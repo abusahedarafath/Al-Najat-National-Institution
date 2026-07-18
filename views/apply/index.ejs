@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/navbar') %>
+
+<section class="hero">
+    <h2>Online Admission Form</h2>
+
+    <form action="/apply" method="POST">
+
+        <label>Student Name</label><br>
+        <input type="text" name="studentName" required><br><br>
+
+        <label>Father's Name</label><br>
+        <input type="text" name="fatherName" required><br><br>
+
+        <label>Mother's Name</label><br>
+        <input type="text" name="motherName" required><br><br>
+
+        <label>Mobile Number</label><br>
+        <input type="tel" name="mobile" required><br><br>
+
+        <label>Class Applying For</label><br>
+        <select name="class">
+            <option>Nursery</option>
+            <option>Class I</option>
+            <option>Class II</option>
+            <option>Class III</option>
+            <option>Class IV</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">Submit Application</button>
+
+    </form>
+
+</section>
+
+<%- include('../partials/footer') %>
