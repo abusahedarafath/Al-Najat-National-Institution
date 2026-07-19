@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission 2027 Wizard</title>
+
+    <link rel="stylesheet" href="/css/admission2027.css">
+</head>
+
+<body>
+
+<div class="container section">
+
+    <%- include("./partials/progress") %>
+
+<form
+    id="admissionWizard"
+    action="/admission2027/apply"
+    method="POST"
+    enctype="multipart/form-data"
+>
+        <%- include("./partials/step1-personal") %>
+        <%- include("./partials/step2-academic") %>
+        <%- include("./partials/step3-course") %>
+        <%- include("./partials/step4-documents") %>
+        <%- include("./partials/step5-preview") %>
+
+    </form>
+
+</div>
+
+<script src="/js/admission2027.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/navbar') %>
+
+<section class="admin-dashboard">
+
+    <div class="container">
+
+        <h1>Application Details</h1>
+
+        <table class="admin-table">
+
+            <tr>
+                <th>ID</th>
+                <td><%= application.id %></td>
+            </tr>
+
+            <tr>
+                <th>Full Name</th>
+                <td><%= application.full_name %></td>
+            </tr>
+
+            <tr>
+                <th>Father's Name</th>
+                <td><%= application.father_name %></td>
+            </tr>
+
+            <tr>
+                <th>Mother's Name</th>
+                <td><%= application.mother_name %></td>
+            </tr>
+
+            <tr>
+                <th>Date of Birth</th>
+                <td><%= application.dob %></td>
+            </tr>
+
+            <tr>
+                <th>Gender</th>
+                <td><%= application.gender %></td>
+            </tr>
+
+            <tr>
+                <th>Mobile</th>
+                <td><%= application.mobile %></td>
+            </tr>
+
+            <tr>
+                <th>Email</th>
+                <td><%= application.email %></td>
+            </tr>
+
+            <tr>
+                <th>Address</th>
+                <td><%= application.address %></td>
+            </tr>
+
+            <tr>
+                <th>Course</th>
+                <td><%= application.course || "Not Selected" %></td>
+            </tr>
+
+            <tr>
+                <th>Previous School</th>
+                <td><%= application.previous_school %></td>
+            </tr>
+
+            <tr>
+                <th>Status</th>
+                <td><strong><%= application.status %></strong></td>
+            </tr>
+
+            <tr>
+                <th>Submitted On</th>
+                <td><%= application.created_at %></td>
+            </tr>
+
+        </table>
+
+        <br>
+
+        <form action="/admin/application/<%= application.id %>/approve" method="POST">
+
+            <button type="submit" class="btn btn-success">
+                ✅ Approve Application
+            </button>
+
+        </form>
+
+        <br>
+
+        <a href="/admin/applications" class="btn">
+            ← Back to Applications
+        </a>
+
+    </div>
+
+</section>
+
+<%- include('../partials/footer') %>

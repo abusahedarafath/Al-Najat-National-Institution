@@ -1,0 +1,53 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Admin Dashboard</h1>
+
+    <div class="dashboard-grid">
+
+        <div class="card">
+            <h2>Total Applications</h2>
+            <h1><%= totalApplications || 0 %></h1>
+        </div>
+
+        <div class="card">
+            <h2>Pending</h2>
+            <h1><%= pendingApplications || 0 %></h1>
+        </div>
+
+        <div class="card">
+            <h2>Approved</h2>
+            <h1><%= approvedApplications || 0 %></h1>
+        </div>
+
+        <div class="card">
+            <h2>Rejected</h2>
+            <h1><%= rejectedApplications || 0 %></h1>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Quick Actions</h2>
+
+        <p>
+            <a href="/admin/applications">Manage Applications</a>
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

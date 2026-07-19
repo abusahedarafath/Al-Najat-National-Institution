@@ -1,0 +1,64 @@
+<div class="wizard-step" id="step3" style="display:none;">
+
+    <h2>Step 3: Course-specific Information</h2>
+    <p>Please complete the details required for your selected admission category.</p>
+
+    <div class="form-grid">
+        <div class="form-group">
+    <label>Selected Course</label>
+
+<select name="course" id="course" required>        <option value="">Select Course</option>
+        <option value="Arabic Awal">Arabic Awal</option>
+        <option value="ETFC">Foundation Course (ETFC)</option>
+        <option value="DCFC">Dawra Foundation (DCFC)</option>
+        <option value="DCSE">Dawra Secondary (DCSE)</option>
+    </select>
+</div>
+
+        <div class="form-group">
+            <label>Are you a Hafiz?</label>
+            <select name="is_hafiz">
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Hifz Institution</label>
+            <input type="text" name="hifz_institution">
+        </div>
+
+        <div class="form-group">
+            <label>Mishkat Completed?</label>
+            <select name="mishkat_completed">
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Mishkat Registration Number</label>
+            <input type="text" name="mishkat_registration">
+        </div>
+
+        <div class="form-group full-width">
+            <label>Additional Remarks</label>
+            <textarea name="remarks" rows="4"></textarea>
+        </div>
+
+    </div>
+
+    <div class="wizard-buttons">
+
+<button type="button" class="btn-secondary" id="backStep3">
+    ← Previous
+</button>
+        <button type="button" class="btn-primary" id="nextStep3">
+            Next →
+        </button>
+
+    </div>
+
+</div>

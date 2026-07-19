@@ -1,0 +1,141 @@
+/* ==========================
+   HOME HERO
+========================== */
+
+.hero{
+    background:linear-gradient(rgba(11,107,58,.75),rgba(11,107,58,.75)),
+    url("/images/home-banner.jpg");
+
+    background-size:cover;
+    background-position:center;
+
+    min-height:500px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+    color:#fff;
+
+    padding:40px 20px;
+}
+
+.hero-content{
+    max-width:800px;
+}
+
+.hero h2{
+    font-size:48px;
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:20px;
+    margin-bottom:35px;
+    line-height:1.8;
+}
+
+.hero .btn{
+    display:inline-block;
+    background:#fff;
+    color:#0b6b3a;
+    padding:15px 35px;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.hero .btn:hover{
+    background:#f1f1f1;
+}
+
+/* ==========================
+   FEATURES
+========================== */
+
+.features{
+    padding:80px 20px;
+}
+
+.feature-grid{
+    max-width:1200px;
+    margin:auto;
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:30px;
+}
+
+.feature-box{
+    background:#fff;
+    padding:35px 25px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+.feature-box:hover{
+    transform:translateY(-6px);
+}
+
+.feature-box h3{
+    color:#0b6b3a;
+    margin-bottom:15px;
+    font-size:26px;
+}
+
+.feature-box p{
+    color:#666;
+    line-height:1.7;
+}
+
+/* ==========================
+   TABLET
+========================== */
+
+@media(max-width:992px){
+
+.hero h2{
+    font-size:40px;
+}
+
+.hero p{
+    font-size:18px;
+}
+
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px){
+
+.hero{
+    min-height:420px;
+}
+
+.hero h2{
+    font-size:32px;
+}
+
+.hero p{
+    font-size:17px;
+}
+
+.hero .btn{
+    width:220px;
+}
+
+.features{
+    padding:50px 20px;
+}
+
+}

@@ -1,0 +1,61 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/navbar') %>
+
+<section class="admin-dashboard">
+
+    <div class="container">
+
+        <h1>Admission Applications</h1>
+
+        <table class="admin-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            <% applications.forEach(app => { %>
+
+                <tr>
+
+                    <td><%= app.id %></td>
+
+                    <td><%= app.full_name %></td>
+
+                    <td><%= app.course %></td>
+
+                    <td><%= app.mobile %></td>
+
+                    <td><%= app.status %></td>
+
+                    <td>
+
+                        <a href="/admin/application/<%= app.id %>" class="btn">
+                            View
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            <% }) %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<%- include('../partials/footer') %>
+

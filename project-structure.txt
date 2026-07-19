@@ -1,0 +1,236 @@
+.
+├── README.md
+├── config
+│   ├── constants.js
+│   ├── database.js
+│   ├── multer.js
+│   └── session.js
+├── controllers
+│   ├── aboutController.js
+│   ├── adminController.js
+│   ├── adminController.jsnano
+│   ├── admissionController.js
+│   ├── applicationController.js
+│   ├── authController.js
+│   ├── headmasterController.js
+│   ├── homeController.js
+│   ├── libraryController.js
+│   ├── paymentController.js
+│   ├── studentController.js
+│   └── teacherController.js
+├── database
+│   ├── backup
+│   ├── migration
+│   ├── schema.sql
+│   └── seed.sql
+├── docs
+├── logs
+├── middleware
+│   ├── admin.js
+│   ├── auth.js
+│   ├── headmaster.js
+│   ├── student.js
+│   ├── teacher.js
+│   ├── upload.js
+│   └── validation.js
+├── models
+│   ├── Admission.js
+│   ├── Assignment.js
+│   ├── Attendance.js
+│   ├── Book.js
+│   ├── Complaint.js
+│   ├── Event.js
+│   ├── Gallery.js
+│   ├── Homework.js
+│   ├── Library.js
+│   ├── Notice.js
+│   ├── Payment.js
+│   ├── Result.js
+│   ├── Staff.js
+│   ├── Student.js
+│   ├── Teacher.js
+│   ├── User.js
+│   ├── adminModel.js
+│   └── admissionModel.js
+├── node_modules
+│   ├── @types
+│   ├── accepts
+│   ├── anymatch
+│   ├── append-field
+│   ├── aws-ssl-profiles
+│   ├── balanced-match
+│   ├── bcryptjs
+│   ├── binary-extensions
+│   ├── body-parser
+│   ├── brace-expansion
+│   ├── braces
+│   ├── buffer-from
+│   ├── busboy
+│   ├── bytes
+│   ├── call-bind-apply-helpers
+│   ├── call-bound
+│   ├── chokidar
+│   ├── concat-stream
+│   ├── connect-flash
+│   ├── content-disposition
+│   ├── content-type
+│   ├── cookie
+│   ├── cookie-parser
+│   ├── cookie-signature
+│   ├── debug
+│   ├── denque
+│   ├── depd
+│   ├── dotenv
+│   ├── dunder-proto
+│   ├── ee-first
+│   ├── ejs
+│   ├── encodeurl
+│   ├── es-define-property
+│   ├── es-errors
+│   ├── es-object-atoms
+│   ├── escape-html
+│   ├── etag
+│   ├── express
+│   ├── express-session
+│   ├── fill-range
+│   ├── finalhandler
+│   ├── forwarded
+│   ├── fresh
+│   ├── function-bind
+│   ├── generate-function
+│   ├── get-intrinsic
+│   ├── get-proto
+│   ├── glob-parent
+│   ├── gopd
+│   ├── has-flag
+│   ├── has-symbols
+│   ├── hasown
+│   ├── http-errors
+│   ├── iconv-lite
+│   ├── ignore-by-default
+│   ├── inherits
+│   ├── ipaddr.js
+│   ├── is-binary-path
+│   ├── is-extglob
+│   ├── is-glob
+│   ├── is-number
+│   ├── is-promise
+│   ├── is-property
+│   ├── long
+│   ├── lru.min
+│   ├── math-intrinsics
+│   ├── media-typer
+│   ├── merge-descriptors
+│   ├── mime-db
+│   ├── mime-types
+│   ├── minimatch
+│   ├── ms
+│   ├── multer
+│   ├── mysql2
+│   ├── named-placeholders
+│   ├── negotiator
+│   ├── nodemon
+│   ├── normalize-path
+│   ├── object-inspect
+│   ├── on-finished
+│   ├── on-headers
+│   ├── once
+│   ├── parseurl
+│   ├── path-to-regexp
+│   ├── picomatch
+│   ├── proxy-addr
+│   ├── pstree.remy
+│   ├── qs
+│   ├── random-bytes
+│   ├── range-parser
+│   ├── raw-body
+│   ├── readable-stream
+│   ├── readdirp
+│   ├── router
+│   ├── safe-buffer
+│   ├── safer-buffer
+│   ├── semver
+│   ├── send
+│   ├── serve-static
+│   ├── setprototypeof
+│   ├── side-channel
+│   ├── side-channel-list
+│   ├── side-channel-map
+│   ├── side-channel-weakmap
+│   ├── simple-update-notifier
+│   ├── sql-escaper
+│   ├── statuses
+│   ├── streamsearch
+│   ├── string_decoder
+│   ├── supports-color
+│   ├── to-regex-range
+│   ├── toidentifier
+│   ├── touch
+│   ├── type-is
+│   ├── typedarray
+│   ├── uid-safe
+│   ├── undefsafe
+│   ├── undici-types
+│   ├── unpipe
+│   ├── util-deprecate
+│   ├── vary
+│   └── wrappy
+├── package-lock.json
+├── package.json
+├── project-structure.txt
+├── public
+│   ├── css
+│   ├── images
+│   ├── js
+│   ├── pdf
+│   └── uploads
+├── routes
+│   ├── aboutRoutes.js
+│   ├── admin.js
+│   ├── adminRoutes.js
+│   ├── admission.js
+│   ├── admission2027Routes.js
+│   ├── admissionRoutes.js
+│   ├── api.js
+│   ├── auth.js
+│   ├── authRoutes.js
+│   ├── headmaster.js
+│   ├── homeRoutes.js
+│   ├── library.js
+│   ├── payment.js
+│   ├── student.js
+│   ├── teacher.js
+│   └── web.js
+├── server.js
+├── server.js 
+├── services
+│   ├── emailService.js
+│   ├── paymentService.js
+│   ├── pdfService.js
+│   ├── qrService.js
+│   └── reportService.js
+├── tests
+├── uploads
+├── utils
+│   ├── helpers.js
+│   ├── response.js
+│   └── validator.js
+└── views
+    ├── about
+    ├── admin
+    ├── admission
+    ├── admission2027
+    ├── apply
+    ├── auth
+    ├── error
+    ├── errors
+    ├── headmaster
+    ├── home
+    ├── index.ejs
+    ├── layouts
+    ├── library
+    ├── partials
+    ├── student
+    └── teacher
+
+160 directories, 74 files

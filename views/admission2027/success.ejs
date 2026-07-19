@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Application Submitted</title>
+
+<link rel="stylesheet" href="/css/admission2027.css">
+
+</head>
+
+<body>
+
+<div class="success-container">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✅
+        </div>
+
+        <h1>Application Submitted Successfully</h1>
+
+        <p>
+            Thank you for applying to
+            <strong>Al-Najat National Institution</strong>.
+        </p>
+
+        <div class="application-box">
+
+            <small>Your Application Number</small>
+
+            <h2><%= application_no %></h2>
+
+        </div>
+
+        <p class="note">
+
+            Please save this Application Number.
+            It will be required for future communication.
+
+        </p>
+
+        <div class="success-buttons">
+
+            <button onclick="window.print()"
+                    class="btn-secondary">
+
+                Print Receipt
+
+            </button>
+
+            <a href="/admission2027"
+               class="btn-primary">
+
+               Back to Home
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

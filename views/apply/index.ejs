@@ -1,39 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Online Admission | Al-Najat National Institution</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+    body{
+        margin:0;
+        padding:0;
+        background:#f5f7fa;
+        font-family:Arial,Helvetica,sans-serif;
+    }
+
+    .apply-section{
+        max-width:900px;
+        margin:40px auto;
+        background:#fff;
+        padding:30px;
+        border-radius:15px;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    .apply-section h1{
+        text-align:center;
+        color:#0b6b3a;
+        margin-bottom:10px;
+    }
+
+    .apply-section p{
+        text-align:center;
+        color:#666;
+        margin-bottom:30px;
+    }
+
+    .form-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:20px;
+    }
+
+    .form-group{
+        display:flex;
+        flex-direction:column;
+    }
+
+    .full-width{
+        grid-column:1/3;
+    }
+
+    label{
+        margin-bottom:8px;
+        font-weight:bold;
+        color:#333;
+    }
+
+    input,
+    select,
+    textarea{
+
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:8px;
+        font-size:15px;
+        outline:none;
+
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus{
+
+        border-color:#0b6b3a;
+
+    }
+
+    textarea{
+
+        resize:vertical;
+
+    }
+
+    .submit-btn{
+
+        width:100%;
+        background:#0b6b3a;
+        color:#fff;
+        border:none;
+        padding:15px;
+        font-size:17px;
+        border-radius:10px;
+        cursor:pointer;
+        transition:.3s;
+
+    }
+
+    .submit-btn:hover{
+
+        background:#09542e;
+
+    }
+
+    @media(max-width:768px){
+
+        .form-grid{
+
+            grid-template-columns:1fr;
+
+        }
+
+        .full-width{
+
+            grid-column:1;
+
+        }
+
+    }
+
+    </style>
+
+</head>
+
+<body>
+
 <%- include('../partials/header') %>
 
 <%- include('../partials/navbar') %>
 
-<section class="hero">
-    <h2>Online Admission Form</h2>
 
-    <form action="/apply" method="POST">
 
-        <label>Student Name</label><br>
-        <input type="text" name="studentName" required><br><br>
+<section class="apply-section">
 
-        <label>Father's Name</label><br>
-        <input type="text" name="fatherName" required><br><br>
 
-        <label>Mother's Name</label><br>
-        <input type="text" name="motherName" required><br><br>
 
-        <label>Mobile Number</label><br>
-        <input type="tel" name="mobile" required><br><br>
 
-        <label>Class Applying For</label><br>
-        <select name="class">
-            <option>Nursery</option>
-            <option>Class I</option>
-            <option>Class II</option>
-            <option>Class III</option>
-            <option>Class IV</option>
-        </select>
+<h1>Online Admission Form</h1>
 
-        <br><br>
+<p>Please fill in all required details carefully.</p>
 
-        <button type="submit">Submit Application</button>
+<form action="/apply" method="POST" enctype="multipart/form-data">
 
-    </form>
+
+<div class="form-grid">
+
+
+<div class="form-group">
+    <label>Student Full Name *</label>
+    <input type="text" name="full_name" required>
+</div>
+
+<div class="form-group">
+    <label>Father's Name *</label>
+    <input type="text" name="father_name" required>
+</div>
+
+<div class="form-group">
+    <label>Mother's Name *</label>
+    <input type="text" name="mother_name" required>
+</div>
+
+<div class="form-group">
+    <label>Date of Birth *</label>
+    <input type="date" name="dob" required>
+</div>
+
+<div class="form-group">
+    <label>Gender *</label>
+    <select name="gender" required>
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Mobile Number *</label>
+    <input type="tel" name="mobile" required>
+</div>
+
+<div class="form-group">
+    <label>Email Address</label>
+    <input type="email" name="email">
+</div>
+
+<div class="form-group">
+    <label>Course *</label>
+    <select name="course" required>
+        <option value="">Select Course</option>
+        <option>Arabic Awal</option>
+        <option>Foundation Course (ETFC)</option>
+        <option>Dawra Foundation (DCFC)</option>
+        <option>Dawra Secondary (DCSE)</option>
+    </select>
+</div>
+
+<div class="form-group full-width">
+    <label>Full Address *</label>
+    <textarea
+        name="address"
+        rows="4"
+        required></textarea>
+</div>
+
+<div class="form-group full-width">
+    <label>Previous School / Madrasa</label>
+    <input
+        type="text"
+        name="previous_school">
+</div>
+
+<div class="form-group full-width">
+    <label>Student Photo</label>
+    <input
+        type="file"
+        name="photo"
+        accept=".jpg,.jpeg,.png">
+</div>
+
+<div class="form-group full-width">
+    <button type="submit" class="submit-btn">
+        Submit Application
+    </button>
+</div>
+
+</div>
+
+</form>
 
 </section>
 
 <%- include('../partials/footer') %>
+
+</body>
+</html>

@@ -1,35 +1,40 @@
 const express = require("express");
 const path = require("path");
+const db = require("./config/database");
+
+const homeRoutes = require("./routes/homeRoutes");
+const aboutRoutes = require("./routes/aboutRoutes");
+const admissionRoutes = require("./routes/admissionRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const authRoutes = require("./routes/authRoutes");
+const session = require("express-session");
+const admission2027Routes = require("./routes/admission2027Routes");
+
+
 
 const app = express();
-app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 3000;
+
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: "al_najat_secret_key",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/", homeRoutes);
+app.use("/", aboutRoutes);
+app.use("/", admissionRoutes);
+app.use("/", adminRoutes);
+app.use("/", authRoutes);
+app.use("/", admission2027Routes);
 
-app.get("/", (req, res) => {
-  res.render("home/index");
-});
-app.get("/about", (req, res) => {
-    res.render("about/index");
-});
-app.get("/admission", (req, res) => {
-    res.render("admission/index");
-});
 
-app.get("/apply", (req, res) => {
-    res.render("admission/apply");
-});
-
-app.post("/apply", (req, res) => {
-    console.log(req.body);
-
-    res.send("<h1>Application Submitted Successfully!</h1>");
-});
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Server is running at http://localhost:${PORT}`);
 });
-

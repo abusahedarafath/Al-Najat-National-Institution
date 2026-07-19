@@ -1,0 +1,72 @@
+<div class="wizard-step" id="step2" style="display:none;">
+
+    <h2>Step 2: Academic Information</h2>
+    <p>Please enter your previous academic details.</p>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label>Admission Category *</label>
+            <select name="admission_category" required>
+                <option value="">Select Category</option>
+                <option value="arabic_awal">Arabic Awal</option>
+                <option value="etfc">ETFC</option>
+                <option value="dcfc">DCFC</option>
+                <option value="dcse">DCSE</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Previous School / Madrasa *</label>
+            <input type="text" name="previous_school" required>
+        </div>
+
+        <div class="form-group">
+            <label>Board / Council</label>
+            <input type="text" name="board">
+        </div>
+
+        <div class="form-group">
+            <label>Last Class Passed *</label>
+            <input type="text" name="last_class" required>
+        </div>
+
+        <div class="form-group">
+            <label>Year of Passing *</label>
+            <input type="number" name="passing_year" min="2000" max="2100" required>
+        </div>
+
+        <div class="form-group">
+            <label>Percentage / Grade</label>
+            <input type="text" name="grade">
+        </div>
+
+        <div class="form-group">
+            <label>PEN Number</label>
+            <input type="text" name="pen_no">
+        </div>
+
+        <div class="form-group">
+            <label>APAAR ID</label>
+            <input type="text" name="apaar_id">
+        </div>
+
+        <div class="form-group">
+            <label>Siksha Setu ID</label>
+            <input type="text" name="siksha_setu_id">
+        </div>
+
+    </div>
+
+    <div class="wizard-buttons">
+
+<button type="button" class="btn-secondary" id="backStep2">
+    ← Previous
+</button>
+        <button type="button" class="btn-primary" id="nextStep2">
+            Next →
+        </button>
+
+    </div>
+
+</div>

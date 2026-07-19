@@ -1,0 +1,72 @@
+/* ==========================
+   ABOUT PAGE
+========================== */
+
+.about-section{
+    max-width:1100px;
+    margin:60px auto;
+    padding:20px;
+}
+
+.about-card{
+    background:#fff;
+    border-radius:12px;
+    padding:40px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.about-card h2{
+    text-align:center;
+    color:#0b6b3a;
+    margin-bottom:25px;
+    font-size:36px;
+}
+
+.about-card p{
+    color:#555;
+    font-size:18px;
+    line-height:1.8;
+    margin-bottom:20px;
+}
+
+.about-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:25px;
+    margin-top:40px;
+}
+
+.about-box{
+    background:#f8f8f8;
+    padding:30px;
+    border-radius:12px;
+}
+
+.about-box h3{
+    color:#0b6b3a;
+    margin-bottom:15px;
+}
+
+.about-box p{
+    margin:0;
+}
+
+@media(max-width:768px){
+
+.about-card{
+    padding:25px;
+}
+
+.about-card h2{
+    font-size:28px;
+}
+
+.about-card p{
+    font-size:16px;
+}
+
+.about-grid{
+    grid-template-columns:1fr;
+}
+
+}

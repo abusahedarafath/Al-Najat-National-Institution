@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <%- include("../partials/admin-sidebar") %>
+
+    <main class="admin-content">
+
+        <h1>👨‍🎓 Student Profile</h1>
+
+<div style="text-align:center; margin:20px 0;">
+
+    <% if (student.photo) { %>
+
+        <img
+            src="/uploads/students/<%= student.photo %>"
+            alt="Student Photo"
+            style="width:160px;height:160px;border-radius:50%;object-fit:cover;border:4px solid #0d6efd;">
+
+    <% } else { %>
+
+        <img
+            src="/images/default-user.png"
+            alt="No Photo"
+            style="width:160px;height:160px;border-radius:50%;object-fit:cover;border:4px solid #ccc;">
+
+    <% } %>
+
+</div>
+
+
+        <div class="profile-card">
+
+            <table class="profile-table">
+
+                <tr>
+                    <th>Student ID</th>
+                    <td><%= student.student_id %></td>
+                </tr>
+
+                <tr>
+                    <th>Full Name</th>
+                    <td><%= student.full_name %></td>
+                </tr>
+
+                <tr>
+                    <th>Father's Name</th>
+                    <td><%= student.father_name %></td>
+                </tr>
+
+                <tr>
+                    <th>Mother's Name</th>
+                    <td><%= student.mother_name %></td>
+                </tr>
+
+                <tr>
+                    <th>Date of Birth</th>
+                    <td><%= student.dob %></td>
+                </tr>
+
+                <tr>
+                    <th>Gender</th>
+                    <td><%= student.gender %></td>
+                </tr>
+
+                <tr>
+                    <th>Mobile</th>
+                    <td><%= student.mobile %></td>
+                </tr>
+
+                <tr>
+                    <th>Email</th>
+                    <td><%= student.email %></td>
+                </tr>
+
+                <tr>
+                    <th>Address</th>
+                    <td><%= student.address %></td>
+                </tr>
+
+                <tr>
+                    <th>Course</th>
+                    <td><%= student.course %></td>
+                </tr>
+
+                <tr>
+                    <th>Previous School</th>
+                    <td><%= student.previous_school %></td>
+                </tr>
+
+                <tr>
+                    <th>Admission Date</th>
+                    <td><%= student.admission_date %></td>
+                </tr>
+
+                <tr>
+                    <th>Status</th>
+                    <td><%= student.status %></td>
+                </tr>
+
+            </table>
+
+            <div class="form-actions">
+
+                <a href="/admin/student/<%= student.id %>/edit">
+                    <button class="btn-save" type="button">
+                        ✏️ Edit Student
+                    </button>
+                </a>
+
+                <form action="/admin/student/<%= student.id %>/deactivate" method="POST">
+
+                    <button class="btn-cancel" type="submit">
+                        🚫 Deactivate
+                    </button>
+
+                </form>
+
+                <a href="/admin/students">
+                    <button class="btn-view" type="button">
+                        ⬅ Back
+                    </button>
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
