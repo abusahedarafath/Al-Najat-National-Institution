@@ -2,14 +2,14 @@ const db = require("../config/database");
 
 class Student {
 
+    // Create Student
     static create(data, callback) {
 
         const sql = `
-            INSERT INTO students (
+            INSERT INTO students
+            (
                 student_id,
                 application_id,
-                admission_no,
-                session,
                 full_name,
                 father_name,
                 mother_name,
@@ -19,18 +19,15 @@ class Student {
                 email,
                 address,
                 course,
-                pen_no,
-                apaar_id,
-                siksha_setu_id
+                previous_school,
+                admission_date
             )
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())
         `;
 
         db.query(sql, [
             data.student_id,
             data.application_id,
-            data.admission_no,
-            data.session,
             data.full_name,
             data.father_name,
             data.mother_name,
@@ -40,10 +37,79 @@ class Student {
             data.email,
             data.address,
             data.course,
-            data.pen_no,
-            data.apaar_id,
-            data.siksha_setu_id
+            data.previous_school
         ], callback);
+
+    }
+
+    // Get All Students
+    static getAll(callback) {
+
+        db.query(
+            "SELECT * FROM students ORDER BY id DESC",
+            callback
+        );
+
+    }
+
+    // Get Student By ID
+    static getById(id, callback) {
+
+        db.query(
+            "SELECT * FROM students WHERE id = ?",
+            [id],
+            callback
+        );
+
+    }
+
+    // Update Student
+    static update(id, student, callback) {
+
+        const sql = `
+            UPDATE students
+            SET
+                full_name = ?,
+                father_name = ?,
+                mother_name = ?,
+                dob = ?,
+                gender = ?,
+                mobile = ?,
+                email = ?,
+                address = ?,
+                course = ?,
+                previous_school = ?,
+                status = ?
+            WHERE id = ?
+        `;
+
+        db.query(sql, [
+
+            student.full_name,
+            student.father_name,
+            student.mother_name,
+            student.dob,
+            student.gender,
+            student.mobile,
+            student.email,
+            student.address,
+            student.course,
+            student.previous_school,
+            student.status,
+            id
+
+        ], callback);
+
+    }
+
+    // Deactivate Student
+    static deactivate(id, callback) {
+
+        db.query(
+            "UPDATE students SET status='Inactive' WHERE id=?",
+            [id],
+            callback
+        );
 
     }
 
