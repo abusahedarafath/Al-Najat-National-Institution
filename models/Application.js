@@ -47,6 +47,7 @@ class Application {
             data.siksha_setu_id,
             "Pending"
         ], callback);
+
     }
 
     // ==========================
@@ -68,6 +69,23 @@ class Application {
         `;
 
         db.query(sql, callback);
+
+    }
+
+    // ==========================
+    // Get Last Application
+    // ==========================
+    static getLastApplication(callback) {
+
+        const sql = `
+            SELECT application_no
+            FROM applications
+            ORDER BY id DESC
+            LIMIT 1
+        `;
+
+        db.query(sql, callback);
+
     }
 
     // ==========================
@@ -82,6 +100,7 @@ class Application {
         `;
 
         db.query(sql, [id], callback);
+
     }
 
 }
