@@ -103,6 +103,21 @@ class Application {
 
     }
 
+    // ==========================
+    // Update Application Status
+    // ==========================
+    static updateStatus(id, status, callback) {
+
+        const sql = `
+            UPDATE applications
+            SET status = ?
+            WHERE id = ?
+        `;
+
+        db.query(sql, [status, id], callback);
+
+    }
+
 }
 
 module.exports = Application;

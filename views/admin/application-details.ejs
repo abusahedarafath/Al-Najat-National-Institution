@@ -16,6 +16,11 @@
             </tr>
 
             <tr>
+                <th>Application No</th>
+                <td><%= application.application_no %></td>
+            </tr>
+
+            <tr>
                 <th>Full Name</th>
                 <td><%= application.full_name %></td>
             </tr>
@@ -47,7 +52,7 @@
 
             <tr>
                 <th>Email</th>
-                <td><%= application.email %></td>
+                <td><%= application.email || "-" %></td>
             </tr>
 
             <tr>
@@ -62,12 +67,29 @@
 
             <tr>
                 <th>Previous School</th>
-                <td><%= application.previous_school %></td>
+                <td><%= application.previous_school || "-" %></td>
             </tr>
 
             <tr>
-                <th>Status</th>
-                <td><strong><%= application.status %></strong></td>
+                <th>PEN No</th>
+                <td><%= application.pen_no || "-" %></td>
+            </tr>
+
+            <tr>
+                <th>APAAR ID</th>
+                <td><%= application.apaar_id || "-" %></td>
+            </tr>
+
+            <tr>
+                <th>Siksha Setu ID</th>
+                <td><%= application.siksha_setu_id || "-" %></td>
+            </tr>
+
+            <tr>
+                <th>Current Status</th>
+                <td>
+                    <strong><%= application.status %></strong>
+                </td>
             </tr>
 
             <tr>
@@ -77,12 +99,35 @@
 
         </table>
 
-        <br>
+        <hr>
 
-        <form action="/admin/application/<%= application.id %>/approve" method="POST">
+        <h3>Update Application Status</h3>
+
+        <form action="/admin/application/<%= application.id %>/status" method="POST">
+
+            <select name="status" class="form-control">
+
+                <option value="Pending"
+                    <%= application.status === "Pending" ? "selected" : "" %>>
+                    Pending
+                </option>
+
+                <option value="Approved"
+                    <%= application.status === "Approved" ? "selected" : "" %>>
+                    Approved
+                </option>
+
+                <option value="Rejected"
+                    <%= application.status === "Rejected" ? "selected" : "" %>>
+                    Rejected
+                </option>
+
+            </select>
+
+            <br>
 
             <button type="submit" class="btn btn-success">
-                ✅ Approve Application
+                Update Status
             </button>
 
         </form>
