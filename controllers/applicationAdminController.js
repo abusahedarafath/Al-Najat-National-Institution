@@ -1,7 +1,9 @@
-const bcrypt = require("bcryptjs");const Application = require("../../models/Application");
-const Student = require("../../models/Student");
-const StudentUser = require("../../models/StudentUser");
+const bcrypt = require("bcryptjs");
 
+
+const Application = require("../models/Application");
+const Student = require("../models/Student");
+const StudentUser = require("../models/StudentUser");
 /**
  * Show all applications
  */
@@ -28,20 +30,21 @@ exports.viewApplication = (req, res) => {
 
     const id = req.params.id;
 
-    Application.getById(id, (err, application) => {
+Application.getById(id, (err, rows) => {
 
-        if (err || !application) {
-            req.flash("error", "Application not found.");
-            return res.redirect("/admin/applications");
-        }
+    if (err || rows.length === 0) {
+        req.flash("error", "Application not found.");
+        return res.redirect("/admin/applications");
+    }
 
-        res.render("admin/application-details", {
-            title: "Application Details",
-            application
-        });
+    const application = rows[0];
 
+    res.render("admin/application-details", {
+        title: "Application Details",
+        application
     });
 
+});
 };
 
 
@@ -52,9 +55,14 @@ exports.approveApplication = (req, res) => {
 
     const applicationId = req.params.id;
 
-    Application.getById(applicationId, async (err, application) => {
+Application.getById(applicationId, async (err, rows) => {
 
-        if (err || !application) {
+    if (err || rows.length === 0) {
+        req.flash("error", "Application not found.");
+        return res.redirect("/admin/applications");
+    }
+
+    const application = rows[0];{
             req.flash("error", "Application not found.");
             return res.redirect("/admin/applications");
         }
@@ -66,15 +74,14 @@ exports.approveApplication = (req, res) => {
                 return res.redirect("/admin/application/" + applicationId);
             }
 
-            Student.findByApplicationId(applicationId, async (err3, existingStudent) => {
-
+Student.findByApplicationId(applicationId, async (err3, students) => {
                 if (err3) {
                     console.error(err3);
                     req.flash("error", "Database error.");
                     return res.redirect("/admin/application/" + applicationId);
                 }
 
-                if (existingStudent) {
+               if (students.length > 0) {
                     req.flash("success", "Application approved successfully.");
                     return res.redirect("/admin/application/" + applicationId);
                 }
