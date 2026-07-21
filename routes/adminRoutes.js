@@ -6,6 +6,7 @@ const upload = require("../middleware/upload");
 
 const adminDashboardController = require("../controllers/adminDashboardController");
 const applicationAdminController = require("../controllers/applicationAdminController");
+const studentController = require("../controllers/studentController");
 const adminController = require("../controllers/adminController");
 
 // ===============================
@@ -50,32 +51,32 @@ router.post(
 router.get(
     "/admin/students",
     authMiddleware.isLoggedIn,
-    adminController.showStudents
+    studentController.showStudents
 );
 
 router.get(
     "/admin/student/:id",
     authMiddleware.isLoggedIn,
-    adminController.viewStudent
+    studentController.viewStudent
 );
 
 router.get(
     "/admin/student/:id/edit",
     authMiddleware.isLoggedIn,
-    adminController.editStudentPage
+    studentController.editStudentPage
 );
 
 router.post(
     "/admin/student/:id/edit",
     authMiddleware.isLoggedIn,
     upload.single("photo"),
-    adminController.updateStudent
+    studentController.updateStudent
 );
 
 router.post(
     "/admin/student/:id/deactivate",
     authMiddleware.isLoggedIn,
-    adminController.deactivateStudent
+    studentController.deactivateStudent
 );
 
 module.exports = router;
