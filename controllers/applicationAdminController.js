@@ -118,8 +118,7 @@ Student.findByApplicationId(applicationId, async (err3, students) => {
                         status: "Active"
                     };
 
-                    Student.create(studentData, async (err5) => {
-
+Student.create(studentData, async (err5, result) => {
                         if (err5) {
                             console.error(err5);
                             req.flash("error", "Unable to create student.");
@@ -134,12 +133,11 @@ Student.findByApplicationId(applicationId, async (err3, students) => {
                             const hashedPassword =
                                 await bcrypt.hash(plainPassword, 10);
 
-                            const loginData = {
-                                student_id: studentId,
-                                username: studentId,
-                                password: hashedPassword
-                            };
-
+const loginData = {
+    student_id: result.insertId,
+    username: studentId,
+    password: hashedPassword
+};
                             StudentUser.create(loginData, (err6) => {
 
                                 if (err6) {
