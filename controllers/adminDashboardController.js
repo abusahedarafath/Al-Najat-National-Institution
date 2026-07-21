@@ -5,25 +5,20 @@ const admissionModel = require("../models/admissionModel");
 // ===============================
 exports.dashboard = (req, res) => {
 
-    admissionModel.getDashboardStats((err, statsResult) => {
+    admissionModel.getDashboardStats((err, results) => {
 
         if (err) {
             console.error(err);
             return res.send("Database Error");
         }
 
-        admissionModel.getRecentApplications((err, recentResult) => {
+        const stats = results && results.length ? results[0] : {};
 
-            if (err) {
-                console.error(err);
-                return res.send("Database Error");
-            }
-
-            res.render("admin/dashboard", {
-                stats: statsResult[0],
-                recentApplications: recentResult
-            });
-
+        res.render("admin/dashboard", {
+            totalApplications: stats.total || 0,
+            pendingApplications: stats.pending || 0,
+            approvedApplications: stats.approved || 0,
+            rejectedApplications: stats.rejected || 0
         });
 
     });

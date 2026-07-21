@@ -1,39 +1,42 @@
 const express = require("express");
 const router = express.Router();
 
-const adminController = require("../controllers/adminController");
 const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
+const adminDashboardController = require("../controllers/adminDashboardController");
+const applicationAdminController = require("../controllers/applicationAdminController");
+const adminController = require("../controllers/adminController");
 
-
-
+// ===============================
+// Dashboard
+// ===============================
 router.get(
     "/admin",
     authMiddleware.isLoggedIn,
-    adminController.dashboard
+    adminDashboardController.dashboard
 );
-
 
 router.get(
     "/admin/dashboard",
     authMiddleware.isLoggedIn,
-    adminController.dashboard
+    adminDashboardController.dashboard
 );
 
+// ===============================
+// Applications
+// ===============================
 router.get(
     "/admin/applications",
     authMiddleware.isLoggedIn,
-    adminController.showApplications
+    applicationAdminController.showApplications
 );
-
 
 router.get(
     "/admin/application/:id",
     authMiddleware.isLoggedIn,
-    adminController.viewApplication
+    applicationAdminController.viewApplication
 );
-
 
 router.post(
     "/admin/application/:id/approve",
@@ -41,13 +44,12 @@ router.post(
     adminController.approveApplication
 );
 
+// ===============================
+// Students
+// ===============================
 router.get(
     "/admin/students",
     authMiddleware.isLoggedIn,
-    (req, res, next) => {
-        console.log("✅ /admin/students route reached");
-        next();
-    },
     adminController.showStudents
 );
 
@@ -75,7 +77,5 @@ router.post(
     authMiddleware.isLoggedIn,
     adminController.deactivateStudent
 );
-
-
 
 module.exports = router;
