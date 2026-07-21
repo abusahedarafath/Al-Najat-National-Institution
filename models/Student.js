@@ -3,6 +3,25 @@ const db = require("../config/database");
 class Student {
 
     // ===============================
+    // Generate Next Student Number
+    // ===============================
+    static getNextStudentNumber(callback) {
+
+        const sql = `
+            SELECT COUNT(*) AS total
+            FROM students
+        `;
+
+        db.query(sql, (err, rows) => {
+            if (err) return callback(err);
+
+            const nextNumber = (rows[0].total || 0) + 1;
+            callback(null, nextNumber);
+        });
+
+    }
+
+    // ===============================
     // Create Student
     // ===============================
     static create(data, callback) {
@@ -71,8 +90,34 @@ class Student {
     static getById(id, callback) {
 
         db.query(
-            "SELECT * FROM students WHERE id=?",
+            "SELECT * FROM students WHERE id = ?",
             [id],
+            callback
+        );
+
+    }
+
+    // ===============================
+    // Find Student By Student ID
+    // ===============================
+    static findByStudentId(studentId, callback) {
+
+        db.query(
+            "SELECT * FROM students WHERE student_id = ? LIMIT 1",
+            [studentId],
+            callback
+        );
+
+    }
+
+    // ===============================
+    // Check Existing Student
+    // ===============================
+    static findByApplicationId(applicationId, callback) {
+
+        db.query(
+            "SELECT * FROM students WHERE application_id = ? LIMIT 1",
+            [applicationId],
             callback
         );
 
@@ -86,18 +131,18 @@ class Student {
         const sql = `
             UPDATE students
             SET
-                full_name=?,
-                father_name=?,
-                mother_name=?,
-                dob=?,
-                gender=?,
-                mobile=?,
-                email=?,
-                address=?,
-                course=?,
-                previous_school=?,
-                status=?
-            WHERE id=?
+                full_name = ?,
+                father_name = ?,
+                mother_name = ?,
+                dob = ?,
+                gender = ?,
+                mobile = ?,
+                email = ?,
+                address = ?,
+                course = ?,
+                previous_school = ?,
+                status = ?
+            WHERE id = ?
         `;
 
         db.query(
@@ -122,25 +167,12 @@ class Student {
     }
 
     // ===============================
-    // Check Existing Student
-    // ===============================
-    static findByApplicationId(applicationId, callback) {
-
-        db.query(
-            "SELECT * FROM students WHERE application_id=? LIMIT 1",
-            [applicationId],
-            callback
-        );
-
-    }
-
-    // ===============================
     // Deactivate Student
     // ===============================
     static deactivate(id, callback) {
 
         db.query(
-            "UPDATE students SET status='Inactive' WHERE id=?",
+            "UPDATE students SET status = 'Inactive' WHERE id = ?",
             [id],
             callback
         );
