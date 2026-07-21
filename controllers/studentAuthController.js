@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const StudentUser = require("../models/StudentUser");
 const Student = require("../models/Student");
 
@@ -64,18 +64,32 @@ exports.login = (req, res) => {
 
         }
 
-        req.session.student = {
-            id: user.student_id,
-            username: user.username
-        };
+Student.getById(user.student_id, (studentErr, studentRows) => {
 
-        StudentUser.updateLastLogin(
-            user.student_id,
-            () => {}
-        );
+    if (studentErr || studentRows.length === 0) {
 
-        res.redirect("/student/dashboard");
+        return res.render("student/login", {
+            title: "Student Login",
+            error: "Student record not found."
+        });
 
+    }
+
+    const student = studentRows[0];
+
+    req.session.student = {
+        id: student.id,
+        student_id: student.student_id,
+        username: user.username,
+        full_name: student.full_name,
+        course: student.course
+    };
+
+    StudentUser.updateLastLogin(user.student_id, () => {});
+
+    res.redirect("/student/dashboard");
+
+});
     });
 
 };
