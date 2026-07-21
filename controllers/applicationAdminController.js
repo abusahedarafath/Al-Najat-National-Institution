@@ -62,7 +62,10 @@ Application.getById(applicationId, async (err, rows) => {
         return res.redirect("/admin/applications");
     }
 
-    const application = rows[0];{
+    const application = rows[0];if (application.status === "Approved") {
+    req.flash("info", "This application has already been approved.");
+    return res.redirect("/admin/application/" + applicationId);
+} {
             req.flash("error", "Application not found.");
             return res.redirect("/admin/applications");
         }
@@ -127,9 +130,14 @@ Student.create(studentData, async (err5, result) => {
 
                         try {
 
-                            const plainPassword =
-                                application.mobile.slice(-6);
+ const mobile = String(application.mobile || "").trim();
 
+if (mobile.length < 6) {
+    req.flash("error", "Invalid mobile number.");
+    return res.redirect("/admin/application/" + applicationId);
+}
+
+const plainPassword = mobile.slice(-6);
                             const hashedPassword =
                                 await bcrypt.hash(plainPassword, 10);
 
