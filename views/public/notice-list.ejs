@@ -1,0 +1,37 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="container" style="padding:50px 0;">
+
+    <h1>Latest Notices</h1>
+
+    <% if(notices.length){ %>
+
+        <% notices.forEach(notice=>{ %>
+
+            <div class="feature-card" style="margin-bottom:20px;">
+
+                <h3><%= notice.title %></h3>
+
+                <p><strong>Date:</strong> <%= notice.publish_date %></p>
+
+                <a href="/notice/<%= notice.id %>" class="btn">
+                    Read More
+                </a>
+
+            </div>
+
+        <% }) %>
+
+    <% }else{ %>
+
+        <p>No notices available.</p>
+
+    <% } %>
+
+</section>
+
+<%- include("../partials/footer") %>

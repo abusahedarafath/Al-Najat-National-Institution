@@ -1,0 +1,32 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="container" style="padding:50px 0;">
+
+    <h1><%= notice.title %></h1>
+
+    <p>
+        <strong>Published:</strong>
+        <%= notice.publish_date %>
+    </p>
+
+    <hr>
+
+    <p><%= notice.description %></p>
+
+    <% if(notice.file){ %>
+        <p>
+            <a class="btn"
+               href="/uploads/notices/<%= notice.file %>"
+               target="_blank">
+                Download Notice
+            </a>
+        </p>
+    <% } %>
+
+</section>
+
+<%- include("../partials/footer") %>

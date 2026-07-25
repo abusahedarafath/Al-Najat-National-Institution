@@ -1,0 +1,25 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="container" style="padding:50px 0;">
+
+    <h1><%= news.title %></h1>
+
+    <p><strong>Published:</strong> <%= news.publish_date %></p>
+
+    <hr>
+
+    <% if(news.image){ %>
+        <img src="/uploads/news/<%= news.image %>"
+             alt="<%= news.title %>"
+             style="max-width:100%;margin-bottom:20px;">
+    <% } %>
+
+    <p><%= news.description %></p>
+
+</section>
+
+<%- include("../partials/footer") %>

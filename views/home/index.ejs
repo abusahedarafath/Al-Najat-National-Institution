@@ -4,6 +4,12 @@
 
 <%- include('../partials/navbar') %>
 
+
+
+
+
+
+
 <section class="hero-slider">
 
     <% if(sliders && sliders.length){ %>
@@ -47,6 +53,12 @@
     <button class="next">&#10095;</button>
 
 </section>
+
+
+
+
+
+
 
 
 <!-- =========================
@@ -96,6 +108,11 @@
     </div>
 
 </section>
+
+
+
+
+
 <!-- =========================
      Statistics
 ========================= -->
@@ -129,6 +146,11 @@
 </section>
 
 
+
+
+
+
+
 <section class="features">
 
 <h2>Why Choose Al-Najat?</h2>
@@ -153,6 +175,95 @@
 </div>
 
 </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="home-notices">
+
+<h2>Latest Notices</h2>
+
+<div class="feature-grid">
+
+<% if(notices && notices.length){ %>
+
+<% notices.forEach(notice=>{ %>
+
+<div class="feature-card">
+
+<h3><%= notice.title %></h3>
+
+<p><%= notice.publish_date %></p>
+
+<a href="/notice/<%= notice.id %>" class="btn">
+
+Read More
+
+</a>
+
+</div>
+
+<% }) %>
+
+<% }else{ %>
+
+<p>No notices available.</p>
+
+<% } %>
+
+</div>
+
+</section>
+
+
+
+
+<section class="home-news">
+
+    <h2>Latest News</h2>
+
+    <div class="feature-grid">
+
+        <% if(news && news.length){ %>
+
+            <% news.forEach(item => { %>
+
+                <div class="feature-card">
+
+                    <h3><%= item.title %></h3>
+
+                    <p><%= item.publish_date %></p>
+
+                    <a href="/news/<%= item.id %>" class="btn">
+                        Read More
+                    </a>
+
+                </div>
+
+            <% }) %>
+
+        <% } else { %>
+
+            <p>No news available.</p>
+
+        <% } %>
+
+    </div>
+
+</section>
+
+
+
+
 
 <script src="/js/home-slider.js"></script>
 
