@@ -12,7 +12,7 @@ const session = require("express-session");
 const admission2027Routes = require("./routes/admission2027Routes");
 const adminNoticeRoutes = require("./routes/adminNoticeRoutes");
 const adminNewsRoutes = require("./routes/adminNewsRoutes");
-app.use(adminNewsRoutes);
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +37,7 @@ app.use("/", authRoutes);
 app.use("/", studentRoutes);
 app.use("/", admission2027Routes);
 app.use(adminNoticeRoutes);
+app.use(adminNewsRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
