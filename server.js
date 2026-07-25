@@ -11,7 +11,8 @@ const studentRoutes = require("./routes/studentRoutes");
 const session = require("express-session");
 const admission2027Routes = require("./routes/admission2027Routes");
 const adminNoticeRoutes = require("./routes/adminNoticeRoutes");
-
+const adminNewsRoutes = require("./routes/adminNewsRoutes");
+app.use(adminNewsRoutes);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
