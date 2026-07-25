@@ -4,88 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Notices</title>
-<%- include("../../partials/admin-sidebar") %>
+
     <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body>
 
 <div class="admin-layout">
 
+    <%- include("../../partials/admin-sidebar") %>
 
     <main class="admin-content">
 
         <div class="container">
 
-            <h1>Manage Notices</h1>
+            <div class="page-header">
 
-            <p style="margin-bottom:20px;">
-                <a href="/admin/notices/create">➕ Add Notice</a>
-            </p>
+                <h1 class="page-title">
+                    Notice Management
+                </h1>
 
-            <table border="1" cellpadding="10" cellspacing="0" width="100%">
+                <a href="/admin/notices/create" class="btn btn-success">
+                    + Add Notice
+                </a>
 
-                <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
+            </div>
 
-                <% if (notices.length === 0) { %>
+            <div class="card">
 
-                    <tr>
+                <table class="table">
 
-                        <td colspan="5" style="text-align:center;">
+                    <thead>
 
-                            No notices found.
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Publish Date</th>
+                            <th>Status</th>
+                            <th width="180">Action</th>
+                        </tr>
 
-                        </td>
+                    </thead>
 
-                    </tr>
+                    <tbody>
 
-                <% } %>
+                    <% if(notices.length===0){ %>
 
-                <% notices.forEach((notice,index)=>{ %>
+                        <tr>
 
-                    <tr>
+                            <td colspan="5" style="text-align:center;padding:40px;">
 
-                        <td><%= index+1 %></td>
+                                No notices available.
 
-                        <td><%= notice.title %></td>
+                            </td>
 
-                        <td><%= notice.publish_date %></td>
+                        </tr>
 
-                        <td><%= notice.status %></td>
+                    <% } %>
 
-                        <td>
+                    <% notices.forEach((notice,index)=>{ %>
 
-                            <a href="/admin/notices/<%= notice.id %>/edit">
-                                Edit
-                            </a>
+                        <tr>
 
-                            |
+                            <td><%= index+1 %></td>
 
-                            <form
-                                action="/admin/notices/<%= notice.id %>/delete"
-                                method="POST"
-                                style="display:inline;">
+                            <td>
+                                <strong><%= notice.title %></strong>
+                            </td>
 
-                                <button type="submit">
+                            <td>
+                                <%= notice.publish_date %>
+                            </td>
 
-                                    Delete
+                            <td>
 
-                                </button>
+                                <% if(notice.status==="Active"){ %>
 
-                            </form>
+                                    <span style="color:#16a34a;font-weight:700;">
+                                        Active
+                                    </span>
 
-                        </td>
+                                <% }else{ %>
 
-                    </tr>
+                                    <span style="color:#dc2626;font-weight:700;">
+                                        Inactive
+                                    </span>
 
-                <% }) %>
+                                <% } %>
 
-            </table>
+                            </td>
+
+                            <td>
+
+                                <div class="action-buttons">
+
+                                    <a
+                                        href="/admin/notices/<%= notice.id %>/edit"
+                                        class="btn btn-primary">
+
+                                        Edit
+
+                                    </a>
+
+                                    <form
+                                        action="/admin/notices/<%= notice.id %>/delete"
+                                        method="POST"
+                                        onsubmit="return confirm('Delete this notice?');">
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger">
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 

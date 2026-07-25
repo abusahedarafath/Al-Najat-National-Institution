@@ -18,7 +18,7 @@ exports.index = (req, res) => {
 
     });
 
-};;
+};
 /**
  * Show Create Form
  */

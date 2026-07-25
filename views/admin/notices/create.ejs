@@ -11,96 +11,116 @@
 
 <div class="admin-layout">
 
-<%- include("../../partials/admin-sidebar") %>
+    <%- include("../../partials/admin-sidebar") %>
+
     <main class="admin-content">
 
         <div class="container">
 
-            <h1>Add Notice</h1>
+            <div class="page-header">
 
-            <form action="/admin/notices/create"
-                  method="POST"
-                  enctype="multipart/form-data">
+                <h1 class="page-title">
+                    Add New Notice
+                </h1>
 
-                <p>
+                <a href="/admin/notices" class="btn btn-secondary">
+                    Back
+                </a>
 
-                    <label>Notice Title</label><br>
+            </div>
 
-                    <input
-                        type="text"
-                        name="title"
-                        required
-                        style="width:100%;padding:10px;">
+            <div class="card">
 
-                </p>
+                <form
+                    action="/admin/notices/create"
+                    method="POST"
+                    enctype="multipart/form-data">
 
-                <p>
+                    <div class="form-group">
 
-                    <label>Description</label><br>
+                        <label>Notice Title</label>
 
-                    <textarea
-                        name="description"
-                        rows="6"
-                        style="width:100%;padding:10px;"></textarea>
+                        <input
+                            type="text"
+                            name="title"
+                            class="form-control"
+                            required>
 
-                </p>
+                    </div>
 
-                <p>
+                    <div class="form-group">
 
-                    <label>Upload File (PDF/Image)</label><br>
+                        <label>Description</label>
 
-                    <input
-                        type="file"
-                        name="file">
+                        <textarea
+                            name="description"
+                            rows="6"
+                            class="form-control"></textarea>
 
-                </p>
+                    </div>
 
-                <p>
+                    <div class="form-group">
 
-                    <label>Publish Date</label><br>
+                        <label>Notice File (PDF/Image)</label>
 
-                    <input
-                        type="date"
-                        name="publish_date"
-                        required>
+                        <input
+                            type="file"
+                            name="file"
+                            class="form-control">
 
-                </p>
+                    </div>
 
-                <p>
+                    <div class="form-group">
 
-                    <label>Status</label><br>
+                        <label>Publish Date</label>
 
-                    <select name="status">
+                        <input
+                            type="date"
+                            name="publish_date"
+                            class="form-control"
+                            required>
 
-                        <option value="Active">
-                            Active
-                        </option>
+                    </div>
 
-                        <option value="Inactive">
-                            Inactive
-                        </option>
+                    <div class="form-group">
 
-                    </select>
+                        <label>Status</label>
 
-                </p>
+                        <select
+                            name="status"
+                            class="form-control">
 
-                <p>
+                            <option value="Active">
+                                Active
+                            </option>
 
-                    <button type="submit">
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
 
                         Save Notice
 
                     </button>
 
-                    <a href="/admin/notices">
+                    <a
+                        href="/admin/notices"
+                        class="btn btn-secondary">
 
                         Cancel
 
                     </a>
 
-                </p>
+                </form>
 
-            </form>
+            </div>
 
         </div>
 
@@ -110,4 +130,3 @@
 
 </body>
 </html>
-

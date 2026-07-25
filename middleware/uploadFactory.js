@@ -24,13 +24,13 @@ function createUploader(folder) {
 
         filename: (req, file, cb) => {
 
-            const uniqueName =
+            const fileName =
                 Date.now() +
                 "-" +
-                Math.round(Math.random() * 1E9) +
+                Math.round(Math.random() * 1000000000) +
                 path.extname(file.originalname);
 
-            cb(null, uniqueName);
+            cb(null, fileName);
 
         }
 
@@ -38,36 +38,23 @@ function createUploader(folder) {
 
     const fileFilter = (req, file, cb) => {
 
-const fileFilter = (req, file, cb) => {
+        const allowedExt = /\.(jpg|jpeg|png|webp|pdf)$/i;
 
-    const allowedExt = /\.(jpg|jpeg|png|webp|pdf)$/i;
+        const allowedMime = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "application/pdf"
+        ];
 
-    const allowedMime = [
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-        "application/pdf"
-    ];
+        const ext = allowedExt.test(file.originalname);
 
-    const ext = allowedExt.test(file.originalname);
+        const mime = allowedMime.includes(file.mimetype);
 
-    const mime = allowedMime.includes(file.mimetype);
-
-    if (ext && mime) {
-
-        cb(null, true);
-
-    } else {
-
-        cb(new Error("Only PDF, JPG, JPEG, PNG and WEBP files are allowed."));
-
-    }
-
-};
         if (ext && mime) {
             cb(null, true);
         } else {
-            cb(new Error("Only JPG, JPEG, PNG and WEBP images are allowed."));
+            cb(new Error("Only PDF, JPG, JPEG, PNG and WEBP files are allowed."));
         }
 
     };
