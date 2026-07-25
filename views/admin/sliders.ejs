@@ -1,0 +1,46 @@
+<%- include("../partials/header") %>
+<%- include("../partials/admin-sidebar") %>
+
+<div class="admin-content">
+
+    <h2>Hero Slider Management</h2>
+
+    <% if (sliders.length === 0) { %>
+
+        <p>No sliders have been added yet.</p>
+
+    <% } else { %>
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Order</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <% sliders.forEach(slider => { %>
+
+                    <tr>
+                        <td><%= slider.id %></td>
+                        <td><%= slider.title %></td>
+                        <td><%= slider.status %></td>
+                        <td><%= slider.display_order %></td>
+                    </tr>
+
+                <% }) %>
+
+            </tbody>
+
+        </table>
+
+    <% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

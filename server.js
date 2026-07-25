@@ -7,9 +7,10 @@ const aboutRoutes = require("./routes/aboutRoutes");
 const admissionRoutes = require("./routes/admissionRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
+const studentRoutes = require("./routes/studentRoutes");
 const session = require("express-session");
 const admission2027Routes = require("./routes/admission2027Routes");
-
+const adminNoticeRoutes = require("./routes/adminNoticeRoutes");
 
 
 const app = express();
@@ -32,8 +33,9 @@ app.use("/", aboutRoutes);
 app.use("/", admissionRoutes);
 app.use("/", adminRoutes);
 app.use("/", authRoutes);
+app.use("/", studentRoutes);
 app.use("/", admission2027Routes);
-
+app.use(adminNoticeRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);

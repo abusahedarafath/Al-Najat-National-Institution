@@ -132,51 +132,41 @@ exports.createStudentFromApplication = (application, callback) => {
 
     const studentId = "ANI" + year + String(application.id).padStart(4, "0");
 
-    const username = application.mobile;
-
-    const password = application.mobile;
-
     const sql = `
-        INSERT INTO students
-        (
-            student_id,
-            application_id,
-            full_name,
-            father_name,
-            mother_name,
-            dob,
-            gender,
-            mobile,
-            email,
-            address,
-            course,
-            previous_school,
-            admission_date,
-            username,
-            password
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?, ?)
-    `;
+    INSERT INTO students
+    (
+        student_id,
+        application_id,
+        full_name,
+        father_name,
+        mother_name,
+        dob,
+        gender,
+        mobile,
+        email,
+        address,
+        course,
+        previous_school,
+        admission_date
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())
+`;
+db.query(sql, [
 
-    db.query(sql, [
+    studentId,
+    application.id,
+    application.full_name,
+    application.father_name,
+    application.mother_name,
+    application.dob,
+    application.gender,
+    application.mobile,
+    application.email,
+    application.address,
+    application.course,
+    application.previous_school
 
-        studentId,
-        application.id,
-        application.full_name,
-        application.father_name,
-        application.mother_name,
-        application.dob,
-        application.gender,
-        application.mobile,
-        application.email,
-        application.address,
-        application.course,
-        application.previous_school,
-        username,
-        password
-
-    ], callback);
-
+], callback);
 };
 
 

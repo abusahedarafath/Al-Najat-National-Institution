@@ -1,43 +1,159 @@
 <%- include('../partials/header') %>
+
 <link rel="stylesheet" href="/css/home.css">
+
 <%- include('../partials/navbar') %>
 
-<section class="hero">
-    <div class="hero-content">
+<section class="hero-slider">
 
-        <h2>Welcome to Al-Najat National Institution</h2>
+    <% if(sliders && sliders.length){ %>
 
-        <p>
-            We provide quality education with Islamic values,
-            discipline and modern learning.
-        </p>
+        <% sliders.forEach((slider,index)=>{ %>
 
-<a href="/admission2027" class="btn">            Apply for Admission
-        </a>
+            <div class="slide <%= index===0 ? 'active' : '' %>">
+
+                <img
+                    src="/uploads/sliders/<%= slider.image %>"
+                    alt="<%= slider.title %>">
+
+                <div class="slide-content">
+
+                    <h1><%= slider.title %></h1>
+
+                    <p><%= slider.subtitle %></p>
+
+                    <% if(slider.button_text){ %>
+
+                        <a
+                            href="<%= slider.button_link %>"
+                            class="btn">
+
+                            <%= slider.button_text %>
+
+                        </a>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+    <button class="prev">&#10094;</button>
+
+    <button class="next">&#10095;</button>
+
+</section>
+
+
+<!-- =========================
+     Chairman's Message
+========================= -->
+
+<section class="chairman-section">
+
+    <div class="chairman-container">
+
+        <div class="chairman-image">
+
+            <img
+                src="/images/chairman.jpg"
+                alt="Chairman">
+
+        </div>
+
+        <div class="chairman-content">
+
+            <span class="section-title">
+                Chairman's Message
+            </span>
+
+            <h2>
+                Welcome to Al-Najat National Institution
+            </h2>
+
+            <p>
+
+                At Al-Najat National Institution, we are committed to
+                providing quality education integrated with Islamic
+                values, discipline, innovation and character building.
+                Our mission is to prepare students for success in this
+                world and the Hereafter.
+
+            </p>
+
+            <a href="/chairman-message" class="btn">
+
+                Read Full Message
+
+            </a>
+
+        </div>
 
     </div>
+
 </section>
+<!-- =========================
+     Statistics
+========================= -->
+
+<section class="stats-section">
+
+    <div class="stats-container">
+
+        <div class="stat-card">
+            <h2>2500+</h2>
+            <p>Students</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>120+</h2>
+            <p>Teachers</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>98%</h2>
+            <p>Success Rate</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>25+</h2>
+            <p>Courses</p>
+        </div>
+
+    </div>
+
+</section>
+
 
 <section class="features">
 
-    <h2>Why Choose Al-Najat?</h2>
+<h2>Why Choose Al-Najat?</h2>
 
-    <div class="feature-grid">
+<div class="feature-grid">
 
-        <div class="feature-card">
-        <h3>Quality Education</h3>
-        <p>Experienced teachers and modern learning methods.</p>    </div>
-
-    <div class="feature-card">
-        <h3>Islamic Environment</h3>
-        <p>Academic excellence with moral and Islamic values.</p>
-    </div>
-
-    <div class="feature-card">
-        <h3>Excellent Results</h3>
-        <p>Helping students achieve success in every field.</p>
-    </div>
+<div class="feature-card">
+<h3>Quality Education</h3>
+<p>Experienced teachers and modern learning methods.</p>
 </div>
+
+<div class="feature-card">
+<h3>Islamic Environment</h3>
+<p>Academic excellence with moral and Islamic values.</p>
+</div>
+
+<div class="feature-card">
+<h3>Excellent Results</h3>
+<p>Helping students achieve success in every field.</p>
+</div>
+
+</div>
+
 </section>
+
+<script src="/js/home-slider.js"></script>
 
 <%- include('../partials/footer') %>

@@ -1,5 +1,4 @@
 <%- include('../partials/header') %>
-
 <%- include('../partials/navbar') %>
 
 <section class="admin-dashboard">
@@ -101,36 +100,29 @@
 
         <hr>
 
-        <h3>Update Application Status</h3>
+        <% if (application.status !== "Approved") { %>
 
-        <form action="/admin/application/<%= application.id %>/status" method="POST">
+            <h3>Approve Application</h3>
 
-            <select name="status" class="form-control">
+            <p>
+                Clicking the button below will approve this application and create the student account.
+            </p>
 
-                <option value="Pending"
-                    <%= application.status === "Pending" ? "selected" : "" %>>
-                    Pending
-                </option>
+            <form action="/admin/application/<%= application.id %>/approve" method="POST">
 
-                <option value="Approved"
-                    <%= application.status === "Approved" ? "selected" : "" %>>
-                    Approved
-                </option>
+                <button type="submit" class="btn btn-success">
+                    ✅ Approve Application
+                </button>
 
-                <option value="Rejected"
-                    <%= application.status === "Rejected" ? "selected" : "" %>>
-                    Rejected
-                </option>
+            </form>
 
-            </select>
+        <% } else { %>
 
-            <br>
+            <h3 style="color:green;">
+                ✅ This application has already been approved.
+            </h3>
 
-            <button type="submit" class="btn btn-success">
-                Update Status
-            </button>
-
-        </form>
+        <% } %>
 
         <br>
 

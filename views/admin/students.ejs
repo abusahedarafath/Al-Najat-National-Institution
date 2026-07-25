@@ -15,43 +15,75 @@
 
     <main class="admin-content">
 
-        <h1>👨‍🎓 Students</h1>
+        <h1>Students</h1>
 
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Course</th>
-                    <th>Mobile</th>
-                    <th>Status</th> 
-                    <th>Action</th>
+        <div class="card">
 
-                </tr>
-            </thead>
+            <input
+                type="text"
+                placeholder="Search Student..."
+                style="width:100%;padding:12px;margin-bottom:20px;"
+            >
 
-            <tbody>
+            <table class="admin-table">
 
-            <% students.forEach(student => { %>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Mobile</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-                <tr>
-                    <td><%= student.student_id %></td>
-                    <td><%= student.full_name %></td>
-                    <td><%= student.course %></td>
-                    <td><%= student.mobile %></td>
-                    <td><%= student.status %></td>
+                <tbody>
 
-<td>
-    <a href="/admin/student/<%= student.id %>">
-        <button class="btn-view">View</button>
-    </a>
-</td>
-                </tr>
+                <% if (students && students.length > 0) { %>
 
-            <% }) %>
+                    <% students.forEach(student => { %>
 
-            </tbody>
-        </table>
+                    <tr>
+
+                        <td><%= student.student_id %></td>
+
+                        <td><%= student.full_name %></td>
+
+                        <td><%= student.course %></td>
+
+                        <td><%= student.mobile %></td>
+
+                        <td><%= student.status %></td>
+
+                        <td>
+
+                            <a class="btn-view"
+                               href="/admin/student/<%= student.id %>">
+                               View
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <% }) %>
+
+                <% } else { %>
+
+                    <tr>
+                        <td colspan="6" style="text-align:center;">
+                            No students found.
+                        </td>
+                    </tr>
+
+                <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     </main>
 

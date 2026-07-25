@@ -8,10 +8,9 @@ const Student = require("../models/Student");
 // ===============================
 exports.showLogin = (req, res) => {
 
-    res.render("student/login", {
-        title: "Student Login"
-    });
-
+res.render("auth/student-login", {
+    title: "Student Login"
+});
 };
 
 
@@ -25,7 +24,7 @@ exports.login = (req, res) => {
 
     if (!username || !password) {
 
-        return res.render("student/login", {
+        return res.render("auth/student-login", {
             title: "Student Login",
             error: "Username and Password are required."
         });
@@ -41,7 +40,7 @@ exports.login = (req, res) => {
 
         if (!results || results.length === 0) {
 
-            return res.render("student/login", {
+            returnres.render("auth/student-login", {
                 title: "Student Login",
                 error: "Invalid Username or Password."
             });
@@ -57,7 +56,7 @@ exports.login = (req, res) => {
 
         if (!passwordMatched) {
 
-            return res.render("student/login", {
+            return res.render("auth/student-login", {
                 title: "Student Login",
                 error: "Invalid Username or Password."
             });
@@ -68,7 +67,7 @@ Student.getById(user.student_id, (studentErr, studentRows) => {
 
     if (studentErr || studentRows.length === 0) {
 
-        return res.render("student/login", {
+return res.render("auth/student-login", {
             title: "Student Login",
             error: "Student record not found."
         });

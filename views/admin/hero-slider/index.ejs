@@ -1,0 +1,164 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/admin-sidebar") %>
+
+    <div class="admin-content">
+
+        <div class="page-header">
+
+            <h1>Hero Sliders</h1>
+
+            <a href="/admin/sliders/create" class="btn-save">
+                + Add Slider
+            </a>
+
+        </div>
+
+        <% if(sliders.length === 0){ %>
+
+            <div class="profile-card">
+                <h3>No Hero Sliders Found</h3>
+                <p>Create your first homepage slider.</p>
+            </div>
+
+        <% } else { %>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Image</th>
+
+                    <th>Title</th>
+
+                    <th>Order</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            <% sliders.forEach(slider => { %>
+
+                <tr>
+
+                    <td><%= slider.id %></td>
+
+                    <td>
+
+                        <% if(slider.image){ %>
+
+                            <img
+                                src="/uploads/sliders/<%= slider.image %>"
+                                width="120"
+                                style="border-radius:8px;">
+
+                        <% } %>
+
+                    </td>
+
+                    <td>
+
+                        <strong>
+                            <%= slider.title %>
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            <%= slider.subtitle %>
+                        </small>
+
+                    </td>
+
+                    <td>
+
+                        <%= slider.display_order %>
+
+                    </td>
+
+                    <td>
+
+                        <% if(slider.status==="Active"){ %>
+
+                            <span style="color:green;font-weight:bold;">
+                                Active
+                            </span>
+
+                        <% }else{ %>
+
+                            <span style="color:red;font-weight:bold;">
+                                Inactive
+                            </span>
+
+                        <% } %>
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="/admin/sliders/<%= slider.id %>/edit"
+                            class="btn-view">
+                            Edit
+                        </a>
+
+                        <form
+                            action="/admin/sliders/<%= slider.id %>/toggle"
+                            method="POST"
+                            style="display:inline;">
+
+                            <button
+                                class="btn-save"
+                                type="submit">
+
+                                Toggle
+
+                            </button>
+
+                        </form>
+
+                        <form
+                            action="/admin/sliders/<%= slider.id %>/delete"
+                            method="POST"
+                            style="display:inline;"
+                            onsubmit="return confirm('Delete this slider?')">
+
+                            <button
+                                class="btn-cancel"
+                                type="submit">
+
+                                Delete
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+            <% }) %>
+
+            </tbody>
+
+        </table>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+<%- include("../../partials/footer") %>

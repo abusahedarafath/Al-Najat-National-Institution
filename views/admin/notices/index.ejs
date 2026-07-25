@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Notices</title>
+<%- include("../../partials/admin-sidebar") %>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <h1>Manage Notices</h1>
+
+            <p style="margin-bottom:20px;">
+                <a href="/admin/notices/create">➕ Add Notice</a>
+            </p>
+
+            <table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+                <% if (notices.length === 0) { %>
+
+                    <tr>
+
+                        <td colspan="5" style="text-align:center;">
+
+                            No notices found.
+
+                        </td>
+
+                    </tr>
+
+                <% } %>
+
+                <% notices.forEach((notice,index)=>{ %>
+
+                    <tr>
+
+                        <td><%= index+1 %></td>
+
+                        <td><%= notice.title %></td>
+
+                        <td><%= notice.publish_date %></td>
+
+                        <td><%= notice.status %></td>
+
+                        <td>
+
+                            <a href="/admin/notices/<%= notice.id %>/edit">
+                                Edit
+                            </a>
+
+                            |
+
+                            <form
+                                action="/admin/notices/<%= notice.id %>/delete"
+                                method="POST"
+                                style="display:inline;">
+
+                                <button type="submit">
+
+                                    Delete
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
