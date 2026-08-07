@@ -1,0 +1,97 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1><%= title %></h1>
+
+            </div>
+
+            <% if (!members || members.length === 0) { %>
+
+                <div class="alert alert-info">
+
+                    No member found.
+
+                </div>
+
+            <% } else { %>
+
+                <div class="table-responsive">
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Photo</th>
+                                <th>Member ID</th>
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Display Order</th>
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% members.forEach(member => { %>
+
+                                <tr>
+
+                                    <td>
+
+                                        <% if(member.photo){ %>
+
+                                            <img
+                                                src="/uploads/arsp-members/<%= member.photo %>"
+                                                alt="<%= member.full_name %>"
+                                                style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+
+                                        <% } else { %>
+
+                                            -
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td><%= member.member_id %></td>
+
+                                    <td><%= member.full_name %></td>
+
+                                    <td><%= member.designation %></td>
+
+                                    <td><%= member.display_order %></td>
+
+                                    <td><%= member.status %></td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

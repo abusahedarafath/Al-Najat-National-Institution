@@ -1,0 +1,161 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>ARSP Management Dashboard</h1>
+
+                    <p>
+                        Manage ARSP members, committees and leadership.
+                    </p>
+
+                </div>
+
+                <a
+                    href="/admin/arsp/register"
+                    class="btn-save">
+
+                    + Register Member
+
+                </a>
+
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <h2><%= totalMembers %></h2>
+
+                    <p>Total Members</p>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h2><%= founderCount %></h2>
+
+                    <p>Founder</p>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h2><%= chiefAdviserCount %></h2>
+
+                    <p>Chief Adviser</p>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h2><%= organizingBodyCount %></h2>
+
+                    <p>Organizing Body</p>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h2><%= advisoryBodyCount %></h2>
+
+                    <p>Advisory Body</p>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <h2><%= committeeCount %></h2>
+
+                    <p>Committees</p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Quick Actions</h2>
+
+                <div class="quick-grid">
+
+                    <a
+                        href="/admin/arsp/register"
+                        class="quick-card">
+
+                        👤
+
+                        <span>Register Member</span>
+
+                    </a>
+
+                    <a
+                        href="/admin/arsp/members"
+                        class="quick-card">
+
+                        📋
+
+                        <span>Member Registry</span>
+
+                    </a>
+
+                    <a
+                        href="/admin/arsp/committees"
+                        class="quick-card">
+
+                        🏛
+
+                        <span>Committee</span>
+
+                    </a>
+
+                    <a
+                        href="/admin/arsp/founder"
+                        class="quick-card">
+
+                        ⭐
+
+                        <span>Founder</span>
+
+                    </a>
+
+                    <a
+                        href="/admin/arsp/chief-adviser"
+                        class="quick-card">
+
+                        👔
+
+                        <span>Chief Adviser</span>
+
+                    </a>
+
+                    <a
+                        href="/admin/arsp/settings"
+                        class="quick-card">
+
+                        ⚙
+
+                        <span>Settings</span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,132 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Transport Routes</h1>
+
+                    <p>Manage all school transport routes.</p>
+
+                </div>
+
+                <a
+                    href="/admin/transport-route/add"
+                    class="btn btn-primary">
+
+                    + Add Route
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Route Name</th>
+                        <th>Start Point</th>
+                        <th>End Point</th>
+                        <th>Fare</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (routes && routes.length > 0) { %>
+
+                        <% routes.forEach(route => { %>
+
+            <tr>
+
+
+                    <td> <%= route.route_name %> </td>
+
+                    <td> <%= route.start_point %> </td>
+
+                    <td> <%= route.end_point %> </td>
+
+                    <td>₹ <%= Number(route.fare).toFixed(2) %> </td>
+
+
+                    <td> <% if (route.status === "Active") { %>
+                                       
+                        <span class="badge badge-success"> Active  </span>
+
+                                    <% } else { %>
+                        <span class="badge badge-danger"> Inactive </span>
+                                   <% } %> </td>
+
+                     <td>
+                          <div class="action-buttons">
+
+                    <a href="/admin/transport-route/<%= route.id %>"
+                      class="btn btn-primary"> View </a>
+
+                     <a href="/admin/transport-route/<%= route.id %>/edit"
+                      class="btn btn-success"> Edit </a>
+
+                      <form action="/admin/transport-route/<%= route.id %>/delete"
+                           method="POST"
+                           style="display:inline;"
+                           onsubmit="return confirm('Delete this route?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                style="text-align:center;">
+
+                                No transport routes found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

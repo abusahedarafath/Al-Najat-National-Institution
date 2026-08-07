@@ -1,0 +1,161 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Attendance Details</h1>
+
+                    <p>View complete attendance information.</p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th>Student ID</th>
+
+                            <td>
+
+                                <%= attendance.student_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Class ID</th>
+
+                            <td>
+
+                                <%= attendance.class_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Attendance Date</th>
+
+                            <td>
+
+                                <%= attendance.attendance_date ? attendance.attendance_date.toLocaleDateString() : "" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Status</th>
+
+                            <td>
+
+                                <% if (attendance.status === "Present") { %>
+
+                                    <span class="badge badge-success">
+
+                                        Present
+
+                                    </span>
+
+                                <% } else if (attendance.status === "Absent") { %>
+
+                                    <span class="badge badge-danger">
+
+                                        Absent
+
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="badge badge-warning">
+
+                                        Leave
+
+                                    </span>
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Remarks</th>
+
+                            <td>
+
+                                <%= attendance.remarks || "No remarks available." %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div class="action-buttons" style="margin-top:25px;">
+
+                    <a
+                        href="/admin/attendance/<%= attendance.id %>/edit"
+                        class="btn btn-success">
+
+                        Edit
+
+                    </a>
+
+                    <a
+                        href="/admin/attendance"
+                        class="btn btn-secondary">
+
+                        Back
+
+                    </a>
+
+                    <form
+                        action="/admin/attendance/<%= attendance.id %>/delete"
+                        method="POST"
+                        style="display:inline;">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('Delete this attendance record?')">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

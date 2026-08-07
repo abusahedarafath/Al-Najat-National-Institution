@@ -1,0 +1,252 @@
+const Gallery = require("../models/Gallery");
+
+exports.index = async (req, res) => {
+    try {
+        const albums = await Gallery.getAllAlbums();
+
+        res.render("admin/gallery/index", {
+            pageTitle: "Gallery",
+            albums
+        });
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load gallery.");
+        res.redirect("/admin/dashboard");
+    }
+};
+
+
+// ==========================
+// Gallery Album List
+// ==========================
+
+
+exports.imagesPage = async (req, res) => {
+    try {
+        const albumResult = await Gallery.getAlbumById(req.params.id);
+
+        if (!albumResult.length) {
+            req.flash("error", "Album not found.");
+            return res.redirect("/admin/gallery");
+        }
+
+        const images = await Gallery.getImages(req.params.id);
+
+        res.render("admin/gallery/images", {
+            pageTitle: "Gallery Images",
+            album: albumResult[0],
+            images
+        });
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load images.");
+        res.redirect("/admin/gallery");
+    }
+};
+
+
+
+// ==========================
+// Create Album Page
+// ==========================
+exports.createPage = (req, res) => {
+
+    res.render("admin/gallery/create", {
+        title: "Create Album"
+    });
+
+};
+
+// ==========================
+// Save Album
+// ==========================
+exports.store = (req, res) => {
+
+    const data = {
+        title: req.body.title,
+        description: req.body.description,
+        cover_image: req.file ? req.file.filename : null,
+        status: req.body.status
+    };
+
+    Gallery.createAlbum(data, (err) => {
+
+        if (err) {
+            console.error(err);
+            return res.redirect("/admin/gallery/create");
+        }
+
+        res.redirect("/admin/gallery");
+
+    });
+
+};
+
+// ==========================
+// Edit Album Page
+// ==========================
+exports.editPage = (req, res) => {
+
+    Gallery.getAlbumById(req.params.id, (err, result) => {
+
+        if (err || !result.length) {
+            return res.redirect("/admin/gallery");
+        }
+
+        res.render("admin/gallery/edit", {
+            title: "Edit Album",
+            album: result[0]
+        });
+
+    });
+
+};
+
+// ==========================
+// Update Album
+// ==========================
+exports.update = (req, res) => {
+
+    Gallery.getAlbumById(req.params.id, (err, result) => {
+
+        if (err || !result.length) {
+            return res.redirect("/admin/gallery");
+        }
+
+        const album = result[0];
+
+        const data = {
+            title: req.body.title,
+            description: req.body.description,
+            cover_image: req.file ? req.file.filename : album.cover_image,
+            status: req.body.status
+        };
+
+        Gallery.updateAlbum(req.params.id, data, (err) => {
+
+            if (err) {
+                console.error(err);
+            }
+
+            res.redirect("/admin/gallery");
+
+        });
+
+    });
+
+};
+
+// ==========================
+// Delete Album
+// ==========================
+// ==========================
+// Delete Album
+// ==========================
+exports.delete = (req, res) => {
+
+    Gallery.deleteAlbum(req.params.id, (err) => {
+
+        if (err) {
+            console.error(err);
+        }
+
+        res.redirect("/admin/gallery");
+
+    });
+
+};
+// ==========================
+// Manage Album Images
+// ==========================
+exports.imagesPage = async (req, res) => {
+    try {
+        const albumResult = await Gallery.getAlbumById(req.params.id);
+
+        if (!albumResult.length) {
+            return res.redirect("/admin/gallery");
+        }
+
+        const images = await Gallery.getImages(req.params.id);
+
+        res.render("admin/gallery/images", {
+            title: "Gallery Images",
+            album: albumResult[0],
+            images
+        });
+    } catch (err) {
+        console.error(err);
+        res.redirect("/admin/gallery");
+    }
+};
+// ==========================
+// Upload Images
+// ==========================
+exports.uploadImages = (req, res) => {
+
+    if (!req.files || req.files.length === 0) {
+        return res.redirect("/admin/gallery/" + req.params.id + "/images");
+    }
+
+    let completed = 0;
+
+    req.files.forEach(file => {
+
+        Gallery.addImage({
+            album_id: req.params.id,
+            image: file.filename,
+            caption: ""
+        }, () => {
+
+            completed++;
+
+            if (completed === req.files.length) {
+                res.redirect("/admin/gallery/" + req.params.id + "/images");
+            }
+
+        });
+
+    });
+
+};
+
+
+
+exports.deleteImage = async (req, res) => {
+    try {
+        const result = await Gallery.getImageById(req.params.imageId);
+
+        if (!result.length) {
+            return res.redirect("/admin/gallery");
+        }
+
+        const albumId = result[0].album_id;
+
+        await Gallery.deleteImage(req.params.imageId);
+
+        res.redirect("/admin/gallery/" + albumId + "/images");
+    } catch (err) {
+        console.error(err);
+        res.redirect("/admin/gallery");
+    }
+};
+
+// ==========================
+// Update Image Caption
+// ==========================
+exports.updateImageCaption = (req, res) => {
+
+    Gallery.updateImageCaption(
+        req.params.imageId,
+        req.body.caption,
+        (err) => {
+
+            if (err) {
+                console.error(err);
+            }
+
+            res.redirect("/admin/gallery/" + req.params.albumId + "/images");
+
+        }
+    );
+
+};

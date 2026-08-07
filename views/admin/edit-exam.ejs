@@ -1,0 +1,193 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Examination</h1>
+
+                    <p>Update examination details.</p>
+
+                </div>
+
+                <a
+                    href="/admin/exams"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/exam/<%= exam.id %>/edit"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>Exam Name</label>
+
+                        <input
+                            type="text"
+                            name="exam_name"
+                            value="<%= exam.exam_name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Class</label>
+
+                        <select
+                            name="class_id"
+                            required>
+
+                            <% classes.forEach(cls => { %>
+
+                                <option
+                                    value="<%= cls.id %>"
+                                    <%= exam.class_id == cls.id ? "selected" : "" %>>
+
+                                    <%= cls.class_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Academic Session</label>
+
+                        <select
+                            name="session_id"
+                            required>
+
+                            <% sessions.forEach(session => { %>
+
+                                <option
+                                    value="<%= session.id %>"
+                                    <%= exam.session_id == session.id ? "selected" : "" %>>
+
+                                    <%= session.session_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Exam Date</label>
+
+                        <input
+                            type="date"
+                            name="exam_date"
+                            value="<%= exam.exam_date ? exam.exam_date.toISOString().split('T')[0] : '' %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Total Marks</label>
+
+                        <input
+                            type="number"
+                            name="total_marks"
+                            min="1"
+                            value="<%= exam.total_marks %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Passing Marks</label>
+
+                        <input
+                            type="number"
+                            name="passing_marks"
+                            min="0"
+                            value="<%= exam.passing_marks %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select
+                            name="status"
+                            required>
+
+                            <option
+                                value="Active"
+                                <%= exam.status === "Active" ? "selected" : "" %>>
+
+                                Active
+
+                            </option>
+
+                            <option
+                                value="Inactive"
+                                <%= exam.status === "Inactive" ? "selected" : "" %>>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Update Examination
+
+                        </button>
+
+                        <a
+                            href="/admin/exam/<%= exam.id %>"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

@@ -1,0 +1,185 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+                <h1>Assign Management Position</h1>
+            </div>
+
+            <form
+                action="/admin/arsp/member/<%= member.id %>/assign"
+                method="POST"
+                class="admin-form">
+
+                <div class="form-group">
+                    <label>Member</label>
+
+                    <input
+                        type="text"
+                        value="<%= member.full_name %> (<%= member.member_id %>)"
+                        readonly>
+                </div>
+
+                <div class="form-group">
+
+                    <label>Committee</label>
+
+                    <select
+                        name="committee_id"
+                        required>
+
+                        <option value="">Select Committee</option>
+
+                        <% committees.forEach(committee => { %>
+
+                            <option value="<%= committee.id %>">
+
+                                <%= committee.committee_name %>
+
+                                (<%= committee.session_name %>)
+
+                            </option>
+
+                        <% }) %>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Section</label>
+
+                    <select
+                        id="section"
+                        name="section"
+                        required>
+
+                        <option value="">Select Section</option>
+
+                        <option value="Founder">Founder</option>
+
+                        <option value="Organizing Body">Organizing Body</option>
+
+                        <option value="Chief Adviser">Chief Adviser</option>
+
+                        <option value="Advisory Body">Advisory Body</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Designation</label>
+
+                    <select
+                        id="designation"
+                        name="designation"
+                        required>
+
+                        <option value="">Select Designation</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Display Order</label>
+
+                    <input
+                        type="number"
+                        name="display_order"
+                        value="1"
+                        min="1"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Status</label>
+
+                    <select
+                        name="status">
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+
+                        Save Position
+
+                    </button>
+
+                    <a
+                        href="/admin/arsp/members"
+                        class="btn-cancel"
+                        style="text-decoration:none;padding:10px 20px;display:inline-block;">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+
+const designations = <%- JSON.stringify(designations) %>;
+
+const sectionSelect =
+document.getElementById("section");
+
+const designationSelect =
+document.getElementById("designation");
+
+sectionSelect.addEventListener("change", function () {
+
+    designationSelect.innerHTML =
+        '<option value="">Select Designation</option>';
+
+    designations
+        .filter(d => d.section === this.value)
+        .forEach(d => {
+
+            designationSelect.innerHTML += `
+                <option value="${d.designation_name}">
+                    ${d.designation_name}
+                </option>
+            `;
+
+        });
+
+});
+
+</script>
+
+<%- include("../partials/footer") %>

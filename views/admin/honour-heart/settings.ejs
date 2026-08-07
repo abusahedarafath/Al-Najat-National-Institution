@@ -1,0 +1,147 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Honour Heart Settings</h1>
+
+                    <p>ARSP Honour Heart Award</p>
+
+                </div>
+
+            </div>
+
+            <form
+                action="/admin/honour-heart/settings"
+                method="POST"
+                enctype="multipart/form-data"
+                class="admin-form">
+
+                <div class="form-group">
+
+                    <label>Current Hero Banner</label>
+
+                    <% if (settings.hero_banner) { %>
+
+                        <img
+                            src="/uploads/honour-heart/settings/<%= settings.hero_banner %>"
+                            style="width:100%;max-width:650px;border-radius:12px;border:1px solid #ddd;">
+
+                    <% } else { %>
+
+                        <p>No Hero Banner Uploaded</p>
+
+                    <% } %>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Change Hero Banner</label>
+
+                    <input
+                        type="file"
+                        name="hero_banner">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>About Title</label>
+
+                    <input
+                        type="text"
+                        name="about_title"
+                        value="<%= settings.about_title || '' %>">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>About Description</label>
+
+                    <textarea
+                        name="about_description"
+                        rows="8"><%= settings.about_description || '' %></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Popup Title</label>
+
+                    <input
+                        type="text"
+                        name="popup_title"
+                        value="<%= settings.popup_title || '' %>">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Popup Description</label>
+
+                    <textarea
+                        name="popup_description"
+                        rows="6"><%= settings.popup_description || '' %></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Popup Enabled</label>
+
+                    <select name="popup_enabled">
+
+                        <option
+                            value="Yes"
+                            <%= settings.popup_enabled === "Yes" ? "selected" : "" %>>
+                            Yes
+                        </option>
+
+                        <option
+                            value="No"
+                            <%= settings.popup_enabled === "No" ? "selected" : "" %>>
+                            No
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        <i class="fas fa-save"></i>
+
+                        Save Settings
+
+                    </button>
+
+                    <a
+                        href="/admin/honour-heart"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+<%- include("../partials/footer") %>

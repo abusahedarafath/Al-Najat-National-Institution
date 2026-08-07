@@ -1,0 +1,151 @@
+<div class="section-title">
+
+LOGIN INFORMATION
+
+</div>
+
+<div
+style="
+display:grid;
+grid-template-columns:68% 32%;
+gap:20px;
+align-items:start;">
+
+<div>
+
+<table class="table">
+
+<tr>
+<td>Registration No.</td>
+<td><%= member.registration_no %></td>
+</tr>
+
+<tr>
+<td>ARSP Member ID</td>
+<td><%= username %></td>
+</tr>
+
+<tr>
+<td>Temporary Password</td>
+<td>
+<span
+style="
+font-size:20px;
+font-weight:bold;
+color:#0B6B3A;">
+<%= password %>
+</span>
+</td>
+</tr>
+
+<tr>
+<td>Login URL</td>
+<td style="word-break:break-word;">
+<%= loginUrl %>
+</td>
+</tr>
+
+<tr>
+<td>Registration Source</td>
+<td>
+<%= registrationSource === "Self" ? "Self Registration" : registrationSource %>
+</td>
+</tr>
+
+</table>
+
+<div
+style="
+margin-top:20px;
+border:2px solid #0B6B3A;
+border-radius:8px;
+padding:10px;
+background:#FFF8E8;">
+
+<h3
+style="
+margin-top:0;
+color:#0B6B3A;">
+
+Security Instructions
+
+</h3>
+
+<ul
+style="
+margin:0;
+padding-left:20px;
+line-height:1.4;">
+
+<li>Login using your ARSP Member ID.</li>
+
+<li>Change your password immediately after your first login.</li>
+
+<li>Keep your password confidential.</li>
+
+<li>Do not share your credentials with anyone.</li>
+
+<li>Contact the ARSP Administrator if you forget your password.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div style="text-align:center;">
+
+<div
+style="
+border:3px solid #0B6B3A;
+border-radius:10px;
+padding:6px;">
+
+<img
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>"
+style="
+width:110px;
+height:135px;
+object-fit:cover;">
+
+</div>
+
+<% if(member.qr_code){ %>
+
+<div style="margin-top:15px;">
+
+<img
+src="/uploads/arsp-qr/<%= member.qr_code %>"
+style="width:75px;">
+
+</div>
+
+<div
+style="
+font-size:13px;
+font-weight:bold;
+margin-top:6px;">
+
+SCAN TO LOGIN
+
+</div>
+
+<% } %>
+
+<div
+style="
+margin-top:12px;
+padding:8px;
+background:#0B6B3A;
+color:#fff;
+border-radius:5px;
+font-size:13px;
+font-weight:bold;">
+
+Official Login Document
+
+</div>
+
+</div>
+
+</div>

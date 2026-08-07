@@ -4,15 +4,13 @@
 
 <%- include('../partials/navbar') %>
 
-
-
-
-
-
+<!-- =====================================================
+     HERO SECTION
+===================================================== -->
 
 <section class="hero-slider">
 
-    <% if(sliders && sliders.length){ %>
+    <% if (sliders && sliders.length) { %>
 
         <% sliders.forEach((slider,index)=>{ %>
 
@@ -22,17 +20,33 @@
                     src="/uploads/sliders/<%= slider.image %>"
                     alt="<%= slider.title %>">
 
-                <div class="slide-content">
+                <div class="hero-overlay"></div>
 
-                    <h1><%= slider.title %></h1>
+                <div class="hero-content">
 
-                    <p><%= slider.subtitle %></p>
+                    <span class="hero-badge">
+
+                        Welcome to
+
+                    </span>
+
+                    <h1>
+
+                        <%= slider.title %>
+
+                    </h1>
+
+                    <p>
+
+                        <%= slider.subtitle %>
+
+                    </p>
 
                     <% if(slider.button_text){ %>
 
                         <a
                             href="<%= slider.button_link %>"
-                            class="btn">
+                            class="btn hero-btn">
 
                             <%= slider.button_text %>
 
@@ -54,54 +68,155 @@
 
 </section>
 
+<!-- =====================================================
+     WELCOME SECTION
+===================================================== -->
 
+<% if (welcome) { %>
 
+<section class="welcome-section">
 
+    <div class="container">
 
+        <div class="welcome-wrapper">
 
+            <div class="welcome-image">
 
+                <% if (welcome.image) { %>
 
-<!-- =========================
-     Chairman's Message
-========================= -->
+                    <img
+                        src="/uploads/welcome/<%= welcome.image %>"
+                        alt="<%= welcome.title %>">
 
-<section class="chairman-section">
+                <% } %>
 
-    <div class="chairman-container">
+            </div>
 
-        <div class="chairman-image">
+            <div class="welcome-content">
 
-            <img
-                src="/images/chairman.jpg"
-                alt="Chairman">
+                <span class="section-badge">
+
+                    <%= welcome.small_title %>
+
+                </span>
+
+                <h2>
+
+                    <%= welcome.title %>
+
+                </h2>
+
+                <p>
+
+                    <%= welcome.description %>
+
+                </p>
+
+                <% if (welcome.button_text) { %>
+
+                    <a
+                        href="<%= welcome.button_link %>"
+                        class="btn welcome-btn">
+
+                        <%= welcome.button_text %>
+
+                    </a>
+
+                <% } %>
+
+            </div>
 
         </div>
 
-        <div class="chairman-content">
+    </div>
 
-            <span class="section-title">
-                Chairman's Message
+</section>
+
+<% } %>
+
+
+
+
+
+
+<!-- =====================================================
+     QUICK ACCESS
+===================================================== -->
+
+<section class="quick-access">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Quick Access
+
             </span>
 
             <h2>
-                Welcome to Al-Najat National Institution
+
+                Important Links
+
             </h2>
 
             <p>
 
-                At Al-Najat National Institution, we are committed to
-                providing quality education integrated with Islamic
-                values, discipline, innovation and character building.
-                Our mission is to prepare students for success in this
-                world and the Hereafter.
+                Access all important services with a single click.
 
             </p>
 
-            <a href="/chairman-message" class="btn">
+        </div>
 
-                Read Full Message
+        <div class="quick-grid">
 
-            </a>
+
+
+
+<% if (quickButtons && quickButtons.length) { %>
+
+    <% quickButtons.forEach(button => { %>
+
+        <a
+            href="<%= button.url %>"
+            class="quick-card">
+
+            <div class="quick-icon">
+
+<i class="fa-solid fa-<%= button.icon %>"></i>
+            </div>
+
+            <h3>
+
+                <%= button.title %>
+
+            </h3>
+
+            <p>
+
+                <%= button.subtitle %>
+
+            </p>
+
+        </a>
+
+    <% }) %>
+
+<% } else { %>
+
+    <div class="empty-box">
+
+        No Quick Buttons Available.
+
+    </div>
+
+<% } %>
+
+
+
+
+
 
         </div>
 
@@ -113,32 +228,150 @@
 
 
 
-<!-- =========================
-     Statistics
-========================= -->
+<!-- =====================================================
+     INSTITUTIONAL PERSONALITIES
+===================================================== -->
+
+<% if (personalities && personalities.length) { %>
+
+<section class="personality-section">
+    <div class="container">
+
+        <% personalities.forEach((person,index)=>{ %>
+
+<div class="personality-wrapper <%= index % 2 ? 'reverse' : '' %>">
+<div class="personality-image">
+                <img
+                    src="/uploads/personalities/<%= person.photo %>"
+                    alt="<%= person.name %>">
+
+            </div>
+
+<div class="personality-content">
+                <span class="section-badge">
+
+                    <%= person.message_title %>
+
+                </span>
+
+                <h2>
+
+                    <%= person.name %>
+
+                </h2>
+
+                <h4>
+
+                    <%= person.designation %>
+
+                </h4>
+
+                <p>
+
+                    <%= person.message.substring(0,300) %>...
+
+                </p>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+
+               <a href="/personality/<%= person.slug %>" class="btn personality-btn">
+    <%= person.message_button_text && person.message_button_text.trim()
+        ? person.message_button_text
+        : "Read Full Message" %>
+</a>
+
+                    <a
+                        href="/personality/<%= person.slug %>/biography"
+                        class="btn btn-outline-success">
+
+                        <%= person.biography_button_text %>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <% }) %>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+
+
+
+
+<!-- =====================================================
+     STATISTICS
+===================================================== -->
 
 <section class="stats-section">
 
-    <div class="stats-container">
+    <div class="container">
 
-        <div class="stat-card">
-            <h2>2500+</h2>
-            <p>Students</p>
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Our Achievements
+
+            </span>
+
+            <h2>
+
+                Institution Statistics
+
+            </h2>
+
+            <p>
+
+                Our growth in numbers reflects our commitment to quality education.
+
+            </p>
+
         </div>
 
-        <div class="stat-card">
-            <h2>120+</h2>
-            <p>Teachers</p>
-        </div>
+        <div class="stats-grid">
 
-        <div class="stat-card">
-            <h2>98%</h2>
-            <p>Success Rate</p>
-        </div>
+            <div class="stat-card">
 
-        <div class="stat-card">
-            <h2>25+</h2>
-            <p>Courses</p>
+                <h2>2500+</h2>
+
+                <p>Students</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>120+</h2>
+
+                <p>Teachers</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>98%</h2>
+
+                <p>Success Rate</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>25+</h2>
+
+                <p>Courses</p>
+
+            </div>
+
         </div>
 
     </div>
@@ -151,28 +384,156 @@
 
 
 
-<section class="features">
+<!-- =====================================================
+     WHY CHOOSE US
+===================================================== -->
 
-<h2>Why Choose Al-Najat?</h2>
+<section class="features-section">
 
-<div class="feature-grid">
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Why Choose Us
+
+            </span>
+
+            <h2>
+
+                Why Choose Al-Najat?
+
+            </h2>
+
+            <p>
+
+                Building knowledge, character and leadership through quality education.
+
+            </p>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                <h3>Quality Education</h3>
+
+                <p>
+
+                    Experienced teachers and modern teaching methods.
+
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <h3>Islamic Environment</h3>
+
+                <p>
+
+                    Academic excellence with Islamic values and moral education.
+
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <h3>Excellent Results</h3>
+
+                <p>
+
+                    Consistent academic performance and student success.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+<!-- =====================================================
+     LATEST NOTICES
+===================================================== -->
+
+<section class="latest-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Notice Board
+
+            </span>
+
+            <h2>
+
+                Latest Notices
+
+            </h2>
+
+            <p>
+
+                Stay updated with our latest announcements.
+
+            </p>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <% if (notices && notices.length) { %>
+
+                <% notices.forEach(notice => { %>
+
+                   
 
 <div class="feature-card">
-<h3>Quality Education</h3>
-<p>Experienced teachers and modern learning methods.</p>
+
+    <span class="date-badge">
+        <%= notice.publish_date %>
+    </span>
+
+    <h3>
+        <%= notice.title %>
+    </h3>
+
+    <a href="/notice/<%= notice.id %>" class="btn">
+        Read More
+    </a>
+
 </div>
 
-<div class="feature-card">
-<h3>Islamic Environment</h3>
-<p>Academic excellence with moral and Islamic values.</p>
-</div>
 
-<div class="feature-card">
-<h3>Excellent Results</h3>
-<p>Helping students achieve success in every field.</p>
-</div>
 
-</div>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <div class="empty-box">
+
+                    No notices available.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
 
 </section>
 
@@ -181,90 +542,191 @@
 
 
 
+<!-- =====================================================
+     LATEST NEWS
+===================================================== -->
+
+<section class="latest-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                News & Updates
+
+            </span>
+
+            <h2>
+
+                Latest News
+
+            </h2>
+
+            <p>
+
+                Discover what's happening in our institution.
+
+            </p>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <% if (news && news.length) { %>
+
+                <% news.forEach(item => { %>
 
 
 
 
 
-
-
-<section class="home-notices">
-
-<h2>Latest Notices</h2>
-
-<div class="feature-grid">
-
-<% if(notices && notices.length){ %>
-
-<% notices.forEach(notice=>{ %>
 
 <div class="feature-card">
 
-<h3><%= notice.title %></h3>
+<%
+const ext = item.image
+    ? item.image.split(".").pop().toLowerCase()
+    : "";
+%>
 
-<p><%= notice.publish_date %></p>
+<% if(["jpg","jpeg","png","webp"].includes(ext)){ %>
 
-<a href="/notice/<%= notice.id %>" class="btn">
+    <img
+        src="/uploads/news/<%= item.image %>"
+        alt="<%= item.title %>"
+        class="news-image">
 
-Read More
+<% } else if(ext==="pdf"){ %>
+
+    <div class="pdf-preview">
+        <i class="fas fa-file-pdf"></i>
+        <span>PDF Document</span>
+    </div>
+
+<% } %>
+
+    <span class="date-badge">
+        <%= item.publish_date %>
+    </span>
+
+    <h3>
+        <%= item.title %>
+    </h3>
+
+    <p>
+        <%= item.description.substring(0,120) %>...
+    </p>
+
+    <a
+        href="/news/<%= item.id %>"
+        class="btn">
+
+        Read More
+
+    </a>
+
+   <% if(ext==="pdf"){ %>
+
+<a
+    href="/uploads/news/<%= item.image %>"
+    target="_blank"
+    class="btn pdf-btn">
+
+    Open PDF
+
+</a>
+
+<% } %>
+
+
+</div>
+
+
+
+
+
+                <% }) %>
+
+            <% } else { %>
+
+                <div class="empty-box">
+
+                    No news available.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script src="/js/home-slider.js"></script>
+
+
+<% if(honourHeartPopup){ %>
+
+<div id="honourHeartPopup" class="hh-popup-overlay">
+
+<div class="hh-popup">
+
+<button
+class="hh-close"
+onclick="document.getElementById('honourHeartPopup').style.display='none'">
+
+&times;
+
+</button>
+
+<img
+src="/uploads/honour-heart/awardees/<%= honourHeartPopup.photo %>">
+
+<h2>
+
+<%= honourHeartPopup.name %>
+
+</h2>
+
+<h4>
+
+<%= honourHeartPopup.designation %>
+
+</h4>
+
+<p>
+
+Congratulations!
+
+ARSP has selected
+
+<strong><%= honourHeartPopup.name %></strong>
+
+to receive the
+
+<strong>ARSP Honour Heart Award <%= honourHeartPopup.award_year %></strong>.
+
+</p>
+
+<a
+href="/honour-heart"
+class="hh-btn">
+
+Know More
 
 </a>
 
 </div>
 
-<% }) %>
-
-<% }else{ %>
-
-<p>No notices available.</p>
+</div>
 
 <% } %>
 
-</div>
-
-</section>
-
-
-
-
-<section class="home-news">
-
-    <h2>Latest News</h2>
-
-    <div class="feature-grid">
-
-        <% if(news && news.length){ %>
-
-            <% news.forEach(item => { %>
-
-                <div class="feature-card">
-
-                    <h3><%= item.title %></h3>
-
-                    <p><%= item.publish_date %></p>
-
-                    <a href="/news/<%= item.id %>" class="btn">
-                        Read More
-                    </a>
-
-                </div>
-
-            <% }) %>
-
-        <% } else { %>
-
-            <p>No news available.</p>
-
-        <% } %>
-
-    </div>
-
-</section>
-
-
-
-
-
-<script src="/js/home-slider.js"></script>
 
 <%- include('../partials/footer') %>
+
+
+

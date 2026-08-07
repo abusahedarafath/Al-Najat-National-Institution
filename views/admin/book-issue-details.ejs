@@ -1,0 +1,291 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Book Issue Details</h1>
+
+                    <p>View complete issue and return information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/book-issues"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th>Book Title</th>
+
+                            <td>
+
+                                <%= issue.book_title %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Accession No.</th>
+
+                            <td>
+
+                                <%= issue.accession_no %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Author</th>
+
+                            <td>
+
+                                <%= issue.author %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Student Name</th>
+
+                            <td>
+
+                                <%= issue.student_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Student ID</th>
+
+                            <td>
+
+                                <%= issue.student_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Mobile</th>
+
+                            <td>
+
+                                <%= issue.mobile %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Issue Date</th>
+
+                            <td>
+
+                                <%= issue.issue_date ? new Date(issue.issue_date).toLocaleDateString() : "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Due Date</th>
+
+                            <td>
+
+                                <%= issue.due_date ? new Date(issue.due_date).toLocaleDateString() : "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Return Date</th>
+
+                            <td>
+
+                                <%= issue.return_date ? new Date(issue.return_date).toLocaleDateString() : "Not Returned" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Fine Amount</th>
+
+                            <td>
+
+                                ₹ <%= Number(issue.fine_amount || 0).toFixed(2) %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Status</th>
+
+                            <td>
+
+                                <% if (issue.status === "Issued") { %>
+
+                                    <span class="badge badge-warning">
+
+                                        Issued
+
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="badge badge-success">
+
+                                        Returned
+
+                                    </span>
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Remarks</th>
+
+                            <td>
+
+                                <%= issue.remarks || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <% if (issue.status === "Issued") { %>
+
+                <hr>
+
+                <h3>Return Book</h3>
+
+                <form
+                    action="/admin/book-issue/<%= issue.id %>/return"
+                    method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>Return Date</label>
+
+                            <input
+                                type="date"
+                                name="return_date"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Fine Amount (₹)</label>
+
+                            <input
+                                type="number"
+                                name="fine_amount"
+                                value="0"
+                                min="0"
+                                step="0.01">
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+
+                            Return Book
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+                <% } %>
+
+                <div class="form-actions" style="margin-top:20px;">
+
+                    <a
+                        href="/admin/book-issue/<%= issue.id %>/edit"
+                        class="btn btn-primary">
+
+                        Edit
+
+                    </a>
+
+                    <form
+                        action="/admin/book-issue/<%= issue.id %>/delete"
+                        method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('Delete this issue record?');">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

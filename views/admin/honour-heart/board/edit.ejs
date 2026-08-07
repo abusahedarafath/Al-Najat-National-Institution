@@ -1,0 +1,166 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Selection Board Member</h1>
+
+                    <p>ARSP Honour Heart Award</p>
+
+                </div>
+
+                <a
+                    href="/admin/honour-heart/board"
+                    class="btn btn-secondary">
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Back
+
+                </a>
+
+            </div>
+
+            <form
+                action="/admin/honour-heart/board/edit/<%= member.id %>"
+                method="POST"
+                enctype="multipart/form-data"
+                class="admin-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Current Photo</label>
+
+                        <img
+                            src="/uploads/honour-heart/board/<%= member.photo %>"
+                            style="width:180px;height:180px;object-fit:cover;border-radius:12px;border:1px solid #ddd;">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Change Photo</label>
+
+                        <input
+                            type="file"
+                            name="photo">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Name</label>
+
+                        <input
+                            type="text"
+                            name="name"
+                            value="<%= member.name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Designation</label>
+
+                        <input
+                            type="text"
+                            name="designation"
+                            value="<%= member.designation %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Organisation</label>
+
+                        <input
+                            type="text"
+                            name="organisation"
+                            value="<%= member.organisation %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Display Order</label>
+
+                        <input
+                            type="number"
+                            name="display_order"
+                            value="<%= member.display_order %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option
+                                value="Active"
+                                <%= member.status === "Active" ? "selected" : "" %>>
+
+                                Active
+
+                            </option>
+
+                            <option
+                                value="Inactive"
+                                <%= member.status === "Inactive" ? "selected" : "" %>>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        <i class="fas fa-save"></i>
+
+                        Update Member
+
+                    </button>
+
+                    <a
+                        href="/admin/honour-heart/board"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>

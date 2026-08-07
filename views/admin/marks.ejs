@@ -1,0 +1,181 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Marks Management</h1>
+
+                    <p>Manage students' examination marks.</p>
+
+                </div>
+
+                <a
+                    href="/admin/mark/add"
+                    class="btn btn-primary">
+
+                    + Add Marks
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student</th>
+                        <th>Roll No.</th>
+                        <th>Class</th>
+                        <th>Exam</th>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Grade</th>
+                        <th>GPA</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (marks && marks.length > 0) { %>
+
+                        <% marks.forEach(mark => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <%= mark.student_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= mark.roll_number %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= mark.class_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= mark.exam_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= mark.subject_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= mark.obtained_marks %> / <%= mark.total_marks %>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge badge-primary">
+
+                                        <%= mark.grade %>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <%= mark.gpa %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/mark/<%= mark.id %>"
+                                            class="btn btn-primary">
+
+                                            View
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/mark/<%= mark.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/mark/<%= mark.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Delete this mark record?')">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                style="text-align:center;">
+
+                                No marks records found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

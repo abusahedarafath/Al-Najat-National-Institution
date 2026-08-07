@@ -1,0 +1,300 @@
+<%- include("../partials/header") %>
+<div class="container-fluid">
+
+    <div class="row">
+
+<%- include("../partials/sidebar") %>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2>Edit Institutional Personality</h2>
+
+                <a href="/admin/personalities" class="btn btn-secondary">
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Back
+
+                </a>
+
+            </div>
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <form
+                        action="/admin/personalities/edit/<%= personality.id %>"
+                        method="POST"
+                        enctype="multipart/form-data">
+
+                        <div class="row">
+
+                            <div class="col-md-3 mb-3">
+
+                                <label class="form-label">
+
+                                    Current Photo
+
+                                </label>
+
+                                <br>
+
+                                <img
+                                    src="/uploads/personalities/<%= personality.photo %>"
+                                    class="img-fluid rounded border"
+                                    style="max-height:180px;">
+
+                            </div>
+
+                            <div class="col-md-9 mb-3">
+
+                                <label class="form-label">
+
+                                    Change Photo
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    name="photo"
+                                    class="form-control">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Message Title
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="message_title"
+                                    class="form-control"
+                                    value="<%= personality.message_title %>"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Name
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    class="form-control"
+                                    value="<%= personality.name %>"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Designation
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="designation"
+                                    class="form-control"
+                                    value="<%= personality.designation %>"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Slug
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="slug"
+                                    class="form-control"
+                                    value="<%= personality.slug %>"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Display Order
+
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="display_order"
+                                    class="form-control"
+                                    value="<%= personality.display_order %>">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Status
+
+                                </label>
+
+                                <select
+                                    name="status"
+                                    class="form-select">
+
+                                    <option
+                                        value="Active"
+                                        <%= personality.status==="Active" ? "selected" : "" %>>
+
+                                        Active
+
+                                    </option>
+
+                                    <option
+                                        value="Inactive"
+                                        <%= personality.status==="Inactive" ? "selected" : "" %>>
+
+                                        Inactive
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Show on Homepage
+
+                                </label>
+
+                                <select
+                                    name="show_homepage"
+                                    class="form-select">
+
+                                    <option
+                                        value="Yes"
+                                        <%= personality.show_homepage==="Yes" ? "selected" : "" %>>
+
+                                        Yes
+
+                                    </option>
+
+                                    <option
+                                        value="No"
+                                        <%= personality.show_homepage==="No" ? "selected" : "" %>>
+
+                                        No
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Message Button Text
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="message_button_text"
+                                    class="form-control"
+                                    value="<%= personality.message_button_text %>">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Biography Button Text
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="biography_button_text"
+                                    class="form-control"
+                                    value="<%= personality.biography_button_text %>">
+
+                            </div>
+
+                            <div class="col-12 mb-3">
+
+                                <label class="form-label">
+
+                                    Personal Message
+
+                                </label>
+
+                                <textarea
+                                    name="message"
+                                    rows="8"
+                                    class="form-control"
+                                    required><%= personality.message %></textarea>
+
+                            </div>
+
+                            <div class="col-12 mb-3">
+
+                                <label class="form-label">
+
+                                    Biography
+
+                                </label>
+
+                                <textarea
+                                    name="biography"
+                                    rows="8"
+                                    class="form-control"
+                                    required><%= personality.biography %></textarea>
+
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-success">
+
+                            <i class="fas fa-save"></i>
+
+                            Update Personality
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

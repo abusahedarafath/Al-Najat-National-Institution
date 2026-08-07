@@ -1,0 +1,168 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Honour Heart Awardees</h1>
+
+                    <p>ARSP Honour Heart Award</p>
+
+                </div>
+
+                <a
+                    href="/admin/honour-heart/awardees/add"
+                    class="btn btn-success">
+
+                    <i class="fas fa-plus"></i>
+
+                    Add Awardee
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Photo</th>
+
+                        <th>Name</th>
+
+                        <th>Year</th>
+
+                        <th>Category</th>
+
+                        <th>Status</th>
+
+                        <th>Published</th>
+
+                        <th>Popup</th>
+
+                        <th width="220">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (awardees.length) { %>
+
+                        <% awardees.forEach(item => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <img
+                                        src="/uploads/honour-heart/awardees/<%= item.photo %>"
+                                        style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+
+                                </td>
+
+                                <td>
+
+                                    <strong><%= item.name %></strong>
+
+                                    <br>
+
+                                    <small><%= item.designation %></small>
+
+                                </td>
+
+                                <td>
+
+                                    <%= item.award_year %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= item.award_category %>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge <%= item.status === 'Upcoming' ? 'badge-warning' : 'badge-success' %>">
+
+                                        <%= item.status %>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <%= item.published %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= item.popup %>
+
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="/admin/honour-heart/awardees/edit/<%= item.id %>"
+                                        class="btn btn-warning">
+
+                                        Edit
+
+                                    </a>
+
+                                    <a
+                                        href="/admin/honour-heart/awardees/delete/<%= item.id %>"
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Delete this awardee?')">
+
+                                        Delete
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td colspan="8" class="text-center">
+
+                                No Awardees Found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>

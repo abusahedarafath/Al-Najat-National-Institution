@@ -2,46 +2,40 @@ const db = require("../config/database");
 
 class HeroSlider {
 
-    // ==========================
     // Get All Sliders
-    // ==========================
-    static getAll(callback) {
+    static async getAll() {
         const sql = `
             SELECT *
             FROM hero_sliders
             ORDER BY display_order ASC
         `;
-        db.query(sql, callback);
+        const [rows] = await db.query(sql);
+        return rows;
     }
 
-    // ==========================
     // Get Active Sliders
-    // ==========================
-    static getActive(callback) {
+    static async getActive() {
         const sql = `
             SELECT *
             FROM hero_sliders
             WHERE status='Active'
             ORDER BY display_order ASC
         `;
-        db.query(sql, callback);
+        const [rows] = await db.query(sql);
+        return rows;
     }
 
-    // ==========================
     // Get Slider By ID
-    // ==========================
-    static getById(id, callback) {
-        db.query(
+    static async getById(id) {
+        const [rows] = await db.query(
             "SELECT * FROM hero_sliders WHERE id=?",
-            [id],
-            callback
+            [id]
         );
+        return rows[0] || null;
     }
 
-    // ==========================
     // Create Slider
-    // ==========================
-    static create(data, callback) {
+    static async create(data) {
 
         const sql = `
             INSERT INTO hero_sliders
@@ -57,7 +51,7 @@ class HeroSlider {
             VALUES (?,?,?,?,?,?,?)
         `;
 
-        db.query(sql, [
+        const [result] = await db.query(sql, [
             data.title,
             data.subtitle,
             data.button_text,
@@ -65,14 +59,13 @@ class HeroSlider {
             data.image,
             data.display_order,
             data.status
-        ], callback);
+        ]);
 
+        return result;
     }
 
-    // ==========================
     // Update Slider
-    // ==========================
-    static update(id, data, callback) {
+    static async update(id, data) {
 
         const sql = `
             UPDATE hero_sliders
@@ -87,7 +80,7 @@ class HeroSlider {
             WHERE id=?
         `;
 
-        db.query(sql, [
+        const [result] = await db.query(sql, [
             data.title,
             data.subtitle,
             data.button_text,
@@ -96,34 +89,27 @@ class HeroSlider {
             data.display_order,
             data.status,
             id
-        ], callback);
+        ]);
 
+        return result;
     }
 
-    // ==========================
     // Delete Slider
-    // ==========================
-    static delete(id, callback) {
-
-        db.query(
+    static async delete(id) {
+        const [result] = await db.query(
             "DELETE FROM hero_sliders WHERE id=?",
-            [id],
-            callback
+            [id]
         );
-
+        return result;
     }
 
-    // ==========================
     // Toggle Status
-    // ==========================
-    static toggleStatus(id, status, callback) {
-
-        db.query(
+    static async toggleStatus(id, status) {
+        const [result] = await db.query(
             "UPDATE hero_sliders SET status=? WHERE id=?",
-            [status, id],
-            callback
+            [status, id]
         );
-
+        return result;
     }
 
 }

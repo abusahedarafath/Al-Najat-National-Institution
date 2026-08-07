@@ -1,69 +1,87 @@
 const db = require("../config/database");
 
-class StudentUser {
+const StudentUser = {
 
-    // Create Student Login Account
-    static create(data, callback) {
-
-        const sql = `
+    async create(user) {
+        const [result] = await db.query(
+            `
             INSERT INTO student_users
-            (student_id, username, password)
-            VALUES (?, ?, ?)
-        `;
-
-        db.query(
-            sql,
+            (
+                student_id,
+                username,
+                password
+            )
+            VALUES
+            (
+                ?,?,?
+            )
+            `,
             [
-                data.student_id,
-                data.username,
-                data.password
-            ],
-            callback
+                user.student_id,
+                user.username,
+                user.password
+            ]
         );
 
-    }
+        return result;
+    },
 
-    // Find by Username
-    static findByUsername(username, callback) {
-
-        const sql = `
+    async findByUsername(username) {
+        const [rows] = await db.query(
+            `
             SELECT *
             FROM student_users
-            WHERE username = ?
+            WHERE username=?
             LIMIT 1
-        `;
+            `,
+            [username]
+        );
 
-        db.query(sql, [username], callback);
+        return rows[0] || null;
+    },
 
-    }
-
-    // Find by Student ID
-    static findByStudentId(studentId, callback) {
-
-        const sql = `
+    async findByStudentId(studentId) {
+        const [rows] = await db.query(
+            `
             SELECT *
             FROM student_users
-            WHERE student_id = ?
+            WHERE student_id=?
             LIMIT 1
-        `;
+            `,
+            [studentId]
+        );
 
-        db.query(sql, [studentId], callback);
+        return rows[0] || null;
+    },
 
-    }
-
-    // Update Last Login
-    static updateLastLogin(studentId, callback) {
-
-        const sql = `
+    async updateLastLogin(studentId) {
+        const [result] = await db.query(
+            `
             UPDATE student_users
-            SET last_login = NOW()
-            WHERE student_id = ?
-        `;
+            SET last_login=NOW()
+            WHERE student_id=?
+            `,
+            [studentId]
+        );
 
-        db.query(sql, [studentId], callback);
+        return result;
+    },
 
+    async deleteByStudentId(studentId) {
+        const [result] = await db.query(
+            `
+            DELETE FROM student_users
+            WHERE student_id=?
+            `,
+            [studentId]
+        );
+
+        return result;
     }
 
-}
+};
 
 module.exports = StudentUser;
+
+
+

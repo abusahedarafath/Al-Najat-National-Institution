@@ -1,141 +1,113 @@
 const Notice = require("../models/Notice");
 
-/**
- * Show All Notices
- */
-exports.index = (req, res) => {
-
-    Notice.getAll((err, notices) => {
-
-        if (err) {
-            console.error(err);
-            return res.redirect("/admin");
-        }
+exports.index = async (req, res) => {
+    try {
+        const notices = await Notice.getAll();
 
         res.render("admin/notices/index", {
             notices
         });
-
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Unable to load notices.");
+        res.redirect("/admin");
+    }
 };
-/**
- * Show Create Form
- */
-exports.createPage = (req, res) => {
 
+exports.createPage = (req, res) => {
     res.render("admin/notices/create", {
         title: "Add Notice"
     });
-
 };
 
 
-/**
- * Save Notice
- */
-exports.store = (req, res) => {
 
-    const data = {
-        title: req.body.title,
-        description: req.body.description,
-        file: req.file ? req.file.filename : "",
-        publish_date: req.body.publish_date,
-        status: req.body.status
-    };
+exports.store = async (req, res) => {
+    try {
+        const data = {
+            title: req.body.title,
+            description: req.body.description,
+            file: req.file ? req.file.filename : "",
+            publish_date: req.body.publish_date,
+            status: req.body.status
+        };
 
-    Notice.create(data, (err) => {
+        await Notice.create(data);
 
-        if (err) {
-            console.error(err);
-            return res.redirect("/admin/notices/create");
-        }
-
+        req.flash("success", "Notice created successfully.");
         res.redirect("/admin/notices");
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to create notice.");
+        res.redirect("/admin/notices/create");
+    }
 };
 
+exports.editPage = async (req, res) => {
+    try {
+        const notice = await Notice.getById(req.params.id);
 
-/**
- * Show Edit Form
- */
-exports.editPage = (req, res) => {
-
-    Notice.getById(req.params.id, (err, result) => {
-
-        if (err || result.length === 0) {
+        if (!notice) {
+            req.flash("error", "Notice not found.");
             return res.redirect("/admin/notices");
         }
 
         res.render("admin/notices/edit", {
             title: "Edit Notice",
-            notice: result[0]
+            notice
         });
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load notice.");
+        res.redirect("/admin/notices");
+    }
 };
 
+exports.update = async (req, res) => {
+    try {
+        const oldNotice = await Notice.getById(req.params.id);
 
-/**
- * Update Notice
- */
-exports.update = (req, res) => {
-
-    Notice.getById(req.params.id, (err, result) => {
-
-        if (err || result.length === 0) {
+        if (!oldNotice) {
+            req.flash("error", "Notice not found.");
             return res.redirect("/admin/notices");
         }
 
-        const oldNotice = result[0];
-
         const data = {
-
             title: req.body.title,
-
             description: req.body.description,
-
-            file: req.file
-                ? req.file.filename
-                : oldNotice.file,
-
+            file: req.file ? req.file.filename : oldNotice.file,
             publish_date: req.body.publish_date,
-
             status: req.body.status
-
         };
 
-        Notice.update(req.params.id, data, (err) => {
+        await Notice.update(req.params.id, data);
 
-            if (err) {
-                console.error(err);
-            }
-
-            res.redirect("/admin/notices");
-
-        });
-
-    });
-
-};
-
-
-/**
- * Delete Notice
- */
-exports.delete = (req, res) => {
-
-    Notice.delete(req.params.id, (err) => {
-
-        if (err) {
-            console.error(err);
-        }
-
+        req.flash("success", "Notice updated successfully.");
         res.redirect("/admin/notices");
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to update notice.");
+        res.redirect("/admin/notices");
+    }
 };
+
+exports.delete = async (req, res) => {
+    try {
+        await Notice.delete(req.params.id);
+
+        req.flash("success", "Notice deleted successfully.");
+        res.redirect("/admin/notices");
+
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to delete notice.");
+        res.redirect("/admin/notices");
+    }
+};
+
+
+
+

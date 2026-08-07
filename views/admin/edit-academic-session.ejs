@@ -1,0 +1,131 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Academic Session</h1>
+
+                    <p>Update academic session information.</p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/academic-session/<%= session.id %>/edit"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>Session Name</label>
+
+                        <input
+                            type="text"
+                            name="session_name"
+                            value="<%= session.session_name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Start Date</label>
+
+                        <input
+                            type="date"
+                            name="start_date"
+                            value="<%= session.start_date ? session.start_date.toISOString().split('T')[0] : '' %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>End Date</label>
+
+                        <input
+                            type="date"
+                            name="end_date"
+                            value="<%= session.end_date ? session.end_date.toISOString().split('T')[0] : '' %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Description</label>
+
+                        <textarea
+                            name="description"
+                            rows="4"><%= session.description %></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option
+                                value="Active"
+                                <%= session.status === "Active" ? "selected" : "" %>>
+
+                                Active
+
+                            </option>
+
+                            <option
+                                value="Inactive"
+                                <%= session.status === "Inactive" ? "selected" : "" %>>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save Changes
+
+                        </button>
+
+                        <a
+                            href="/admin/academic-session/<%= session.id %>"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

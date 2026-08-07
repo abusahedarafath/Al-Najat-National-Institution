@@ -1,0 +1,144 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+
+            <div class="page-header">
+
+                <h1 class="page-title">
+                    Gallery Management
+                </h1>
+
+                <a href="/admin/gallery/create" class="btn btn-success">
+                    + Create Album
+                </a>
+
+            </div>
+
+            <div class="card">
+
+    <table class="admin-table">
+                    <thead>
+
+                        <tr>
+                            <th>#</th>
+                            <th>Cover</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th width="180">Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% if(albums.length===0){ %>
+
+                            <tr>
+
+                                <td colspan="5" style="text-align:center;padding:40px;">
+                                    No albums found.
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                        <% albums.forEach((album,index)=>{ %>
+
+                            <tr>
+
+                                <td><%= index+1 %></td>
+
+                                <td>
+
+                                    <% if(album.cover_image){ %>
+
+                                        <img
+                                            src="/uploads/gallery/<%= album.cover_image %>"
+                                            style="width:80px;height:60px;object-fit:cover;">
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+                                    <strong><%= album.title %></strong>
+                                </td>
+
+                                <td>
+
+                                    <% if(album.status==="Active"){ %>
+
+                                        <span style="color:#16a34a;font-weight:700;">
+                                            Active
+                                        </span>
+
+                                    <% }else{ %>
+
+                                        <span style="color:#dc2626;font-weight:700;">
+                                            Inactive
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+
+<a
+    href="/admin/gallery/<%= album.id %>/images"
+    class="btn btn-success">
+
+    Images
+
+</a>
+
+
+                                        <a
+                                            href="/admin/gallery/<%= album.id %>/edit"
+                                            class="btn btn-primary">
+
+                                            Edit
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/gallery/delete/<%= album.id %>"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Delete this album?')">
+
+                                            Delete
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+</main>
+
+</div>
+
+<%- include("../partials/footer") %>

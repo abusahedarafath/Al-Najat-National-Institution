@@ -1,61 +1,134 @@
-<%- include('../partials/header') %>
+<%- include("./partials/header") %>
 
-<%- include('../partials/navbar') %>
+<div class="admin-layout">
 
-<section class="admin-dashboard">
+    <%- include("./partials/sidebar") %>
 
-    <div class="container">
+    <main class="admin-content">
 
-        <h1>Admission Applications</h1>
+        <div class="container">
 
-        <table class="admin-table">
+            <div class="page-header">
+                <div>
+                    <h1>Admission Applications</h1>
+                    <p>Manage all admission applications submitted by students.</p>
+                </div>
+            </div>
 
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Student</th>
-                    <th>Course</th>
-                    <th>Mobile</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+            <table class="admin-table">
 
-            <tbody>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Application No.</th>
+                        <th>Student Name</th>
+                        <th>Course</th>
+                        <th>Mobile</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-            <% applications.forEach(app => { %>
+                <tbody>
 
-                <tr>
+                    <% if (applications && applications.length > 0) { %>
 
-                    <td><%= app.id %></td>
+                        <% applications.forEach(app => { %>
 
-                    <td><%= app.full_name %></td>
+                            <tr>
 
-                    <td><%= app.course %></td>
+                                <td><%= app.id %></td>
 
-                    <td><%= app.mobile %></td>
+                                <td>
+                                    <%= app.application_no || "-" %>
+                                </td>
 
-                    <td><%= app.status %></td>
+                                <td>
+                                    <%= app.full_name %>
+                                </td>
 
-                    <td>
+                                <td>
+                                    <%= app.course || "-" %>
+                                </td>
 
-                        <a href="/admin/application/<%= app.id %>" class="btn">
-                            View
-                        </a>
+                                <td>
+                                    <%= app.mobile %>
+                                </td>
 
-                    </td>
+                                <td>
 
-                </tr>
+                                    <% if (app.status === "Approved") { %>
 
-            <% }) %>
+                                        <span class="badge badge-success">
+                                            Approved
+                                        </span>
 
-            </tbody>
+                                    <% } else if (app.status === "Rejected") { %>
 
-        </table>
+                                        <span class="badge badge-danger">
+                                            Rejected
+                                        </span>
 
-    </div>
+                                    <% } else { %>
 
-</section>
+                                        <span class="badge badge-warning">
+                                            Pending
+                                        </span>
 
-<%- include('../partials/footer') %>
+                                    <% } %>
 
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a href="/admin/application/<%= app.id %>"
+                                           class="btn btn-primary">
+                                            View
+                                        </a>
+
+                                        <form
+                                            action="/admin/application/<%= app.id %>/delete"
+                                            method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this application?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td colspan="7" style="text-align:center;">
+                                No applications found.
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

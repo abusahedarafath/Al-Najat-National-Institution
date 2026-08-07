@@ -1,0 +1,11 @@
+<%
+const logoPath =
+    (setting && setting.logo)
+        ? "/uploads/arsp-settings/" + setting.logo
+        : "/images/default-logo.png";
+%>
+
+<img
+src="<%= logoPath %>"
+alt="ARSP Logo"
+class="logo">

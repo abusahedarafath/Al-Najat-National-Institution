@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Invigilator Attendance Sheet</title>
+
+<style>
+
+body{
+
+font-family:Arial,sans-serif;
+
+margin:20px;
+
+}
+
+.room{
+
+page-break-after:always;
+
+border:2px solid #000;
+
+padding:20px;
+
+margin-bottom:40px;
+
+}
+
+.header{
+
+text-align:center;
+
+border-bottom:2px solid #000;
+
+padding-bottom:15px;
+
+margin-bottom:20px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:15px;
+
+}
+
+th,td{
+
+border:1px solid #000;
+
+padding:7px;
+
+text-align:center;
+
+}
+
+.footer{
+
+margin-top:30px;
+
+display:flex;
+
+justify-content:space-between;
+
+}
+
+.signature{
+
+width:220px;
+
+border-top:1px solid #000;
+
+text-align:center;
+
+padding-top:8px;
+
+}
+
+@media print{
+
+button{
+
+display:none;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<button onclick="window.print()">
+
+🖨 Print Attendance Sheet
+
+</button>
+
+<% rooms.forEach(room=>{ %>
+
+<div class="room">
+
+<div class="header">
+
+<h1>
+
+Ratabari Talent Search Examination
+
+</h1>
+
+<h2>
+
+SECTION <%= section %>
+
+</h2>
+
+<h3>
+
+ROOM NO. <%= room.room_no %>
+
+</h3>
+
+<p>
+
+Exam Date :
+<strong>
+
+<%= examSetting.exam_date %>
+
+</strong>
+
+&nbsp;&nbsp;&nbsp;
+
+Reporting :
+<strong>
+
+<%= examSetting.reporting_time %>
+
+</strong>
+
+</p>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+
+Seat
+
+</th>
+
+<th>
+
+Roll No.
+
+</th>
+
+<th>
+
+Student Name
+
+</th>
+
+<th>
+
+School
+
+</th>
+
+<th>
+
+Student Signature
+
+</th>
+
+<th>
+
+Present / Absent
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% room.students.forEach(student=>{ %>
+
+<tr>
+
+<td>
+
+<%= student.seat_no %>
+
+</td>
+
+<td>
+
+<%= student.roll_no %>
+
+</td>
+
+<td>
+
+<%= student.full_name %>
+
+</td>
+
+<td>
+
+<%= student.school_name %>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+□ P &nbsp;&nbsp; □ A
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+<div class="footer">
+
+<div class="signature">
+
+Invigilator Signature
+
+</div>
+
+<div class="signature">
+
+Chief Superintendent
+
+</div>
+
+</div>
+
+</div>
+
+<% }) %>
+
+</body>
+
+</html>

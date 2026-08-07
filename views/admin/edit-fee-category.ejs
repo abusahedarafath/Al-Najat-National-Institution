@@ -1,0 +1,128 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Fee Category</h1>
+
+                    <p>Update fee category information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/fee-categories"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/fee-category/<%= category.id %>/edit"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>Category Name</label>
+
+                        <input
+                            type="text"
+                            name="category_name"
+                            value="<%= category.category_name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Description</label>
+
+                        <textarea
+                            name="description"
+                            rows="4"><%= category.description || "" %></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Amount (₹)</label>
+
+                        <input
+                            type="number"
+                            name="amount"
+                            step="0.01"
+                            min="0"
+                            value="<%= category.amount %>"
+                            required>
+
+                    </div>
+
+
+<div class="form-group">
+
+    <label>Status</label>
+
+    <select name="status" required>
+
+        <option value="Active"
+            <%= category.status === "Active" ? "selected" : "" %>>
+            Active
+        </option>
+
+        <option value="Inactive"
+            <%= category.status === "Inactive" ? "selected" : "" %>>
+            Inactive
+        </option>
+
+    </select>
+
+</div>
+
+
+
+
+                   
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Update Fee Category
+
+                        </button>
+
+                        <a
+                            href="/admin/fee-category/<%= category.id %>"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

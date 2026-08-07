@@ -1,0 +1,151 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Add Welcome Section</h1>
+
+                    <p>Create homepage welcome content.</p>
+
+                </div>
+
+                <a
+                    href="/admin/welcome-sections"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/welcome-section/add"
+                    method="POST"
+                    class="admin-form">
+
+                    <div class="form-group">
+
+                        <label>Small Title</label>
+
+                        <input
+                            type="text"
+                            name="small_title"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Title</label>
+
+                        <input
+                            type="text"
+                            name="title"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Description</label>
+
+                        <textarea
+                            name="description"
+                            rows="6"
+                            required></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Image Filename</label>
+
+                        <input
+                            type="text"
+                            name="image"
+                            placeholder="welcome.jpg">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Button Text</label>
+
+                        <input
+                            type="text"
+                            name="button_text">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Button Link</label>
+
+                        <input
+                            type="text"
+                            name="button_link"
+                            placeholder="/about">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save Welcome Section
+
+                        </button>
+
+                        <a
+                            href="/admin/welcome-sections"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

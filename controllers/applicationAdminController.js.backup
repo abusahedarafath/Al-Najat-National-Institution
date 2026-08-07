@@ -1,0 +1,415 @@
+console.log("applicationAdminController loaded");
+
+
+const bcrypt = require("bcryptjs");
+
+const Application = require("../models/Application");
+const Student = require("../models/Student");
+const StudentUser = require("../models/StudentUser");
+const ApplicationDocument = require("../models/ApplicationDocument");
+
+
+/* ==========================================================
+   Show All Applications
+========================================================== */
+
+
+    Application.getAll((err, applications) => {
+
+        if (err) {
+            console.error("Load Applications Error:", err);
+            req.flash("error", "Unable to load applications.");
+            return res.redirect("/admin");
+        }
+
+        res.render("admin/applications", {
+            title: "Applications",
+            applications
+        });
+
+    });
+
+};
+
+
+
+exports.showApplications = async (req, res) => {
+
+
+    try {
+
+        const applications = await Application.getAll();
+
+        res.render("admin/applications", {
+            title: "Applications",
+            applications
+        });
+
+    } catch (err) {
+
+        console.error("Load Applications Error:", err);
+        req.flash("error", "Unable to load applications.");
+        res.redirect("/admin");
+
+    }
+
+};
+
+/* ==========================================================
+   View Single Application
+========================================================== */
+
+    const applicationId = req.params.id;
+
+    Application.getById(applicationId, (err, rows) => {
+
+        if (err) {
+            console.error(err);
+            return res.redirect("/admin/applications");
+        }
+
+        if (!rows || rows.length === 0) {
+            req.flash("error", "Application not found.");
+            return res.redirect("/admin/applications");
+        }
+
+        const application = rows[0];
+
+        ApplicationDocument.getByApplicationId(
+            applicationId,
+            (err, documents) => {
+
+                if (err) {
+                    console.error(err);
+                    documents = [];
+                }
+
+                res.render("admin/application-details", {
+                    title: "Application Details",
+                    application,
+                    documents
+                });
+
+            }
+        );
+
+    });
+
+};
+
+
+
+
+
+exports.viewApplication = async (req, res) => {
+
+    try {
+
+        const applicationId = req.params.id;
+
+        const rows = await Application.getById(applicationId);
+
+        if (!rows || rows.length === 0) {
+            req.flash("error", "Application not found.");
+            return res.redirect("/admin/applications");
+        }
+
+        const application = rows[0];
+
+        ApplicationDocument.getByApplicationId(applicationId, (err, documents) => {
+
+            if (err) {
+                console.error(err);
+                documents = [];
+            }
+
+            res.render("admin/application-details", {
+                title: "Application Details",
+                application,
+                documents
+            });
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+        req.flash("error", "Unable to load application.");
+        res.redirect("/admin/applications");
+
+    }
+
+};
+
+
+
+/* ==========================================================
+   Approve Application
+========================================================== */
+
+
+    console.log(">>> approveApplication called");
+
+    const applicationId = req.params.id;
+
+    Application.getById(applicationId, async (err, rows) => {
+
+
+
+
+
+
+	exports.approveApplication = async (req, res) => {
+
+    console.log(">>> approveApplication called");
+
+    try {
+
+        const applicationId = req.params.id;
+
+        const rows = await Application.getById(applicationId);
+
+        if (err) {
+            console.error("Application Fetch Error:", err);
+            req.flash("error", "Database error.");
+            return res.redirect("/admin/applications");
+        }
+
+        if (!rows || rows.length === 0) {
+            req.flash("error", "Application not found.");
+            return res.redirect("/admin/applications");
+        }
+
+        const application = rows[0];
+
+        if (application.status === "Approved") {
+            req.flash("info", "This application has already been approved.");
+            return res.redirect("/admin/application/" + applicationId);
+        }
+
+        
+   await Application.updateStatus(applicationId, "Approved");
+
+if (err) {
+        console.error("Status Update Error:", err);
+        req.flash("error", "Unable to approve application.");
+        return res.redirect("/admin/application/" + applicationId);
+    }
+
+
+
+
+Student.findByApplicationId(applicationId, async (err, students) => {
+
+                if (err) {
+                    console.error("Student Search Error:", err);
+                    req.flash("error", "Database error.");
+                    return res.redirect("/admin/application/" + applicationId);
+                }
+
+              if (students) {
+                    req.flash("success", "Application approved successfully.");
+                    return res.redirect("/admin/application/" + applicationId);
+                }
+
+
+
+
+const studentId = application.application_no;
+
+console.log("Student ID:", studentId);
+
+const studentData = {
+
+    student_id: studentId,
+    application_id: application.id,
+
+    full_name: application.full_name,
+    father_name: application.father_name,
+    mother_name: application.mother_name,
+
+    dob: application.dob,
+    gender: application.gender,
+
+    mobile: application.mobile,
+    email: application.email,
+
+    address: application.address,
+    course: application.course,
+    previous_school: application.previous_school,
+
+    admission_date: new Date(),
+
+    status: "Active"
+
+};
+
+Student.create(studentData, async (err, result) => {
+
+    if (err) {
+        console.error(err);
+        req.flash("error", "Unable to create student.");
+        return res.redirect("/admin/application/" + applicationId);
+    }
+
+    const plainPassword = String(application.mobile).slice(-6);
+    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
+    const loginData = {
+        student_id: result.insertId,
+        username: studentId,
+        password: hashedPassword
+    };
+
+    StudentUser.create(loginData, (err) => {
+
+        if (err) {
+            console.error(err);
+            req.flash("error", "Student created but login creation failed.");
+            return res.redirect("/admin/application/" + applicationId);
+        }
+
+        req.flash(
+            "success",
+            `Application approved successfully. Student ID: ${studentId}`
+        );
+
+        return res.redirect("/admin/application/" + applicationId);
+
+    });
+
+});
+            });
+
+        });
+
+    });
+
+};
+
+
+
+
+
+
+/* ==========================================================
+   Reject Application
+========================================================== */
+
+exports.rejectApplication = (req, res) => {
+
+    const applicationId = req.params.id;
+
+    Application.updateStatus(applicationId, "Rejected", (err) => {
+
+        if (err) {
+            console.error("Reject Application Error:", err);
+
+            req.flash(
+                "error",
+                "Unable to reject application."
+            );
+
+            return res.redirect(
+                "/admin/application/" + applicationId
+            );
+        }
+
+        req.flash(
+            "success",
+            "Application rejected successfully."
+        );
+
+        return res.redirect(
+            "/admin/application/" + applicationId
+        );
+
+    });
+
+};
+
+
+/* ==========================================================
+   Edit Application Page
+========================================================== */
+
+exports.editApplicationPage = (req, res) => {
+
+    const applicationId = req.params.id;
+
+    Application.getById(applicationId, (err, rows) => {
+
+        if (err) {
+            console.error("Edit Page Error:", err);
+            return res.redirect("/admin/applications");
+        }
+
+        if (!rows || rows.length === 0) {
+
+            req.flash(
+                "error",
+                "Application not found."
+            );
+
+            return res.redirect("/admin/applications");
+
+        }
+
+        res.render("admin/edit-application", {
+
+            title: "Edit Application",
+            application: rows[0]
+
+        });
+
+    });
+
+};
+
+
+/* ==========================================================
+   Update Application
+========================================================== */
+
+exports.updateApplication = (req, res) => {
+
+    const applicationId = req.params.id;
+
+    Application.update(applicationId, req.body, (err) => {
+
+        if (err) {
+
+            console.error("Update Application Error:", err);
+
+            req.flash(
+                "error",
+                "Unable to update application."
+            );
+
+            return res.redirect(
+                "/admin/application/" +
+                applicationId +
+                "/edit"
+            );
+
+        }
+
+        req.flash(
+            "success",
+            "Application updated successfully."
+        );
+
+        return res.redirect(
+            "/admin/application/" + applicationId
+        );
+
+    });
+
+};
+
+
+
+
+
+
+

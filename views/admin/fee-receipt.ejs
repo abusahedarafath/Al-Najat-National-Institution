@@ -1,0 +1,310 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Fee Receipt</h1>
+
+                    <p>Official Student Fee Receipt</p>
+
+                </div>
+
+                <div class="action-buttons">
+
+                    <a
+                        href="/admin/fee-receipt/<%= receipt.id %>/pdf"
+                        class="btn btn-success">
+
+                        Download PDF
+
+                    </a>
+
+                    <button
+                        onclick="window.print()"
+                        class="btn btn-primary">
+
+                        Print Receipt
+
+                    </button>
+
+                    <a
+                        href="/admin/fee-payments"
+                        class="btn btn-secondary">
+
+                        Back
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="details-card receipt-card">
+
+                <div style="text-align:center; margin-bottom:30px;">
+
+                    <img
+                        src="/images/logo.png"
+                        alt="School Logo"
+                        style="width:90px;">
+
+                    <h2 style="margin:10px 0 5px;">
+
+                        AL-NAJAT NATIONAL INSTITUTION
+
+                    </h2>
+
+                    <p>
+
+                        Sribhumi, Assam - India
+
+                    </p>
+
+                    <h3>
+
+                        FEE RECEIPT
+
+                    </h3>
+
+                </div>
+
+                <table class="details-table">
+
+                    <tr>
+
+                        <th>Receipt No.</th>
+
+                        <td>
+
+                            <%= receipt.receipt_no %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Payment Date</th>
+
+                        <td>
+
+                            <%= receipt.payment_date ? receipt.payment_date.toLocaleDateString() : "" %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Student Name</th>
+
+                        <td>
+
+                            <%= receipt.student_name %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Roll Number</th>
+
+                        <td>
+
+                            <%= receipt.roll_number %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Father's Name</th>
+
+                        <td>
+
+                            <%= receipt.father_name || "-" %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Mobile</th>
+
+                        <td>
+
+                            <%= receipt.mobile || "-" %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Class</th>
+
+                        <td>
+
+                            <%= receipt.class_name %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Fee Category</th>
+
+                        <td>
+
+                            <%= receipt.category_name %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Payment Method</th>
+
+                        <td>
+
+                            <%= receipt.payment_method %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Amount</th>
+
+                        <td>
+
+                            ₹ <%= Number(receipt.amount).toFixed(2) %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Fine</th>
+
+                        <td>
+
+                            ₹ <%= Number(receipt.fine).toFixed(2) %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Discount</th>
+
+                        <td>
+
+                            ₹ <%= Number(receipt.discount).toFixed(2) %>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Total Paid</th>
+
+                        <td>
+
+                            <strong>
+
+                                ₹ <%= (Number(receipt.amount) + Number(receipt.fine) - Number(receipt.discount)).toFixed(2) %>
+
+                            </strong>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Status</th>
+
+                        <td>
+
+                            <span class="badge badge-success">
+
+                                <%= receipt.payment_status %>
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Remarks</th>
+
+                        <td>
+
+                            <%= receipt.remarks || "N/A" %>
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+                <br>
+
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:40px;">
+
+                    <div>
+
+                        <strong>QR Code</strong>
+
+                        <div style="width:100px; height:100px; border:1px solid #ccc; display:flex; align-items:center; justify-content:center;">
+
+                            QR
+
+                        </div>
+
+                    </div>
+
+                    <div style="text-align:right;">
+
+                        <br><br><br>
+
+                        _______________________
+
+                        <br>
+
+                        Authorized Signature
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

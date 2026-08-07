@@ -1,9 +1,12 @@
+// models/admissionModel.js
+
 const db = require("../config/database");
 
+// ===============================
+// CREATE NEW ADMISSION
+// ===============================
 
-
-
-exports.createAdmission = (student, callback) => {
+exports.createAdmission = async (student) => {
 
     const sql = `
         INSERT INTO applications
@@ -35,16 +38,17 @@ exports.createAdmission = (student, callback) => {
         student.previous_school
     ];
 
-    db.query(sql, values, callback);
+    const [result] = await db.query(sql, values);
+
+    return result;
 };
 
 
+// ===============================
+// GET ALL APPLICATIONS
+// ===============================
 
-
-
-
-
-exports.getAllApplications = (callback) => {
+exports.getAllApplications = async () => {
 
     const sql = `
         SELECT *
@@ -52,30 +56,36 @@ exports.getAllApplications = (callback) => {
         ORDER BY id DESC
     `;
 
-    db.query(sql, callback);
+    const [rows] = await db.query(sql);
 
+    return rows;
 };
 
 
+// ===============================
+// GET APPLICATION BY ID
+// ===============================
 
-
-exports.getApplicationById = (id, callback) => {
+exports.getApplicationById = async (id) => {
 
     const sql = `
         SELECT *
         FROM applications
         WHERE id = ?
+        LIMIT 1
     `;
 
-    db.query(sql, [id], callback);
+    const [rows] = await db.query(sql, [id]);
 
+    return rows[0];
 };
 
 
+// ===============================
+// APPROVE APPLICATION
+// ===============================
 
-
-
-exports.approveApplication = (id, callback) => {
+exports.approveApplication = async (id) => {
 
     const sql = `
         UPDATE applications
@@ -83,14 +93,17 @@ exports.approveApplication = (id, callback) => {
         WHERE id = ?
     `;
 
-    db.query(sql, [id], callback);
+    const [result] = await db.query(sql, [id]);
 
+    return result;
 };
 
 
+// ===============================
+// DASHBOARD STATISTICS
+// ===============================
 
-
-exports.getDashboardStats = (callback) => {
+exports.getDashboardStats = async () => {
 
     const sql = `
         SELECT
@@ -101,80 +114,91 @@ exports.getDashboardStats = (callback) => {
         FROM applications
     `;
 
-    db.query(sql, callback);
+    const [rows] = await db.query(sql);
 
+    return rows[0];
 };
 
 
+// ===============================
+// RECENT APPLICATIONS
+// ===============================
 
-
-exports.getRecentApplications = (callback) => {
+exports.getRecentApplications = async () => {
 
     const sql = `
-        SELECT id, full_name, status
+        SELECT
+            id,
+            full_name,
+            status
         FROM applications
         ORDER BY id DESC
         LIMIT 5
     `;
 
-    db.query(sql, callback);
+    const [rows] = await db.query(sql);
 
+    return rows;
 };
 
 
 
+// ===============================
+// CREATE STUDENT FROM APPLICATION
+// ===============================
 
-
-
-exports.createStudentFromApplication = (application, callback) => {
+exports.createStudentFromApplication = async (application) => {
 
     const year = new Date().getFullYear();
-
     const studentId = "ANI" + year + String(application.id).padStart(4, "0");
 
     const sql = `
-    INSERT INTO students
-    (
-        student_id,
-        application_id,
-        full_name,
-        father_name,
-        mother_name,
-        dob,
-        gender,
-        mobile,
-        email,
-        address,
-        course,
-        previous_school,
-        admission_date
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())
-`;
-db.query(sql, [
+        INSERT INTO students
+        (
+            student_id,
+            application_id,
+            full_name,
+            father_name,
+            mother_name,
+            dob,
+            gender,
+            mobile,
+            email,
+            address,
+            course,
+            previous_school,
+            admission_date
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())
+    `;
 
-    studentId,
-    application.id,
-    application.full_name,
-    application.father_name,
-    application.mother_name,
-    application.dob,
-    application.gender,
-    application.mobile,
-    application.email,
-    application.address,
-    application.course,
-    application.previous_school
+    const values = [
+        studentId,
+        application.id,
+        application.full_name,
+        application.father_name,
+        application.mother_name,
+        application.dob,
+        application.gender,
+        application.mobile,
+        application.email,
+        application.address,
+        application.course,
+        application.previous_school
+    ];
 
-], callback);
+    const [result] = await db.query(sql, values);
+
+    return result;
 };
 
 
+// ===============================
+// GET ALL STUDENTS
+// ===============================
 
-
-
-
-exports.getAllStudents = (callback) => {
+exports.getAllStudents = async () => {
 
     const sql = `
         SELECT *
@@ -182,50 +206,49 @@ exports.getAllStudents = (callback) => {
         ORDER BY id DESC
     `;
 
-    db.query(sql, callback);
+    const [rows] = await db.query(sql);
 
+    return rows;
 };
 
 
+// ===============================
+// GET STUDENT BY ID
+// ===============================
 
-
-
-
-exports.getStudentById = (id, callback) => {
+exports.getStudentById = async (id) => {
 
     const sql = `
         SELECT *
         FROM students
         WHERE id = ?
+        LIMIT 1
     `;
 
-    db.query(sql, [id], callback);
+    const [rows] = await db.query(sql, [id]);
+
+    return rows[0];
+};
+
+
+// ===============================
+// GET STUDENT FOR EDIT
+// ===============================
+
+exports.getStudentForEdit = async (id) => {
+
+    return await exports.getStudentById(id);
 
 };
 
 
 
 
+// ===============================
+// UPDATE STUDENT
+// ===============================
 
-
-
-exports.getStudentForEdit = (id, callback) => {
-
-    const sql = `
-        SELECT *
-        FROM students
-        WHERE id = ?
-    `;
-
-    db.query(sql, [id], callback);
-
-};
-
-
-
-
-
-exports.updateStudent = (id, studentData, callback) => {
+exports.updateStudent = async (id, studentData) => {
 
     let sql;
     let values;
@@ -233,21 +256,21 @@ exports.updateStudent = (id, studentData, callback) => {
     if (studentData.photo) {
 
         sql = `
-        UPDATE students
-        SET
-            full_name = ?,
-            father_name = ?,
-            mother_name = ?,
-            dob = ?,
-            gender = ?,
-            mobile = ?,
-            email = ?,
-            address = ?,
-            course = ?,
-            previous_school = ?,
-            status = ?,
-            photo = ?
-        WHERE id = ?
+            UPDATE students
+            SET
+                full_name = ?,
+                father_name = ?,
+                mother_name = ?,
+                dob = ?,
+                gender = ?,
+                mobile = ?,
+                email = ?,
+                address = ?,
+                course = ?,
+                previous_school = ?,
+                status = ?,
+                photo = ?
+            WHERE id = ?
         `;
 
         values = [
@@ -269,20 +292,20 @@ exports.updateStudent = (id, studentData, callback) => {
     } else {
 
         sql = `
-        UPDATE students
-        SET
-            full_name = ?,
-            father_name = ?,
-            mother_name = ?,
-            dob = ?,
-            gender = ?,
-            mobile = ?,
-            email = ?,
-            address = ?,
-            course = ?,
-            previous_school = ?,
-            status = ?
-        WHERE id = ?
+            UPDATE students
+            SET
+                full_name = ?,
+                father_name = ?,
+                mother_name = ?,
+                dob = ?,
+                gender = ?,
+                mobile = ?,
+                email = ?,
+                address = ?,
+                course = ?,
+                previous_school = ?,
+                status = ?
+            WHERE id = ?
         `;
 
         values = [
@@ -302,60 +325,17 @@ exports.updateStudent = (id, studentData, callback) => {
 
     }
 
-    db.query(sql, values, callback);
+    const [result] = await db.query(sql, values);
 
+    return result;
 };
 
 
+// ===============================
+// DEACTIVATE STUDENT
+// ===============================
 
-
-
-
-
-exports.updateStudent = (id, student, callback) => {
-
-    const sql = `
-        UPDATE students
-        SET
-            full_name = ?,
-            father_name = ?,
-            mother_name = ?,
-            dob = ?,
-            gender = ?,
-            mobile = ?,
-            email = ?,
-            address = ?,
-            course = ?,
-            previous_school = ?,
-            status = ?
-        WHERE id = ?
-    `;
-
-    db.query(sql, [
-        student.full_name,
-        student.father_name,
-        student.mother_name,
-        student.dob,
-        student.gender,
-        student.mobile,
-        student.email,
-        student.address,
-        student.course,
-        student.previous_school,
-        student.status,
-        id
-    ], callback);
-
-};
-
-
-
-
-
-
-
-
-exports.deactivateStudent = (id, callback) => {
+exports.deactivateStudent = async (id) => {
 
     const sql = `
         UPDATE students
@@ -363,6 +343,9 @@ exports.deactivateStudent = (id, callback) => {
         WHERE id = ?
     `;
 
-    db.query(sql, [id], callback);
+    const [result] = await db.query(sql, [id]);
 
+    return result;
 };
+
+

@@ -1,0 +1,193 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-content">
+
+<div class="page-header">
+
+<div>
+
+<h1>
+
+Honour Heart Selection Board
+
+</h1>
+
+<p>
+
+ARSP Honour Heart Award
+
+</p>
+
+</div>
+
+<a
+href="/admin/honour-heart/selection-board/add"
+class="btn btn-success">
+
+<i class="fas fa-plus"></i>
+
+Add Board Member
+
+</a>
+
+</div>
+
+<table class="admin-table">
+
+<thead>
+
+<tr>
+
+<th width="90">
+
+Photo
+
+</th>
+
+<th>
+
+Name
+
+</th>
+
+<th>
+
+Designation
+
+</th>
+
+<th>
+
+Organisation
+
+</th>
+
+<th>
+
+Order
+
+</th>
+
+<th>
+
+Status
+
+</th>
+
+<th width="220">
+
+Action
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% if(board.length){ %>
+
+<% board.forEach(member=>{ %>
+
+<tr>
+
+<td>
+
+<img
+
+src="/uploads/honour-heart/selection-board/<%= member.photo %>"
+
+style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+
+</td>
+
+<td>
+
+<strong>
+
+<%= member.name %>
+
+</strong>
+
+</td>
+
+<td>
+
+<%= member.designation %>
+
+</td>
+
+<td>
+
+<%= member.organisation %>
+
+</td>
+
+<td>
+
+<%= member.display_order %>
+
+</td>
+
+<td>
+
+<span class="badge <%= member.status==='Active' ? 'badge-success' : 'badge-danger' %>">
+
+<%= member.status %>
+
+</span>
+
+</td>
+
+<td>
+
+<a
+
+href="/admin/honour-heart/selection-board/edit/<%= member.id %>"
+
+class="btn btn-warning">
+
+Edit
+
+</a>
+
+<a
+
+href="/admin/honour-heart/selection-board/delete/<%= member.id %>"
+
+class="btn btn-danger"
+
+onclick="return confirm('Delete this board member?')">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+<% } else { %>
+
+<tr>
+
+<td colspan="7" class="text-center">
+
+No Selection Board Members Found.
+
+</td>
+
+</tr>
+
+<% } %>
+
+</tbody>
+
+</table>
+
+</div>
+
+<%- include("../../partials/footer") %>

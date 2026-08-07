@@ -1,0 +1,164 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+
+                    RTSE Seat Plan Generator
+
+                </h1>
+
+                <a
+                    href="/admin/rtse"
+                    class="btn-cancel">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <form
+                    action="/admin/rtse/seat-plan"
+                    method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Section
+
+                            </label>
+
+                            <select
+                                name="section"
+                                required>
+
+                                <option value="A">
+
+                                    SECTION A
+
+                                </option>
+
+                                <option value="B">
+
+                                    SECTION B
+
+                                </option>
+
+                                <option value="C">
+
+                                    SECTION C
+
+                                </option>
+
+                                <option value="D">
+
+                                    SECTION D
+
+                                </option>
+
+                                <option value="E">
+
+                                    SECTION E
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Room Capacity
+
+                            </label>
+
+                            <input
+                                type="number"
+                                name="room_capacity"
+                                value="30"
+                                min="1"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+
+                        Generate Seat Plan
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="profile-card">
+
+                <h2>
+
+                    Seat Plan Rules
+
+                </h2>
+
+                <ul>
+
+                    <li>
+
+                        Only approved students with generated roll numbers are included.
+
+                    </li>
+
+                    <li>
+
+                        Students are arranged according to Roll Number.
+
+                    </li>
+
+                    <li>
+
+                        Rooms are filled automatically.
+
+                    </li>
+
+                    <li>
+
+                        Seat numbers restart from 1 in every room.
+
+                    </li>
+
+                    <li>
+
+                        Generated Room Number and Seat Number automatically appear on Admit Cards.
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

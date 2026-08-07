@@ -1,0 +1,190 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Navigation Menu</h1>
+
+                    <p>Update navigation menu.</p>
+
+                </div>
+
+                <a
+                    href="/admin/menu"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <form
+                action="/admin/menu/<%= menu.id %>/edit"
+                method="POST"
+                class="admin-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Parent Menu</label>
+
+                        <select name="parent_id">
+
+                            <option value="">None (Main Menu)</option>
+
+                            <% parents.forEach(parent=>{ %>
+
+                                <option
+                                    value="<%= parent.id %>"
+                                    <%= menu.parent_id==parent.id ? "selected" : "" %>>
+
+                                    <%= parent.menu_title %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Menu Title</label>
+
+                        <input
+                            type="text"
+                            name="menu_title"
+                            value="<%= menu.menu_title %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Menu URL</label>
+
+                        <input
+                            type="text"
+                            name="menu_url"
+                            value="<%= menu.menu_url %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Menu Icon</label>
+
+                        <input
+                            type="text"
+                            name="menu_icon"
+                            value="<%= menu.menu_icon %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Open In</label>
+
+                        <select name="target">
+
+                            <option
+                                value="_self"
+                                <%= menu.target=="_self" ? "selected" : "" %>>
+
+                                Same Tab
+
+                            </option>
+
+                            <option
+                                value="_blank"
+                                <%= menu.target=="_blank" ? "selected" : "" %>>
+
+                                New Tab
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Display Order</label>
+
+                        <input
+                            type="number"
+                            name="display_order"
+                            value="<%= menu.display_order %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option
+                                value="Active"
+                                <%= menu.status=="Active" ? "selected" : "" %>>
+
+                                Active
+
+                            </option>
+
+                            <option
+                                value="Inactive"
+                                <%= menu.status=="Inactive" ? "selected" : "" %>>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Update Menu
+
+                    </button>
+
+                    <a
+                        href="/admin/menu"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

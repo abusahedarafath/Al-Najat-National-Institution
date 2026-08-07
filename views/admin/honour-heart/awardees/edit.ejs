@@ -1,0 +1,314 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Honour Heart Awardee</h1>
+
+                    <p>ARSP Honour Heart Award</p>
+
+                </div>
+
+                <a
+                    href="/admin/honour-heart/awardees"
+                    class="btn btn-secondary">
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Back
+
+                </a>
+
+            </div>
+
+            <form
+                action="/admin/honour-heart/awardees/edit/<%= awardee.id %>"
+                method="POST"
+                enctype="multipart/form-data"
+                class="admin-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Current Photo</label>
+
+                        <img
+                            src="/uploads/honour-heart/awardees/<%= awardee.photo %>"
+                            style="width:180px;height:180px;object-fit:cover;border-radius:12px;border:1px solid #ddd;">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Change Photo</label>
+
+                        <input
+                            type="file"
+                            name="photo">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Award Year</label>
+
+                        <input
+                            type="text"
+                            name="award_year"
+                            value="<%= awardee.award_year %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Name</label>
+
+                        <input
+                            type="text"
+                            name="name"
+                            value="<%= awardee.name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Designation</label>
+
+                        <input
+                            type="text"
+                            name="designation"
+                            value="<%= awardee.designation %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>State</label>
+
+                        <input
+                            type="text"
+                            name="state"
+                            value="<%= awardee.state %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Country</label>
+
+                        <input
+                            type="text"
+                            name="country"
+                            value="<%= awardee.country %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Award Category</label>
+
+                        <input
+                            type="text"
+                            name="award_category"
+                            value="<%= awardee.award_category %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Named After</label>
+
+                        <select name="legend_id">
+
+                            <% legends.forEach(legend => { %>
+
+                                <option
+                                    value="<%= legend.id %>"
+                                    <%= legend.id == awardee.legend_id ? "selected" : "" %>>
+
+                                    <%= legend.name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Ceremony Date</label>
+
+                        <input
+                            type="date"
+                            name="ceremony_date"
+                            value="<%= awardee.ceremony_date %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Venue</label>
+
+                        <input
+                            type="text"
+                            name="venue"
+                            value="<%= awardee.venue %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option
+                                value="Upcoming"
+                                <%= awardee.status === "Upcoming" ? "selected" : "" %>>
+
+                                Upcoming
+
+                            </option>
+
+                            <option
+                                value="Previous"
+                                <%= awardee.status === "Previous" ? "selected" : "" %>>
+
+                                Previous
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Popup</label>
+
+                        <select name="popup">
+
+                            <option
+                                value="Yes"
+                                <%= awardee.popup === "Yes" ? "selected" : "" %>>
+
+                                Yes
+
+                            </option>
+
+                            <option
+                                value="No"
+                                <%= awardee.popup === "No" ? "selected" : "" %>>
+
+                                No
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Published</label>
+
+                        <select name="published">
+
+                            <option
+                                value="Yes"
+                                <%= awardee.published === "Yes" ? "selected" : "" %>>
+
+                                Yes
+
+                            </option>
+
+                            <option
+                                value="No"
+                                <%= awardee.published === "No" ? "selected" : "" %>>
+
+                                No
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Biography</label>
+
+                    <textarea
+                        name="biography"
+                        rows="8"><%= awardee.biography %></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Achievements</label>
+
+                    <textarea
+                        name="achievements"
+                        rows="8"><%= awardee.achievements %></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Citation</label>
+
+                    <textarea
+                        name="citation"
+                        rows="6"><%= awardee.citation %></textarea>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        <i class="fas fa-save"></i>
+
+                        Update Awardee
+
+                    </button>
+
+                    <a
+                        href="/admin/honour-heart/awardees"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>

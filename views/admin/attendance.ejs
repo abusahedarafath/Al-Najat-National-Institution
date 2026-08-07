@@ -1,0 +1,172 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Attendance Management</h1>
+
+                    <p>Manage student attendance records.</p>
+
+                </div>
+
+                <a
+                    href="/admin/attendance/add"
+                    class="btn btn-primary">
+
+                    + Mark Attendance
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student</th>
+                        <th>Roll No.</th>
+                        <th>Class</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (attendance && attendance.length > 0) { %>
+
+                        <% attendance.forEach(record => { %>
+
+                            <tr>
+
+                                <td>
+                                    <%= record.student_name %>
+                                </td>
+
+                                <td>
+                                    <%= record.roll_number %>
+                                </td>
+
+                                <td>
+                                    <%= record.class_name %>
+                                </td>
+
+                                <td>
+                                    <%= record.attendance_date ? record.attendance_date.toLocaleDateString() : "" %>
+                                </td>
+
+                                <td>
+
+                                    <% if (record.status === "Present") { %>
+
+                                        <span class="badge badge-success">
+
+                                            Present
+
+                                        </span>
+
+                                    <% } else if (record.status === "Absent") { %>
+
+                                        <span class="badge badge-danger">
+
+                                            Absent
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-warning">
+
+                                            Leave
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/attendance/<%= record.id %>"
+                                            class="btn btn-primary">
+
+                                            View
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/attendance/<%= record.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/attendance/<%= record.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Delete this attendance record?')">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                style="text-align:center;">
+
+                                No attendance records found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

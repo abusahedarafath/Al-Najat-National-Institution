@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<title>ARSP Membership Registration Slip</title>
+
+<%- include("./partials/styles") %>
+
+</head>
+
+<body>
+
+<div class="page">
+
+<div class="slip-card">
+
+<div class="header">
+
+<div>
+
+<% if(setting.logo){ %>
+
+<img
+src="/uploads/arsp-settings/<%= setting.logo %>"
+class="logo">
+
+<% } %>
+
+</div>
+
+<div class="header-center">
+
+<div class="org-title">
+
+<%= setting.organization_name %>
+
+</div>
+
+<div class="org-sub">
+
+<%= setting.tagline %>
+
+</div>
+
+<div class="document-title">
+
+Official Membership Registration Slip
+
+</div>
+
+</div>
+
+<div class="verify-box">
+
+<% if(member.qr_code){ %>
+
+<img
+src="/uploads/arsp-qr/<%= member.qr_code %>">
+
+<% } %>
+
+<div class="verify-text">
+
+SCAN TO VERIFY
+
+</div>
+
+</div>
+
+</div>
+
+<div class="main-content">
+
+<div class="left-section">
+
+<table class="info-table">
+
+<tr>
+
+<td class="label">Registration No.</td>
+
+<td><%= member.registration_no %></td>
+
+<td class="label">Date</td>
+
+<td><%= new Date().toLocaleDateString("en-GB") %></td>
+
+</tr>
+
+<tr>
+
+<td class="label">Member Name</td>
+
+<td colspan="3">
+
+<strong>
+
+<%= member.full_name %>
+
+</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">Father's Name</td>
+
+<td colspan="3">
+
+<%= member.father_name || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">Member ID</td>
+
+<td>
+
+<%= member.member_id %>
+
+</td>
+
+<td class="label">Status</td>
+
+<td>
+
+<strong style="color:#0B6B3A">
+
+<%= member.status %>
+
+</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">Mobile</td>
+
+<td>
+
+<%= member.mobile || "-" %>
+
+</td>
+
+<td class="label">Email</td>
+
+<td>
+
+<%= member.email || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">Address</td>
+
+<td colspan="3">
+
+<%= member.address || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">District</td>
+
+<td>
+
+<%= member.district || "-" %>
+
+</td>
+
+<td class="label">State</td>
+
+<td>
+
+<%= member.state || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">PIN Code</td>
+
+<td>
+
+<%= member.pincode || "-" %>
+
+</td>
+
+<td class="label">Blood Group</td>
+
+<td>
+
+<%= member.blood_group || "-" %>
+
+</td>
+
+</tr>
+
+</table>
+
+<div class="section-box">
+
+<div class="section-title">
+
+Declaration
+
+</div>
+
+<p>
+
+This certifies that the above person has successfully completed the membership registration process of
+
+<strong>
+
+<%= setting.organization_name %>
+
+</strong>
+
+and is recognised as an official member of the organisation.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="right-section">
+
+<div class="photo-box">
+
+<img
+
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>">
+
+</div>
+
+<div class="member-status">
+
+Verified Member
+
+</div>
+
+</div>
+
+</div>
+
+<div class="signature-area">
+
+<div class="signature">
+
+<div class="signature-space"></div>
+
+<hr>
+
+<span>
+
+Member Signature
+
+</span>
+
+</div>
+
+<div class="signature">
+
+<div class="signature-space"></div>
+
+<hr>
+
+<span>
+
+Registration Officer
+
+</span>
+
+</div>
+
+<div class="signature">
+
+<% if(setting && setting.president_signature){ %>
+
+<img
+src="/uploads/arsp-settings/<%= setting.president_signature %>"
+style="
+height:35px;
+max-width:150px;
+display:block;
+margin:0 auto 5px;
+object-fit:contain;">
+
+<% }else{ %>
+
+<div class="signature-space"></div>
+
+<% } %>
+
+<hr>
+
+<span>
+
+Authorised Signatory
+
+</span>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+<div class="footer-left">
+
+<strong>
+
+<%= setting.organization_name %>
+
+</strong>
+
+<br>
+
+Generated on
+
+<%= new Date().toLocaleString("en-GB") %>
+
+</div>
+
+<div class="footer-right">
+
+Registration No.
+
+<br>
+
+<strong>
+
+<%= member.registration_no %>
+
+</strong>
+
+</div>
+
+</div>
+
+<div class="action-buttons">
+
+<button
+
+class="btn"
+
+onclick="window.print()">
+
+🖨 Print Certificate
+
+</button>
+
+
+<div class="notice-box">
+    <strong>Important Notice</strong><br><br>
+
+    Username:
+    Your registered Mobile Number
+
+    <br><br>
+
+    Initial Password:
+    Your registered Mobile Number
+
+    <br><br>
+
+    For your security, you must change your password immediately after your first login.
+</div>
+
+
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

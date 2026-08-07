@@ -2,26 +2,28 @@ const db = require("../config/database");
 
 class Notice {
 
-    static getAll(callback) {
+    static async getAll() {
         const sql = `
             SELECT *
             FROM notices
             ORDER BY publish_date DESC, id DESC
         `;
-        db.query(sql, callback);
+        const [rows] = await db.query(sql);
+        return rows;
     }
 
-    static getActive(callback) {
+    static async getActive() {
         const sql = `
             SELECT *
             FROM notices
             WHERE status='Active'
             ORDER BY publish_date DESC, id DESC
         `;
-        db.query(sql, callback);
+        const [rows] = await db.query(sql);
+        return rows;
     }
 
-    static getLatest(limit, callback) {
+    static async getLatest(limit) {
         const sql = `
             SELECT *
             FROM notices
@@ -29,40 +31,37 @@ class Notice {
             ORDER BY publish_date DESC, id DESC
             LIMIT ?
         `;
-        db.query(sql, [Number(limit)], callback);
+        const [rows] = await db.query(sql, [Number(limit)]);
+        return rows;
     }
 
-    static getById(id, callback) {
-        db.query(
+    static async getById(id) {
+        const [rows] = await db.query(
             "SELECT * FROM notices WHERE id = ?",
-            [id],
-            callback
+            [id]
         );
+        return rows[0];
     }
 
-    static create(data, callback) {
-
+    static async create(data) {
         const sql = `
             INSERT INTO notices
             (title, description, file, publish_date, status)
             VALUES (?, ?, ?, ?, ?)
         `;
 
-        db.query(
-            sql,
-            [
-                data.title,
-                data.description,
-                data.file,
-                data.publish_date,
-                data.status
-            ],
-            callback
-        );
+        const [result] = await db.query(sql, [
+            data.title,
+            data.description,
+            data.file,
+            data.publish_date,
+            data.status
+        ]);
+
+        return result;
     }
 
-    static update(id, data, callback) {
-
+    static async update(id, data) {
         const sql = `
             UPDATE notices
             SET
@@ -74,28 +73,26 @@ class Notice {
             WHERE id = ?
         `;
 
-        db.query(
-            sql,
-            [
-                data.title,
-                data.description,
-                data.file,
-                data.publish_date,
-                data.status,
-                id
-            ],
-            callback
-        );
+        const [result] = await db.query(sql, [
+            data.title,
+            data.description,
+            data.file,
+            data.publish_date,
+            data.status,
+            id
+        ]);
+
+        return result;
     }
 
-    static delete(id, callback) {
-        db.query(
+    static async delete(id) {
+        const [result] = await db.query(
             "DELETE FROM notices WHERE id = ?",
-            [id],
-            callback
+            [id]
         );
-    }
 
+        return result;
+    }
 }
 
 module.exports = Notice;

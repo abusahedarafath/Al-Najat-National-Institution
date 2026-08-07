@@ -1,0 +1,199 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>RTSE Application Archive</h1>
+
+                <a
+                    href="/admin/rtse"
+                    class="btn-cancel">
+
+                    ← Back to Dashboard
+
+                </a>
+
+            </div>
+
+            <% if(applications.length===0){ %>
+
+                <div class="profile-card">
+
+                    <h3>No Archived Applications</h3>
+
+                    <p>
+                        There are no archived RTSE applications.
+                    </p>
+
+                </div>
+
+            <% }else{ %>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Reg. No.</th>
+
+                        <th>Photo</th>
+
+                        <th>Name</th>
+
+                        <th>School</th>
+
+                        <th>Class</th>
+
+                        <th>Section</th>
+
+                        <th>Archived On</th>
+
+                        <th width="330">
+
+                            Actions
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                <% applications.forEach(application=>{ %>
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+
+                                <%= application.registration_no %>
+
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            <img
+
+                                src="/uploads/rtse/<%= application.photo %>"
+
+                                style="width:55px;height:55px;border-radius:50%;object-fit:cover;">
+
+                        </td>
+
+                        <td>
+
+                            <%= application.full_name %>
+
+                        </td>
+
+                        <td>
+
+                            <%= application.school_name %>
+
+                        </td>
+
+                        <td>
+
+                            <%= application.class %>
+
+                        </td>
+
+                        <td>
+
+                            <%= application.section %>
+
+                        </td>
+
+                        <td>
+
+                            <%= application.archived_at %>
+
+                        </td>
+
+                        <td>
+
+                            <a
+
+                                href="/admin/rtse/application/<%= application.id %>"
+
+                                class="btn-view">
+
+                                View
+
+                            </a>
+
+                            <form
+
+                                action="/admin/rtse/application/<%= application.id %>/restore"
+
+                                method="POST"
+
+                                style="display:inline;">
+
+                                <button
+
+                                    type="submit"
+
+                                    class="btn-save"
+
+                                    onclick="return confirm('Restore this application?')">
+
+                                    Restore
+
+                                </button>
+
+                            </form>
+
+                            <form
+
+                                action="/admin/rtse/application/<%= application.id %>/delete"
+
+                                method="POST"
+
+                                style="display:inline;">
+
+                                <button
+
+                                    type="submit"
+
+                                    class="btn-danger"
+
+                                    onclick="return confirm('This will permanently delete the application from the database. Continue?')">
+
+                                    Delete Permanently
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+                </tbody>
+
+            </table>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

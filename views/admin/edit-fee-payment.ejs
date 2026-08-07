@@ -1,0 +1,245 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Fee Payment</h1>
+
+                    <p>Update the student's fee payment record.</p>
+
+                </div>
+
+                <a
+                    href="/admin/fee-payments"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <form
+                action="/admin/fee-payment/<%= payment.id %>/edit"
+                method="POST"
+                class="admin-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Receipt No.</label>
+
+                        <input
+                            type="text"
+                            value="<%= payment.receipt_no %>"
+                            readonly>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Student</label>
+
+                        <select
+                            name="student_id"
+                            required>
+
+                            <% students.forEach(student => { %>
+
+                                <option
+                                    value="<%= student.id %>"
+                                    <%= payment.student_id == student.id ? "selected" : "" %>>
+
+
+<%= student.full_name %> (<%= student.student_id %>)
+
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Class</label>
+
+                        <select
+                            name="class_id"
+                            required>
+
+                            <% classes.forEach(cls => { %>
+
+                                <option
+                                    value="<%= cls.id %>"
+                                    <%= payment.class_id == cls.id ? "selected" : "" %>>
+
+                                    <%= cls.class_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Fee Category</label>
+
+<select name="fee_category_id" required>
+                            <% categories.forEach(category => { %>
+
+                                <option
+                                    value="<%= category.id %>"
+<%= payment.fee_category_id == category.id ? "selected" : "" %>
+
+                                    <%= category.category_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Payment Date</label>
+
+                        <input
+                            type="date"
+                            name="payment_date"
+                            value="<%= payment.payment_date ? payment.payment_date.toISOString().split('T')[0] : '' %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Payment Method</label>
+
+                        <select
+                            name="payment_method"
+                            required>
+
+                            <option value="Cash" <%= payment.payment_method === "Cash" ? "selected" : "" %>>Cash</option>
+                            <option value="UPI" <%= payment.payment_method === "UPI" ? "selected" : "" %>>UPI</option>
+                            <option value="Bank Transfer" <%= payment.payment_method === "Bank Transfer" ? "selected" : "" %>>Bank Transfer</option>
+                            <option value="Cheque" <%= payment.payment_method === "Cheque" ? "selected" : "" %>>Cheque</option>
+                            <option value="Card" <%= payment.payment_method === "Card" ? "selected" : "" %>>Card</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Amount (₹)</label>
+
+                        <input
+                            type="number"
+                            name="amount"
+                            step="0.01"
+                            min="0"
+                            value="<%= payment.amount %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Fine (₹)</label>
+
+                        <input
+                            type="number"
+                            name="fine"
+                            step="0.01"
+                            min="0"
+                            value="<%= payment.fine %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Discount (₹)</label>
+
+                        <input
+                            type="number"
+                            name="discount"
+                            step="0.01"
+                            min="0"
+                            value="<%= payment.discount %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select
+                            name="payment_status">
+
+                            <option value="Paid" <%= payment.payment_status === "Paid" ? "selected" : "" %>>Paid</option>
+                            <option value="Pending" <%= payment.payment_status === "Pending" ? "selected" : "" %>>Pending</option>
+                            <option value="Failed" <%= payment.payment_status === "Failed" ? "selected" : "" %>>Failed</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Remarks</label>
+
+                    <textarea
+                        name="remarks"
+                        rows="4"><%= payment.remarks %></textarea>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Update Payment
+
+                    </button>
+
+                    <a
+                        href="/admin/fee-payments"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

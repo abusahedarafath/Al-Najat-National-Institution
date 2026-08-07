@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<style>
+
+body{
+
+font-family:Arial,sans-serif;
+background:#f4f7fb;
+margin:0;
+padding:40px;
+
+}
+
+.card{
+
+max-width:700px;
+margin:auto;
+background:#fff;
+padding:30px;
+border-radius:12px;
+box-shadow:0 5px 20px rgba(0,0,0,.12);
+
+}
+
+h2{
+
+margin-top:0;
+color:#0B6B3A;
+text-align:center;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+
+}
+
+td{
+
+padding:12px;
+border-bottom:1px solid #eee;
+
+}
+
+.label{
+
+font-weight:bold;
+width:220px;
+
+}
+
+.valid{
+
+background:#198754;
+color:#fff;
+padding:8px 16px;
+border-radius:20px;
+display:inline-block;
+
+}
+
+.invalid{
+
+background:#dc3545;
+color:#fff;
+padding:8px 16px;
+border-radius:20px;
+display:inline-block;
+
+}
+
+.footer{
+
+margin-top:30px;
+text-align:center;
+color:#666;
+font-size:13px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>ARSP Document Verification</h2>
+
+<% if(valid){ %>
+
+<p style="text-align:center;">
+
+<span class="<%= verification.status==='Valid' ? 'valid' : 'invalid' %>">
+
+<%= verification.status %>
+
+</span>
+
+</p>
+
+<table>
+
+<tr>
+
+<td class="label">Document Number</td>
+
+<td><%= verification.document_number %></td>
+
+</tr>
+
+<tr>
+
+<td class="label">Document Type</td>
+
+<td><%= verification.document_type %></td>
+
+</tr>
+
+<tr>
+
+<td class="label">Member Name</td>
+
+<td><%= member.full_name %></td>
+
+</tr>
+
+<tr>
+
+<td class="label">Member ID</td>
+
+<td><%= member.member_id %></td>
+
+</tr>
+
+<tr>
+
+<td class="label">Issue Date</td>
+
+<td><%= new Date(verification.issue_date).toLocaleDateString("en-GB") %></td>
+
+</tr>
+
+<tr>
+
+<td class="label">Verification Status</td>
+
+<td><strong><%= verification.status %></strong></td>
+
+</tr>
+
+</table>
+
+<% } else { %>
+
+<p style="text-align:center;">
+
+<span class="invalid">
+
+INVALID DOCUMENT
+
+</span>
+
+</p>
+
+<p style="text-align:center;">
+
+No official ARSP document was found with this document number.
+
+</p>
+
+<% } %>
+
+<div class="footer">
+
+ACTIVE RURAL SOCIAL PROGRESS
+
+</div>
+
+</div>
+
+</body>
+
+</html>

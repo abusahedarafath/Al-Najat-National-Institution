@@ -1,0 +1,157 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>Edit RTSE Application</h1>
+
+                <a href="/admin/rtse" class="btn-view">
+                    Back
+                </a>
+
+            </div>
+
+            <form
+                action="/admin/rtse/application/<%= application.id %>/edit"
+                method="POST">
+
+                <div class="profile-card">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input
+                                type="text"
+                                name="full_name"
+                                value="<%= application.full_name %>"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Father Name</label>
+                            <input
+                                type="text"
+                                name="father_name"
+                                value="<%= application.father_name %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mother Name</label>
+                            <input
+                                type="text"
+                                name="mother_name"
+                                value="<%= application.mother_name %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mobile</label>
+                            <input
+                                type="text"
+                                name="mobile"
+                                value="<%= application.mobile %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                value="<%= application.email %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>School Name</label>
+                            <input
+                                type="text"
+                                name="school_name"
+                                value="<%= application.school_name %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>District</label>
+                            <input
+                                type="text"
+                                name="district"
+                                value="<%= application.district %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>State</label>
+                            <input
+                                type="text"
+                                name="state"
+                                value="<%= application.state %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Class</label>
+                            <input
+                                type="number"
+                                name="class"
+                                value="<%= application.class %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status</label>
+
+                            <select name="status">
+
+                                <option
+                                    value="Pending"
+                                    <%= application.status==="Pending"?"selected":"" %>>
+
+                                    Pending
+
+                                </option>
+
+                                <option
+                                    value="Approved"
+                                    <%= application.status==="Approved"?"selected":"" %>>
+
+                                    Approved
+
+                                </option>
+
+                                <option
+                                    value="Rejected"
+                                    <%= application.status==="Rejected"?"selected":"" %>>
+
+                                    Rejected
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+
+                        Update Application
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

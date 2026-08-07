@@ -1,0 +1,367 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+                <h1>
+                    <%= isEdit ? "Edit ARSP Member" : "Register ARSP Member" %>
+                </h1>
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="<%= isEdit ? '/admin/arsp/member/' + member.id + '/edit' : '/admin/arsp/register' %>"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="admin-form">
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            name="full_name"
+                            value="<%= isEdit ? member.full_name : '' %>"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Father's Name</label>
+                        <input
+                            type="text"
+                            name="father_name"
+                            value="<%= isEdit ? member.father_name : '' %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mother's Name</label>
+                        <input
+                            type="text"
+                            name="mother_name"
+                            value="<%= isEdit ? member.mother_name : '' %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+
+                        <select name="gender">
+
+                            <option
+                                value="Male"
+                                <%= isEdit && member.gender==="Male" ? "selected" : "" %>>
+                                Male
+                            </option>
+
+                            <option
+                                value="Female"
+                                <%= isEdit && member.gender==="Female" ? "selected" : "" %>>
+                                Female
+                            </option>
+
+                            <option
+                                value="Other"
+                                <%= isEdit && member.gender==="Other" ? "selected" : "" %>>
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+
+                        <input
+                            type="date"
+                            name="dob"
+                            value="<%= isEdit && member.dob ? member.dob.toISOString().split('T')[0] : '' %>">
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Blood Group</label>
+
+                        <select name="blood_group">
+
+                            <% const groups=['A+','A-','B+','B-','AB+','AB-','O+','O-']; %>
+
+                            <% groups.forEach(group=>{ %>
+
+                            <option
+                                value="<%= group %>"
+                                <%= isEdit && member.blood_group===group ? "selected" : "" %>>
+
+                                <%= group %>
+
+                            </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+
+
+
+
+<h3 style="margin-top:30px;margin-bottom:15px;">
+    Professional Information
+</h3>
+
+<div class="form-group">
+
+    <label>Occupation</label>
+
+    <input
+        type="text"
+        name="occupation"
+        value="<%= isEdit ? member.occupation : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Nationality</label>
+
+    <input
+        type="text"
+        name="nationality"
+        value="<%= isEdit ? member.nationality : 'Indian' %>">
+
+</div>
+
+
+
+
+
+<h3 style="margin-top:30px;margin-bottom:15px;">
+    Identity Verification
+</h3>
+
+<div class="form-group">
+
+    <label>Identity Proof</label>
+
+    <select name="identity_type">
+
+        <option value="">Select Identity Proof</option>
+
+        <option value="Aadhaar">Aadhaar Card</option>
+
+        <option value="PAN">PAN Card</option>
+
+        <option value="Voter ID">Voter ID</option>
+
+        <option value="Passport">Passport</option>
+
+        <option value="Driving Licence">Driving Licence</option>
+
+    </select>
+
+</div>
+
+<div class="form-group">
+
+    <label>Identity Number</label>
+
+    <input
+        type="text"
+        name="identity_number"
+        value="<%= isEdit ? member.identity_number : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Identity Front</label>
+
+    <input
+        type="file"
+        name="identity_front"
+        accept="image/*,.pdf">
+
+</div>
+
+<div class="form-group">
+
+    <label>Identity Back</label>
+
+    <input
+        type="file"
+        name="identity_back"
+        accept="image/*,.pdf">
+
+</div>
+
+
+
+
+
+
+<h3 style="margin-top:30px;margin-bottom:15px;">
+    Emergency Contact
+</h3>
+
+<div class="form-group">
+
+    <label>Emergency Contact Name</label>
+
+    <input
+        type="text"
+        name="emergency_contact_name"
+        value="<%= isEdit ? member.emergency_contact_name : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Relationship</label>
+
+    <input
+        type="text"
+        name="emergency_contact_relation"
+        value="<%= isEdit ? member.emergency_contact_relation : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Emergency Mobile Number</label>
+
+    <input
+        type="text"
+        name="emergency_contact_mobile"
+        value="<%= isEdit ? member.emergency_contact_mobile : '' %>">
+
+</div>
+
+
+
+
+
+<div class="form-group">
+
+    <label>District</label>
+
+    <input
+        type="text"
+        name="district"
+        value="<%= isEdit ? member.district : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>State</label>
+
+    <input
+        type="text"
+        name="state"
+        value="<%= isEdit ? member.state : 'Assam' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Pincode</label>
+
+    <input
+        type="text"
+        name="pincode"
+        value="<%= isEdit ? member.pincode : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Joining Date</label>
+
+    <input
+        type="date"
+        name="joining_date"
+        value="<%= isEdit && member.joining_date ? member.joining_date.toISOString().split('T')[0] : '' %>">
+
+</div>
+
+<div class="form-group">
+
+    <label>Photo</label>
+
+    <% if (isEdit && member.photo) { %>
+
+        <div style="margin-bottom:10px;">
+
+            <img
+                src="/uploads/arsp-members/<%= member.photo %>"
+                style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
+
+        </div>
+
+    <% } %>
+
+    <input
+        type="file"
+        name="photo"
+        accept=".jpg,.jpeg,.png,.webp">
+
+</div>
+
+<div class="form-group">
+
+    <label>Status</label>
+
+    <select name="status">
+
+        <option
+            value="Active"
+            <%= isEdit && member.status==="Active" ? "selected" : "" %>>
+            Active
+        </option>
+
+        <option
+            value="Inactive"
+            <%= isEdit && member.status==="Inactive" ? "selected" : "" %>>
+            Inactive
+        </option>
+
+    </select>
+
+</div>
+
+<div class="form-actions">
+
+    <button
+        type="submit"
+        class="btn-save">
+
+        <%= isEdit ? "Update Member" : "Register Member" %>
+
+    </button>
+
+    <a
+        href="/admin/arsp/members"
+        class="btn-cancel"
+        style="text-decoration:none;padding:10px 20px;display:inline-block;">
+
+        Cancel
+
+    </a>
+
+</div>
+
+</form>
+
+</div>
+
+</main>
+
+</div>
+
+<%- include("../partials/footer") %>

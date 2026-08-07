@@ -1,0 +1,162 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Fee Categories</h1>
+
+                    <p>Manage all fee categories for the institution.</p>
+
+                </div>
+
+                <a
+                    href="/admin/fee-category/add"
+                    class="btn btn-primary">
+
+                    + Add Fee Category
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+
+                        <th>Action</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (categories && categories.length > 0) { %>
+
+                        <% categories.forEach(category => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <%= category.category_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= category.description || "-" %>
+
+                                </td>
+
+                                <td>
+
+                                    ₹ <%= Number(category.amount).toFixed(2) %>
+
+                                </td>
+
+
+
+<td>
+
+    <% if (category.status === "Active") { %>
+
+        <span class="badge badge-success">Active</span>
+
+    <% } else { %>
+
+        <span class="badge badge-danger">Inactive</span>
+
+    <% } %>
+
+</td>
+
+
+
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/fee-category/<%= category.id %>"
+                                            class="btn btn-primary">
+
+                                            View
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/fee-category/<%= category.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/fee-category/<%= category.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Delete this fee category?')">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                style="text-align:center;">
+
+                                No fee categories found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

@@ -1,0 +1,188 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Homepage Buttons</h1>
+
+                    <p>Manage homepage quick buttons.</p>
+
+                </div>
+
+                <a
+                    href="/admin/quick-access/add"
+                    class="btn btn-primary">
+
+                    + Add Button
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Title</th>
+
+                            <th>Subtitle</th>
+
+                            <th>Icon</th>
+
+                            <th>URL</th>
+
+                            <th>Order</th>
+
+                            <th>Status</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% if(items.length){ %>
+
+                            <% items.forEach((item,index)=>{ %>
+
+                                <tr>
+
+                                    <td>
+
+                                        <%= index+1 %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+
+                                            <%= item.title %>
+
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= item.subtitle %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <i class="fa-solid fa-<%= item.icon %>"></i>
+
+                                        <%= item.icon %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= item.url %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= item.display_order %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <% if(item.status==="Active"){ %>
+
+                                            <span class="badge badge-success">
+
+                                                Active
+
+                                            </span>
+
+                                        <% }else{ %>
+
+                                            <span class="badge badge-danger">
+
+                                                Inactive
+
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/quick-access/<%= item.id %>/edit"
+                                            class="btn btn-warning">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/quick-access/<%= item.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Delete this button?')">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        <% }else{ %>
+
+                            <tr>
+
+                                <td colspan="8">
+
+                                    No Homepage Buttons Found.
+
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

@@ -1,0 +1,232 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/gallery.css">
+
+<%- include("../partials/navbar") %>
+
+
+
+
+
+
+<section class="page-banner">
+
+    <div class="container">
+
+        <h1><%= album.title %></h1>
+
+        <p><%= album.description %></p>
+
+        <div class="album-meta">
+
+            <span>
+                📷 <%= images.length %> Photos
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+<section class="gallery-page">
+
+    <div class="container">
+
+        <div class="gallery-grid">
+
+            <% if(images && images.length){ %>
+
+                <% images.forEach(image=>{ %>
+
+                    <div class="gallery-card">
+
+
+
+
+                       <ahref="#"
+    class="gallery-popup"
+    data-image="/uploads/gallery/<%= image.image %>">
+
+    <img
+        src="/uploads/gallery/<%= image.image %>"
+        alt="<%= image.caption %>"
+        class="gallery-image">
+
+</a>
+
+
+
+
+                        <div class="gallery-content">
+
+                            <p>
+
+                                <%= image.caption || "Al-Najat National Institution" %>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <div class="empty-box">
+
+                    No images available in this album.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- Gallery Lightbox -->
+
+<div id="lightbox" class="lightbox">
+
+    <span class="lightbox-close">&times;</span>
+
+    <span class="lightbox-prev">&#10094;</span>
+
+    <img
+        id="lightbox-image"
+        class="lightbox-image"
+        src=""
+        alt="Gallery Image">
+
+    <span class="lightbox-next">&#10095;</span>
+
+</div>
+
+
+
+
+<script>
+
+const popupLinks = document.querySelectorAll(".gallery-popup");
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightbox-image");
+const closeBtn = document.querySelector(".lightbox-close");
+const prevBtn = document.querySelector(".lightbox-prev");
+const nextBtn = document.querySelector(".lightbox-next");
+
+let currentIndex = 0;
+
+const images = [];
+
+popupLinks.forEach((link,index)=>{
+
+    images.push(link.dataset.image);
+
+    link.addEventListener("click",function(e){
+
+        e.preventDefault();
+
+        currentIndex = index;
+
+        showImage();
+
+        lightbox.classList.add("show");
+
+    });
+
+});
+
+function showImage(){
+
+    lightboxImage.src = images[currentIndex];
+
+}
+
+nextBtn.addEventListener("click",()=>{
+
+    currentIndex++;
+
+    if(currentIndex >= images.length){
+
+        currentIndex = 0;
+
+    }
+
+    showImage();
+
+});
+
+prevBtn.addEventListener("click",()=>{
+
+    currentIndex--;
+
+    if(currentIndex < 0){
+
+        currentIndex = images.length-1;
+
+    }
+
+    showImage();
+
+});
+
+closeBtn.addEventListener("click",()=>{
+
+    lightbox.classList.remove("show");
+
+});
+
+lightbox.addEventListener("click",function(e){
+
+    if(e.target===lightbox){
+
+        lightbox.classList.remove("show");
+
+    }
+
+});
+
+document.addEventListener("keydown",function(e){
+
+    if(!lightbox.classList.contains("show")) return;
+
+    if(e.key==="Escape"){
+
+        lightbox.classList.remove("show");
+
+    }
+
+    if(e.key==="ArrowRight"){
+
+        nextBtn.click();
+
+    }
+
+    if(e.key==="ArrowLeft"){
+
+        prevBtn.click();
+
+    }
+
+});
+
+</script>
+
+
+
+
+
+
+<%- include("../partials/footer") %>

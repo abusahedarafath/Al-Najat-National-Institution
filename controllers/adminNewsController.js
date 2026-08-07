@@ -1,143 +1,112 @@
 const News = require("../models/News");
 
-/**
- * List News
- */
-exports.index = (req, res) => {
-
-    News.getAll((err, news) => {
-
-        if (err) {
-            console.error(err);
-            return res.redirect("/admin");
-        }
+exports.index = async (req, res) => {
+    try {
+        const news = await News.getAll();
 
         res.render("admin/news/index", {
             news
         });
-
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Unable to load news.");
+        res.redirect("/admin");
+    }
 };
 
-/**
- * Create Page
- */
 exports.createPage = (req, res) => {
-
     res.render("admin/news/create");
-
 };
 
-/**
- * Store News
- */
-exports.store = (req, res) => {
 
-    const data = {
 
-        title: req.body.title,
 
-        description: req.body.description,
+exports.store = async (req, res) => {
+    try {
+        const data = {
+            title: req.body.title,
+            description: req.body.description,
+            image: req.file ? req.file.filename : "",
+            publish_date: req.body.publish_date,
+            status: req.body.status
+        };
 
-        image: req.file ? req.file.filename : "",
+        await News.create(data);
 
-        publish_date: req.body.publish_date,
-
-        status: req.body.status
-
-    };
-
-    News.create(data, (err) => {
-
-        if (err) {
-            console.error(err);
-            return res.redirect("/admin/news/create");
-        }
-
+        req.flash("success", "News created successfully.");
         res.redirect("/admin/news");
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to create news.");
+        res.redirect("/admin/news/create");
+    }
 };
 
-/**
- * Edit Page
- */
-exports.editPage = (req, res) => {
+exports.editPage = async (req, res) => {
+    try {
+        const news = await News.getById(req.params.id);
 
-    News.getById(req.params.id, (err, result) => {
-
-        if (err || result.length === 0) {
+        if (!news) {
+            req.flash("error", "News not found.");
             return res.redirect("/admin/news");
         }
 
         res.render("admin/news/edit", {
-
-            news: result[0]
-
+            news
         });
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load news.");
+        res.redirect("/admin/news");
+    }
 };
 
-/**
- * Update News
- */
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
+    try {
+        const oldNews = await News.getById(req.params.id);
 
-    News.getById(req.params.id, (err, result) => {
-
-        if (err || result.length === 0) {
+        if (!oldNews) {
+            req.flash("error", "News not found.");
             return res.redirect("/admin/news");
         }
 
-        const oldNews = result[0];
-
         const data = {
-
             title: req.body.title,
-
             description: req.body.description,
-
-            image: req.file
-                ? req.file.filename
-                : oldNews.image,
-
+            image: req.file ? req.file.filename : oldNews.image,
             publish_date: req.body.publish_date,
-
             status: req.body.status
-
         };
 
-        News.update(req.params.id, data, (err) => {
+        await News.update(req.params.id, data);
 
-            if (err) {
-                console.error(err);
-            }
-
-            res.redirect("/admin/news");
-
-        });
-
-    });
-
-};
-
-/**
- * Delete News
- */
-exports.delete = (req, res) => {
-
-    News.delete(req.params.id, (err) => {
-
-        if (err) {
-            console.error(err);
-        }
-
+        req.flash("success", "News updated successfully.");
         res.redirect("/admin/news");
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to update news.");
+        res.redirect("/admin/news");
+    }
 };
+
+exports.delete = async (req, res) => {
+    try {
+        await News.delete(req.params.id);
+
+        req.flash("success", "News deleted successfully.");
+        res.redirect("/admin/news");
+
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to delete news.");
+        res.redirect("/admin/news");
+    }
+};
+
+
+
+
+

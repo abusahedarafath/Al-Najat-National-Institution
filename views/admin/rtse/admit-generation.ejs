@@ -1,0 +1,158 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+
+                    Generate Admit Cards
+
+                </h1>
+
+                <a
+
+                    href="/admin/rtse"
+
+                    class="btn-cancel">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <div
+                style="text-align:center;">
+
+                    <h2>
+
+                        SECTION <%= section %>
+
+                    </h2>
+
+                    <br>
+
+                    <h3>
+
+                        Total Students
+
+                    </h3>
+
+                    <h1>
+
+                        <%= students.length %>
+
+                    </h1>
+
+                    <br>
+
+                    <div
+                    style="max-width:600px;margin:auto;">
+
+                        <div
+                        style="
+                        height:30px;
+                        background:#ddd;
+                        border-radius:30px;
+                        overflow:hidden;">
+
+                            <div
+
+                                id="progressBar"
+
+                                style="
+                                width:0%;
+                                height:100%;
+                                background:#28a745;">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <h2 id="progressText">
+
+                        Ready
+
+                    </h2>
+
+                    <br>
+
+                    <button
+
+                        id="generateBtn"
+
+                        class="btn-save">
+
+                        Start Admit Generation
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const btn = document.getElementById("generateBtn");
+
+btn.onclick = async function () {
+
+    btn.disabled = true;
+
+    document.getElementById("progressText").innerHTML =
+        "Generating Admit Cards...";
+
+    document.getElementById("progressBar").style.width = "100%";
+
+    try {
+
+        const response = await fetch(
+            window.location.pathname,
+            {
+                method: "POST"
+            }
+        );
+
+        if (response.redirected) {
+
+            window.location.href = response.url;
+
+        }
+
+    } catch (err) {
+
+        alert("Failed to generate admit cards.");
+
+        btn.disabled = false;
+
+    }
+
+};
+
+</script>
+
+
+
+
+
+<%- include("../partials/footer") %>

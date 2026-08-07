@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Notice</title>
-
-    <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
-
+<%- include("../partials/header") %>
 <div class="admin-layout">
 
-    <%- include("../../partials/admin-sidebar") %>
-
+<%- include("../partials/sidebar") %>
     <main class="admin-content">
 
         <div class="container">
@@ -106,5 +95,30 @@
 
                     </div>
 
-                    <button
-                       
+<button
+    type="submit"
+    class="btn btn-primary">
+
+    Update Notice
+
+</button>
+
+<a
+    href="/admin/notices"
+    class="btn btn-secondary">
+
+    Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+<%- include("../partials/footer") %>

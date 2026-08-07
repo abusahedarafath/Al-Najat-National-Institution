@@ -1,0 +1,223 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Add Marks</h1>
+
+                    <p>Enter a student's examination marks.</p>
+
+                </div>
+
+                <a
+                    href="/admin/marks"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/mark/add"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>Student</label>
+
+                        <select
+                            name="student_id"
+                            required>
+
+                            <option value="">Select Student</option>
+
+                            <% students.forEach(student => { %>
+
+                                <option value="<%= student.id %>">
+
+                                    <%= student.name %> (Roll: <%= student.roll_number %>)
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Class</label>
+
+                        <select
+                            name="class_id"
+                            required>
+
+                            <option value="">Select Class</option>
+
+                            <% classes.forEach(cls => { %>
+
+                                <option value="<%= cls.id %>">
+
+                                    <%= cls.class_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Examination</label>
+
+                        <select
+                            name="exam_id"
+                            required>
+
+                            <option value="">Select Examination</option>
+
+                            <% exams.forEach(exam => { %>
+
+                                <option value="<%= exam.id %>">
+
+                                    <%= exam.exam_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Subject</label>
+
+                        <select
+                            name="subject_id"
+                            required>
+
+                            <option value="">Select Subject</option>
+
+                            <% subjects.forEach(subject => { %>
+
+                                <option value="<%= subject.id %>">
+
+                                    <%= subject.subject_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Obtained Marks</label>
+
+                        <input
+                            type="number"
+                            name="obtained_marks"
+                            min="0"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Total Marks</label>
+
+                        <input
+                            type="number"
+                            name="total_marks"
+                            min="1"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Grade</label>
+
+                        <input
+                            type="text"
+                            name="grade"
+                            placeholder="e.g. A+">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>GPA</label>
+
+                        <input
+                            type="number"
+                            name="gpa"
+                            step="0.01"
+                            min="0"
+                            max="10"
+                            placeholder="e.g. 4.00">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Remarks</label>
+
+                        <textarea
+                            name="remarks"
+                            rows="4"
+                            placeholder="Optional remarks..."></textarea>
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save Marks
+
+                        </button>
+
+                        <a
+                            href="/admin/marks"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

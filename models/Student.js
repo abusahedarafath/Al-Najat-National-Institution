@@ -1,31 +1,43 @@
 const db = require("../config/database");
 
-class Student {
+const Student = {
 
-    // ===============================
-    // Generate Next Student Number
-    // ===============================
-    static getNextStudentNumber(callback) {
 
-        const sql = `
-            SELECT COUNT(*) AS total
+
+
+    async getNextStudentNumber() {
+        const year = new Date().getFullYear();
+
+        const [rows] = await db.query(
+            `
+            SELECT student_id
             FROM students
-        `;
+            WHERE student_id LIKE ?
+            ORDER BY CAST(RIGHT(student_id,4) AS UNSIGNED) DESC
+            LIMIT 1
+            `,
+            [`ANI${year}%`]
+        );
 
-        db.query(sql, (err, rows) => {
-            if (err) return callback(err);
+        let next = 1;
 
-            const nextNumber = (rows[0].total || 0) + 1;
-            callback(null, nextNumber);
-        });
+        if (rows.length > 0) {
+            const lastId = rows[0].student_id;
+            const number = parseInt(lastId.slice(-4), 10);
 
-    }
+            if (!isNaN(number)) {
+                next = number + 1;
+            }
+        }
 
-    // ===============================
-    // Create Student
-    // ===============================
-    static create(data, callback) {
+        return `ANI${year}${String(next).padStart(4, "0")}`;
+    },
 
+
+
+
+
+    async create(student) {
         const sql = `
             INSERT INTO students
             (
@@ -42,143 +54,204 @@ class Student {
                 course,
                 previous_school,
                 admission_date,
-                status
+                status,
+                photo
             )
             VALUES
-            (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?
-            )
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
-        db.query(
-            sql,
-            [
-                data.student_id,
-                data.application_id,
-                data.full_name,
-                data.father_name,
-                data.mother_name,
-                data.dob,
-                data.gender,
-                data.mobile,
-                data.email,
-                data.address,
-                data.course,
-                data.previous_school,
-                data.status || "Active"
-            ],
-            callback
-        );
+        const [result] = await db.query(sql, [
+            student.student_id,
+            student.application_id,
+            student.full_name,
+            student.father_name,
+            student.mother_name,
+            student.dob,
+            student.gender,
+            student.mobile,
+            student.email,
+            student.address,
+            student.course,
+            student.previous_school,
+            student.admission_date,
+            student.status,
+            student.photo
+        ]);  
+          return result;
+    },
 
-    }
 
-    // ===============================
-    // Get All Students
-    // ===============================
-    static getAll(callback) {
 
-        db.query(
-            "SELECT * FROM students ORDER BY id DESC",
-            callback
-        );
 
-    }
 
-    // ===============================
-    // Get Student By ID
-    // ===============================
-    static getById(id, callback) {
+    async getAll() {
+        const [rows] = await db.query(`
+            SELECT *
+            FROM students
+            ORDER BY id DESC
+        `);
 
-        db.query(
-            "SELECT * FROM students WHERE id = ?",
-            [id],
-            callback
-        );
+        return rows;
+    },
 
-    }
 
-    // ===============================
-    // Find Student By Student ID
-    // ===============================
-    static findByStudentId(studentId, callback) {
 
-        db.query(
-            "SELECT * FROM students WHERE student_id = ? LIMIT 1",
-            [studentId],
-            callback
-        );
 
-    }
 
-    // ===============================
-    // Check Existing Student
-    // ===============================
-    static findByApplicationId(applicationId, callback) {
-
-        db.query(
-            "SELECT * FROM students WHERE application_id = ? LIMIT 1",
-            [applicationId],
-            callback
-        );
-
-    }
-
-    // ===============================
-    // Update Student
-    // ===============================
-    static update(id, student, callback) {
-
-        const sql = `
-            UPDATE students
-            SET
-                full_name = ?,
-                father_name = ?,
-                mother_name = ?,
-                dob = ?,
-                gender = ?,
-                mobile = ?,
-                email = ?,
-                address = ?,
-                course = ?,
-                previous_school = ?,
-                status = ?
+    async getById(id) {
+        const [rows] = await db.query(
+            `
+            SELECT *
+            FROM students
             WHERE id = ?
-        `;
-
-        db.query(
-            sql,
-            [
-                student.full_name,
-                student.father_name,
-                student.mother_name,
-                student.dob,
-                student.gender,
-                student.mobile,
-                student.email,
-                student.address,
-                student.course,
-                student.previous_school,
-                student.status,
-                id
-            ],
-            callback
+            `,
+            [id]
         );
 
-    }
+        return rows[0] || null;
+    },
 
-    // ===============================
-    // Deactivate Student
-    // ===============================
-    static deactivate(id, callback) {
 
-        db.query(
-            "UPDATE students SET status = 'Inactive' WHERE id = ?",
-            [id],
-            callback
+
+
+
+    async findByStudentId(studentId) {
+        const [rows] = await db.query(
+            `
+            SELECT *
+            FROM students
+            WHERE student_id = ?
+            LIMIT 1
+            `,
+            [studentId]
         );
 
-    }
+        return rows[0] || null;
+    },
 
+
+
+
+
+    async findByApplicationId(applicationId) {
+        const [rows] = await db.query(
+            `
+            SELECT *
+            FROM students
+            WHERE application_id = ?
+            LIMIT 1
+            `,
+            [applicationId]
+        );
+
+        return rows[0] || null;
+    },
+
+
+
+
+async update(id, student) {
+    const sql = `
+        UPDATE students
+        SET
+            full_name = ?,
+            father_name = ?,
+            mother_name = ?,
+            dob = ?,
+            gender = ?,
+            mobile = ?,
+            email = ?,
+            address = ?,
+            course = ?,
+            previous_school = ?,
+            status = ?,
+            photo = COALESCE(?, photo)
+        WHERE id = ?
+    `;
+
+    const [result] = await db.query(sql, [
+        student.full_name,
+        student.father_name,
+        student.mother_name,
+        student.dob,
+        student.gender,
+        student.mobile,
+        student.email,
+        student.address,
+        student.course,
+        student.previous_school,
+        student.status,
+        student.photo || null,
+        id
+    ]);
+
+    return result;
+},
+
+
+
+
+    async deactivate(id) {
+        const [result] = await db.query(
+            `
+            UPDATE students
+            SET status = 'Inactive'
+            WHERE id = ?
+            `,
+            [id]
+        );
+
+        return result;
+    },
+
+
+
+
+
+    async delete(id) {
+        const [result] = await db.query(
+            `
+            DELETE FROM students
+            WHERE id = ?
+            `,
+            [id]
+        );
+
+        return result;
+    },
+
+
+
+async deletePermanent(id) {
+    return this.delete(id);
+},
+
+async createFromApplication(application, photo = null) {
+    const studentId = await this.getNextStudentNumber();
+
+    return this.create({
+        student_id: studentId,
+        application_id: application.id,
+        full_name: application.full_name,
+        father_name: application.father_name,
+        mother_name: application.mother_name,
+        dob: application.dob,
+        gender: application.gender,
+        mobile: application.mobile,
+        email: application.email,
+        address: application.address,
+        course: application.course,
+        previous_school: application.previous_school,
+        admission_date: new Date(),
+        status: "Active",
+        photo: photo
+    });
 }
+};
+
+
+
+
 
 module.exports = Student;

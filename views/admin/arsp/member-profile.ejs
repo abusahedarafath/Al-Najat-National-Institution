@@ -1,0 +1,522 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>ARSP Member Profile</h1>
+
+                <a
+                    href="/admin/arsp/members"
+                    class="btn-cancel">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <div style="text-align:center;margin-bottom:25px;">
+
+                    <% if(member.photo){ %>
+
+                        <img
+                            src="/uploads/arsp-members/<%= member.photo %>"
+                            alt="<%= member.full_name %>"
+                            style="width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid #ddd;">
+
+                    <% } else { %>
+
+                        <img
+                            src="/images/default-user.png"
+                            alt="No Photo"
+                            style="width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid #ddd;">
+
+                    <% } %>
+
+                </div>
+
+                <h3>Personal Information</h3>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">ARSP Member ID</th>
+
+                            <td><%= member.member_id %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Registration Number</th>
+
+                            <td><%= member.registration_no || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Full Name</th>
+
+                            <td><%= member.full_name %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Father's Name</th>
+
+                            <td><%= member.father_name || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Mother's Name</th>
+
+                            <td><%= member.mother_name || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Gender</th>
+
+                            <td><%= member.gender || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Date of Birth</th>
+
+                            <td><%= member.dob || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Blood Group</th>
+
+                            <td><%= member.blood_group || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Occupation</th>
+
+                            <td><%= member.occupation || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Nationality</th>
+
+                            <td><%= member.nationality || "-" %></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <h3 style="margin-top:30px;">Identity & Contact Information</h3>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">Identity Type</th>
+
+                            <td><%= member.identity_type || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Identity Number</th>
+
+                            <td><%= member.identity_number || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Mobile Number</th>
+
+                            <td><%= member.mobile || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Email Address</th>
+
+                            <td><%= member.email || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Address</th>
+
+                            <td><%= member.address || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>District</th>
+
+                            <td><%= member.district || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>State</th>
+
+                            <td><%= member.state || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>PIN Code</th>
+
+                            <td><%= member.pincode || "-" %></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+
+                <h3 style="margin-top:30px;">Emergency Contact</h3>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">Emergency Contact Name</th>
+
+                            <td><%= member.emergency_contact_name || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Relationship</th>
+
+                            <td><%= member.emergency_contact_relation || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Emergency Mobile</th>
+
+                            <td><%= member.emergency_contact_mobile || "-" %></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <h3 style="margin-top:30px;">Membership Information</h3>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">Registration Source</th>
+
+                            <td><%= member.registration_source || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Approval Status</th>
+
+                            <td><%= member.approval_status || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Joining Date</th>
+
+                            <td><%= member.joining_date || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Member Status</th>
+
+                            <td><%= member.status || "-" %></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <h3 style="margin-top:30px;">Committee Information</h3>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">Committee</th>
+
+                            <td><%= member.committee || "Not Assigned" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Section</th>
+
+                            <td><%= member.section || "-" %></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Designation</th>
+
+                            <td><%= member.designation || "-" %></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <h3 style="margin-top:30px;">Uploaded Documents</h3>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">Member Photo</th>
+
+                            <td>
+
+                                <% if(member.photo){ %>
+
+                                    <a
+                                        href="/uploads/arsp-members/<%= member.photo %>"
+                                        target="_blank"
+                                        class="btn-view">
+
+                                        View Photo
+
+                                    </a>
+
+                                <% } else { %>
+
+                                    Not Uploaded
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Identity Front</th>
+
+                            <td>
+
+                                <% if(member.identity_front){ %>
+
+                                    <a
+                                        href="/uploads/arsp-members/<%= member.identity_front %>"
+                                        target="_blank"
+                                        class="btn-view">
+
+                                        View Identity Front
+
+                                    </a>
+
+                                <% } else { %>
+
+                                    Not Uploaded
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Identity Back</th>
+
+                            <td>
+
+                                <% if(member.identity_back){ %>
+
+                                    <a
+                                        href="/uploads/arsp-members/<%= member.identity_back %>"
+                                        target="_blank"
+                                        class="btn-view">
+
+                                        View Identity Back
+
+                                    </a>
+
+                                <% } else { %>
+
+                                    Not Uploaded
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>QR Code</th>
+
+                            <td>
+
+                                <% if(member.qr_code){ %>
+
+                                    <a
+                                        href="/uploads/arsp-members/<%= member.qr_code %>"
+                                        target="_blank"
+                                        class="btn-view">
+
+                                        View QR Code
+
+                                    </a>
+
+                                <% } else { %>
+
+                                    Not Available
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+
+
+                <div style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
+
+                    <a
+                        href="/admin/arsp/member/<%= member.id %>/edit"
+                        class="btn-save">
+
+                        Edit Member
+
+                    </a>
+
+                    <% if(member.designation){ %>
+
+                        <a
+                            href="/admin/arsp/member/<%= member.id %>/assign"
+                            class="btn-view">
+
+                            Change Position
+
+                        </a>
+
+                        <form
+                            action="/admin/arsp/member/<%= member.id %>/remove-position"
+                            method="POST"
+                            style="display:inline;">
+
+                            <button
+                                type="submit"
+                                class="btn-danger"
+                                onclick="return confirm('Remove this member from the current position?')">
+
+                                Remove Position
+
+                            </button>
+
+                        </form>
+
+                    <% } else { %>
+
+                        <a
+                            href="/admin/arsp/member/<%= member.id %>/assign"
+                            class="btn-view">
+
+                            Assign Position
+
+                        </a>
+
+                    <% } %>
+
+                    <a
+                        href="/admin/arsp/member/<%= member.id %>/id-card"
+                        class="btn-view">
+
+                        View ID Card
+
+                    </a>
+
+                    <% if(member.designation){ %>
+
+                        <a
+                            href="/admin/arsp/member/<%= member.id %>/appointment-letter"
+                            class="btn-view">
+
+                            Appointment Letter
+
+                        </a>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

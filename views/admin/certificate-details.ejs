@@ -1,0 +1,190 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Certificate Details</h1>
+
+                    <p>View complete certificate information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/certificates"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th>Certificate Number</th>
+
+                            <td>
+
+                                <%= certificate.certificate_no %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Student Name</th>
+
+                            <td>
+
+                                <%= certificate.full_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Student ID</th>
+
+                            <td>
+
+                                <%= certificate.student_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Class</th>
+
+                            <td>
+
+                                <%= certificate.class_name || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Roll Number</th>
+
+                            <td>
+
+                                <%= certificate.roll_no || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Certificate Type</th>
+
+                            <td>
+
+                                <%= certificate.certificate_type %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Issue Date</th>
+
+                            <td>
+
+                                <%= certificate.issue_date ? new Date(certificate.issue_date).toLocaleDateString() : "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Remarks</th>
+
+                            <td>
+
+                                <%= certificate.remarks || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div class="form-actions" style="margin-top:25px;">
+
+                    <a
+                        href="/admin/certificate/<%= certificate.id %>/edit"
+                        class="btn btn-primary">
+
+                        Edit
+
+                    </a>
+
+                    <a
+                        href="/admin/certificate/<%= certificate.id %>/print"
+                        target="_blank"
+                        class="btn btn-success">
+
+                        Print
+
+                    </a>
+
+                    <form
+                        action="/admin/certificate/<%= certificate.id %>/delete"
+                        method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('Are you sure you want to delete this certificate?');">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                    <a
+                        href="/admin/certificates"
+                        class="btn btn-secondary">
+
+                        Back to List
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

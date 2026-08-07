@@ -4,13 +4,25 @@
 
         <div class="brand">
 
-            <img src="/images/logo.png" alt="Logo" class="logo">
+            <img
+                src="<%= siteSettings && siteSettings.logo ? '/uploads/site-settings/' + siteSettings.logo : '/images/logo.png' %>"
+                alt="Logo"
+                class="logo">
 
             <div class="brand-text">
-                <h1>Al-Najat National Instition</h1>
+
+                <h1>
+                    <%= siteSettings
+                        ? siteSettings.institution_name
+                        : "Al-Najat National Institution" %>
+                </h1>
+
                 <p>
-                    An Islamic Madrasa Integrated School
+                    <%= siteSettings
+                        ? siteSettings.tagline
+                        : "An Islamic Madrasa Integrated School" %>
                 </p>
+
             </div>
 
         </div>
@@ -21,15 +33,74 @@
 
     </div>
 
-<nav class="navbar">
+    <nav class="navbar">
 
-    <a href="/">Home</a>
-    <a href="/about">About</a>
-    <a href="/admission2027">Admission</a>
-    <a href="/notice">Notice</a>
-    <a href="/news">News</a>
-    <a href="/gallery">Gallery</a>
-    <a href="/contact">Contact</a>
+        <%
+            const parentMenus = [];
+            const childMenus = {};
 
-</nav>
+            if (menus && menus.length) {
+                menus.forEach(menu => {
+                    if (!menu.parent_id) {
+                        parentMenus.push(menu);
+                    } else {
+                        if (!childMenus[menu.parent_id]) {
+                            childMenus[menu.parent_id] = [];
+                        }
+                        childMenus[menu.parent_id].push(menu);
+                    }
+                });
+            }
+        %>
+
+        <% parentMenus.forEach(parent => { %>
+
+            <% const children = childMenus[parent.id] || []; %>
+
+            <% if (children.length > 0) { %>
+
+                <div class="dropdown">
+
+                    <a
+                        href="<%= parent.menu_url %>"
+                        target="<%= parent.target %>">
+
+                        <%= parent.menu_title %>
+
+                    </a>
+
+                    <div class="dropdown-content">
+
+                        <% children.forEach(child => { %>
+
+                            <a
+                                href="<%= child.menu_url %>"
+                                target="<%= child.target %>">
+
+                                <%= child.menu_title %>
+
+                            </a>
+
+                        <% }) %>
+
+                    </div>
+
+                </div>
+
+            <% } else { %>
+
+                <a
+                    href="<%= parent.menu_url %>"
+                    target="<%= parent.target %>">
+
+                    <%= parent.menu_title %>
+
+                </a>
+
+            <% } %>
+
+        <% }) %>
+
+    </nav>
+
 </header>

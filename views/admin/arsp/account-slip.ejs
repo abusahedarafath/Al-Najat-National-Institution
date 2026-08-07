@@ -1,0 +1,810 @@
+<%- include("../partials/header") %>
+
+<style>
+
+body{
+
+    background:#f4f6f9;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+}
+
+.slip-wrapper{
+
+    max-width:1000px;
+
+    margin:30px auto;
+
+}
+
+.membership-slip{
+
+    background:#fff;
+
+    border:8px solid #0B6B3A;
+
+    border-radius:14px;
+
+    padding:30px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+
+}
+
+.watermark{
+
+    position:absolute;
+
+    top:180px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    opacity:.05;
+
+    width:380px;
+
+    z-index:0;
+
+}
+
+.slip-content{
+
+    position:relative;
+
+    z-index:5;
+
+}
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    border-bottom:3px solid #0B6B3A;
+
+    padding-bottom:18px;
+
+    margin-bottom:25px;
+
+}
+
+.logo{
+
+    width:95px;
+
+    height:95px;
+
+    object-fit:contain;
+
+}
+
+.header-center{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+.header-center h1{
+
+    margin:0;
+
+    color:#0B6B3A;
+
+    font-size:30px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+}
+
+.header-center h3{
+
+    margin:8px 0;
+
+    color:#444;
+
+    font-size:20px;
+
+}
+
+.header-center p{
+
+    margin:0;
+
+    color:#666;
+
+    font-size:14px;
+
+}
+
+.reg-box{
+
+    border:2px solid #0B6B3A;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    min-width:220px;
+
+    text-align:center;
+
+}
+
+.reg-box strong{
+
+    display:block;
+
+    color:#0B6B3A;
+
+    font-size:18px;
+
+}
+
+.section-title{
+
+    background:#0B6B3A;
+
+    color:#fff;
+
+    padding:10px;
+
+    text-align:center;
+
+    margin:25px 0 20px;
+
+    border-radius:6px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+.member-top{
+
+    display:flex;
+
+    gap:25px;
+
+}
+
+.member-left{
+
+    flex:1;
+
+}
+
+.member-right{
+
+    width:220px;
+
+    text-align:center;
+
+}
+
+.member-photo{
+
+    width:180px;
+
+    height:210px;
+
+    border:4px solid #0B6B3A;
+
+    object-fit:cover;
+
+}
+
+.qr{
+
+    width:120px;
+
+    margin-top:18px;
+
+}
+
+.info-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.info-table td{
+
+    padding:10px;
+
+    border:1px solid #ddd;
+
+    font-size:15px;
+
+}
+
+.info-table td:first-child{
+
+    width:220px;
+
+    font-weight:bold;
+
+    background:#f7f7f7;
+
+}
+
+</style>
+
+<div class="slip-wrapper">
+
+<div class="membership-slip">
+
+<% if(setting && setting.logo){ %>
+
+<img
+
+class="watermark"
+
+src="/uploads/arsp-settings/<%= setting.logo %>">
+
+<% } %>
+
+<div class="slip-content">
+
+<div class="header">
+
+<div>
+
+<% if(setting && setting.logo){ %>
+
+<img
+
+class="logo"
+
+src="/uploads/arsp-settings/<%= setting.logo %>">
+
+<% } %>
+
+</div>
+
+<div class="header-center">
+
+<h1>
+
+<%= setting.organization_name %>
+
+</h1>
+
+<h3>
+
+OFFICIAL MEMBERSHIP REGISTRATION SLIP
+
+</h3>
+
+<p>
+
+<%= setting.tagline %>
+
+</p>
+
+</div>
+
+<div class="reg-box">
+
+Registration No
+
+<strong>
+
+<%= member.registration_no %>
+
+</strong>
+
+</div>
+
+</div>
+
+<div class="section-title">
+
+MEMBER INFORMATION
+
+</div>
+
+<div class="member-top">
+
+<div class="member-left">
+
+
+
+
+
+
+
+
+<table class="info-table">
+
+<tr>
+
+<td>Registration Number</td>
+
+<td>
+
+<%= member.registration_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>ARSP Member ID</td>
+
+<td>
+
+<%= member.member_id %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Full Name</td>
+
+<td>
+
+<%= member.full_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Father's Name</td>
+
+<td>
+
+<%= member.father_name || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Mother's Name</td>
+
+<td>
+
+<%= member.mother_name || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Gender</td>
+
+<td>
+
+<%= member.gender || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Date of Birth</td>
+
+<td>
+
+<%= member.dob
+? new Date(member.dob).toLocaleDateString("en-GB")
+: "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Blood Group</td>
+
+<td>
+
+<%= member.blood_group || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Mobile</td>
+
+<td>
+
+<%= member.mobile || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Email</td>
+
+<td>
+
+<%= member.email || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Address</td>
+
+<td>
+
+<%= member.address || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>District</td>
+
+<td>
+
+<%= member.district || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>State</td>
+
+<td>
+
+<%= member.state || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>PIN Code</td>
+
+<td>
+
+<%= member.pincode || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Joining Date</td>
+
+<td>
+
+<%= member.joining_date
+? new Date(member.joining_date).toLocaleDateString("en-GB")
+: "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Status</td>
+
+<td>
+
+<span style="color:#0B6B3A;font-weight:bold;">
+
+<%= member.status %>
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Registration Source</td>
+
+<td>
+
+<%= registrationSource %>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="member-right">
+
+<img
+
+class="member-photo"
+
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>">
+
+<br>
+
+<% if(member.qr_code){ %>
+
+<img
+
+class="qr"
+
+src="/uploads/arsp-qr/<%= member.qr_code %>">
+
+<% } %>
+
+<p
+style="margin-top:15px;
+font-weight:bold;
+color:#0B6B3A;">
+
+SCAN TO VERIFY
+
+</p>
+
+</div>
+
+</div>
+
+<div class="section-title">
+
+ACCOUNT DETAILS
+
+</div>
+
+
+
+
+
+
+
+
+<table class="info-table" style="margin-top:20px;">
+
+<tr>
+
+<td>Username (ARSP ID)</td>
+
+<td>
+
+<strong><%= username %></strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Temporary Password</td>
+
+<td>
+
+<strong><%= password %></strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Login Portal</td>
+
+<td>
+
+<a href="<%= loginUrl %>">
+
+<%= loginUrl %>
+
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+<div style="margin-top:30px;">
+
+<h3 style="color:#0B6B3A;">
+
+Important Instructions
+
+</h3>
+
+<ol style="line-height:2;">
+
+<li>
+
+This Registration Number is permanent and should be quoted in all official correspondence.
+
+</li>
+
+<li>
+
+Use your ARSP Member ID as the username for login.
+
+</li>
+
+<li>
+
+Change your password immediately after your first login.
+
+</li>
+
+<li>
+
+Keep this registration slip safe for future verification.
+
+</li>
+
+<li>
+
+Your Membership ID Card can be downloaded after logging into your dashboard.
+
+</li>
+
+<li>
+
+Scan the QR Code to verify your membership online.
+
+</li>
+
+</ol>
+
+</div>
+
+<div style="margin-top:40px;">
+
+<h3 style="color:#0B6B3A;">
+
+Declaration
+
+</h3>
+
+<p style="text-align:justify;line-height:1.8;">
+
+I hereby declare that all information submitted during my membership registration is true and correct to the best of my knowledge. I agree to abide by the Constitution, Rules, Regulations and Code of Conduct of <strong><%= setting.organization_name %></strong>. I understand that any false information may result in suspension or cancellation of my membership.
+
+</p>
+
+</div>
+
+<div style="display:flex;justify-content:space-between;margin-top:70px;">
+
+<div style="width:30%;text-align:center;">
+
+<div style="border-top:1px solid #000;padding-top:8px;">
+
+Member Signature
+
+</div>
+
+</div>
+
+<div style="width:30%;text-align:center;">
+
+<div style="border-top:1px solid #000;padding-top:8px;">
+
+Official Seal
+
+</div>
+
+</div>
+
+<div style="width:30%;text-align:center;">
+
+<div style="border-top:1px solid #000;padding-top:8px;">
+
+Authorized Signature
+
+</div>
+
+</div>
+
+</div>
+
+<div style="margin-top:40px;text-align:center;">
+
+<button
+
+class="btn-save"
+
+onclick="window.print()">
+
+<i class="fas fa-print"></i>
+
+Print Registration Slip
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<style>
+
+@media print{
+
+header,
+
+aside,
+
+nav,
+
+button,
+
+.print-area{
+
+display:none !important;
+
+}
+
+body{
+
+background:#fff;
+
+}
+
+.slip-wrapper{
+
+margin:0;
+
+max-width:100%;
+
+}
+
+.membership-slip{
+
+border:3px solid #0B6B3A;
+
+box-shadow:none;
+
+margin:0;
+
+}
+
+}
+
+</style>
+
+<%- include("../partials/footer") %>

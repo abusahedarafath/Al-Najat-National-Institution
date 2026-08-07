@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/arsp.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div>
+
+<strong>
+
+My Activity
+
+</strong>
+
+</div>
+
+<div>
+
+<a href="/arsp/dashboard">
+
+Dashboard
+
+</a>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<h2>
+
+Activity History
+
+</h2>
+
+<% if(activities.length===0){ %>
+
+<div class="notice-card">
+
+No activity found.
+
+</div>
+
+<% } %>
+
+<% activities.forEach(activity=>{ %>
+
+<div class="notice-card">
+
+<h3>
+
+<%= activity.activity %>
+
+</h3>
+
+<p>
+
+IP Address :
+<%= activity.ip_address || "-" %>
+
+</p>
+
+<small>
+
+<%= new Date(activity.created_at).toLocaleString("en-GB") %>
+
+</small>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</body>
+
+</html>

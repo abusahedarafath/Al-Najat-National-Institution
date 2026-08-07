@@ -1,0 +1,176 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Fee Payment Details</h1>
+
+                    <p>View complete payment information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/fee-payments"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="details-card">
+
+                <table class="details-table">
+
+                    <tr>
+                        <th>Receipt No.</th>
+                        <td><%= payment.receipt_no %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Student ID</th>
+                        <td><%= payment.student_id %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Class ID</th>
+                        <td><%= payment.class_id %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Fee Category ID</th>
+                        <td><%= payment.category_id %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Payment Date</th>
+                        <td>
+                            <%= payment.payment_date ? payment.payment_date.toLocaleDateString() : "" %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Payment Method</th>
+                        <td><%= payment.payment_method %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Amount</th>
+                        <td>₹ <%= Number(payment.amount).toFixed(2) %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Fine</th>
+                        <td>₹ <%= Number(payment.fine).toFixed(2) %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Discount</th>
+                        <td>₹ <%= Number(payment.discount).toFixed(2) %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Net Amount</th>
+                        <td>
+                            ₹ <%= (Number(payment.amount) + Number(payment.fine) - Number(payment.discount)).toFixed(2) %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Status</th>
+                        <td>
+
+                            <% if (payment.payment_status === "Paid") { %>
+
+                                <span class="badge badge-success">
+
+                                    Paid
+
+                                </span>
+
+                            <% } else if (payment.payment_status === "Pending") { %>
+
+                                <span class="badge badge-warning">
+
+                                    Pending
+
+                                </span>
+
+                            <% } else { %>
+
+                                <span class="badge badge-danger">
+
+                                    Failed
+
+                                </span>
+
+                            <% } %>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Remarks</th>
+                        <td>
+
+                            <%= payment.remarks || "N/A" %>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Created At</th>
+                        <td>
+                            <%= payment.created_at ? payment.created_at.toLocaleString() : "" %>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a
+                    href="/admin/fee-payment/<%= payment.id %>/edit"
+                    class="btn btn-primary">
+
+                    Edit
+
+                </a>
+
+                <form
+                    action="/admin/fee-payment/<%= payment.id %>/delete"
+                    method="POST"
+                    style="display:inline;">
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger"
+                        onclick="return confirm('Delete this payment?')">
+
+                        Delete
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

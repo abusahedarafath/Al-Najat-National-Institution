@@ -1,0 +1,183 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Certificate</h1>
+
+                    <p>Update certificate information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/certificates"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/certificate/<%= certificate.id %>/edit"
+                    method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>Certificate Number</label>
+
+                            <input
+                                type="text"
+                                value="<%= certificate.certificate_no %>"
+                                readonly>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Student</label>
+
+                            <input
+                                type="text"
+                                value="<%= certificate.full_name %> (<%= certificate.student_id %>)"
+                                readonly>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Certificate Type</label>
+
+                            <select
+                                name="certificate_type"
+                                required>
+
+                                <option
+                                    value="Transfer Certificate"
+                                    <%= certificate.certificate_type === "Transfer Certificate" ? "selected" : "" %>>
+
+                                    Transfer Certificate
+
+                                </option>
+
+                                <option
+                                    value="Character Certificate"
+                                    <%= certificate.certificate_type === "Character Certificate" ? "selected" : "" %>>
+
+                                    Character Certificate
+
+                                </option>
+
+                                <option
+                                    value="Bonafide Certificate"
+                                    <%= certificate.certificate_type === "Bonafide Certificate" ? "selected" : "" %>>
+
+                                    Bonafide Certificate
+
+                                </option>
+
+                                <option
+                                    value="Study Certificate"
+                                    <%= certificate.certificate_type === "Study Certificate" ? "selected" : "" %>>
+
+                                    Study Certificate
+
+                                </option>
+
+                                <option
+                                    value="Fee Clearance Certificate"
+                                    <%= certificate.certificate_type === "Fee Clearance Certificate" ? "selected" : "" %>>
+
+                                    Fee Clearance Certificate
+
+                                </option>
+
+                                <option
+                                    value="Migration Certificate"
+                                    <%= certificate.certificate_type === "Migration Certificate" ? "selected" : "" %>>
+
+                                    Migration Certificate
+
+                                </option>
+
+                                <option
+                                    value="Experience Certificate"
+                                    <%= certificate.certificate_type === "Experience Certificate" ? "selected" : "" %>>
+
+                                    Experience Certificate
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Issue Date</label>
+
+                            <input
+                                type="date"
+                                name="issue_date"
+                                value="<%= certificate.issue_date ? certificate.issue_date.toISOString().split('T')[0] : '' %>"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Remarks</label>
+
+                        <textarea
+                            name="remarks"
+                            rows="4"><%= certificate.remarks || "" %></textarea>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Update Certificate
+
+                        </button>
+
+                        <a
+                            href="/admin/certificate/<%= certificate.id %>"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

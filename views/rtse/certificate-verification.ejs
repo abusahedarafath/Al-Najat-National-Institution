@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Certificate Verification</title>
+
+<style>
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    background:#f4f4f4;
+
+    margin:0;
+
+    padding:40px;
+
+}
+
+.container{
+
+    max-width:850px;
+
+    margin:auto;
+
+    background:#fff;
+
+    padding:30px;
+
+    border-radius:10px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+
+}
+
+.header{
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+}
+
+.logo{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:contain;
+
+}
+
+.valid{
+
+    color:green;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+}
+
+.invalid{
+
+    color:red;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+}
+
+.photo{
+
+    width:130px;
+
+    height:150px;
+
+    border:1px solid #ccc;
+
+    object-fit:cover;
+
+    border-radius:6px;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:25px;
+
+}
+
+table td{
+
+    border:1px solid #ddd;
+
+    padding:10px;
+
+}
+
+.footer{
+
+    margin-top:30px;
+
+    text-align:center;
+
+    color:#666;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<% if(setting && setting.logo){ %>
+
+<img
+
+src="/uploads/arsp-settings/<%= setting.logo %>"
+
+class="logo">
+
+<% } %>
+
+<h1>
+
+Ratabari Talent Search Examination
+
+</h1>
+
+<h3>
+
+Certificate Verification Portal
+
+</h3>
+
+</div>
+
+<% if(certificate){ %>
+
+<div style="text-align:center;">
+
+<h2 class="valid">
+
+✅ VALID CERTIFICATE
+
+</h2>
+
+</div>
+
+<div style="text-align:center;margin-top:20px;">
+
+<% if(certificate.photo){ %>
+
+<img
+
+src="/uploads/rtse/<%= certificate.photo %>"
+
+class="photo">
+
+<% } %>
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="250">
+
+Certificate Number
+
+</td>
+
+<td>
+
+<strong>
+
+<%= certificate.certificate_no %>
+
+</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Student Name
+
+</td>
+
+<td>
+
+<%= certificate.full_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Registration Number
+
+</td>
+
+<td>
+
+<%= certificate.registration_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Roll Number
+
+</td>
+
+<td>
+
+<%= certificate.roll_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+School
+
+</td>
+
+<td>
+
+<%= certificate.school_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Section
+
+</td>
+
+<td>
+
+<%= certificate.section %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Certificate Type
+
+</td>
+
+<td>
+
+<strong>
+
+<%= certificate.certificate_type %>
+
+</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Issue Date
+
+</td>
+
+<td>
+
+<%= certificate.issue_date %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Status
+
+</td>
+
+<td style="color:green;font-weight:bold;">
+
+VERIFIED ✓
+
+</td>
+
+</tr>
+
+</table>
+
+<% } else { %>
+
+<div style="text-align:center;">
+
+<h2 class="invalid">
+
+❌ INVALID CERTIFICATE
+
+</h2>
+
+<p>
+
+This certificate was not issued by
+
+<strong>
+
+Active Rural Social Progress (ARSP)
+
+</strong>.
+
+</p>
+
+<p>
+
+Please contact ARSP if you believe this is an error.
+
+</p>
+
+</div>
+
+<% } %>
+
+<div class="footer">
+
+Copyright © ARSP • RTSE Verification System
+
+</div>
+
+</div>
+
+</body>
+
+</html>

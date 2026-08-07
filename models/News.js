@@ -2,33 +2,28 @@ const db = require("../config/database");
 
 class News {
 
-    static getAll(callback) {
-
+    static async getAll() {
         const sql = `
             SELECT *
             FROM news
             ORDER BY publish_date DESC, id DESC
         `;
-
-        db.query(sql, callback);
-
+        const [rows] = await db.query(sql);
+        return rows;
     }
 
-    static getActive(callback) {
-
+    static async getActive() {
         const sql = `
             SELECT *
             FROM news
             WHERE status='Active'
             ORDER BY publish_date DESC, id DESC
         `;
-
-        db.query(sql, callback);
-
+        const [rows] = await db.query(sql);
+        return rows;
     }
 
-    static getLatest(limit, callback) {
-
+    static async getLatest(limit) {
         const sql = `
             SELECT *
             FROM news
@@ -36,87 +31,68 @@ class News {
             ORDER BY publish_date DESC, id DESC
             LIMIT ?
         `;
-
-        db.query(sql, [Number(limit)], callback);
-
+        const [rows] = await db.query(sql, [Number(limit)]);
+        return rows;
     }
 
-    static getById(id, callback) {
-
-        db.query(
-            "SELECT * FROM news WHERE id=?",
-            [id],
-            callback
+    static async getById(id) {
+        const [rows] = await db.query(
+            "SELECT * FROM news WHERE id = ?",
+            [id]
         );
-
+        return rows[0];
     }
 
-    static create(data, callback) {
-
+    static async create(data) {
         const sql = `
             INSERT INTO news
-            (
-                title,
-                description,
-                image,
-                publish_date,
-                status
-            )
+            (title, description, image, publish_date, status)
             VALUES (?, ?, ?, ?, ?)
         `;
 
-        db.query(
-            sql,
-            [
-                data.title,
-                data.description,
-                data.image,
-                data.publish_date,
-                data.status
-            ],
-            callback
-        );
+        const [result] = await db.query(sql, [
+            data.title,
+            data.description,
+            data.image,
+            data.publish_date,
+            data.status
+        ]);
 
+        return result;
     }
 
-    static update(id, data, callback) {
-
+    static async update(id, data) {
         const sql = `
             UPDATE news
             SET
-                title=?,
-                description=?,
-                image=?,
-                publish_date=?,
-                status=?
-            WHERE id=?
+                title = ?,
+                description = ?,
+                image = ?,
+                publish_date = ?,
+                status = ?
+            WHERE id = ?
         `;
 
-        db.query(
-            sql,
-            [
-                data.title,
-                data.description,
-                data.image,
-                data.publish_date,
-                data.status,
-                id
-            ],
-            callback
-        );
+        const [result] = await db.query(sql, [
+            data.title,
+            data.description,
+            data.image,
+            data.publish_date,
+            data.status,
+            id
+        ]);
 
+        return result;
     }
 
-    static delete(id, callback) {
-
-        db.query(
-            "DELETE FROM news WHERE id=?",
-            [id],
-            callback
+    static async delete(id) {
+        const [result] = await db.query(
+            "DELETE FROM news WHERE id = ?",
+            [id]
         );
 
+        return result;
     }
-
 }
 
 module.exports = News;

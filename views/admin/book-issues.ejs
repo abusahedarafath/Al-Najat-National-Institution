@@ -1,0 +1,186 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Book Issue Management</h1>
+
+                    <p>Manage all issued library books.</p>
+
+                </div>
+
+                <a
+                    href="/admin/book-issue/add"
+                    class="btn btn-primary">
+
+                    + Issue Book
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Book</th>
+                        <th>Accession No.</th>
+                        <th>Student</th>
+                        <th>Student ID</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (issues && issues.length > 0) { %>
+
+                        <% issues.forEach(issue => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <%= issue.book_title %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= issue.accession_no %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= issue.student_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= issue.student_id %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= issue.issue_date ? new Date(issue.issue_date).toLocaleDateString() : "-" %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= issue.due_date ? new Date(issue.due_date).toLocaleDateString() : "-" %>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (issue.status === "Issued") { %>
+
+                                        <span class="badge badge-warning">
+
+                                            Issued
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-success">
+
+                                            Returned
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/book-issue/<%= issue.id %>"
+                                            class="btn btn-primary">
+
+                                            View
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/book-issue/<%= issue.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/book-issue/<%= issue.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Delete this issue record?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                style="text-align:center;">
+
+                                No issued books found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

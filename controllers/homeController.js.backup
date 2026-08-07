@@ -1,0 +1,64 @@
+const HeroSlider = require("../models/HeroSlider");
+const Notice = require("../models/Notice");
+const News = require("../models/News");
+const ChairmanMessage = require("../models/ChairmanMessage");
+
+exports.index = (req, res) => {
+
+    HeroSlider.getActive((sliderErr, sliders) => {
+
+        if (sliderErr) sliders = [];
+
+        Notice.getLatest(5, (noticeErr, notices) => {
+
+            if (noticeErr) notices = [];
+
+            News.getLatest(5, (newsErr, news) => {
+
+                if (newsErr) news = [];
+
+                ChairmanMessage.get((chairmanErr, result) => {
+
+                    let chairman = null;
+
+                    if (!chairmanErr && result.length > 0) {
+                        chairman = result[0];
+                    }
+
+                    res.render("home/index", {
+                        title: "Home | Al-Najat National Institution",
+                        sliders,
+                        notices,
+                        news,
+                        chairman
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
+
+};
+
+
+
+
+exports.chairmanMessage = (req, res) => {
+
+    ChairmanMessage.get((err, result) => {
+
+        if (err || result.length === 0) {
+            return res.status(404).send("Chairman's message not found.");
+        }
+
+        res.render("home/chairman-message", {
+            title: "Chairman's Message",
+            chairman: result[0]
+        });
+
+    });
+
+};

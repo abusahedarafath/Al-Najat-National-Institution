@@ -1,0 +1,247 @@
+g<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/arsp.css">
+
+<%- include("../partials/navbar") %>
+
+<div class="container">
+
+<header class="topbar">
+
+<div>
+
+<strong>ACTIVE RURAL SOCIAL PROGRESS</strong>
+
+</div>
+
+<div>
+
+<a href="/arsp/logout">Logout</a>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="profile">
+
+<img
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>"
+alt="Profile">
+
+<h2><%= member.full_name %></h2>
+
+<p><%= member.member_id %></p>
+
+<p>
+
+Status :
+
+<strong style="color:#198754;">
+
+<%= member.status %>
+
+</strong>
+
+</p>
+
+</div>
+
+
+
+
+
+<h2 style="margin-top:30px;">
+
+Quick Services
+
+</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>👤 My Profile</h3>
+
+<a href="/arsp/member/<%= member.member_id %>">
+
+Open
+
+</a>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>📄 Membership Registration Slip</h3>
+
+<a href="/arsp/registration-slip">
+
+View / Download
+
+</a>
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+<h3>
+
+📜 My Activity
+
+</h3>
+
+<a href="/arsp/activity">
+
+Open
+
+</a>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>🪪 Digital ID</h3>
+
+<a href="/arsp/member/<%= member.member_id %>">
+
+View
+
+</a>
+
+</div>
+
+
+
+<% if(hasAppointment){ %>
+<div class="card">
+
+<h3>📜 Appointment Letter</h3>
+
+<a href="/arsp/appointment-letter">
+
+View / Download
+
+</a>
+
+</div>
+
+<% } %>
+
+
+
+
+
+
+<div class="card">
+
+<h3>📄 Download ID PDF</h3>
+
+<a href="/arsp/id-card/pdf">
+
+Download
+
+</a>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<h3>🔐 Change Password</h3>
+
+<a href="/arsp/change-password">
+
+Open
+
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>✅ Verify ID</h3>
+
+<a href="/arsp/verify/<%= member.member_id %>">
+
+Verify
+
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>🚪 Logout</h3>
+
+<a href="/arsp/logout">
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+<h2 style="margin-top:40px;">
+
+Latest Notices
+
+</h2>
+
+<% if(notices && notices.length){ %>
+
+<% notices.forEach(notice=>{ %>
+
+<div class="notice-card">
+
+<h3>
+
+<%= notice.title %>
+
+</h3>
+
+<p>
+
+<%= notice.description %>
+
+</p>
+
+<small>
+
+<%= notice.publish_date %>
+
+</small>
+
+</div>
+
+<% }) %>
+
+<% }else{ %>
+
+<div class="notice-card">
+
+No notices available.
+
+</div>
+
+<% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

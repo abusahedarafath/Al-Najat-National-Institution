@@ -1,0 +1,275 @@
+<%- include("../partials/header") %>
+<div class="container-fluid">
+
+    <div class="row">
+
+<%- include("../partials/sidebar") %>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2>Add Institutional Personality</h2>
+
+                <a href="/admin/personalities" class="btn btn-secondary">
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Back
+
+                </a>
+
+            </div>
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <form
+                        action="/admin/personalities/add"
+                        method="POST"
+                        enctype="multipart/form-data">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Photo
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    name="photo"
+                                    class="form-control"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Message Title
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="message_title"
+                                    class="form-control"
+                                    placeholder="Chairman's Message"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Name
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    class="form-control"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Designation
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="designation"
+                                    class="form-control"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Slug
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="slug"
+                                    class="form-control"
+                                    placeholder="chairman"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Display Order
+
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="display_order"
+                                    class="form-control"
+                                    value="1">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Message Button Text
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="message_button_text"
+                                    value="Read Full Message"
+                                    class="form-control">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Biography Button Text
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="biography_button_text"
+                                    value="See Biography"
+                                    class="form-control">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Show on Homepage
+
+                                </label>
+
+                                <select
+                                    name="show_homepage"
+                                    class="form-select">
+
+                                    <option value="Yes">
+
+                                        Yes
+
+                                    </option>
+
+                                    <option value="No">
+
+                                        No
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Status
+
+                                </label>
+
+                                <select
+                                    name="status"
+                                    class="form-select">
+
+                                    <option value="Active">
+
+                                        Active
+
+                                    </option>
+
+                                    <option value="Inactive">
+
+                                        Inactive
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-12 mb-3">
+
+                                <label class="form-label">
+
+                                    Personal Message
+
+                                </label>
+
+                                <textarea
+                                    name="message"
+                                    rows="8"
+                                    class="form-control"
+                                    required></textarea>
+
+                            </div>
+
+                            <div class="col-12 mb-3">
+
+                                <label class="form-label">
+
+                                    Biography
+
+                                </label>
+
+                                <textarea
+                                    name="biography"
+                                    rows="8"
+                                    class="form-control"
+                                    required></textarea>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="btn btn-success">
+
+                            <i class="fas fa-save"></i>
+
+                            Save Personality
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

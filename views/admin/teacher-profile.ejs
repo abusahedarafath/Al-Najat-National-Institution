@@ -1,0 +1,175 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Teacher Profile</h1>
+                    <p>View complete information about the teacher.</p>
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div style="text-align:center; margin-bottom:25px;">
+
+                    <% if (teacher.photo) { %>
+
+                        <img
+                            src="/uploads/teachers/<%= teacher.photo %>"
+                            alt="Teacher Photo"
+                            style="width:150px;height:150px;border-radius:50%;object-fit:cover;">
+
+                    <% } else { %>
+
+                        <img
+                            src="/images/default-user.png"
+                            alt="Teacher"
+                            style="width:150px;height:150px;border-radius:50%;object-fit:cover;">
+
+                    <% } %>
+
+                    <h2 style="margin-top:15px;">
+                        <%= teacher.full_name %>
+                    </h2>
+
+                    <% if (teacher.status === "Active") { %>
+
+                        <span class="badge badge-success">
+                            Active
+                        </span>
+
+                    <% } else { %>
+
+                        <span class="badge badge-danger">
+                            Inactive
+                        </span>
+
+                    <% } %>
+
+                </div>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+                            <th>Teacher ID</th>
+                            <td><%= teacher.teacher_id %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Father's Name</th>
+                            <td><%= teacher.father_name %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Mother's Name</th>
+                            <td><%= teacher.mother_name %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Gender</th>
+                            <td><%= teacher.gender %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Date of Birth</th>
+                            <td>
+                                <%= teacher.dob ? teacher.dob.toLocaleDateString() : "" %>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Mobile</th>
+                            <td><%= teacher.mobile %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Email</th>
+                            <td><%= teacher.email %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Address</th>
+                            <td><%= teacher.address %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Qualification</th>
+                            <td><%= teacher.qualification %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Subject</th>
+                            <td><%= teacher.subject %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Designation</th>
+                            <td><%= teacher.designation %></td>
+                        </tr>
+
+                        <tr>
+                            <th>Joining Date</th>
+                            <td>
+                                <%= teacher.joining_date ? teacher.joining_date.toLocaleDateString() : "" %>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Salary</th>
+                            <td>₹ <%= teacher.salary || 0 %></td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div class="action-buttons" style="margin-top:25px;">
+
+                    <a
+                        href="/admin/teacher/<%= teacher.id %>/edit"
+                        class="btn btn-success">
+                        Edit
+                    </a>
+
+                    <a
+                        href="/admin/teachers"
+                        class="btn btn-secondary">
+                        Back
+                    </a>
+
+                    <form
+                        action="/admin/teacher/<%= teacher.id %>/delete"
+                        method="POST"
+                        style="display:inline;">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('Delete this teacher?')">
+                            Delete
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

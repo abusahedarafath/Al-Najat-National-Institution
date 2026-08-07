@@ -1,0 +1,95 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="page-banner">
+
+    <div class="container text-center">
+
+        <h1>
+
+            Biography
+
+        </h1>
+
+        <p>
+
+            <%= personality.name %>
+
+        </p>
+
+    </div>
+
+</section>
+
+<section class="message-section">
+
+    <div class="container">
+
+        <div class="message-wrapper">
+
+            <div class="message-image">
+
+                <img
+                    src="/uploads/personalities/<%= personality.photo %>"
+                    alt="<%= personality.name %>">
+
+            </div>
+
+            <div class="message-content">
+
+                <span class="section-badge">
+
+                    <%= personality.designation %>
+
+                </span>
+
+                <h2>
+
+                    <%= personality.name %>
+
+                </h2>
+
+                <p>
+
+                    Learn more about the life, experience, achievements, and contributions of <strong><%= personality.name %></strong>.
+
+                </p>
+
+                <a
+                    href="/personality/<%= personality.slug %>"
+                    class="btn">
+
+                    <%= personality.message_button_text %>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="welcome-section">
+
+    <div class="container">
+
+        <div class="feature-card">
+
+            <div class="biography-content">
+
+                <%- personality.biography %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,186 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Vehicle Management</h1>
+
+                    <p>Manage all school transport vehicles.</p>
+
+                </div>
+
+                <a
+                    href="/admin/vehicle/add"
+                    class="btn btn-primary">
+
+                    + Add Vehicle
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Vehicle Name</th>
+                        <th>Vehicle Number</th>
+                        <th>Type</th>
+                        <th>Capacity</th>
+                        <th>Route</th>
+                        <th>Driver</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (vehicles && vehicles.length > 0) { %>
+
+                        <% vehicles.forEach(vehicle => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <%= vehicle.vehicle_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= vehicle.vehicle_number %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= vehicle.vehicle_type %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= vehicle.capacity %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= vehicle.route_name || "-" %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= vehicle.driver_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (vehicle.status === "Active") { %>
+
+                                        <span class="badge badge-success">
+
+                                            Active
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-danger">
+
+                                            Inactive
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/vehicle/<%= vehicle.id %>"
+                                            class="btn btn-primary">
+
+                                            View
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/vehicle/<%= vehicle.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/vehicle/<%= vehicle.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Delete this vehicle?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                style="text-align:center;">
+
+                                No vehicles found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

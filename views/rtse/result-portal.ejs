@@ -1,0 +1,290 @@
+<%- include("../partials/header") %>
+
+<div class="container" style="max-width:700px;margin:50px auto;">
+
+    <div class="profile-card">
+
+        <div style="text-align:center;">
+
+            <h1>
+
+                RTSE Result Portal
+
+            </h1>
+
+            <p>
+
+                Search your result using Registration Number or Roll Number.
+
+            </p>
+
+        </div>
+
+        <form
+
+            action="/rtse/result"
+
+            method="POST">
+
+            <div class="form-group">
+
+                <label>
+
+                    Registration No. / Roll No.
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    name="keyword"
+
+                    placeholder="Example : ARSP2600001 or RTSE26-1001"
+
+                    required>
+
+            </div>
+
+            <button
+
+                type="submit"
+
+                class="btn-save"
+
+                style="width:100%;">
+
+                Search Result
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <% if(student){ %>
+
+    <div
+
+        class="profile-card"
+
+        style="margin-top:25px;">
+
+        <div style="text-align:center;">
+
+            <% if(student.photo){ %>
+
+            <img
+
+                src="/uploads/rtse/<%= student.photo %>"
+
+                style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
+
+            <% } %>
+
+            <h2>
+
+                <%= student.full_name %>
+
+            </h2>
+
+        </div>
+
+        <table class="admin-table">
+
+            <tbody>
+
+                <tr>
+
+                    <th width="220">
+
+                        Registration No.
+
+                    </th>
+
+                    <td>
+
+                        <%= student.registration_no %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Roll Number
+
+                    </th>
+
+                    <td>
+
+                        <%= student.roll_no %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        School
+
+                    </th>
+
+                    <td>
+
+                        <%= student.school_name %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Section
+
+                    </th>
+
+                    <td>
+
+                        <%= student.section %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Marks
+
+                    </th>
+
+                    <td>
+
+                        <strong>
+
+                            <%= student.marks %>
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Percentage
+
+                    </th>
+
+                    <td>
+
+                        <%= student.percentage %> %
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Grade
+
+                    </th>
+
+                    <td>
+
+                        <%= student.grade %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Section Rank
+
+                    </th>
+
+                    <td>
+
+                        <%= student.section_rank %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Overall Rank
+
+                    </th>
+
+                    <td>
+
+                        <%= student.overall_rank %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Result Status
+
+                    </th>
+
+                    <td>
+
+                        <strong>
+
+                            <%= student.result_status %>
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <div
+            style="margin-top:25px;text-align:center;">
+
+            <a
+
+                href="/rtse/result/<%= student.application_id %>"
+
+                class="btn-save">
+
+                Download Mark Sheet
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

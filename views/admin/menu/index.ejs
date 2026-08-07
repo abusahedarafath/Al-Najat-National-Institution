@@ -1,0 +1,170 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Navigation Menu</h1>
+
+                    <p>Manage website navigation menu.</p>
+
+                </div>
+
+                <a
+                    href="/admin/menu/create"
+                    class="btn btn-primary">
+
+                    + Add Menu
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Title</th>
+
+                            <th>Parent</th>
+
+                            <th>URL</th>
+
+                            <th>Order</th>
+
+                            <th>Status</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    <% if(menus.length){ %>
+
+                        <% menus.forEach((menu,index)=>{ %>
+
+                        <tr>
+
+                            <td><%= index+1 %></td>
+
+                            <td>
+
+                                <%= menu.menu_title %>
+
+                            </td>
+
+                            <td>
+
+                                <%= menu.parent_name || "-" %>
+
+                            </td>
+
+                            <td>
+
+                                <%= menu.menu_url %>
+
+                            </td>
+
+                            <td>
+
+                                <%= menu.display_order %>
+
+                            </td>
+
+                            <td>
+
+                                <% if(menu.status==="Active"){ %>
+
+                                    <span class="badge badge-success">
+
+                                        Active
+
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="badge badge-danger">
+
+                                        Inactive
+
+                                    </span>
+
+                                <% } %>
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="/admin/menu/<%= menu.id %>/edit"
+                                    class="btn btn-warning">
+
+                                    Edit
+
+                                </a>
+
+                                <form
+                                    action="/admin/menu/<%= menu.id %>/delete"
+                                    method="POST"
+                                    style="display:inline;">
+
+                                    <button
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Delete this menu?')">
+
+                                        Delete
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td colspan="7">
+
+                                No menu available.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

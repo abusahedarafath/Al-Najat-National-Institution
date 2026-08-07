@@ -4,91 +4,104 @@ const News = require("../models/News");
 // ======================
 // All Notices
 // ======================
-exports.noticeList = (req, res) => {
 
-    Notice.getActive((err, notices) => {
+exports.noticeList = async (req, res) => {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Server Error");
-        }
+    try {
+
+        const notices = await Notice.getActive();
 
         res.render("public/notice-list", {
             title: "Notices",
             notices
         });
 
-    });
+    } catch (err) {
+
+        console.error(err);
+        res.status(500).send("Server Error");
+
+    }
 
 };
 
 // ======================
 // Notice Details
 // ======================
-exports.noticeDetails = (req, res) => {
 
-    Notice.getById(req.params.id, (err, result) => {
+exports.noticeDetails = async (req, res) => {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Server Error");
-        }
+    try {
 
-        if (!result.length) {
+        const notice = await Notice.getById(req.params.id);
+
+        if (!notice) {
             return res.status(404).send("Notice Not Found");
         }
 
         res.render("public/notice-details", {
-            title: result[0].title,
-            notice: result[0]
+            title: notice.title,
+            notice
         });
 
-    });
+    } catch (err) {
+
+        console.error(err);
+        res.status(500).send("Server Error");
+
+    }
 
 };
 
 // ======================
 // All News
 // ======================
-exports.newsList = (req, res) => {
 
-    News.getActive((err, news) => {
+exports.newsList = async (req, res) => {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Server Error");
-        }
+    try {
+
+        const news = await News.getActive();
 
         res.render("public/news-list", {
             title: "News",
             news
         });
 
-    });
+    } catch (err) {
+
+        console.error(err);
+        res.status(500).send("Server Error");
+
+    }
 
 };
 
 // ======================
 // News Details
 // ======================
-exports.newsDetails = (req, res) => {
 
-    News.getById(req.params.id, (err, result) => {
+exports.newsDetails = async (req, res) => {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Server Error");
-        }
+    try {
 
-        if (!result.length) {
+        const news = await News.getById(req.params.id);
+
+        if (!news) {
             return res.status(404).send("News Not Found");
         }
 
         res.render("public/news-details", {
-            title: result[0].title,
-            news: result[0]
+            title: news.title,
+            news
         });
 
-    });
+    } catch (err) {
+
+        console.error(err);
+        res.status(500).send("Server Error");
+
+    }
 
 };
+

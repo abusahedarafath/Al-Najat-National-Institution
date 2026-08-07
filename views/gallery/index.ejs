@@ -1,0 +1,72 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/gallery.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="page-banner">
+
+    <div class="container">
+
+        <h1>Gallery</h1>
+
+        <p>Explore our albums and memorable moments.</p>
+
+    </div>
+
+</section>
+
+<section class="gallery-page">
+
+    <div class="container">
+
+        <div class="gallery-grid">
+
+            <% if(albums && albums.length){ %>
+
+                <% albums.forEach(album=>{ %>
+
+                    <div class="gallery-card">
+
+                        <a href="/gallery/<%= album.id %>">
+
+                            <% if(album.cover_image){ %>
+
+                                <img
+                                    src="/uploads/gallery/<%= album.cover_image %>"
+                                    alt="<%= album.title %>"
+                                    class="gallery-image">
+
+                            <% } %>
+
+                            <div class="gallery-content">
+
+                                <h3><%= album.title %></h3>
+
+                                <p><%= album.description %></p>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                <% }) %>
+
+            <% }else{ %>
+
+                <div class="empty-box">
+
+                    No gallery albums available.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</section>
+
+<%- include("../partials/footer") %>

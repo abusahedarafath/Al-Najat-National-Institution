@@ -1,0 +1,49 @@
+/* =====================================================
+   ARSP THEME VARIABLES
+===================================================== */
+
+:root{
+
+    /* Primary Colors */
+
+    --primary:#0A1F7A;
+
+    --primary-dark:#07175D;
+
+    --gold:#C9A227;
+
+    --gold-dark:#A8841E;
+
+    /* Background */
+
+    --bg:#F5F7FB;
+
+    --surface:#FFFFFF;
+
+    /* Text */
+
+    --text:#1F2937;
+
+    --text-light:#6B7280;
+
+    /* Border */
+
+    --border:#E5E7EB;
+
+    /* Success */
+
+    --success:#16A34A;
+
+    --danger:#DC2626;
+
+    --warning:#F59E0B;
+
+    /* Radius */
+
+    --radius:12px;
+
+    /* Shadow */
+
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+
+}

@@ -1,0 +1,486 @@
+<%- include("../partials/header") %>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:30px;
+    background:#eceff3;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.page{
+    width:100%;
+    display:flex;
+    justify-content:center;
+}
+
+.id-card{
+
+    width:950px;
+    height:540px;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    border:4px solid #123b6d;
+
+    box-shadow:0 20px 45px rgba(0,0,0,.18);
+
+}
+
+.watermark{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    opacity:.05;
+
+    pointer-events:none;
+
+}
+
+.watermark img{
+
+    width:420px;
+
+}
+
+.header{
+
+    height:100px;
+
+    background:#123b6d;
+
+    color:#ffffff;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:18px 30px;
+
+    border-bottom:5px solid #d6a428;
+
+}
+
+.logo{
+
+    width:74px;
+
+    height:74px;
+
+    object-fit:contain;
+
+    border-radius:50%;
+
+    background:#ffffff;
+
+    padding:4px;
+
+    margin-right:18px;
+
+}
+
+.title{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+.subtitle{
+
+    margin-top:5px;
+
+    font-size:14px;
+
+    letter-spacing:1px;
+
+}
+
+.content{
+
+    display:flex;
+
+    height:335px;
+
+}
+
+.left{
+
+    width:270px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.photo{
+
+    width:180px;
+
+    height:220px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+
+    border:4px solid #123b6d;
+
+}
+
+.right{
+
+    flex:1;
+
+    padding:28px;
+
+}
+
+.member-name{
+
+    font-size:32px;
+
+    color:#123b6d;
+
+    font-weight:bold;
+
+}
+
+.member-designation{
+
+    font-size:22px;
+
+    color:#d6a428;
+
+    font-weight:bold;
+
+    margin-top:8px;
+
+    margin-bottom:22px;
+
+}
+
+.details{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.details td{
+
+    padding:9px 0;
+
+    border-bottom:1px solid #dddddd;
+
+    font-size:18px;
+
+}
+
+.details td:first-child{
+
+    width:180px;
+
+    font-weight:bold;
+
+    color:#123b6d;
+
+}
+
+.bottom{
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    bottom:0;
+
+    height:105px;
+
+    background:#123b6d;
+
+    border-top:5px solid #d6a428;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 30px;
+
+}
+
+.verify{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    color:#ffffff;
+
+}
+
+.verify img{
+
+    width:80px;
+
+    height:80px;
+
+}
+
+.signature{
+
+    text-align:center;
+
+    color:#ffffff;
+
+}
+
+.signature img{
+
+    height:55px;
+
+}
+
+.print{
+
+    text-align:center;
+
+    margin-top:20px;
+
+}
+
+@media print{
+
+body{
+
+background:#ffffff;
+
+padding:0;
+
+}
+
+.print{
+
+display:none;
+
+}
+
+}
+
+</style>
+
+<div class="page">
+
+<div>
+
+<div class="id-card">
+
+<div class="watermark">
+
+<% if(settings && settings.logo){ %>
+
+<img src="/uploads/id-card/<%= settings.logo %>">
+
+<% } %>
+
+</div>
+
+<div class="header">
+
+<% if(settings && settings.logo){ %>
+
+<img
+src="/uploads/id-card/<%= settings.logo %>"
+class="logo">
+
+<% } %>
+
+<div>
+
+<div class="title">
+
+<%= settings && settings.organization_name
+? settings.organization_name
+: "ACTIVE RURAL SOCIAL PROGRESS" %>
+
+</div>
+
+<div class="subtitle">
+
+OFFICIAL MEMBER IDENTITY CARD
+
+</div>
+
+</div>
+
+</div>
+
+<div class="content">
+
+<div class="left">
+
+<img
+src="/uploads/arsp-members/<%= member.photo %>"
+class="photo">
+
+</div>
+
+<div class="right">
+
+<div class="member-name">
+
+<%= member.full_name %>
+
+</div>
+
+<div class="member-designation">
+
+<%= member.designation %>
+
+</div>
+
+<table class="details">
+
+
+
+<tr>
+    <td>Member ID</td>
+    <td><%= member.member_id %></td>
+</tr>
+
+<tr>
+    <td>Designation</td>
+    <td><%= member.designation %></td>
+</tr>
+
+<tr>
+    <td>Committee</td>
+    <td><%= member.committee %></td>
+</tr>
+
+<tr>
+    <td>Section</td>
+    <td><%= member.section %></td>
+</tr>
+
+<tr>
+    <td>Status</td>
+    <td><%= member.status %></td>
+</tr>
+
+<tr>
+    <td>District</td>
+    <td><%= member.district || "-" %></td>
+</tr>
+
+<tr>
+    <td>Joining Date</td>
+    <td>
+        <%= member.joining_date
+        ? new Date(member.joining_date).toLocaleDateString("en-GB")
+        : "-" %>
+    </td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="bottom">
+
+<div class="verify">
+
+<% if(member.qr_code){ %>
+
+<img
+src="/uploads/arsp-qr/<%= member.qr_code %>">
+
+<% } %>
+
+<div>
+
+<div style="font-size:18px;font-weight:bold;">
+
+SCAN TO VERIFY
+
+</div>
+
+<div style="font-size:13px;">
+
+ARSP Digital Verification
+
+</div>
+
+</div>
+
+</div>
+
+<div class="signature">
+
+<% if(settings && settings.signature){ %>
+
+<img
+src="/uploads/id-card/<%= settings.signature %>">
+
+<% } %>
+
+<div style="margin-top:5px;">
+
+Authorized Signature
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="print">
+
+<button
+class="btn-save"
+onclick="window.print()">
+
+🖨 Print Identity Card
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<%- include("../partials/footer") %>

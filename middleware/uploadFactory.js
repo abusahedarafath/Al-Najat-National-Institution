@@ -38,6 +38,11 @@ function createUploader(folder) {
 
     const fileFilter = (req, file, cb) => {
 
+
+	console.log("Original Name:", file.originalname);
+console.log("MIME Type:", file.mimetype);
+
+
         const allowedExt = /\.(jpg|jpeg|png|webp|pdf)$/i;
 
         const allowedMime = [

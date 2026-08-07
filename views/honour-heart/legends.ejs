@@ -1,0 +1,79 @@
+<%- include("../partials/header") %>
+
+<section class="page-banner">
+
+    <div class="container">
+
+        <h1>Legendary Personalities</h1>
+
+        <p>
+
+            The ARSP Honour Heart Award is dedicated to preserving the legacy of outstanding personalities whose vision, sacrifice and lifelong contributions continue to inspire society.
+
+        </p>
+
+    </div>
+
+</section>
+
+<section class="team-section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>Honoured Legendary Personalities</h2>
+
+            <p>
+
+                Click on any personality to read the complete biography and learn about their remarkable legacy.
+
+            </p>
+
+        </div>
+
+        <div class="team-grid">
+
+            <% legends.forEach(legend=>{ %>
+
+            <div class="team-card">
+
+                <img
+                    src="/uploads/honour-heart/legends/<%= legend.photo %>"
+                    alt="<%= legend.name %>">
+
+                <div class="team-content">
+
+                    <h3>
+
+                        <%= legend.name %>
+
+                    </h3>
+
+                    <p>
+
+                        <%= legend.designation %>
+
+                    </p>
+
+                    <a
+                        href="/honour-heart/legend/<%= legend.slug %>"
+                        class="btn btn-primary">
+
+                        Read Biography
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</section>
+
+<%- include("../partials/footer") %>

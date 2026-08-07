@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Overall Merit List</title>
+
+<style>
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    margin:20px;
+
+    background:#f5f5f5;
+
+}
+
+.container{
+
+    background:#fff;
+
+    padding:20px;
+
+    border:2px solid #000;
+
+}
+
+.header{
+
+    text-align:center;
+
+    border-bottom:2px solid #000;
+
+    margin-bottom:20px;
+
+    padding-bottom:15px;
+
+}
+
+.header h1{
+
+    margin:0;
+
+}
+
+.header h2{
+
+    margin:8px 0;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+th,
+
+td{
+
+    border:1px solid #000;
+
+    padding:8px;
+
+    text-align:center;
+
+}
+
+.photo{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+.rank{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+.print{
+
+    margin-bottom:20px;
+
+    text-align:center;
+
+}
+
+@media print{
+
+.print{
+
+display:none;
+
+}
+
+body{
+
+background:#fff;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="print">
+
+<button onclick="window.print()">
+
+🖨 Print Merit List
+
+</button>
+
+</div>
+
+<div class="container">
+
+<div class="header">
+
+<h1>
+
+Ratabari Talent Search Examination
+
+</h1>
+
+<h2>
+
+Overall Merit List
+
+</h2>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+
+Rank
+
+</th>
+
+<th>
+
+Photo
+
+</th>
+
+<th>
+
+Roll No.
+
+</th>
+
+<th>
+
+Registration
+
+</th>
+
+<th>
+
+Student Name
+
+</th>
+
+<th>
+
+School
+
+</th>
+
+<th>
+
+District
+
+</th>
+
+<th>
+
+Section
+
+</th>
+
+<th>
+
+Marks
+
+</th>
+
+<th>
+
+%
+
+</th>
+
+<th>
+
+Grade
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% students.forEach(student=>{ %>
+
+<tr>
+
+<td class="rank">
+
+<%= student.overall_rank %>
+
+</td>
+
+<td>
+
+<% if(student.photo){ %>
+
+<img
+
+src="/uploads/rtse/<%= student.photo %>"
+
+class="photo">
+
+<% } %>
+
+</td>
+
+<td>
+
+<%= student.roll_no %>
+
+</td>
+
+<td>
+
+<%= student.registration_no %>
+
+</td>
+
+<td>
+
+<strong>
+
+<%= student.full_name %>
+
+</strong>
+
+</td>
+
+<td>
+
+<%= student.school_name %>
+
+</td>
+
+<td>
+
+<%= student.district %>
+
+</td>
+
+<td>
+
+<%= student.section %>
+
+</td>
+
+<td>
+
+<strong>
+
+<%= student.marks %>
+
+</strong>
+
+</td>
+
+<td>
+
+<%= student.percentage %>
+
+</td>
+
+<td>
+
+<%= student.grade %>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+</div>
+
+</body>
+
+</html>
+

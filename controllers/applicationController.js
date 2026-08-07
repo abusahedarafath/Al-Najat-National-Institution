@@ -1,54 +1,37 @@
 const Application = require("../models/Application");
+const ApplicationDocument = require("../models/ApplicationDocument");
 
-function generateApplicationNumber(callback) {
+async function generateApplicationNumber() {
+    const results = await Application.getLastApplication();
 
-    Application.getLastApplication((err, results) => {
+    const year = new Date().getFullYear();
+    let nextNumber = 1;
 
-        if (err) return callback(err);
+    if (results.length > 0 && results[0].application_no) {
+        const lastNumber = parseInt(
+            results[0].application_no.replace(`ANI${year}`, ""),
+            10
+        );
 
-        let nextNumber = 1;
-
-        if (results.length > 0 && results[0].application_no) {
-
-            const lastNumber = parseInt(
-                results[0].application_no.replace("ANI2027", ""),
-                10
-            );
-
-            if (!isNaN(lastNumber)) {
-                nextNumber = lastNumber + 1;
-            }
+        if (!isNaN(lastNumber)) {
+            nextNumber = lastNumber + 1;
         }
+    }
 
-        const applicationNo =
-            "ANI2027" + String(nextNumber).padStart(5, "0");
-
-        callback(null, applicationNo);
-
-    });
-
+    return `ANI${year}${String(nextNumber).padStart(5, "0")}`;
 }
 
-exports.submitApplication = (req, res) => {
+exports.submitApplication = async (req, res) => {
+    try {
+        console.log("========== APPLICATION ==========");
+        console.log(req.body);
+        console.log(req.files);
 
-    console.log("========== APPLICATION ==========");
-    console.log("BODY:");
-    console.log(req.body);
-
-    console.log("FILES:");
-    console.log(req.files);
-
-    generateApplicationNumber((err, applicationNo) => {
-
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Application number generation failed.");
-        }
+        const applicationNo = await generateApplicationNumber();
 
         const data = {
-
             application_no: applicationNo,
-            session: "2027",
+            session: String(new Date().getFullYear()),
 
             full_name: req.body.full_name,
             father_name: req.body.father_name,
@@ -61,34 +44,46 @@ exports.submitApplication = (req, res) => {
             email: req.body.email,
 
             address: req.body.address,
-
             course: req.body.course,
             previous_school: req.body.previous_school,
 
             pen_no: req.body.pen_no,
             apaar_id: req.body.apaar_id,
             siksha_setu_id: req.body.siksha_setu_id
-
         };
 
         if (!data.full_name || !data.mobile || !data.course) {
             return res.status(400).send("Required fields are missing.");
         }
 
-Application.create(data, (err, result) => {
+        const result = await Application.create(data);
+        const applicationId = result.insertId;
 
-    if (err) {
+        const fileFields = [
+            "photo",
+            "signature",
+            "birth_certificate",
+            "tc",
+            "marksheet",
+            "aadhaar"
+        ];
+
+        for (const field of fileFields) {
+            if (req.files && req.files[field] && req.files[field][0]) {
+                await ApplicationDocument.create(
+                    applicationId,
+                    field,
+                    req.files[field][0].filename
+                );
+            }
+        }
+
+        res.render("admission2027/success", {
+            application_no: applicationNo
+        });
+
+    } catch (err) {
         console.error(err);
-        return res.status(500).send("Database Error");
+        res.status(500).send("Database Error");
     }
-
-    console.log(result);
-
-    res.render("admission2027/success", {
-        application_no: data.application_no
-    });
-
-});
-    });
-
 };

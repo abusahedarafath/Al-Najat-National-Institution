@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RTSE Admit Card</title>
+
+<style>
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    background:#f5f5f5;
+
+    margin:0;
+
+    padding:20px;
+
+}
+
+.card{
+
+    width:850px;
+
+    margin:auto;
+
+    background:#fff;
+
+    border:3px solid #000;
+
+    padding:20px;
+
+}
+
+.header{
+
+    display:flex;
+
+    align-items:center;
+
+    border-bottom:2px solid #000;
+
+    padding-bottom:10px;
+
+}
+
+.logo{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:contain;
+
+}
+
+.title{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+.title h1{
+
+    margin:0;
+
+    font-size:28px;
+
+}
+
+.title h3{
+
+    margin:5px 0;
+
+}
+
+.photo{
+
+    width:120px;
+
+    height:140px;
+
+    border:1px solid #000;
+
+    object-fit:cover;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+td{
+
+    border:1px solid #000;
+
+    padding:8px;
+
+}
+
+.footer{
+
+    margin-top:40px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+}
+
+.signature{
+
+    width:200px;
+
+    text-align:center;
+
+    border-top:1px solid #000;
+
+    padding-top:8px;
+
+}
+
+.print{
+
+    margin-top:30px;
+
+    text-align:center;
+
+}
+
+@media print{
+
+.print{
+
+display:none;
+
+}
+
+body{
+
+background:#fff;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="header">
+
+<img
+
+src="/uploads/arsp-settings/<%= setting.logo %>"
+
+class="logo">
+
+<div class="title">
+
+<h1>
+
+Ratabari Talent Search Examination
+
+</h1>
+
+<h3>
+
+(RTSE <%= examYear %>)
+
+</h3>
+
+<p>
+
+Conducted by
+
+<strong>
+
+Active Rural Social Progress (ARSP)
+
+</strong>
+
+</p>
+
+</div>
+
+<img
+
+src="/uploads/rtse/<%= student.photo %>"
+
+class="photo">
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="220">
+
+Registration No.
+
+</td>
+
+<td>
+
+<%= student.registration_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Roll No.
+
+</td>
+
+<td>
+
+<strong>
+
+<%= student.roll_no %>
+
+</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Student Name
+
+</td>
+
+<td>
+
+<%= student.full_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Father's Name
+
+</td>
+
+<td>
+
+<%= student.father_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+School
+
+</td>
+
+<td>
+
+<%= student.school_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Class
+
+</td>
+
+<td>
+
+<%= student.class %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Section
+
+</td>
+
+<td>
+
+<%= student.section %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Examination Centre
+
+</td>
+
+<td>
+
+_________________________
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Examination Date
+
+</td>
+
+<td>
+
+_________________________
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Reporting Time
+
+</td>
+
+<td>
+
+_________________________
+
+</td>
+
+</tr>
+
+</table>
+
+<div class="footer">
+
+<div class="signature">
+
+Candidate Signature
+
+</div>
+
+<div class="signature">
+
+Controller of Examination
+
+</div>
+
+</div>
+
+<div class="print">
+
+<button onclick="window.print()">
+
+Print Admit Card
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+
+</html>	

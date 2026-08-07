@@ -1,0 +1,148 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Legendary Personalities</h1>
+
+                    <p>ARSP Honour Heart Award</p>
+
+                </div>
+
+                <a
+                    href="/admin/honour-heart/legends/add"
+                    class="btn btn-success">
+
+                    <i class="fas fa-plus"></i>
+
+                    Add Personality
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th width="90">Photo</th>
+
+                        <th>Name</th>
+
+                        <th>Designation</th>
+
+                        <th>Order</th>
+
+                        <th>Status</th>
+
+                        <th width="220">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (legends.length) { %>
+
+                        <% legends.forEach(legend => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <img
+                                        src="/uploads/honour-heart/legends/<%= legend.photo %>"
+                                        style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+
+                                </td>
+
+                                <td>
+
+                                    <strong><%= legend.name %></strong>
+
+                                </td>
+
+                                <td>
+
+                                    <%= legend.designation %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= legend.display_order %>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge <%= legend.status === 'Active' ? 'badge-success' : 'badge-danger' %>">
+
+                                        <%= legend.status %>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="/admin/honour-heart/legends/edit/<%= legend.id %>"
+                                        class="btn btn-warning">
+
+                                        Edit
+
+                                    </a>
+
+                                    <a
+                                        href="/admin/honour-heart/legends/delete/<%= legend.id %>"
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Delete this personality?')">
+
+                                        Delete
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td colspan="6" class="text-center">
+
+                                No Legendary Personality Found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>

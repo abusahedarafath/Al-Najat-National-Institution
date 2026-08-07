@@ -1,0 +1,293 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>ARSP Member Registry</h1>
+
+                <a href="/admin/arsp/register" class="btn-save">
+                    + Register Member
+                </a>
+
+            </div>
+
+<div class="profile-card" style="margin-bottom:20px;">
+
+    <form action="/admin/arsp/members" method="GET" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+
+        <input
+            type="text"
+            name="search"
+            value="<%= typeof search !== 'undefined' ? search : '' %>"
+            placeholder="Search by Name, Member ID, Mobile or Position..."
+            style="flex:1;padding:12px;border:1px solid #ccc;border-radius:6px;min-width:250px;">
+
+        <button
+            type="submit"
+            class="btn-save">
+
+            🔍 Search
+
+        </button>
+
+    </form>
+
+</div>
+
+
+
+            <% if(members.length === 0){ %>
+
+                <div class="profile-card">
+
+                    <h3>No Members Registered</h3>
+
+                    <p>Register your first ARSP member.</p>
+
+                </div>
+
+            <% } else { %>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Photo</th>
+
+                        <th>ARSP ID</th>
+
+                        <th>Name</th>
+
+                        <th>Mobile</th>
+
+                        <th>Status</th>
+
+                        <th>Position</th>
+
+                        <th width="420">Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                <% members.forEach(member => { %>
+
+                    <tr>
+
+                        <td>
+
+                            <% if(member.photo){ %>
+
+                                <img
+                                    src="/uploads/arsp-members/<%= member.photo %>"
+                                    alt="<%= member.full_name %>"
+                                    style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+
+                            <% } else { %>
+
+                                <img
+                                    src="/images/default-user.png"
+                                    alt="No Photo"
+                                    style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+
+                            <% } %>
+
+                        </td>
+
+                        <td>
+
+                            <strong><%= member.member_id %></strong>
+
+                        </td>
+
+                        <td>
+
+                            <%= member.full_name %>
+
+                        </td>
+
+                        <td>
+
+                            <%= member.mobile %>
+
+                        </td>
+
+                        <td>
+
+                            <% if(member.status === "Active"){ %>
+
+                                <span class="badge badge-success">
+                                    Active
+                                </span>
+
+                            <% } else { %>
+
+                                <span class="badge badge-danger">
+                                    Inactive
+                                </span>
+
+                            <% } %>
+
+                        </td>
+
+                        <td>
+
+                            <% if(member.designation){ %>
+
+                                <span class="badge badge-success">
+                                    <%= member.designation %>
+                                </span>
+
+                                <% if(member.committee){ %>
+
+                                    <br>
+
+                                    <small style="color:#666;">
+                                        <%= member.committee %>
+                                    </small>
+
+                                <% } %>
+
+                            <% } else { %>
+
+                                <span class="badge badge-secondary">
+                                    No Position
+                                </span>
+
+                            <% } %>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="/admin/arsp/member/<%= member.id %>/reset-password"
+                                class="btn-warning">
+
+                                <i class="fas fa-key"></i>
+
+                                Reset Password
+
+                            </a>
+
+                            <a
+                                href="/admin/arsp/member/<%= member.id %>"
+                                class="btn-view">
+
+                                View
+
+                            </a>
+
+                            <a
+                                href="/admin/arsp/member/<%= member.id %>/edit"
+                                class="btn-save">
+
+                                Edit
+
+                            </a>
+
+                           
+<% if(member.designation){ %>
+
+<a
+    href="/admin/arsp/member/<%= member.id %>/assign"
+    class="btn-view">
+
+    Change Position
+
+</a>
+
+<form
+    action="/admin/arsp/member/<%= member.id %>/remove-position"
+    method="POST"
+    style="display:inline;">
+
+    <button
+        type="submit"
+        class="btn-danger"
+        onclick="return confirm('Remove this member from the current position?')">
+
+        Remove Position
+
+    </button>
+
+</form>
+
+<% } else { %>
+
+<a
+    href="/admin/arsp/member/<%= member.id %>/assign"
+    class="btn-view">
+
+    Assign
+
+</a>
+
+<% } %>
+
+
+                            <a
+                                href="/admin/arsp/member/<%= member.id %>/id-card"
+                                class="btn-view">
+
+                                ID Card
+
+                            </a>
+
+                            <a
+                                href="/admin/arsp/member/<%= member.id %>/toggle-status"
+                                class="<%= member.status === 'Active' ? 'btn-warning' : 'btn-save' %>"
+                                onclick="return confirm('Are you sure you want to change this member status?')">
+
+                                <%= member.status === "Active"
+                                    ? "Deactivate"
+                                    : "Activate" %>
+
+                            </a>
+
+                            <form
+                                action="/admin/arsp/member/<%= member.id %>/delete"
+                                method="POST"
+                                style="display:inline;">
+
+                                <button
+                                    type="submit"
+                                    class="btn-danger"
+                                    onclick="return confirm('Delete this member permanently?')">
+
+                                    Delete
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+                </tbody>
+
+            </table>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

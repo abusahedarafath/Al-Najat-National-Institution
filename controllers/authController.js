@@ -1,54 +1,89 @@
-const adminModel = require("../models/adminModel");
+const bcrypt = require("bcryptjs");
+const User = require("../models/userModel");
 
+// ===============================
 // Show Login Page
+// ===============================
 exports.showLogin = (req, res) => {
-    res.render("auth/admin-login", {
-        title: "Admin Login"
+    res.render("auth/login", {
+        title: "Admin Login",
+        error: null
     });
 };
 
+// ===============================
 // Login
-exports.login = (req, res) => {
+// ===============================
+exports.login = async (req, res) => {
+    try {
+        const { username, password } = req.body;
 
-    const { username, password } = req.body;
+        const user = await User.findByUsername(username);
 
-    adminModel.findByUsername(username, (err, results) => {
-
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
+        if (!user) {
+            return res.render("auth/login", {
+                title: "Admin Login",
+                error: "Invalid username or password."
+            });
         }
 
-        if (results.length === 0) {
-            return res.send("Invalid Username");
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!match) {
+            return res.render("auth/login", {
+                title: "Admin Login",
+                error: "Invalid username or password."
+            });
         }
 
-        const admin = results[0];
-
-        if (admin.password !== password) {
-            return res.send("Invalid Password");
+        if (user.status !== "Active") {
+            return res.render("auth/login", {
+                title: "Admin Login",
+                error: "Your account is inactive."
+            });
         }
 
-req.session.admin = {
-    id: admin.id,
-    username: admin.username,
-    full_name: admin.full_name,
-    role: admin.role
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            reference_id: user.reference_id
+        };
+
+        switch (user.role) {
+            case "admin":
+                return res.redirect("/admin");
+
+            case "teacher":
+                return res.redirect("/teacher");
+
+            case "student":
+                return res.redirect("/student");
+
+            case "parent":
+                return res.redirect("/parent");
+
+            default:
+                req.session.destroy(() => {
+                    res.redirect("/admin/login");
+                });
+        }
+
+    } catch (err) {
+        console.error("Login Error:", err);
+
+        return res.render("auth/login", {
+            title: "Admin Login",
+            error: "Something went wrong."
+        });
+    }
 };
 
-return res.redirect("/admin");
-
-    });
-
-};
-
+// ===============================
 // Logout
+// ===============================
 exports.logout = (req, res) => {
-
     req.session.destroy(() => {
-
         res.redirect("/admin/login");
-
     });
-
 };

@@ -1,132 +1,113 @@
-const admissionModel = require("../models/admissionModel");
+const Student = require("../models/Student");
 
 // ===============================
 // Show All Students
 // ===============================
-exports.showStudents = (req, res) => {
-
-    admissionModel.getAllStudents((err, students) => {
-
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
-        }
+exports.showStudents = async (req, res) => {
+    try {
+        const students = await Student.getAll();
 
         res.render("admin/students", {
             title: "Students",
-            students: students
+            students
         });
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 };
 
 // ===============================
 // View Student
 // ===============================
-exports.viewStudent = (req, res) => {
+exports.viewStudent = async (req, res) => {
+    try {
+        const student = await Student.getById(req.params.id);
 
-    const id = req.params.id;
-
-    admissionModel.getStudentById(id, (err, results) => {
-
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
-        }
-
-        if (!results || results.length === 0) {
-            return res.send("Student not found");
+        if (!student) {
+            return res.status(404).send("Student not found");
         }
 
         res.render("admin/student-profile", {
-            student: results[0]
+            student
         });
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 };
 
 // ===============================
-// Edit Student Page
+// Edit Student
 // ===============================
-exports.editStudentPage = (req, res) => {
+exports.editStudentPage = async (req, res) => {
+    try {
+        const student = await Student.getById(req.params.id);
 
-    const id = req.params.id;
-
-    admissionModel.getStudentForEdit(id, (err, results) => {
-
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
-        }
-
-        if (!results || results.length === 0) {
-            return res.send("Student not found");
+        if (!student) {
+            return res.status(404).send("Student not found");
         }
 
         res.render("admin/edit-student", {
-            student: results[0]
+            student
         });
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 };
 
 // ===============================
 // Update Student
 // ===============================
-exports.updateStudent = (req, res) => {
+exports.updateStudent = async (req, res) => {
+    try {
+        const id = req.params.id;
 
-    const id = req.params.id;
+        const studentData = {
+            full_name: req.body.full_name,
+            father_name: req.body.father_name,
+            mother_name: req.body.mother_name,
+            dob: req.body.dob,
+            gender: req.body.gender,
+            mobile: req.body.mobile,
+            email: req.body.email,
+            address: req.body.address,
+            course: req.body.course,
+            previous_school: req.body.previous_school,
+            status: req.body.status
+        };
 
-    const studentData = {
-        full_name: req.body.full_name,
-        father_name: req.body.father_name,
-        mother_name: req.body.mother_name,
-        dob: req.body.dob,
-        gender: req.body.gender,
-        mobile: req.body.mobile,
-        email: req.body.email,
-        address: req.body.address,
-        course: req.body.course,
-        previous_school: req.body.previous_school,
-        status: req.body.status
-    };
-
-    if (req.file) {
-        studentData.photo = req.file.filename;
-    }
-
-    admissionModel.updateStudent(id, studentData, (err) => {
-
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
+        if (req.file) {
+            studentData.photo = req.file.filename;
         }
+
+        console.log("req.file =", req.file);
+        console.log("studentData =", studentData);
+
+        await Student.update(id, studentData);
 
         res.redirect("/admin/student/" + id);
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 };
-
 // ===============================
 // Deactivate Student
 // ===============================
-exports.deactivateStudent = (req, res) => {
+exports.deactivateStudent = async (req, res) => {
+    try {
+        await Student.deactivate(req.params.id);
 
-    const id = req.params.id;
+        res.redirect("/admin/student/" + req.params.id);
 
-    admissionModel.deactivateStudent(id, (err) => {
-
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
-        }
-
-        res.redirect("/admin/student/" + id);
-
-    });
-
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 };

@@ -1,0 +1,167 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+<%- include("../partials/sidebar") %>
+
+<div class="admin-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2>
+
+                    Institutional Personalities
+
+                </h2>
+
+                <a
+                    href="/admin/personalities/add"
+                    class="btn btn-success">
+
+                    <i class="fas fa-plus"></i>
+
+                    Add Personality
+
+                </a>
+
+            </div>
+
+            <div class="card shadow-sm">
+
+                <div class="card-body table-responsive">
+
+                    <table class="table table-bordered table-hover align-middle">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th>Photo</th>
+
+                                <th>Title</th>
+
+                                <th>Name</th>
+
+                                <th>Designation</th>
+
+                                <th>Homepage</th>
+
+                                <th>Order</th>
+
+                                <th>Status</th>
+
+                                <th width="180">
+
+                                    Action
+
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% if(personalities.length){ %>
+
+                                <% personalities.forEach(person=>{ %>
+
+                                <tr>
+
+                                    <td>
+
+                                        <img
+                                            src="/uploads/personalities/<%= person.photo %>"
+                                            width="60"
+                                            height="60"
+                                            style="object-fit:cover;border-radius:50%;">
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= person.message_title %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= person.name %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= person.designation %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= person.show_homepage %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= person.display_order %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <%= person.status %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/personalities/edit/<%= person.id %>"
+                                            class="btn btn-sm btn-primary">
+
+                                            Edit
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/personalities/delete/<%= person.id %>"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Delete this personality?')">
+
+                                            Delete
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                <% }) %>
+
+                            <% }else{ %>
+
+                                <tr>
+
+                                    <td colspan="8" class="text-center">
+
+                                        No personalities found.
+
+                                    </td>
+
+                                </tr>
+
+                            <% } %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+</div>
+
+</div>
+
+<%- include("../partials/footer") %>

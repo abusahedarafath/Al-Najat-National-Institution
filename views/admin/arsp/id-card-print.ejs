@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title><%= title %></title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+html,
+body{
+
+margin:0;
+padding:0;
+height:100%;
+
+font-family:Arial,Helvetica,sans-serif;
+
+background:#d9d9d9;
+
+}
+
+.viewer{
+
+width:100%;
+
+min-height:100vh;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+padding:25px;
+
+}
+
+.toolbar{
+
+margin-bottom:20px;
+
+display:flex;
+
+gap:15px;
+
+}
+
+.toolbar a,
+.toolbar button{
+
+padding:12px 25px;
+
+background:#123b6d;
+
+color:#fff;
+
+border:none;
+
+border-radius:8px;
+
+font-size:15px;
+
+cursor:pointer;
+
+text-decoration:none;
+
+}
+
+.sheet{
+
+width:210mm;
+
+height:297mm;
+
+background:#fff;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+box-shadow:0 10px 40px rgba(0,0,0,.25);
+
+}
+
+.id-card{
+
+width:180mm;
+
+height:113mm;
+
+background:#fff;
+
+border-radius:8mm;
+
+overflow:hidden;
+
+position:relative;
+
+border:1.5mm solid #123b6d;
+
+box-shadow:0 5px 18px rgba(0,0,0,.18);
+
+}
+
+@page{
+
+size:A4 portrait;
+
+margin:0;
+
+}
+
+@media print{
+
+body{
+
+background:#fff;
+
+}
+
+.toolbar{
+
+display:none;
+
+}
+
+.viewer{
+
+padding:0;
+
+}
+
+.sheet{
+
+width:210mm;
+
+height:297mm;
+
+box-shadow:none;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="viewer">
+
+<div class="toolbar">
+
+<a href="/admin/arsp/members">
+
+⬅ Back
+
+</a>
+
+<button onclick="window.print()">
+
+🖨 Print
+
+</button>
+
+</div>
+
+<div class="sheet">
+
+<div class="id-card">
+
+
+
+<div style="
+height:24mm;
+background:#123b6d;
+border-bottom:2mm solid #d6a428;
+display:flex;
+align-items:center;
+padding:0 10mm;">
+
+<% if(settings && settings.logo){ %>
+
+<img
+src="/uploads/id-card/<%= settings.logo %>"
+style="
+width:18mm;
+height:18mm;
+border-radius:50%;
+background:#ffffff;
+padding:1.5mm;
+margin-right:6mm;">
+
+<% } %>
+
+<div style="color:#ffffff;">
+
+<div style="
+font-size:9mm;
+font-weight:bold;
+line-height:1;">
+
+<%= settings && settings.organization_name
+? settings.organization_name
+: "ACTIVE RURAL SOCIAL PROGRESS" %>
+
+</div>
+
+<div style="
+font-size:3.8mm;
+margin-top:1mm;
+letter-spacing:.5mm;">
+
+OFFICIAL MEMBER IDENTITY CARD
+
+</div>
+
+</div>
+
+</div>
+
+<div style="
+display:flex;
+height:69mm;">
+
+<div style="
+width:52mm;
+display:flex;
+justify-content:center;
+align-items:center;">
+
+<img
+src="/uploads/arsp-members/<%= member.photo %>"
+style="
+width:40mm;
+height:50mm;
+object-fit:cover;
+border:1.2mm solid #123b6d;
+border-radius:3mm;">
+
+</div>
+
+<div style="
+flex:1;
+padding:8mm;">
+
+<div style="
+font-size:8mm;
+font-weight:bold;
+color:#123b6d;">
+
+<%= member.full_name %>
+
+</div>
+
+<div style="
+display:inline-block;
+margin-top:3mm;
+margin-bottom:6mm;
+padding:2mm 6mm;
+background:#d6a428;
+color:#123b6d;
+font-size:5mm;
+font-weight:bold;
+border-radius:10mm;">
+
+<%= member.designation %>
+
+</div>
+
+<table style="
+width:100%;
+border-collapse:collapse;
+font-size:4.5mm;">
+
+<tr>
+<td style="width:38mm;font-weight:bold;color:#123b6d;">Member ID</td>
+<td><%= member.member_id %></td>
+</tr>
+
+<tr>
+<td style="font-weight:bold;color:#123b6d;">Committee</td>
+<td><%= member.committee || "-" %></td>
+</tr>
+
+<tr>
+<td style="font-weight:bold;color:#123b6d;">Section</td>
+<td><%= member.section || "-" %></td>
+</tr>
+
+<tr>
+<td style="font-weight:bold;color:#123b6d;">Status</td>
+<td><%= member.status %></td>
+</tr>
+
+<tr>
+<td style="font-weight:bold;color:#123b6d;">District</td>
+<td><%= member.district || "-" %></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+
+
+<div style="
+height:20mm;
+background:#123b6d;
+border-top:2mm solid #d6a428;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 10mm;">
+
+<div style="
+display:flex;
+align-items:center;
+gap:6mm;">
+
+<% if(member.qr_code){ %>
+
+<img
+src="/uploads/arsp-qr/<%= member.qr_code %>"
+style="
+width:18mm;
+height:18mm;
+background:#fff;
+padding:1mm;
+border-radius:2mm;">
+
+<% } %>
+
+<div style="color:#ffffff;">
+
+<div style="
+font-size:4.2mm;
+font-weight:bold;">
+
+SCAN TO VERIFY
+
+</div>
+
+<div style="
+font-size:3.2mm;">
+
+ARSP Digital Verification
+
+</div>
+
+</div>
+
+</div>
+
+<div style="text-align:center;">
+
+<% if(settings && settings.signature){ %>
+
+<img
+src="/uploads/id-card/<%= settings.signature %>"
+style="
+height:14mm;
+max-width:45mm;">
+
+<% } %>
+
+<div style="
+color:#ffffff;
+font-size:3.5mm;
+border-top:.3mm solid #ffffff;
+padding-top:1mm;">
+
+Authorized Signature
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

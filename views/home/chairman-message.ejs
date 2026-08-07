@@ -1,0 +1,43 @@
+<%- include('../partials/header') %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include('../partials/navbar') %>
+
+<section class="chairman-section">
+
+    <div class="chairman-container">
+
+        <div class="chairman-image">
+
+            <img
+                src="/uploads/chairman/<%= chairman.image %>"
+                alt="<%= chairman.name %>">
+
+        </div>
+
+        <div class="chairman-content">
+
+            <span class="section-title">
+                Chairman's Message
+            </span>
+
+            <h2><%= chairman.name %></h2>
+
+            <h4><%= chairman.designation %></h4>
+
+            <p style="white-space: pre-line;">
+                <%= chairman.message %>
+            </p>
+
+            <a href="/" class="btn">
+                ← Back to Home
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+<%- include('../partials/footer') %>

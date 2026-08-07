@@ -1,87 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students</title>
-
-    <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
+<%- include("./partials/header") %>
 
 <div class="admin-layout">
 
-    <%- include("../partials/admin-sidebar") %>
+    <%- include("./partials/sidebar") %>
 
     <main class="admin-content">
 
-        <h1>Students</h1>
+        <div class="container">
 
-        <div class="card">
+            <div class="page-header">
 
-            <input
-                type="text"
-                placeholder="Search Student..."
-                style="width:100%;padding:12px;margin-bottom:20px;"
-            >
+                <div>
+                    <h1>Students</h1>
+                    <p>Manage all admitted students.</p>
+                </div>
 
-            <table class="admin-table">
+            </div>
 
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Course</th>
-                        <th>Mobile</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+            <div class="card">
 
-                <tbody>
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search by Student ID, Name or Mobile">
 
-                <% if (students && students.length > 0) { %>
+                <br>
 
-                    <% students.forEach(student => { %>
+                <table class="admin-table">
 
-                    <tr>
+                    <thead>
 
-                        <td><%= student.student_id %></td>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Mobile</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
 
-                        <td><%= student.full_name %></td>
+                    </thead>
 
-                        <td><%= student.course %></td>
+                    <tbody>
 
-                        <td><%= student.mobile %></td>
+                        <% if (students && students.length > 0) { %>
 
-                        <td><%= student.status %></td>
+                            <% students.forEach(student => { %>
 
-                        <td>
+                                <tr>
 
-                            <a class="btn-view"
-                               href="/admin/student/<%= student.id %>">
-                               View
-                            </a>
+                                    <td>
+                                        <%= student.student_id %>
+                                    </td>
 
-                        </td>
+                                    <td>
+                                        <%= student.full_name %>
+                                    </td>
 
-                    </tr>
+                                    <td>
+                                        <%= student.course || "-" %>
+                                    </td>
 
-                    <% }) %>
+                                    <td>
+                                        <%= student.mobile %>
+                                    </td>
 
-                <% } else { %>
+                                    <td>
 
-                    <tr>
-                        <td colspan="6" style="text-align:center;">
-                            No students found.
-                        </td>
-                    </tr>
+                                        <% if (student.status === "Active") { %>
 
-                <% } %>
+                                            <span class="badge badge-success">
+                                                Active
+                                            </span>
 
-                </tbody>
+                                        <% } else { %>
 
-            </table>
+                                            <span class="badge badge-danger">
+                                                Inactive
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="action-buttons">
+
+                                            <a
+                                                href="/admin/student/<%= student.id %>"
+                                                class="btn btn-primary">
+                                                View
+                                            </a>
+
+                                            <a
+                                                href="/admin/student/<%= student.id %>/edit"
+                                                class="btn btn-warning">
+                                                Edit
+                                            </a>
+
+                                            <form
+                                                action="/admin/student/<%= student.id %>/delete"
+                                                method="POST"
+                                                onsubmit="return confirm('Are you sure you want to permanently delete this student?');">
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-danger">
+                                                    Delete
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        <% } else { %>
+
+                            <tr>
+
+                                <td colspan="6" style="text-align:center;">
+                                    No students found.
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
@@ -89,5 +144,4 @@
 
 </div>
 
-</body>
-</html>
+<%- include("./partials/footer") %>

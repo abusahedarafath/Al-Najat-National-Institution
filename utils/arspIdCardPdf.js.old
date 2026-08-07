@@ -1,0 +1,640 @@
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
+
+
+
+
+module.exports = async function generateIdCard(
+    member,
+    arspSettings,
+    cardSettings,
+    res
+) {
+
+
+
+    const doc = new PDFDocument({
+
+        size: "A4",
+
+        margin: 0
+
+    });
+
+    res.setHeader("Content-Type", "application/pdf");
+
+    res.setHeader(
+
+        "Content-Disposition",
+
+        `attachment; filename=${member.member_id}.pdf`
+
+    );
+
+doc.pipe(res);
+
+        // =====================================
+    // Card Layout
+    // =====================================
+
+    const layout = {
+
+        pageWidth: 595.28,
+        pageHeight: 841.89,
+
+        x: 40,
+        y: 190,
+
+        width: Number(cardSettings?.card_width || 515),
+        height: Number(cardSettings?.card_height || 325),
+
+        radius: 18
+
+    };
+
+   drawBackground(doc, cardSettings, layout);
+
+drawHeader(doc, arspSettings, layout);
+
+drawPhoto(doc, member, layout);
+
+drawMemberInfo(doc, member, layout);
+
+drawFooter(
+    doc,
+    member,
+    arspSettings,
+    cardSettings,
+    layout
+);
+
+    doc.end();
+
+};
+
+
+// =====================================
+// Background
+// =====================================
+
+function drawBackground(doc, cardSettings, layout){
+    const background =
+        cardSettings && cardSettings.background
+            ? path.join(
+                __dirname,
+                "..",
+                "public",
+                "uploads",
+                "id-card",
+                cardSettings.background
+            )
+            : null;
+
+
+    // Custom Background Image
+    if (background && fs.existsSync(background)) {
+
+        doc.image(
+            background,
+            0,
+            0,
+            {
+                width: 595.28,
+                height: 841.89
+            }
+        );
+
+    } else {}
+
+
+
+    // A4 Background
+    doc
+        .rect(0, 0, 595.28, 841.89)
+        .fill("#F2F5F8");
+
+    // Shadow
+    doc
+        .save()
+        .fillOpacity(0.12)
+        .roundedRect(
+    layout.x,
+    layout.y,
+    layout.width,
+    layout.height,
+    layout.radius
+)
+
+        .fill("#999999")
+        .restore();
+
+    // Main Card
+    doc
+        .roundedRect(
+            40,
+            190,
+            515,
+            325,
+            18
+        )
+        .fillAndStroke(
+            "#FFFFFF",
+            "#123B6D"
+        );
+
+    // Gold Border
+    doc
+        .lineWidth(2)
+        .roundedRect(
+    layout.x + 3,
+    layout.y + 3,
+    layout.width - 6,
+    layout.height - 6,
+    layout.radius - 3
+)
+        .stroke("#D4A62A");
+
+}
+
+
+
+
+// =====================================
+// Header
+// =====================================
+
+function drawHeader(doc, arspSettings, layout){
+
+    const logo = arspSettings && arspSettings.logo
+        ? path.join(
+            __dirname,
+            "..",
+            "public",
+            "uploads",
+            "arsp-settings",
+            arspSettings.logo
+        )
+        : null;
+
+    // Blue Header
+    doc
+ 
+.roundedRect(
+    layout.x + 6,
+    layout.y + 6,
+    layout.width,
+    layout.height,
+    layout.radius
+)
+
+
+        .fill("#123B6D");
+
+    // Cover lower rounded corners
+    doc
+        .rect(
+            40,
+            240,
+            515,
+            22
+        )
+        .fill("#123B6D");
+
+    // Gold Line
+    doc
+        .rect(
+            40,
+            258,
+            515,
+            4
+        )
+        .fill("#D4A62A");
+
+    // Logo
+
+
+// Logo
+if (logo && fs.existsSync(logo)) {
+
+    doc.save();
+
+    doc.circle(82,226,24).clip();
+
+    doc.image(
+        logo,
+        58,
+        202,
+        {
+            width:48,
+            height:48
+        }
+    );
+
+    doc.restore();
+
+    doc.circle(82,226,24)
+       .lineWidth(2)
+       .stroke("#FFFFFF");
+
+}
+
+
+    // Organisation Name
+    doc
+        .fillColor("#FFFFFF")
+        .font("Helvetica-Bold")
+        .fontSize(22)
+        .text(
+            arspSettings.organization_name ||
+            "ACTIVE RURAL SOCIAL PROGRESS",
+            118,
+            205
+        );
+
+    // Subtitle
+    doc
+        .font("Helvetica")
+        .fontSize(9)
+        .fillColor("#E8E8E8")
+        .text(
+            "OFFICIAL MEMBER IDENTITY CARD",
+            120,
+            234
+        );
+
+}
+
+
+// =====================================
+// Member Photo
+// =====================================
+
+function drawPhoto(doc, member){
+
+    const photo = member.photo
+        ? path.join(
+            __dirname,
+            "..",
+            "public",
+            "uploads",
+            "arsp-members",
+            member.photo
+        )
+        : null;
+
+    // Photo Frame
+    doc
+
+        .roundedRect(
+            65,
+            290,
+            120,
+            145,
+            8
+        )
+
+        .lineWidth(2)
+
+        .stroke("#123B6D");
+
+    if(
+        photo &&
+        fs.existsSync(photo)
+    ){
+
+        doc.image(
+
+            photo,
+
+            70,
+
+            295,
+
+            {
+
+                fit:[110,135],
+
+                align:"center",
+
+                valign:"center"
+
+            }
+
+        );
+
+    }else{
+
+        doc
+
+            .fillColor("#999999")
+
+            .font("Helvetica-Bold")
+
+            .fontSize(16)
+
+            .text(
+
+                "PHOTO",
+
+                95,
+
+                355
+
+            );
+
+    }
+
+}
+
+// =====================================
+// Member Information
+// =====================================
+
+// =====================================
+// Member Information
+// =====================================
+
+function drawMemberInfo(doc, member){
+
+    doc
+
+        .fillColor("#123B6D")
+
+        .font("Helvetica-Bold")
+
+        .fontSize(24)
+
+       .text(
+    member.full_name,
+    220,
+    278
+);
+
+    doc
+
+       .roundedRect(
+    220,
+    312,
+    210,
+    28,
+    14
+)
+
+        .fill("#D4A62A");
+
+    doc
+
+        .fillColor("#123B6D")
+
+        .font("Helvetica-Bold")
+
+        .fontSize(12)
+
+       .text(
+    member.designation || "ARSP MEMBER",
+    235,
+    321
+);
+
+let y = 350;
+
+    const row = (title, value)=>{
+
+        doc
+
+            .fillColor("#123B6D")
+
+            .font("Helvetica-Bold")
+
+            .fontSize(11)
+
+            .text(
+
+                title,
+
+                220,
+
+                y
+
+            );
+
+        doc
+
+            .fillColor("#333333")
+
+            .font("Helvetica")
+
+            .text(
+
+                value || "-",
+
+                335,
+
+                y
+
+            );
+
+y += 20;
+    };
+
+    row("Member ID", member.member_id);
+
+    row("Committee", member.committee);
+
+    row("Section", member.section);
+
+    row("Status", member.status);
+
+    row("District", member.district);
+
+}
+
+
+
+// =====================================
+// Footer
+// =====================================
+
+function drawFooter(doc, member, arspSettings, cardSettings){
+    const qr = member.qr_code
+    ? path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "arsp-qr",
+        member.qr_code
+    )
+    : null;
+
+const signature =
+    arspSettings && arspSettings.president_signature
+        ? path.join(
+            __dirname,
+            "..",
+            "public",
+            "uploads",
+            "arsp-settings",
+            arspSettings.president_signature
+        )
+        : null;
+
+const seal =
+    arspSettings && arspSettings.official_seal
+        ? path.join(
+            __dirname,
+            "..",
+            "public",
+            "uploads",
+            "arsp-settings",
+            arspSettings.official_seal
+        )
+        : null;
+
+    // Footer Background
+   // Footer body (square top)
+doc
+    .rect(
+        40,
+        462,
+        515,
+        35
+    )
+    .fill("#123B6D");
+
+// Bottom rounded part
+doc
+    .roundedRect(
+        40,
+        480,
+        515,
+        35,
+        18
+    )
+    .fill("#123B6D");
+
+
+    // Gold separator
+    doc
+        .rect(40,459,515,3)
+        .fill("#D4A62A");
+
+    // -------------------
+    // QR SECTION
+    // -------------------
+
+    if (
+    cardSettings &&
+    cardSettings.qr_enabled === "Yes" &&
+    qr &&
+    fs.existsSync(qr)
+) {
+
+    doc.image(
+        qr,
+        60,
+        468,
+        {
+            fit: [42, 42]
+        }
+    );
+
+}
+
+    doc
+        .fillColor("white")
+        .font("Helvetica-Bold")
+        .fontSize(8)
+        .text(
+            "SCAN TO VERIFY",
+            110,
+            474
+        );
+
+doc
+    .font("Helvetica")
+    .fontSize(6)
+    .text(
+        "ARSP Digital Verification",
+        110,
+        488
+    );
+
+    // -------------------
+    // CENTER
+    // -------------------
+
+    doc
+        .font("Helvetica")
+        .fontSize(8)
+        .fillColor("#E5E5E5")
+        .text(
+            arspSettings.website || "www.arsp.in",
+            235,
+            485,
+            {
+                width:120,
+                align:"center"
+            }
+        );
+
+    // -------------------
+    // SIGNATURE
+    // -------------------
+
+    if(signature && fs.existsSync(signature)){
+
+        doc.image(
+            signature,
+            385,
+            468,
+            {
+                fit:[90,36]
+            }
+        );
+
+    }
+
+   doc
+    .fillColor("white")
+    .font("Helvetica")
+    .fontSize(7)
+    .text(
+        "Authorized Signature",
+        378,
+        503,
+        {
+            width: 100,
+            align: "center"
+        }
+    );
+
+    // -------------------
+    // SEAL
+    // -------------------
+
+    if (seal && fs.existsSync(seal)) {
+
+    doc.save();
+
+    doc.circle(512,488,20).clip();
+
+    doc.image(
+        seal,
+        492,
+        468,
+        {
+            width:40,
+            height:40
+        }
+    );
+
+    doc.restore();
+
+    doc.circle(512,488,20)
+       .lineWidth(1.5)
+       .stroke("#FFFFFF");
+
+}
+
+}

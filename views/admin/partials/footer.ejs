@@ -1,0 +1,100 @@
+        </main>
+
+    </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <script>
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".admin-sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        if (menuToggle && sidebar && overlay) {
+
+            menuToggle.addEventListener("click", () => {
+
+                sidebar.classList.toggle("sidebar-open");
+                overlay.classList.toggle("show");
+
+            });
+
+            overlay.addEventListener("click", () => {
+
+                sidebar.classList.remove("sidebar-open");
+                overlay.classList.remove("show");
+
+            });
+
+        }
+
+
+    /* ==========================================
+   MODERN ERP SIDEBAR
+========================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Parent Menus
+    document.querySelectorAll(".sidebar-parent").forEach(parent => {
+
+        parent.addEventListener("click", function () {
+
+            this.classList.toggle("open");
+
+            const menu = this.nextElementSibling;
+
+            if (menu) {
+
+                if (menu.style.display === "block") {
+
+                    menu.style.display = "none";
+
+                } else {
+
+                    menu.style.display = "block";
+
+                }
+
+            }
+
+        });
+
+    });
+
+    // Child Menus
+    document.querySelectorAll(".sidebar-child-parent").forEach(parent => {
+
+        parent.addEventListener("click", function () {
+
+            this.classList.toggle("open");
+
+            const menu = this.nextElementSibling;
+
+            if (menu) {
+
+                if (menu.style.display === "block") {
+
+                    menu.style.display = "none";
+
+                } else {
+
+                    menu.style.display = "block";
+
+                }
+
+            }
+
+        });
+
+    });
+
+});
+
+
+
+    </script>
+
+</body>
+
+</html>

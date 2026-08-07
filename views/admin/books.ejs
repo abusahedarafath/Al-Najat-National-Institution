@@ -1,0 +1,204 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Library Books</h1>
+
+                    <p>Manage all books in the library.</p>
+
+                </div>
+
+                <a
+                    href="/admin/book/add"
+                    class="btn btn-primary">
+
+                    + Add Book
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Cover</th>
+                        <th>Accession No.</th>
+                        <th>ISBN</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Available</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (books && books.length > 0) { %>
+
+                        <% books.forEach(book => { %>
+
+                            <tr>
+
+                                <td>
+
+                                    <% if (book.cover_image) { %>
+
+                                        <img
+                                            src="/uploads/books/<%= book.cover_image %>"
+                                            alt="Book Cover"
+                                            style="width:60px;height:80px;object-fit:cover;border-radius:6px;">
+
+                                    <% } else { %>
+
+                                        <span>No Image</span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= book.accession_no %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= book.isbn %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= book.title %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= book.author %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= book.category_name %>
+
+                                </td>
+
+                                <td>
+
+                                    <%= book.available_quantity %> / <%= book.quantity %>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (book.status === "Available") { %>
+
+                                        <span class="badge badge-success">
+
+                                            Available
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-danger">
+
+                                            <%= book.status %>
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/book/<%= book.id %>"
+                                            class="btn btn-primary">
+
+                                            View
+
+                                        </a>
+
+                                        <a
+                                            href="/admin/book/<%= book.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/book/<%= book.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Delete this book?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                style="text-align:center;">
+
+                                No books found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

@@ -1,0 +1,166 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1><%= album.title %></h1>
+
+                <a
+                    href="/admin/gallery"
+                    class="btn btn-secondary">
+                    Back to Gallery
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Upload Images</h2>
+
+                <form
+                    action="/admin/gallery/<%= album.id %>/images"
+                    method="POST"
+                    enctype="multipart/form-data">
+
+                    <div class="form-group">
+
+                        <label for="images">
+                            Select Images
+                        </label>
+
+                        <input
+                            type="file"
+                            id="images"
+                            name="images"
+                            class="form-control"
+                            multiple
+                            required>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+                            Upload Images
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Uploaded Images</h2>
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+                            <th>Image</th>
+                            <th>Caption</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% if (images.length === 0) { %>
+
+                            <tr>
+
+                                <td colspan="4" style="text-align:center;">
+                                    No images uploaded.
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                        <% images.forEach((img, index) => { %>
+
+                            <tr>
+
+                                <td><%= index + 1 %></td>
+
+                                <td>
+
+                                    <img
+                                        src="/uploads/gallery/<%= img.image %>"
+                                        alt="Gallery Image"
+                                        style="width:100px;border-radius:8px;">
+
+                                </td>
+
+                                <td>
+
+                                    <form
+                                        action="/admin/gallery/<%= album.id %>/image/<%= img.id %>/caption"
+                                        method="POST">
+
+                                        <div class="form-group">
+
+                                            <input
+                                                type="text"
+                                                name="caption"
+                                                class="form-control"
+                                                value="<%= img.caption || '' %>"
+                                                placeholder="Image caption">
+
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary">
+                                            Save
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="/admin/gallery/image/delete/<%= img.id %>"
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Delete this image?');">
+
+                                        Delete
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

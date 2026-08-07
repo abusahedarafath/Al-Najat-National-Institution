@@ -1,12 +1,19 @@
-<%- include("../../partials/header") %>
+<%- include("../partials/header") %>
+
 
 <div class="admin-layout">
 
-    <%- include("../../partials/admin-sidebar") %>
+<%- include("../partials/sidebar") %>
 
-    <div class="admin-content">
 
-        <h1>Add Hero Slider</h1>
+
+<main class="admin-content">
+
+  <div class="container">
+
+   <div class="page-header">
+    <h1>Add Hero Slider</h1>
+   </div>
 
         <form
             action="/admin/sliders/create"
@@ -99,8 +106,10 @@
 
         </form>
 
-    </div>
+</div>
+
+</main>
 
 </div>
 
-<%- include("../../partials/footer") %>
+<%- include("../partials/footer") %>

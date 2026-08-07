@@ -1,0 +1,201 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Mark Details</h1>
+
+                    <p>View complete details of the student's marks.</p>
+
+                </div>
+
+                <a
+                    href="/admin/marks"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th>Student ID</th>
+
+                            <td>
+
+                                <%= mark.student_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Class ID</th>
+
+                            <td>
+
+                                <%= mark.class_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Examination ID</th>
+
+                            <td>
+
+                                <%= mark.exam_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Subject ID</th>
+
+                            <td>
+
+                                <%= mark.subject_id %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Obtained Marks</th>
+
+                            <td>
+
+                                <%= mark.obtained_marks %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Total Marks</th>
+
+                            <td>
+
+                                <%= mark.total_marks %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Percentage</th>
+
+                            <td>
+
+                                <%= ((mark.obtained_marks / mark.total_marks) * 100).toFixed(2) %>%
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Grade</th>
+
+                            <td>
+
+                                <span class="badge badge-primary">
+
+                                    <%= mark.grade %>
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>GPA</th>
+
+                            <td>
+
+                                <%= mark.gpa %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Remarks</th>
+
+                            <td>
+
+                                <%= mark.remarks || "No remarks available." %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div class="action-buttons" style="margin-top:25px;">
+
+                    <a
+                        href="/admin/mark/<%= mark.id %>/edit"
+                        class="btn btn-success">
+
+                        Edit
+
+                    </a>
+
+                    <form
+                        action="/admin/mark/<%= mark.id %>/delete"
+                        method="POST"
+                        style="display:inline;">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('Delete this mark record?')">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

@@ -1,0 +1,195 @@
+<%- include("../partials/header") %>
+
+<div class="container" style="max-width:700px;margin:50px auto;">
+
+    <div class="profile-card">
+
+        <div style="text-align:center;">
+
+            <h1>
+
+                RTSE Certificate Portal
+
+            </h1>
+
+            <p>
+
+                Enter your Registration Number or Roll Number to download your certificate.
+
+            </p>
+
+        </div>
+
+        <form
+            action="/rtse/certificate"
+            method="POST">
+
+            <div class="form-group">
+
+                <label>
+
+                    Registration No. / Roll No.
+
+                </label>
+
+                <input
+                    type="text"
+                    name="keyword"
+                    placeholder="Example : ARSP2600001 or RTSE26-1001"
+                    required>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn-save"
+                style="width:100%;">
+
+                Search Certificate
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <% if(certificate){ %>
+
+    <div
+        class="profile-card"
+        style="margin-top:25px;">
+
+        <div style="text-align:center;">
+
+            <% if(certificate.photo){ %>
+
+            <img
+                src="/uploads/rtse/<%= certificate.photo %>"
+                style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
+
+            <% } %>
+
+            <h2>
+
+                <%= certificate.full_name %>
+
+            </h2>
+
+        </div>
+
+        <table class="admin-table">
+
+            <tbody>
+
+                <tr>
+
+                    <th width="220">
+
+                        Certificate No.
+
+                    </th>
+
+                    <td>
+
+                        <strong>
+
+                            <%= certificate.certificate_no %>
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Registration No.
+
+                    </th>
+
+                    <td>
+
+                        <%= certificate.registration_no %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Roll Number
+
+                    </th>
+
+                    <td>
+
+                        <%= certificate.roll_no %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Certificate Type
+
+                    </th>
+
+                    <td>
+
+                        <strong>
+
+                            <%= certificate.certificate_type %>
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Issue Date
+
+                    </th>
+
+                    <td>
+
+                        <%= certificate.issue_date %>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <div
+            style="margin-top:25px;text-align:center;">
+
+            <a
+                href="/rtse/certificate/<%= certificate.application_id %>"
+                class="btn-save">
+
+                Download Certificate
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

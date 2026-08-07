@@ -1,0 +1,165 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Edit Subject</h1>
+                    <p>Update subject information.</p>
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/subject/<%= subject.id %>/edit"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>Subject Name</label>
+
+                        <input
+                            type="text"
+                            name="subject_name"
+                            value="<%= subject.subject_name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Subject Code</label>
+
+                        <input
+                            type="text"
+                            name="subject_code"
+                            value="<%= subject.subject_code %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Class</label>
+
+                        <input
+                            type="text"
+                            name="class_name"
+                            value="<%= subject.class_name %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Teacher</label>
+
+                        <input
+                            type="text"
+                            name="teacher_name"
+                            value="<%= subject.teacher_name %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Subject Type</label>
+
+                        <select name="subject_type">
+
+                            <option
+                                value="Compulsory"
+                                <%= subject.subject_type === "Compulsory" ? "selected" : "" %>>
+                                Compulsory
+                            </option>
+
+                            <option
+                                value="Optional"
+                                <%= subject.subject_type === "Optional" ? "selected" : "" %>>
+                                Optional
+                            </option>
+
+                            <option
+                                value="Elective"
+                                <%= subject.subject_type === "Elective" ? "selected" : "" %>>
+                                Elective
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Display Order</label>
+
+                        <input
+                            type="number"
+                            name="sort_order"
+                            min="1"
+                            value="<%= subject.sort_order %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option
+                                value="Active"
+                                <%= subject.status === "Active" ? "selected" : "" %>>
+                                Active
+                            </option>
+
+                            <option
+                                value="Inactive"
+                                <%= subject.status === "Inactive" ? "selected" : "" %>>
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save Changes
+
+                        </button>
+
+                        <a
+                            href="/admin/subject/<%= subject.id %>"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

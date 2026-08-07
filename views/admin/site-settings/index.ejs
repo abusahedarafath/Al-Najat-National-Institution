@@ -1,0 +1,104 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Institution Settings</h1>
+                <p>Manage institution name, logo and favicon.</p>
+            </div>
+
+        </div>
+
+        <form
+            action="/admin/site-settings"
+            method="POST"
+            enctype="multipart/form-data"
+            class="admin-form">
+
+            <div class="form-group">
+
+                <label>Institution Name</label>
+
+                <input
+                    type="text"
+                    name="institution_name"
+                    value="<%= settings ? settings.institution_name : '' %>"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Tagline</label>
+
+                <input
+                    type="text"
+                    name="tagline"
+                    value="<%= settings ? settings.tagline : '' %>">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Current Logo</label>
+
+                <% if(settings && settings.logo){ %>
+
+                    <img
+                        src="/uploads/site-settings/<%= settings.logo %>"
+                        style="max-width:120px;display:block;margin-bottom:15px;">
+
+                <% } %>
+
+                <input
+                    type="file"
+                    name="logo"
+                    accept=".png,.jpg,.jpeg,.webp,.svg">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Current Favicon</label>
+
+                <% if(settings && settings.favicon){ %>
+
+                    <img
+                        src="/uploads/site-settings/<%= settings.favicon %>"
+                        style="max-width:50px;display:block;margin-bottom:15px;">
+
+                <% } %>
+
+                <input
+                    type="file"
+                    name="favicon"
+                    accept=".png,.ico,.jpg,.jpeg,.webp">
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>
+

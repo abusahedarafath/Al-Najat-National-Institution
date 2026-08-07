@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Notices</title>
-
-    <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
-
+<%- include("../partials/header") %>
 <div class="admin-layout">
 
-    <%- include("../../partials/admin-sidebar") %>
-
+<%- include("../partials/sidebar") %>
     <main class="admin-content">
 
         <div class="container">
@@ -23,16 +12,14 @@
                     Notice Management
                 </h1>
 
-                <a href="/admin/notices/create" class="btn btn-success">
-                    + Add Notice
+          <a href="/admin/notices/create" class="btn-save">                    + Add Notice
                 </a>
 
             </div>
 
             <div class="card">
 
-                <table class="table">
-
+<table class="admin-table">
                     <thead>
 
                         <tr>
@@ -97,9 +84,15 @@
 
                                 <div class="action-buttons">
 
-                                    <a
-                                        href="/admin/notices/<%= notice.id %>/edit"
-                                        class="btn btn-primary">
+
+
+<a
+href="/admin/notices/<%= notice.id %>/edit"
+class="btn-view">
+
+
+
+
 
                                         Edit
 
@@ -110,13 +103,17 @@
                                         method="POST"
                                         onsubmit="return confirm('Delete this notice?');">
 
-                                        <button
-                                            type="submit"
-                                            class="btn btn-danger">
+
+
+
+                       <button type="submit" class="btn-cancel">
 
                                             Delete
 
                                         </button>
+
+
+
 
                                     </form>
 
@@ -140,5 +137,4 @@
 
 </div>
 
-</body>
-</html>
+<%- include("../partials/footer") %>

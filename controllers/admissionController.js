@@ -10,21 +10,24 @@ exports.showApplyPage = (req, res) => {
     res.render("apply");
 };
 
-// Submit Application
-exports.submitApplication = (req, res) => {
+exports.submitApplication = async (req, res) => {
+    try {
 
-    admissionModel.createAdmission(req.body, (err) => {
+        console.log("=== SUBMIT START ===");
+        console.log(req.body);
 
-        if (err) {
-            console.error(err);
-            return res.send("Database Error");
-        }
+        const result = await admissionModel.createAdmission(req.body);
 
-        res.send(`
-            <h1>Application Submitted Successfully!</h1>
-            <a href="/">Back to Home</a>
-        `);
+        console.log("INSERT RESULT:", result);
 
-    });
+        res.send("Application Submitted Successfully!");
 
+    } catch (err) {
+
+        console.error("SUBMIT ERROR:");
+        console.error(err);
+
+        res.status(500).send(err.message);
+
+    }
 };

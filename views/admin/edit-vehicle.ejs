@@ -1,0 +1,220 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Vehicle</h1>
+
+                    <p>Update vehicle information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/vehicles"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/vehicle/<%= vehicle.id %>/edit"
+                    method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>Vehicle Name</label>
+
+                            <input
+                                type="text"
+                                name="vehicle_name"
+                                value="<%= vehicle.vehicle_name %>"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Vehicle Number</label>
+
+                            <input
+                                type="text"
+                                name="vehicle_number"
+                                value="<%= vehicle.vehicle_number %>"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Vehicle Type</label>
+
+                            <select
+                                name="vehicle_type"
+                                required>
+
+                                <option
+                                    value="Bus"
+                                    <%= vehicle.vehicle_type === "Bus" ? "selected" : "" %>>
+
+                                    Bus
+
+                                </option>
+
+                                <option
+                                    value="Van"
+                                    <%= vehicle.vehicle_type === "Van" ? "selected" : "" %>>
+
+                                    Van
+
+                                </option>
+
+                                <option
+                                    value="Car"
+                                    <%= vehicle.vehicle_type === "Car" ? "selected" : "" %>>
+
+                                    Car
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Seating Capacity</label>
+
+                            <input
+                                type="number"
+                                name="capacity"
+                                min="1"
+                                value="<%= vehicle.capacity %>"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Assigned Route</label>
+
+                            <select
+                                name="route_id"
+                                required>
+
+                                <% routes.forEach(route => { %>
+
+                                    <option
+                                        value="<%= route.id %>"
+                                        <%= vehicle.route_id == route.id ? "selected" : "" %>>
+
+                                        <%= route.route_name %>
+
+                                    </option>
+
+                                <% }) %>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Driver Name</label>
+
+                            <input
+                                type="text"
+                                name="driver_name"
+                                value="<%= vehicle.driver_name %>"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Driver Mobile</label>
+
+                            <input
+                                type="text"
+                                name="driver_mobile"
+                                value="<%= vehicle.driver_mobile %>"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Status</label>
+
+                            <select
+                                name="status"
+                                required>
+
+                                <option
+                                    value="Active"
+                                    <%= vehicle.status === "Active" ? "selected" : "" %>>
+
+                                    Active
+
+                                </option>
+
+                                <option
+                                    value="Inactive"
+                                    <%= vehicle.status === "Inactive" ? "selected" : "" %>>
+
+                                    Inactive
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Update Vehicle
+
+                        </button>
+
+                        <a
+                            href="/admin/vehicle/<%= vehicle.id %>"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

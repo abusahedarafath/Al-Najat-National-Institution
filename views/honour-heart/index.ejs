@@ -1,0 +1,825 @@
+<%- include("../partials/header") %>
+
+<% if (settings && settings.hero_banner) { %>
+
+<section
+    class="honour-hero"
+    style="background-image:url('/uploads/honour-heart/settings/<%= settings.hero_banner %>');">
+
+    <div class="honour-hero-overlay">
+
+        <div class="container">
+
+            <div class="honour-hero-content">
+
+                <span class="section-badge">
+                    ARSP National Honour
+                </span>
+
+                <h1>
+                    ARSP Honour Heart Award
+                </h1>
+
+                <p>
+                    <%= settings.about_title %>
+                </p>
+
+                <a
+                    href="#about-award"
+                    class="btn btn-light">
+                    Learn More
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+<section class="breadcrumb-section">
+
+<div class="container">
+
+<nav>
+
+<a href="/">Home</a>
+
+<span>/</span>
+
+<span>
+
+ARSP Honour Heart Award
+
+</span>
+
+</nav>
+
+</div>
+
+</section>
+
+
+<section
+    class="about-section"
+    id="about-award">
+
+    <div class="container">
+
+        <div class="about-award-card">
+
+            <div class="about-award-left">
+
+                <span class="section-badge">
+                    ABOUT THE AWARD
+                </span>
+
+                <h2>
+                    ARSP Honour Heart Award
+                </h2>
+
+                <p>
+                    <%= settings.about_description %>
+                </p>
+
+            </div>
+
+            <div class="about-award-right">
+
+                <div class="award-icon-box">
+
+                    <i class="fas fa-award"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+<% if (upcomingAwardee) { %>
+
+<section class="upcoming-award">
+
+    <div class="container">
+
+        <div class="premium-award-card">
+
+            <div class="premium-award-header">
+
+                <h4>ARSP</h4>
+
+                <h1>ARSP HONOUR HEART AWARD</h1>
+
+                <h3>UPCOMING AWARDEE</h3>
+
+            </div>
+
+            
+
+<div class="premium-award-body">
+
+    <div class="premium-photo-frame">
+
+        <div class="gold-ring">
+
+            <img
+                src="/uploads/honour-heart/awardees/<%= upcomingAwardee.photo %>"
+                alt="<%= upcomingAwardee.name %>">
+
+        </div>
+
+    </div>
+
+    <div>
+
+        <div class="premium-award-name">
+
+            <h2>
+
+                <%= upcomingAwardee.name %>
+
+            </h2>
+
+            <p>
+
+                <%= upcomingAwardee.designation %>
+
+            </p>
+
+        </div>
+
+        
+
+            
+
+            <div class="premium-award-info">
+
+                <div>
+
+                    <strong>Award Year</strong>
+
+                    <span><%= upcomingAwardee.award_year %></span>
+
+                </div>
+
+                <div>
+
+                    <strong>Category</strong>
+
+                    <span><%= upcomingAwardee.award_category %></span>
+
+                </div>
+
+                <div>
+
+                    <strong>Named After</strong>
+
+                    <span><%= upcomingAwardee.legend_name %></span>
+
+                </div>
+
+                <div>
+
+                    <strong>Venue</strong>
+
+                    <span><%= upcomingAwardee.venue %></span>
+
+                </div>
+
+            </div>
+
+            <div class="premium-award-description">
+
+                <%= upcomingAwardee.biography %>
+
+            </div>
+
+            <div class="premium-award-button">
+
+                <a
+                    href="/honour-heart/awardee/<%= upcomingAwardee.id %>"
+                    class="btn btn-primary">
+
+                    View Complete Profile
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+<!-- =========================================
+     LEGENDARY PERSONALITIES
+========================================== -->
+
+<section class="legend-intro-section">
+
+<div class="container">
+
+<div class="legend-intro-card">
+
+<div class="legend-intro-content">
+
+<span class="section-badge">
+
+ARSP Honour Heart Award
+
+</span>
+
+<h2>
+
+Legendary Personalities
+
+</h2>
+
+<p>
+
+The ARSP Honour Heart Award honours the timeless legacy of distinguished personalities whose vision, sacrifice, wisdom and lifelong service continue to inspire present and future generations. Explore the remarkable lives of these legends whose names have become an everlasting symbol of excellence.
+
+</p>
+
+<a
+
+href="/honour-heart/legends"
+
+class="btn btn-primary">
+
+<i class="fas fa-landmark"></i>
+
+Explore Legendary Personalities
+
+</a>
+
+</div>
+
+<div class="legend-intro-icon">
+
+<i class="fas fa-landmark"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+
+
+<section class="selection-board">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <span class="section-badge">
+
+                OFFICIAL COMMITTEE
+
+            </span>
+
+            <h2>
+
+                Honour Heart Selection Board
+
+            </h2>
+
+            <p>
+
+                The independent Selection Board is responsible for evaluating nominees and selecting personalities whose contributions have created a lasting impact on society.
+
+            </p>
+
+        </div>
+
+        <div class="selection-grid">
+
+            <% board.forEach(member=>{ %>
+
+                <div class="selection-card">
+
+                    <div class="selection-photo">
+
+                        <img
+                            src="/uploads/honour-heart/board/<%= member.photo %>"
+                            alt="<%= member.name %>">
+
+                    </div>
+
+                    <div class="selection-content">
+
+                        <h3>
+
+                            <%= member.name %>
+
+                        </h3>
+
+                        <h5>
+
+                            <%= member.designation %>
+
+                        </h5>
+
+                        <% if(member.organisation){ %>
+
+                            <p>
+
+                                <i class="fas fa-building"></i>
+
+                                <%= member.organisation %>
+
+                            </p>
+
+                        <% } %>
+
+                    </div>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="legend-section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <span class="section-badge">
+                LEGENDARY PERSONALITIES
+            </span>
+
+            <h2>
+                Great Souls Who Inspire Generations
+            </h2>
+
+            <p>
+                Every ARSP Honour Heart Award is dedicated to the ideals and
+                legacy of extraordinary personalities whose lives continue to
+                inspire humanity.
+            </p>
+
+        </div>
+
+        <div class="legend-grid">
+
+            <% legends.forEach(legend => { %>
+
+                <a
+                    href="/honour-heart/legend/<%= legend.slug %>"
+                    class="legend-card">
+
+                    <div class="legend-image">
+
+                        <img
+                            src="/uploads/honour-heart/legends/<%= legend.photo %>"
+                            alt="<%= legend.name %>">
+
+                    </div>
+
+                    <div class="legend-body">
+
+                        <h3><%= legend.name %></h3>
+
+                        <h5><%= legend.designation %></h5>
+
+                        <div class="legend-btn">
+
+                            Read Biography
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+<section class="award-stats-section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <span class="section-badge">
+
+                ACHIEVEMENTS
+
+            </span>
+
+            <h2>
+
+                ARSP Honour Heart Award At A Glance
+
+            </h2>
+
+            <p>
+
+                A quick overview of the Honour Heart Award and its growing legacy.
+
+            </p>
+
+        </div>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    <i class="fas fa-award"></i>
+
+                </div>
+
+                <h3>
+
+                    <%= previousAwardees.length + (upcomingAwardee ? 1 : 0) %>
+
+                </h3>
+
+                <p>Total Awardees</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    <i class="fas fa-landmark"></i>
+
+                </div>
+
+                <h3>
+
+                    <%= legends.length %>
+
+                </h3>
+
+                <p>Legendary Personalities</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    <i class="fas fa-users"></i>
+
+                </div>
+
+                <h3>
+
+                    <%= board.length %>
+
+                </h3>
+
+                <p>Selection Board Members</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    <i class="fas fa-calendar-check"></i>
+
+                </div>
+
+                <h3>
+
+                    <%= new Date().getFullYear() %>
+
+                </h3>
+
+                <p>Current Award Year</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<section class="awardees">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <span class="section-badge">
+
+                HONOUR ROLL
+
+            </span>
+
+            <h2>
+
+                Previous Honour Heart Awardees
+
+            </h2>
+
+            <p>
+
+                Every recipient represents excellence, dedication and extraordinary service to humanity.
+
+            </p>
+
+        </div>
+
+        <div class="awardees-grid">
+
+            <% previousAwardees.forEach(awardee=>{ %>
+
+                <a
+                    href="/honour-heart/awardee/<%= awardee.id %>"
+                    class="awardee-card">
+
+                    <div class="awardee-photo">
+
+                        <img
+                            src="/uploads/honour-heart/awardees/<%= awardee.photo %>"
+                            alt="<%= awardee.name %>">
+
+                        <span class="award-year">
+
+                            <%= awardee.award_year %>
+
+                        </span>
+
+                    </div>
+
+                    <div class="awardee-content">
+
+                        <h3>
+
+                            <%= awardee.name %>
+
+                        </h3>
+
+                        <h5>
+
+                            <%= awardee.designation %>
+
+                        </h5>
+
+                        <p>
+
+                            <strong>
+
+                                <%= awardee.award_category %>
+
+                            </strong>
+
+                        </p>
+
+                        <span class="awardee-btn">
+
+                            View Full Profile
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </span>
+
+                    </div>
+
+                </a>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+<% if(settings.popup_enabled==="Yes"){ %>
+
+<div id="awardPopup" class="award-popup">
+
+<div class="award-popup-content">
+
+<button
+id="closeAwardPopup"
+class="award-popup-close">
+
+×
+
+</button>
+
+<div id="awardPopupBody">
+
+Loading...
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+
+window.addEventListener("load", async () => {
+
+    try {
+
+        const res = await fetch("/honour-heart/popup");
+
+        const data = await res.json();
+
+        if (!data.id) return;
+
+        document.getElementById("awardPopupBody").innerHTML = `
+
+            <span class="section-badge">
+                Upcoming Award
+            </span>
+
+            <img
+                src="/uploads/honour-heart/awardees/${data.photo}"
+                class="popup-photo">
+
+            <h2>${data.name}</h2>
+
+            <h4>
+                ARSP Honour Heart Award ${data.award_year}
+            </h4>
+
+            <p>
+                ${data.biography.substring(0,220)}...
+            </p>
+
+            <a
+                href="/honour-heart/awardee/${data.id}"
+                class="btn btn-success">
+
+                View Complete Profile
+
+            </a>
+
+        `;
+
+        document
+            .getElementById("awardPopup")
+            .classList.add("show");
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
+
+});
+
+document.addEventListener("click", function (e) {
+
+    if (
+
+        e.target.id === "awardPopup" ||
+
+        e.target.id === "closeAwardPopup"
+
+    ) {
+
+        document
+            .getElementById("awardPopup")
+            .classList.remove("show");
+
+    }
+
+});
+
+
+
+
+</script>
+
+<% } %>
+
+
+<!-- =========================================
+     CONTACT / NOMINATION INFORMATION
+========================================= -->
+
+<section class="honour-contact-section">
+
+<div class="container">
+
+<div class="honour-contact-card">
+
+<div>
+
+<h2>
+
+ARSP Honour Heart Award Secretariat
+
+</h2>
+
+<span class="section-badge">
+
+Official Communication
+
+</span>
+
+<p>
+
+
+For all official enquiries regarding nominations, award selection,
+ceremony arrangements, partnerships, media communication or other
+matters related to the ARSP Honour Heart Award, please contact the
+Award Secretariat.
+
+
+
+</p>
+
+</div>
+
+<div class="honour-contact-buttons">
+
+<a
+
+href="/contact"
+
+class="btn btn-primary">
+
+<i class="fas fa-envelope"></i>
+
+Contact Us
+
+</a>
+
+<a
+
+href="/about"
+
+class="btn btn-outline-light">
+
+<i class="fas fa-info-circle"></i>
+
+Learn More
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+
+<%- include("../partials/footer") %>

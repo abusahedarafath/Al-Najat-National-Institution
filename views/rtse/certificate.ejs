@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RTSE Certificate</title>
+
+<style>
+
+body{
+
+    margin:0;
+
+    padding:30px;
+
+    background:#f2f2f2;
+
+    font-family:"Times New Roman",serif;
+
+}
+
+.certificate{
+
+    width:1123px;
+
+    min-height:794px;
+
+    margin:auto;
+
+    background:#fff;
+
+    border:12px solid #b8860b;
+
+    padding:45px;
+
+    box-sizing:border-box;
+
+    position:relative;
+
+}
+
+.inner{
+
+    border:3px solid #b8860b;
+
+    padding:30px;
+
+    min-height:650px;
+
+}
+
+.header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+.logo{
+
+    width:110px;
+
+    height:110px;
+
+    object-fit:contain;
+
+}
+
+.title{
+
+    text-align:center;
+
+    flex:1;
+
+}
+
+.title h1{
+
+    margin:0;
+
+    font-size:38px;
+
+    color:#0b4d91;
+
+}
+
+.title h2{
+
+    margin:8px 0;
+
+    color:#8b0000;
+
+}
+
+.title h3{
+
+    margin:0;
+
+}
+
+.photo{
+
+    width:120px;
+
+    height:140px;
+
+    border:2px solid #444;
+
+    object-fit:cover;
+
+}
+
+.body{
+
+    margin-top:40px;
+
+    text-align:center;
+
+}
+
+.body h1{
+
+    font-size:40px;
+
+    color:#8b0000;
+
+    margin-bottom:30px;
+
+}
+
+.name{
+
+    font-size:36px;
+
+    font-weight:bold;
+
+    color:#0b4d91;
+
+    border-bottom:2px dashed #555;
+
+    display:inline-block;
+
+    padding:5px 20px;
+
+}
+
+.text{
+
+    font-size:22px;
+
+    line-height:1.9;
+
+    margin-top:25px;
+
+}
+
+.info{
+
+    margin-top:35px;
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.info td{
+
+    border:1px solid #999;
+
+    padding:10px;
+
+    font-size:18px;
+
+}
+
+.footer{
+
+    margin-top:60px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+}
+
+.sign{
+
+    width:240px;
+
+    text-align:center;
+
+    border-top:1px solid #000;
+
+    padding-top:8px;
+
+}
+
+.qr{
+
+    width:95px;
+
+    height:95px;
+
+}
+
+.no{
+
+    position:absolute;
+
+    top:20px;
+
+    right:30px;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+}
+
+.print{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+}
+
+@media print{
+
+.print{
+
+display:none;
+
+}
+
+body{
+
+background:#fff;
+
+padding:0;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="print">
+
+<button onclick="window.print()">
+
+🖨 Print Certificate
+
+</button>
+
+</div>
+
+<div class="certificate">
+
+<div class="no">
+
+Certificate No.
+
+<strong>
+
+<%= certificate.certificate_no %>
+
+</strong>
+
+</div>
+
+<div class="inner">
+
+<div class="header">
+
+<img
+
+src="/uploads/arsp-settings/<%= setting.logo %>"
+
+class="logo">
+
+<div class="title">
+
+<h1>
+
+ACTIVE RURAL SOCIAL PROGRESS
+
+</h1>
+
+<h2>
+
+Ratabari Talent Search Examination
+
+</h2>
+
+<h3>
+
+Official Certificate
+
+</h3>
+
+</div>
+
+<img
+
+src="/uploads/rtse/<%= certificate.photo %>"
+
+class="photo">
+
+</div>
+
+<div class="body">
+
+<h1>
+
+<%= certificate.certificate_type %>
+
+Certificate
+
+</h1>
+
+<p class="text">
+
+This certificate is proudly presented to
+
+</p>
+
+<div class="name">
+
+<%= certificate.full_name %>
+
+</div>
+
+<p class="text">
+
+for successfully participating in the
+
+<strong>
+
+Ratabari Talent Search Examination
+
+</strong>
+
+conducted by
+
+<strong>
+
+Active Rural Social Progress (ARSP)
+
+</strong>
+
+and securing an excellent performance.
+
+</p>
+
+<table class="info">
+
+<tr>
+
+<td>
+
+Registration No.
+
+</td>
+
+<td>
+
+<%= certificate.registration_no %>
+
+</td>
+
+<td>
+
+Roll No.
+
+</td>
+
+<td>
+
+<%= certificate.roll_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+School
+
+</td>
+
+<td>
+
+<%= certificate.school_name %>
+
+</td>
+
+<td>
+
+Section
+
+</td>
+
+<td>
+
+<%= certificate.section %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Marks
+
+</td>
+
+<td>
+
+<%= certificate.marks %>
+
+</td>
+
+<td>
+
+Grade
+
+</td>
+
+<td>
+
+<%= certificate.grade %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Overall Rank
+
+</td>
+
+<td>
+
+<%= certificate.overall_rank || "-" %>
+
+</td>
+
+<td>
+
+Section Rank
+
+</td>
+
+<td>
+
+<%= certificate.section_rank || "-" %>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="footer">
+
+<div>
+
+<img
+
+src="/uploads/rtse-qr/<%= certificate.qr_code %>"
+
+class="qr">
+
+</div>
+
+<div class="sign">
+
+Controller of Examination
+
+</div>
+
+<div class="sign">
+
+President, ARSP
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

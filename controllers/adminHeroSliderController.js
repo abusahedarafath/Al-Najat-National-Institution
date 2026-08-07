@@ -3,107 +3,92 @@ const path = require("path");
 
 const HeroSlider = require("../models/HeroSlider");
 
-// ==========================
-// Show All Sliders
-// ==========================
-exports.index = (req, res) => {
-
-    HeroSlider.getAll((err, sliders) => {
-
-        if (err) {
-            console.log(err);
-            return res.redirect("/admin");
-        }
+exports.index = async (req, res) => {
+    try {
+        const sliders = await HeroSlider.getAll();
 
         res.render("admin/hero-slider/index", {
             title: "Hero Sliders",
             sliders
         });
-
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Unable to load sliders.");
+        res.redirect("/admin");
+    }
 };
 
-// ==========================
-// Add Slider Page
-// ==========================
 exports.createPage = (req, res) => {
-
     res.render("admin/hero-slider/create", {
         title: "Add Hero Slider"
     });
-
 };
 
-// ==========================
-// Save Slider
-// ==========================
-exports.store = (req, res) => {
 
-    const image = req.file ? req.file.filename : "";
 
-    const data = {
-        title: req.body.title,
-        subtitle: req.body.subtitle,
-        button_text: req.body.button_text,
-        button_link: req.body.button_link,
-        image,
-        display_order: req.body.display_order || 1,
-        status: req.body.status || "Active"
-    };
 
-    HeroSlider.create(data, (err) => {
+exports.store = async (req, res) => {
+    try {
+        const image = req.file ? req.file.filename : "";
 
-        if (err) {
-            console.log(err);
-            return res.redirect("/admin/sliders/create");
-        }
+        await HeroSlider.create({
+            title: req.body.title,
+            subtitle: req.body.subtitle,
+            button_text: req.body.button_text,
+            button_link: req.body.button_link,
+            image,
+            display_order: req.body.display_order || 1,
+            status: req.body.status || "Active"
+        });
 
+        req.flash("success", "Hero slider added successfully.");
         res.redirect("/admin/sliders");
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to create hero slider.");
+        res.redirect("/admin/sliders/create");
+    }
 };
 
-// ==========================
-// Edit Slider Page
-// ==========================
-exports.editPage = (req, res) => {
 
-    HeroSlider.getById(req.params.id, (err, result) => {
 
-        if (err || result.length === 0) {
+
+exports.editPage = async (req, res) => {
+    try {
+        const slider = await HeroSlider.getById(req.params.id);
+
+        if (!slider) {
+            req.flash("error", "Slider not found.");
             return res.redirect("/admin/sliders");
         }
 
         res.render("admin/hero-slider/edit", {
             title: "Edit Hero Slider",
-            slider: result[0]
+            slider
         });
 
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load slider.");
+        res.redirect("/admin/sliders");
+    }
 };
 
-// ==========================
-// Update Slider
-// ==========================
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
+    try {
+        const slider = await HeroSlider.getById(req.params.id);
 
-    HeroSlider.getById(req.params.id, (err, result) => {
-
-        if (err || result.length === 0) {
+        if (!slider) {
+            req.flash("error", "Slider not found.");
             return res.redirect("/admin/sliders");
         }
-
-        const slider = result[0];
 
         let image = slider.image;
 
         if (req.file) {
 
             if (slider.image) {
-
                 const oldImage = path.join(
                     __dirname,
                     "../public/uploads/sliders",
@@ -113,14 +98,12 @@ exports.update = (req, res) => {
                 if (fs.existsSync(oldImage)) {
                     fs.unlinkSync(oldImage);
                 }
-
             }
 
             image = req.file.filename;
-
         }
 
-        const data = {
+        await HeroSlider.update(req.params.id, {
             title: req.body.title,
             subtitle: req.body.subtitle,
             button_text: req.body.button_text,
@@ -128,37 +111,33 @@ exports.update = (req, res) => {
             image,
             display_order: req.body.display_order,
             status: req.body.status
-        };
-
-        HeroSlider.update(req.params.id, data, (err) => {
-
-            if (err) {
-                console.log(err);
-            }
-
-            res.redirect("/admin/sliders");
-
         });
 
-    });
+        req.flash("success", "Hero slider updated successfully.");
+        res.redirect("/admin/sliders");
 
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to update hero slider.");
+        res.redirect("/admin/sliders");
+    }
 };
 
-// ==========================
-// Delete Slider
-// ==========================
-exports.delete = (req, res) => {
 
-    HeroSlider.getById(req.params.id, (err, result) => {
 
-        if (err || result.length === 0) {
+
+
+
+exports.delete = async (req, res) => {
+    try {
+        const slider = await HeroSlider.getById(req.params.id);
+
+        if (!slider) {
+            req.flash("error", "Slider not found.");
             return res.redirect("/admin/sliders");
         }
 
-        const slider = result[0];
-
         if (slider.image) {
-
             const imagePath = path.join(
                 __dirname,
                 "../public/uploads/sliders",
@@ -168,47 +147,44 @@ exports.delete = (req, res) => {
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
             }
-
         }
 
-        HeroSlider.delete(req.params.id, () => {
+        await HeroSlider.delete(req.params.id);
 
-            res.redirect("/admin/sliders");
+        req.flash("success", "Hero slider deleted successfully.");
+        res.redirect("/admin/sliders");
 
-        });
-
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to delete hero slider.");
+        res.redirect("/admin/sliders");
+    }
 };
 
-// ==========================
-// Toggle Status
-// ==========================
-exports.toggleStatus = (req, res) => {
+exports.toggleStatus = async (req, res) => {
+    try {
+        const slider = await HeroSlider.getById(req.params.id);
 
-    HeroSlider.getById(req.params.id, (err, result) => {
-
-        if (err || result.length === 0) {
+        if (!slider) {
+            req.flash("error", "Slider not found.");
             return res.redirect("/admin/sliders");
         }
 
-        const current = result[0].status;
-
         const newStatus =
-            current === "Active"
-                ? "Inactive"
-                : "Active";
+            slider.status === "Active" ? "Inactive" : "Active";
 
-        HeroSlider.toggleStatus(
-            req.params.id,
-            newStatus,
-            () => {
+        await HeroSlider.toggleStatus(req.params.id, newStatus);
 
-                res.redirect("/admin/sliders");
+        req.flash("success", "Slider status updated successfully.");
+        res.redirect("/admin/sliders");
 
-            }
-        );
-
-    });
-
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to update slider status.");
+        res.redirect("/admin/sliders");
+    }
 };
+
+
+
+

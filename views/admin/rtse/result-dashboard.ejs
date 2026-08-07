@@ -1,0 +1,477 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+
+                    RTSE Result Dashboard
+
+                </h1>
+
+<div
+    style="display:flex;gap:10px;flex-wrap:wrap;">
+
+    <a
+        href="/admin/rtse"
+        class="btn-cancel">
+
+        ← Dashboard
+
+    </a>
+
+    <a
+        href="/admin/rtse/results/generate-rankings"
+        class="btn-save">
+
+        🏆 Generate Rankings
+
+    </a>
+
+    <a
+        href="/admin/rtse/results/merit-list"
+        class="btn-view">
+
+        📋 Merit List
+
+    </a>
+
+    <% if(setting.result_publish){ %>
+
+        <a
+            href="/admin/rtse/results/hide"
+            class="btn-warning">
+
+            🙈 Hide Results
+
+        </a>
+
+    <% } else { %>
+
+        <a
+            href="/admin/rtse/results/publish"
+            class="btn-save">
+
+            📢 Publish Results
+
+        </a>
+
+    <% } %>
+
+
+
+<% if(setting.certificate_publish){ %>
+
+<a
+
+    href="/admin/rtse/certificates/hide"
+
+    class="btn-warning">
+
+    🙈 Hide Certificates
+
+</a>
+
+<% } else { %>
+
+<a
+
+    href="/admin/rtse/certificates/publish"
+
+    class="btn-save">
+
+    🎓 Publish Certificates
+
+</a>
+
+<% } %>
+
+
+<a
+    href="/admin/rtse/certificates/generate-all"
+    class="btn-save"
+    onclick="return confirm('Generate certificates for all eligible students?')">
+
+    🎓 Generate All Certificates
+
+</a>
+
+<hr>
+
+<h3>
+
+Certificate PDF Downloads
+
+</h3>
+
+<div
+    style="display:flex;gap:10px;flex-wrap:wrap;">
+
+    <a
+        href="/admin/rtse/certificates/section/A"
+        class="btn-view">
+
+        📄 Section A PDF
+
+    </a>
+
+    <a
+        href="/admin/rtse/certificates/section/B"
+        class="btn-view">
+
+        📄 Section B PDF
+
+    </a>
+
+    <a
+        href="/admin/rtse/certificates/section/C"
+        class="btn-view">
+
+        📄 Section C PDF
+
+    </a>
+
+    <a
+        href="/admin/rtse/certificates/section/D"
+        class="btn-view">
+
+        📄 Section D PDF
+
+    </a>
+
+    <a
+        href="/admin/rtse/certificates/section/E"
+        class="btn-view">
+
+        📄 Section E PDF
+
+    </a>
+
+</div>
+
+<br>
+
+<div
+    style="display:flex;gap:10px;flex-wrap:wrap;">
+
+    <a
+        href="/admin/rtse/certificates/all"
+        class="btn-save">
+
+        📦 All Certificates
+
+    </a>
+
+</div>
+
+
+
+<a
+    href="/admin/rtse/certificates/generate/A"
+    class="btn-view">
+
+    Section A
+
+</a>
+
+<a
+    href="/admin/rtse/certificates/generate/B"
+    class="btn-view">
+
+    Section B
+
+</a>
+
+<a
+    href="/admin/rtse/certificates/generate/C"
+    class="btn-view">
+
+    Section C
+
+</a>
+
+<a
+    href="/admin/rtse/certificates/generate/D"
+    class="btn-view">
+
+    Section D
+
+</a>
+
+<a
+    href="/admin/rtse/certificates/generate/E"
+    class="btn-view">
+
+    Section E
+
+</a>
+
+
+</div>
+
+
+
+
+            </div>
+
+            <!-- Search -->
+
+            <div class="profile-card">
+
+                <form
+                    method="GET"
+                    action="/admin/rtse/results">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Search Student
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="search"
+                                placeholder="Registration No / Roll No / Name / School">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Section
+
+                            </label>
+
+                            <select name="section">
+
+                                <option value="">
+
+                                    All Sections
+
+                                </option>
+
+                                <option value="A">
+
+                                    Section A
+
+                                </option>
+
+                                <option value="B">
+
+                                    Section B
+
+                                </option>
+
+                                <option value="C">
+
+                                    Section C
+
+                                </option>
+
+                                <option value="D">
+
+                                    Section D
+
+                                </option>
+
+                                <option value="E">
+
+                                    Section E
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="btn-save">
+
+                        Search
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- Student List -->
+
+            <div class="profile-card">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+
+                                Roll No.
+
+                            </th>
+
+                            <th>
+
+                                Registration
+
+                            </th>
+
+                            <th>
+
+                                Student
+
+                            </th>
+
+                            <th>
+
+                                School
+
+                            </th>
+
+                            <th>
+
+                                Section
+
+                            </th>
+
+                            <th>
+
+                                Result
+
+                            </th>
+
+                            <th>
+
+                                Action
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% students.forEach(student=>{ %>
+
+                        <tr>
+
+                            <td>
+
+                                <%= student.roll_no || "-" %>
+
+                            </td>
+
+                            <td>
+
+                                <%= student.registration_no %>
+
+                            </td>
+
+                            <td>
+
+                                <strong>
+
+                                    <%= student.full_name %>
+
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                <%= student.school_name %>
+
+                            </td>
+
+                            <td>
+
+                                <%= student.section %>
+
+                            </td>
+
+
+<% if(student.result_status){ %>
+
+<a
+
+    href="/admin/rtse/certificate/<%= student.id %>"
+
+    class="btn-view">
+
+    Certificate
+
+</a>
+
+<% } %>
+
+
+
+                            <td>
+
+                                <% if(student.result_status){ %>
+
+                                    <span class="badge badge-success">
+
+                                        Entered
+
+                                    </span>
+
+                                <% }else{ %>
+
+                                    <span class="badge badge-warning">
+
+                                        Pending
+
+                                    </span>
+
+                                <% } %>
+
+                            </td>
+
+                            <td>
+
+                                <a
+
+                                    href="/admin/rtse/result/<%= student.id %>"
+
+                                    class="btn-save">
+
+                                    Enter Result
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

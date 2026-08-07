@@ -1,0 +1,387 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/arsp.css">
+<link rel="stylesheet" href="/css/arsp-team.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="page-banner">
+    <div class="container text-center">
+        <h1>ARSP Management Team</h1>
+        <p>Active Rural Social Progress</p>
+    </div>
+</section>
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+
+            <li class="breadcrumb-item active">
+                ARSP Management Team
+            </li>
+
+        </ol>
+
+    </nav>
+
+</div>
+
+<div class="container py-5">
+
+    <!-- ==============================
+         Quick Navigation
+    =============================== -->
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-lg-3 col-md-6">
+
+            <a href="/arsp/founder" class="text-decoration-none">
+
+                <div class="team-card">
+
+                    <h3>Founder</h3>
+
+                    <p>View Founder</p>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <a href="/arsp/organizing-body" class="text-decoration-none">
+
+                <div class="team-card">
+
+                    <h3>Organizing Body</h3>
+
+                    <p>View Members</p>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <a href="/arsp/chief-adviser" class="text-decoration-none">
+
+                <div class="team-card">
+
+                    <h3>Chief Adviser</h3>
+
+                    <p>View Profile</p>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <a href="/arsp/advisory-body" class="text-decoration-none">
+
+                <div class="team-card">
+
+                    <h3>Advisory Body</h3>
+
+                    <p>View Members</p>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ==============================
+         Founder
+    =============================== -->
+
+    <section class="mb-5">
+
+        <h2 class="section-title">
+
+            Founder
+
+        </h2>
+
+        <div class="team-grid">
+
+            <% founders.forEach(member => { %>
+
+            <div class="team-member-card">
+
+                <img
+                    src="/uploads/arsp-members/<%= member.photo %>"
+                    alt="<%= member.full_name %>"
+                    class="member-photo">
+
+                <h3 class="member-name">
+
+                    <%= member.full_name %>
+
+                </h3>
+
+                <span class="designation-badge">
+
+                    <%= member.designation %>
+
+                </span>
+
+                <div class="info-row">
+
+                    <small>Member ID</small>
+
+                    <strong><%= member.member_id %></strong>
+
+                </div>
+
+                <a
+                    href="/arsp/member/<%= member.member_id %>"
+                    class="profile-btn">
+
+                    View Profile
+
+                </a>
+
+            </div>
+
+            <% }) %>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- ==============================
+         Organizing Body
+    =============================== -->
+
+    <section class="mb-5">
+
+        <h2 class="section-title">
+
+            Organizing Body
+
+        </h2>
+
+        <div class="team-grid">
+
+            <% organizingBody.forEach(member => { %>
+
+            <div class="team-member-card">
+
+                <img
+                    src="/uploads/arsp-members/<%= member.photo %>"
+                    alt="<%= member.full_name %>"
+                    class="member-photo">
+
+                <h3 class="member-name">
+
+                    <%= member.full_name %>
+
+                </h3>
+
+                <span class="designation-badge">
+
+                    <%= member.designation %>
+
+                </span>
+
+                <div class="info-row">
+
+                    <small>Member ID</small>
+
+                    <strong><%= member.member_id %></strong>
+
+                </div>
+
+
+
+                <a
+                    href="/arsp/member/<%= member.member_id %>"
+                    class="profile-btn">
+
+                    View Profile
+
+                </a>
+
+            </div>
+
+            <% }) %>
+
+        </div>
+
+    </section>
+
+
+<!-- ==============================
+     Chief Adviser
+================================ -->
+
+<% if (chiefAdviser) { %>
+
+<section class="mb-5">
+
+    <h2 class="section-title">
+
+        Chief Adviser
+
+    </h2>
+
+    <div class="chief-adviser-card">
+
+        <div class="member-left">
+
+            <img
+                src="/uploads/arsp-members/<%= chiefAdviser.photo %>"
+                alt="<%= chiefAdviser.full_name %>"
+                class="member-photo">
+
+        </div>
+
+        <div class="member-right">
+
+            <h2 class="member-name">
+
+                <%= chiefAdviser.full_name %>
+
+            </h2>
+
+            <span class="designation-badge">
+
+                <%= chiefAdviser.designation %>
+
+            </span>
+
+            <div class="info-row">
+
+                <small>Member ID</small>
+
+                <strong><%= chiefAdviser.member_id %></strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <small>District</small>
+
+                <strong><%= chiefAdviser.district || "-" %></strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <small>Status</small>
+
+                <strong><%= chiefAdviser.status %></strong>
+
+            </div>
+
+            <a
+                href="/arsp/member/<%= chiefAdviser.member_id %>"
+                class="profile-btn">
+
+                View Full Profile
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+
+    <!-- ==============================
+         Advisory Body
+    =============================== -->
+
+    <section class="mb-5">
+
+        <h2 class="section-title">
+
+            Advisory Body
+
+        </h2>
+
+        <div class="team-grid">
+
+            <% advisoryBody.forEach(member => { %>
+
+            <div class="team-member-card">
+
+                <img
+                    src="/uploads/arsp-members/<%= member.photo %>"
+                    alt="<%= member.full_name %>"
+                    class="member-photo">
+
+                <h3 class="member-name">
+
+                    <%= member.full_name %>
+
+                </h3>
+
+                <span class="designation-badge">
+
+                    <%= member.designation %>
+
+                </span>
+
+                <div class="info-row">
+
+                    <small>Member ID</small>
+
+                    <strong><%= member.member_id %></strong>
+
+                </div>
+
+
+
+                <a
+                    href="/arsp/member/<%= member.member_id %>"
+                    class="profile-btn">
+
+                    View Profile
+
+                </a>
+
+            </div>
+
+            <% }) %>
+
+        </div>
+
+    </section>
+
+
+
+
+
+</div>
+
+<%- include("../partials/footer") %>
+
+
+

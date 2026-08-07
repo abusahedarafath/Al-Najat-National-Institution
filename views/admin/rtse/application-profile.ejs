@@ -1,0 +1,421 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>RTSE Application Profile</h1>
+
+                <a
+                    href="/admin/rtse"
+                    class="btn-cancel">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <div
+                    style="text-align:center;margin-bottom:30px;">
+
+                    <img
+
+                        src="/uploads/rtse/<%= application.photo %>"
+
+                        style="width:170px;height:170px;border-radius:50%;object-fit:cover;border:5px solid #ddd;">
+
+                </div>
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="240">
+
+                                Registration No.
+
+                            </th>
+
+                            <td>
+
+                                <strong>
+
+                                    <%= application.registration_no %>
+
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Student Name
+
+                            </th>
+
+                            <td>
+
+                                <%= application.full_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Father's Name
+
+                            </th>
+
+                            <td>
+
+                                <%= application.father_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Mother's Name
+
+                            </th>
+
+                            <td>
+
+                                <%= application.mother_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Gender
+
+                            </th>
+
+                            <td>
+
+                                <%= application.gender %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Date of Birth
+
+                            </th>
+
+                            <td>
+
+                                <%= application.dob %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Mobile Number
+
+                            </th>
+
+                            <td>
+
+                                <%= application.mobile %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Email
+
+                            </th>
+
+                            <td>
+
+                                <%= application.email || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                School Name
+
+                            </th>
+
+                            <td>
+
+                                <%= application.school_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Class
+
+                            </th>
+
+                            <td>
+
+                                <%= application.class %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Section
+
+                            </th>
+
+                            <td>
+
+                                SECTION <%= application.section %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                District
+
+                            </th>
+
+                            <td>
+
+                                <%= application.district %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                State
+
+                            </th>
+
+                            <td>
+
+                                <%= application.state %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                PIN Code
+
+                            </th>
+
+                            <td>
+
+                                <%= application.pincode || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Address
+
+                            </th>
+
+                            <td>
+
+                                <%= application.address %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Status
+
+                            </th>
+
+                            <td>
+
+                                <%= application.status %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Roll Number
+
+                            </th>
+
+                            <td>
+
+                                <%= application.roll_no || "Not Generated" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Identity Document
+
+                            </th>
+
+                            <td>
+
+                                <% if(application.identity_document){ %>
+
+                                    <a
+
+                                        href="/uploads/rtse/<%= application.identity_document %>"
+
+                                        target="_blank"
+
+                                        class="btn-view">
+
+                                        View Document
+
+                                    </a>
+
+                                <% } else { %>
+
+                                    Not Uploaded
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div
+                    style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
+
+                    <a
+
+                        href="/admin/rtse/application/<%= application.id %>/approve"
+
+                        class="btn-save">
+
+                        Approve
+
+                    </a>
+
+                    <a
+
+                        href="/admin/rtse/application/<%= application.id %>/reject"
+
+                        class="btn-warning">
+
+                        Reject
+
+                    </a>
+
+                    <a
+
+                        href="/admin/rtse/application/<%= application.id %>/edit"
+
+                        class="btn-view">
+
+                        Edit
+
+                    </a>
+
+                    <form
+
+                        action="/admin/rtse/application/<%= application.id %>/archive"
+
+                        method="POST"
+
+                        style="display:inline;">
+
+                        <button
+
+                            type="submit"
+
+                            class="btn-danger"
+
+                            onclick="return confirm('Move this application to Archive?')">
+
+                            Archive
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,355 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+
+                    RTSE Result Entry
+
+                </h1>
+
+                <a
+                    href="/admin/rtse/results"
+                    class="btn-cancel">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="220">
+
+                                Roll Number
+
+                            </th>
+
+                            <td>
+
+                                <%= student.roll_no %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Registration No.
+
+                            </th>
+
+                            <td>
+
+                                <%= student.registration_no %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Student Name
+
+                            </th>
+
+                            <td>
+
+                                <%= student.full_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                School
+
+                            </th>
+
+                            <td>
+
+                                <%= student.school_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Section
+
+                            </th>
+
+                            <td>
+
+                                <%= student.section %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <hr>
+
+                <form
+
+                    action="/admin/rtse/result/<%= student.id %>"
+
+                    method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Full Marks
+
+                            </label>
+
+                            <input
+
+                                type="number"
+
+                                id="full_marks"
+
+                                value="100"
+
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Obtained Marks
+
+                            </label>
+
+                            <input
+
+                                type="number"
+
+                                name="marks"
+
+                                id="marks"
+
+                                value="<%= result ? result.marks : '' %>"
+
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Percentage
+
+                            </label>
+
+                            <input
+
+                                type="number"
+
+                                name="percentage"
+
+                                id="percentage"
+
+                                value="<%= result ? result.percentage : '' %>"
+
+                                readonly>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Grade
+
+                            </label>
+
+                            <input
+
+                                type="text"
+
+                                name="grade"
+
+                                id="grade"
+
+                                value="<%= result ? result.grade : '' %>"
+
+                                readonly>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+
+                                Result Status
+
+                            </label>
+
+                            <select
+
+                                name="result_status">
+
+                                <option value="Pass">
+
+                                    Pass
+
+                                </option>
+
+                                <option value="Fail">
+
+                                    Fail
+
+                                </option>
+
+                                <option value="Absent">
+
+                                    Absent
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <button
+
+                        class="btn-save"
+
+                        type="submit">
+
+                        Save Result
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+
+const fullMarks=document.getElementById("full_marks");
+
+const marks=document.getElementById("marks");
+
+const percentage=document.getElementById("percentage");
+
+const grade=document.getElementById("grade");
+
+function calculate(){
+
+let total=parseFloat(fullMarks.value)||100;
+
+let obtained=parseFloat(marks.value)||0;
+
+let per=((obtained/total)*100).toFixed(2);
+
+percentage.value=per;
+
+if(per>=90){
+
+grade.value="A+";
+
+}
+
+else if(per>=80){
+
+grade.value="A";
+
+}
+
+else if(per>=70){
+
+grade.value="B+";
+
+}
+
+else if(per>=60){
+
+grade.value="B";
+
+}
+
+else if(per>=50){
+
+grade.value="C";
+
+}
+
+else if(per>=40){
+
+grade.value="D";
+
+}
+
+else{
+
+grade.value="F";
+
+}
+
+}
+
+marks.addEventListener(
+
+"keyup",
+
+calculate
+
+);
+
+marks.addEventListener(
+
+"change",
+
+calculate
+
+);
+
+calculate();
+
+</script>
+
+<%- include("../partials/footer") %>

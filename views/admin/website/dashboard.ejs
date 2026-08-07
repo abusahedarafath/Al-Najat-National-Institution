@@ -1,55 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Management</title>
-
-    <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
+<%- include("../partials/header") %>
 
 <div class="admin-layout">
 
-    <%- include("../../partials/admin-sidebar") %>
+    <%- include("../partials/sidebar") %>
 
     <main class="admin-content">
 
         <div class="container">
 
-            <h1>🌐 Website Management</h1>
+            <div class="page-header">
+
+                <h1>Website Management</h1>
+
+            </div>
 
             <div class="dashboard-grid">
 
                 <div class="card">
+
                     <h2>🖼 Hero Sliders</h2>
-                    <p>Manage homepage slider.</p>
-                    <a href="/admin/sliders">Open</a>
+
+                    <p>Manage homepage banners and hero sliders.</p>
+
+                    <a
+                        href="/admin/sliders"
+                        class="btn btn-primary">
+                        Manage Sliders
+                    </a>
+
                 </div>
 
                 <div class="card">
+
                     <h2>📰 News & Events</h2>
-                    <p>Manage news and events.</p>
+
+                    <p>Create, edit and publish news and events.</p>
+
+                    <a
+                        href="/admin/news"
+                        class="btn btn-primary">
+                        Manage News
+                    </a>
+
                 </div>
 
                 <div class="card">
+
                     <h2>📢 Notices</h2>
-                    <p>Manage notices.</p>
+
+                    <p>Publish notices for students and staff.</p>
+
+                    <a
+                        href="/admin/notices"
+                        class="btn btn-primary">
+                        Manage Notices
+                    </a>
+
                 </div>
 
                 <div class="card">
+
                     <h2>🖼 Gallery</h2>
-                    <p>Manage gallery.</p>
+
+                    <p>Manage albums and gallery images.</p>
+
+                    <a
+                        href="/admin/gallery"
+                        class="btn btn-primary">
+                        Manage Gallery
+                    </a>
+
                 </div>
 
                 <div class="card">
+
                     <h2>📄 Website Pages</h2>
-                    <p>Edit About, Contact and other pages.</p>
+
+                    <p>Edit About, Contact and other website pages.</p>
+
+                    <a
+                        href="/admin/pages"
+                        class="btn btn-primary">
+                        Manage Pages
+                    </a>
+
                 </div>
 
                 <div class="card">
+
                     <h2>📥 Downloads</h2>
-                    <p>Manage downloadable files.</p>
+
+                    <p>Upload and manage downloadable documents.</p>
+
+                    <a
+                        href="/admin/downloads"
+                        class="btn btn-primary">
+                        Manage Downloads
+                    </a>
+
                 </div>
 
             </div>
@@ -60,5 +108,4 @@
 
 </div>
 
-</body>
-</html>
+<%- include("../partials/footer") %>

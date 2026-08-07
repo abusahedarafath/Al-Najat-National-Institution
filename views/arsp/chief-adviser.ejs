@@ -1,0 +1,149 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+<section class="page-banner">
+
+    <div class="container">
+
+        <h1>Chief Adviser</h1>
+
+        <p>Active Rural Social Progress</p>
+
+    </div>
+
+</section>
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a href="/">Home</a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a href="/arsp/team">ARSP Team</a>
+
+            </li>
+
+            <li class="breadcrumb-item active">
+
+                Chief Adviser
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+</div>
+
+<div class="container py-5">
+
+    <% if(chiefAdviser){ %>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-5 col-md-8">
+
+            <div class="team-card">
+
+                <img
+                    src="/uploads/arsp-members/<%= chiefAdviser.photo %>"
+                    class="team-photo">
+
+                <h3>
+
+                    <%= chiefAdviser.full_name %>
+
+                </h3>
+
+                <h5 class="text-success">
+
+                    <%= chiefAdviser.designation %>
+
+                </h5>
+
+                <hr>
+
+                <p>
+
+                    <strong>Member ID:</strong>
+
+                    <%= chiefAdviser.member_id %>
+
+                </p>
+
+                <p>
+
+                    <strong>Committee:</strong>
+
+                    <%= chiefAdviser.committee_name || "-" %>
+
+                </p>
+
+                <p>
+
+                    <strong>District:</strong>
+
+                    <%= chiefAdviser.district || "-" %>
+
+                </p>
+
+                <p>
+
+                    <strong>Session:</strong>
+
+                    <%= chiefAdviser.session_name || "-" %>
+
+                </p>
+
+                <p>
+
+                    <strong>Status:</strong>
+
+                    <span class="badge bg-success">
+
+                        <%= chiefAdviser.status %>
+
+                    </span>
+
+                </p>
+
+                <a
+                    href="/arsp/member/<%= chiefAdviser.member_id %>"
+                    class="btn btn-success w-100">
+
+                    View Full Profile
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <% } else { %>
+
+    <div class="alert alert-warning text-center">
+
+        Chief Adviser not found.
+
+    </div>
+
+    <% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,196 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Homepage Button</h1>
+
+                    <p>Update homepage quick button.</p>
+
+                </div>
+
+                <a
+                    href="/admin/quick-access"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <form
+                action="/admin/quick-access/<%= item.id %>/edit"
+                method="POST"
+                class="admin-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Title</label>
+
+                        <input
+                            type="text"
+                            name="title"
+                            value="<%= item.title %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Icon</label>
+
+                        <input
+                            type="text"
+                            name="icon"
+                            value="<%= item.icon %>"
+                            placeholder="graduation-cap"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>URL</label>
+
+                        <input
+                            type="text"
+                            name="url"
+                            value="<%= item.url %>"
+                            placeholder="/arsp/team"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Display Order</label>
+
+                        <input
+                            type="number"
+                            name="display_order"
+                            value="<%= item.display_order %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Button Color</label>
+
+                        <select name="button_color">
+
+                            <option value="primary"
+                                <%= item.button_color==="primary" ? "selected" : "" %>>
+
+                                Primary
+
+                            </option>
+
+                            <option value="success"
+                                <%= item.button_color==="success" ? "selected" : "" %>>
+
+                                Success
+
+                            </option>
+
+                            <option value="warning"
+                                <%= item.button_color==="warning" ? "selected" : "" %>>
+
+                                Warning
+
+                            </option>
+
+                            <option value="danger"
+                                <%= item.button_color==="danger" ? "selected" : "" %>>
+
+                                Danger
+
+                            </option>
+
+                            <option value="info"
+                                <%= item.button_color==="info" ? "selected" : "" %>>
+
+                                Info
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select name="status">
+
+                            <option value="Active"
+                                <%= item.status==="Active" ? "selected" : "" %>>
+
+                                Active
+
+                            </option>
+
+                            <option value="Inactive"
+                                <%= item.status==="Inactive" ? "selected" : "" %>>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Subtitle</label>
+
+                    <textarea
+                        name="subtitle"
+                        rows="4"><%= item.subtitle %></textarea>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Update
+
+                    </button>
+
+                    <a
+                        href="/admin/quick-access"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

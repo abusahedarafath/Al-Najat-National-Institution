@@ -1,0 +1,289 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+
+       <% if (success && success.length) { %>
+
+<div class="alert alert-success" style="margin-bottom:20px;padding:15px;background:#d1e7dd;border:1px solid #badbcc;color:#0f5132;border-radius:8px;">
+
+    <%= success[0] %>
+
+</div>
+
+<% } %>
+
+<% if (error && error.length) { %>
+
+<div class="alert alert-danger" style="margin-bottom:20px;padding:15px;background:#f8d7da;border:1px solid #f5c2c7;color:#842029;border-radius:8px;">
+
+    <%= error[0] %>
+
+</div>
+
+<% } %>
+
+
+
+             <div class="page-header">
+
+                <h1>ARSP Settings</h1>
+
+            </div>
+
+            <div class="profile-card">
+
+                <form
+                    action="/admin/arsp/settings"
+                    method="POST"
+                    enctype="multipart/form-data">
+
+                    <!-- ARSP Logo -->
+
+                    <div class="form-group">
+
+                        <label>ARSP Logo</label>
+
+                        <% if (setting && setting.logo) { %>
+
+                            <div style="margin-bottom:15px;">
+
+                                <img
+                                    src="/uploads/arsp-settings/<%= setting.logo %>"
+                                    style="height:90px;border:1px solid #ddd;padding:6px;border-radius:8px;">
+
+                            </div>
+
+                        <% } %>
+
+                        <input
+                            type="file"
+                            name="logo"
+                            class="form-control"
+                            accept="image/*">
+
+                        <small class="text-muted">
+
+                            Recommended: PNG, square logo (500 × 500 px).
+
+                        </small>
+
+                        <input
+                            type="hidden"
+                            name="old_logo"
+                            value="<%= setting ? setting.logo : '' %>">
+
+                    </div>
+
+
+
+
+
+<!-- President Signature -->
+
+<div class="form-group">
+
+    <label>President Signature</label>
+
+    <% if (setting && setting.president_signature) { %>
+
+        <div style="margin-bottom:15px;">
+
+            <img
+                src="/uploads/arsp-settings/<%= setting.president_signature %>"
+                style="height:80px;border:1px solid #ddd;padding:6px;border-radius:8px;">
+
+        </div>
+
+    <% } %>
+
+    <input
+        type="file"
+        name="president_signature"
+        class="form-control"
+        accept="image/*">
+
+    <input
+        type="hidden"
+        name="old_president_signature"
+        value="<%= setting ? setting.president_signature : '' %>">
+
+</div>
+
+<!-- Official Seal -->
+
+<div class="form-group">
+
+    <label>Official Seal</label>
+
+    <% if (setting && setting.official_seal) { %>
+
+        <div style="margin-bottom:15px;">
+
+            <img
+                src="/uploads/arsp-settings/<%= setting.official_seal %>"
+                style="height:110px;border:1px solid #ddd;padding:6px;border-radius:8px;">
+
+        </div>
+
+    <% } %>
+
+    <input
+        type="file"
+        name="official_seal"
+        class="form-control"
+        accept="image/*">
+
+    <input
+        type="hidden"
+        name="old_official_seal"
+        value="<%= setting ? setting.official_seal : '' %>">
+
+</div>
+
+<!-- Favicon -->
+
+<div class="form-group">
+
+    <label>Favicon</label>
+
+    <% if (setting && setting.favicon) { %>
+
+        <div style="margin-bottom:15px;">
+
+            <img
+                src="/uploads/arsp-settings/<%= setting.favicon %>"
+                style="height:48px;border:1px solid #ddd;padding:6px;border-radius:8px;">
+
+        </div>
+
+    <% } %>
+
+    <input
+        type="file"
+        name="favicon"
+        class="form-control"
+        accept="image/*">
+
+    <input
+        type="hidden"
+        name="old_favicon"
+        value="<%= setting ? setting.favicon : '' %>">
+
+</div>
+
+
+
+
+
+
+
+                    <!-- Organization Name -->
+
+                    <div class="form-group">
+
+                        <label>Organization Name</label>
+
+                        <input
+                            type="text"
+                            name="organization_name"
+                            class="form-control"
+                            value="<%= setting ? setting.organization_name : '' %>"
+                            required>
+
+                    </div>
+
+                    <!-- Short Name -->
+
+                    <div class="form-group">
+
+                        <label>Short Name</label>
+
+                        <input
+                            type="text"
+                            name="short_name"
+                            class="form-control"
+                            value="<%= setting ? setting.short_name : '' %>">
+
+                    </div>
+
+                    <!-- Tagline -->
+
+                    <div class="form-group">
+
+                        <label>Tagline</label>
+
+                        <input
+                            type="text"
+                            name="tagline"
+                            class="form-control"
+                            value="<%= setting ? setting.tagline : '' %>">
+
+                    </div>
+
+                    <!-- Email -->
+
+                    <div class="form-group">
+
+                        <label>Email</label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            value="<%= setting ? setting.email : '' %>">
+
+                    </div>
+
+                    <!-- Phone -->
+
+                    <div class="form-group">
+
+                        <label>Phone</label>
+
+                        <input
+                            type="text"
+                            name="phone"
+                            class="form-control"
+                            value="<%= setting ? setting.phone : '' %>">
+
+                    </div>
+
+                    <!-- Address -->
+
+                    <div class="form-group">
+
+                        <label>Address</label>
+
+                        <textarea
+                            name="address"
+                            class="form-control"
+                            rows="4"><%= setting ? setting.address : '' %></textarea>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+
+                        Save ARSP Settings
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,158 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Edit Transport Route</h1>
+
+                    <p>Update transport route information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/transport-routes"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+
+
+
+<form
+    action="/admin/transport-route/<%= route.id %>/edit"
+    method="POST">
+
+    <div class="form-group">
+        <label>Route Code</label>
+        <input
+            type="text"
+            name="route_code"
+            value="<%= route.route_code %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Route Name</label>
+        <input
+            type="text"
+            name="route_name"
+            value="<%= route.route_name %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Start Point</label>
+        <input
+            type="text"
+            name="start_point"
+            value="<%= route.start_point %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>End Point</label>
+        <input
+            type="text"
+            name="end_point"
+            value="<%= route.end_point %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Distance (KM)</label>
+        <input
+            type="number"
+            name="distance"
+            step="0.1"
+            min="0"
+            value="<%= route.distance %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Estimated Time</label>
+        <input
+            type="text"
+            name="estimated_time"
+            value="<%= route.estimated_time %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Monthly Fee (₹)</label>
+        <input
+            type="number"
+            name="fare"
+            step="0.01"
+            min="0"
+            value="<%= route.fare %>"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Status</label>
+
+        <select name="status">
+
+            <option
+                value="Active"
+                <%= route.status === "Active" ? "selected" : "" %>>
+                Active
+            </option>
+
+            <option
+                value="Inactive"
+                <%= route.status === "Inactive" ? "selected" : "" %>>
+                Inactive
+            </option>
+
+        </select>
+    </div>
+
+    <div class="action-buttons">
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+            Update Route
+        </button>
+
+        <a
+            href="/admin/transport-route/<%= route.id %>"
+            class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </div>
+
+</form>
+
+
+
+
+
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

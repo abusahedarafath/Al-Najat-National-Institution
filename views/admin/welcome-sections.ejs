@@ -1,0 +1,143 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Welcome Section</h1>
+
+                    <p>Manage homepage welcome section.</p>
+
+                </div>
+
+                <a
+                    href="/admin/welcome-section/add"
+                    class="btn btn-primary">
+
+                    + Add Welcome Section
+
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Small Title</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if(sections.length){ %>
+
+                        <% sections.forEach(section=>{ %>
+
+                            <tr>
+
+                                <td><%= section.id %></td>
+
+                                <td><%= section.small_title %></td>
+
+                                <td><%= section.title %></td>
+
+                                <td>
+
+                                    <% if(section.status==="Active"){ %>
+
+                                        <span class="badge badge-success">
+
+                                            Active
+
+                                        </span>
+
+                                    <% }else{ %>
+
+                                        <span class="badge badge-danger">
+
+                                            Inactive
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/welcome-section/<%= section.id %>/edit"
+                                            class="btn btn-success">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/welcome-section/<%= section.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Delete this section?')">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% }else{ %>
+
+                        <tr>
+
+                            <td colspan="5" style="text-align:center;">
+
+                                No Welcome Section Found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

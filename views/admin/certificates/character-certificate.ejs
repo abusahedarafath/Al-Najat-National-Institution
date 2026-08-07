@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        Character Certificate
+
+    </title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:"Times New Roman",serif;
+            background:#f5f5f5;
+            padding:30px;
+        }
+
+        .certificate{
+            width:210mm;
+            min-height:297mm;
+            margin:auto;
+            background:#fff;
+            padding:40px;
+            border:3px solid #000;
+        }
+
+        .header{
+            text-align:center;
+            border-bottom:2px solid #000;
+            padding-bottom:15px;
+            margin-bottom:30px;
+        }
+
+        .logo{
+            width:90px;
+            height:90px;
+            object-fit:contain;
+            margin-bottom:10px;
+        }
+
+        h1{
+            font-size:32px;
+        }
+
+        h2{
+            font-size:20px;
+            margin-top:5px;
+        }
+
+        .title{
+            text-align:center;
+            margin:35px 0;
+            font-size:28px;
+            font-weight:bold;
+            text-decoration:underline;
+        }
+
+        p{
+            font-size:18px;
+            line-height:2;
+            text-align:justify;
+        }
+
+        .signature{
+            margin-top:80px;
+            display:flex;
+            justify-content:space-between;
+        }
+
+        .sign-box{
+            width:220px;
+            text-align:center;
+        }
+
+        .line{
+            border-top:1px solid #000;
+            margin-bottom:5px;
+        }
+
+        .footer{
+            margin-top:40px;
+            text-align:center;
+            font-size:14px;
+        }
+
+        @media print{
+
+            body{
+                background:#fff;
+                padding:0;
+            }
+
+            .certificate{
+                width:100%;
+                border:none;
+                margin:0;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body onload="window.print()">
+
+<div class="certificate">
+
+    <div class="header">
+
+        <img
+            src="/images/logo.png"
+            class="logo"
+            alt="Logo">
+
+        <h1>
+
+            AL-NAJAT NATIONAL INSTITUTION
+
+        </h1>
+
+        <h2>
+
+            Sribhumi, Assam - 788735
+
+        </h2>
+
+    </div>
+
+    <div class="title">
+
+        CHARACTER CERTIFICATE
+
+    </div>
+
+    <p>
+
+        Certificate No:
+        <strong>
+
+            <%= certificate.certificate_no %>
+
+        </strong>
+
+    </p>
+
+    <p>
+
+        Issue Date:
+        <strong>
+
+            <%= new Date(certificate.issue_date).toLocaleDateString() %>
+
+        </strong>
+
+    </p>
+
+    <br>
+
+    <p>
+
+        This is to certify that
+        <strong>
+
+            <%= certificate.full_name %>
+
+        </strong>
+
+        bearing Student ID
+        <strong>
+
+            <%= certificate.student_id %>
+
+        </strong>
+
+        was a bona fide student of
+        <strong>
+
+            Al-Najat National Institution
+
+        </strong>.
+
+    </p>
+
+    <br>
+
+    <p>
+
+        During the period of study, the student's conduct, discipline and moral character were found to be
+        <strong>good</strong>. We wish the student success in future studies and life.
+
+    </p>
+
+    <% if(certificate.remarks){ %>
+
+    <br>
+
+    <p>
+
+        <strong>Remarks:</strong>
+
+        <%= certificate.remarks %>
+
+    </p>
+
+    <% } %>
+
+    <div class="signature">
+
+        <div class="sign-box">
+
+            <div class="line"></div>
+
+            Class Teacher
+
+        </div>
+
+        <div class="sign-box">
+
+            <div class="line"></div>
+
+            Principal
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        This is a computer-generated certificate issued by
+        Al-Najat National Institution.
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

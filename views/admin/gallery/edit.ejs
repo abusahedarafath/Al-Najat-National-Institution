@@ -1,0 +1,127 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>Edit Gallery Album</h1>
+
+                <a
+                    href="/admin/gallery"
+                    class="btn btn-secondary">
+                    Back to Gallery
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/gallery/<%= album.id %>/edit"
+                    method="POST"
+                    enctype="multipart/form-data">
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            Album Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            class="form-control"
+                            value="<%= album.title %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            class="form-control"><%= album.description %></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="cover_image">
+                            Replace Cover Image (Optional)
+                        </label>
+
+                        <input
+                            type="file"
+                            id="cover_image"
+                            name="cover_image"
+                            class="form-control">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="status">
+                            Status
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                            class="form-control">
+
+                            <option
+                                value="Active"
+                                <%= album.status === "Active" ? "selected" : "" %>>
+                                Active
+                            </option>
+
+                            <option
+                                value="Inactive"
+                                <%= album.status === "Inactive" ? "selected" : "" %>>
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+                            Update Album
+                        </button>
+
+                        <a
+                            href="/admin/gallery"
+                            class="btn btn-secondary">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

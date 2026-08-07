@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RTSE Official Mark Sheet</title>
+
+<style>
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    background:#f5f5f5;
+
+    margin:20px;
+
+}
+
+.sheet{
+
+    width:850px;
+
+    margin:auto;
+
+    background:#fff;
+
+    border:3px solid #000;
+
+    padding:25px;
+
+}
+
+.header{
+
+    display:flex;
+
+    align-items:center;
+
+    border-bottom:2px solid #000;
+
+    padding-bottom:15px;
+
+}
+
+.logo{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:contain;
+
+}
+
+.title{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+.title h1{
+
+    margin:0;
+
+}
+
+.title h3{
+
+    margin:6px 0;
+
+}
+
+.photo{
+
+    width:120px;
+
+    height:140px;
+
+    border:1px solid #000;
+
+    object-fit:cover;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+td{
+
+    border:1px solid #000;
+
+    padding:8px;
+
+}
+
+.result{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    color:green;
+
+}
+
+.footer{
+
+    margin-top:40px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+}
+
+.signature{
+
+    width:220px;
+
+    text-align:center;
+
+    border-top:1px solid #000;
+
+    padding-top:8px;
+
+}
+
+.qr{
+
+    width:90px;
+
+    height:90px;
+
+    border:1px solid #000;
+
+    object-fit:contain;
+
+}
+
+.print{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+}
+
+@media print{
+
+.print{
+
+display:none;
+
+}
+
+body{
+
+background:#fff;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="print">
+
+<button onclick="window.print()">
+
+🖨 Print Mark Sheet
+
+</button>
+
+</div>
+
+<div class="sheet">
+
+<div class="header">
+
+<img
+
+src="/uploads/arsp-settings/<%= examSetting.logo %>"
+
+class="logo">
+
+<div class="title">
+
+<h1>
+
+Ratabari Talent Search Examination
+
+</h1>
+
+<h3>
+
+Official Mark Sheet
+
+</h3>
+
+<p>
+
+Conducted by
+
+<strong>
+
+Active Rural Social Progress (ARSP)
+
+</strong>
+
+</p>
+
+</div>
+
+<img
+
+src="/uploads/rtse/<%= student.photo %>"
+
+class="photo">
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="220">
+
+Registration No.
+
+</td>
+
+<td>
+
+<%= student.registration_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Roll Number
+
+</td>
+
+<td>
+
+<%= student.roll_no %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Student Name
+
+</td>
+
+<td>
+
+<%= student.full_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Father's Name
+
+</td>
+
+<td>
+
+<%= student.father_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+School
+
+</td>
+
+<td>
+
+<%= student.school_name %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+District
+
+</td>
+
+<td>
+
+<%= student.district %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Section
+
+</td>
+
+<td>
+
+<%= student.section %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Marks
+
+</td>
+
+<td>
+
+<strong>
+
+<%= student.marks %>
+
+</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Percentage
+
+</td>
+
+<td>
+
+<%= student.percentage %> %
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Grade
+
+</td>
+
+<td>
+
+<%= student.grade %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Section Rank
+
+</td>
+
+<td>
+
+<%= student.section_rank %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Overall Rank
+
+</td>
+
+<td>
+
+<%= student.overall_rank %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Result
+
+</td>
+
+<td class="result">
+
+<%= student.result_status %>
+
+</td>
+
+</tr>
+
+</table>
+
+<div class="footer">
+
+<div>
+
+<% if(student.qr_code){ %>
+
+<img
+
+src="/uploads/rtse-qr/<%= student.qr_code %>"
+
+class="qr">
+
+<% } %>
+
+</div>
+
+<div class="signature">
+
+Controller of Examination
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

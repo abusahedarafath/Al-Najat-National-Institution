@@ -1,0 +1,166 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+<section class="page-banner">
+
+    <div class="container">
+
+        <h1>Organizing Body</h1>
+
+        <p>Active Rural Social Progress</p>
+
+    </div>
+
+</section>
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a href="/">Home</a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a href="/arsp/team">ARSP Team</a>
+
+            </li>
+
+            <li class="breadcrumb-item active">
+
+                Organizing Body
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+</div>
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <% if(organizingBody.length){ %>
+
+            <% organizingBody.forEach(member=>{ %>
+
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+
+                    <div class="team-card">
+
+                        <img
+                            src="/uploads/arsp-members/<%= member.photo %>"
+                            class="team-photo">
+
+                        <h4>
+
+                            <%= member.full_name %>
+
+                        </h4>
+
+                        <h6 class="text-success">
+
+                            <%= member.designation %>
+
+                        </h6>
+
+                        <hr>
+
+                        <p>
+
+                            <strong>Member ID:</strong>
+
+                            <%= member.member_id %>
+
+                        </p>
+
+                        <p>
+
+                            <strong>Committee:</strong>
+
+                            <%= member.committee_name || "-" %>
+
+                        </p>
+
+                        <p>
+
+                            <strong>District:</strong>
+
+                            <%= member.district || "-" %>
+
+                        </p>
+
+                        <p>
+
+                            <strong>Session:</strong>
+
+                            <%= member.session_name || "-" %>
+
+                        </p>
+
+                        <p>
+
+                            <strong>Status:</strong>
+
+                            <% if(member.status==="Active"){ %>
+
+                                <span class="badge bg-success">
+
+                                    Active
+
+                                </span>
+
+                            <% } else { %>
+
+                                <span class="badge bg-danger">
+
+                                    Inactive
+
+                                </span>
+
+                            <% } %>
+
+                        </p>
+
+                        <a
+                            href="/arsp/member/<%= member.member_id %>"
+                            class="btn btn-success w-100">
+
+                            View Full Profile
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            <% }) %>
+
+        <% } else { %>
+
+            <div class="col-12">
+
+                <div class="alert alert-warning text-center">
+
+                    No organizing body members found.
+
+                </div>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

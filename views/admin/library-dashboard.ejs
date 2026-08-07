@@ -1,0 +1,335 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Library Dashboard</h1>
+
+                    <p>Overview of library books, issues, returns and reports.</p>
+
+                </div>
+
+            </div>
+
+            <!-- Statistics -->
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-card">
+
+                    <h3>Total Books</h3>
+
+                    <h2>
+
+                        <%= stats.total_books || 0 %>
+
+                    </h2>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>Available Books</h3>
+
+                    <h2>
+
+                        <%= stats.available_books || 0 %>
+
+                    </h2>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>Issued Books</h3>
+
+                    <h2>
+
+                        <%= stats.issued_books || 0 %>
+
+                    </h2>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>Overdue Books</h3>
+
+                    <h2>
+
+                        <%= stats.overdue_books || 0 %>
+
+                    </h2>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>Lost Books</h3>
+
+                    <h2>
+
+                        <%= stats.lost_books || 0 %>
+
+                    </h2>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>Damaged Books</h3>
+
+                    <h2>
+
+                        <%= stats.damaged_books || 0 %>
+
+                    </h2>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>Fine Collection</h3>
+
+                    <h2>
+
+                        ₹ <%= Number(stats.total_fine_collection || 0).toFixed(2) %>
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <!-- Today's Issues -->
+
+            <div class="card">
+
+                <h2>Today's Issued Books</h2>
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Book</th>
+                            <th>Student</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% if (todayIssues.length > 0) { %>
+
+                            <% todayIssues.forEach(issue => { %>
+
+                                <tr>
+
+                                    <td><%= issue.title %></td>
+
+                                    <td><%= issue.full_name %></td>
+
+                                    <td><%= new Date(issue.issue_date).toLocaleDateString() %></td>
+
+                                    <td><%= new Date(issue.due_date).toLocaleDateString() %></td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        <% } else { %>
+
+                            <tr>
+
+                                <td colspan="4" style="text-align:center;">
+
+                                    No books issued today.
+
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <br>
+
+            <!-- Today's Returns -->
+
+            <div class="card">
+
+                <h2>Today's Returned Books</h2>
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Book</th>
+                            <th>Student</th>
+                            <th>Return Date</th>
+                            <th>Fine</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% if (todayReturns.length > 0) { %>
+
+                            <% todayReturns.forEach(issue => { %>
+
+                                <tr>
+
+                                    <td><%= issue.title %></td>
+
+                                    <td><%= issue.full_name %></td>
+
+                                    <td><%= new Date(issue.return_date).toLocaleDateString() %></td>
+
+                                    <td>
+
+                                        ₹ <%= Number(issue.fine_amount || 0).toFixed(2) %>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        <% } else { %>
+
+                            <tr>
+
+                                <td colspan="4" style="text-align:center;">
+
+                                    No books returned today.
+
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <br>
+
+            <!-- Monthly Issue Report -->
+
+            <div class="card">
+
+                <h2>Monthly Issue Report</h2>
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Total Issues</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% issueReport.forEach(report => { %>
+
+                            <tr>
+
+                                <td><%= report.month %></td>
+
+                                <td><%= report.year %></td>
+
+                                <td><%= report.total_issues %></td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <br>
+
+            <!-- Monthly Return Report -->
+
+            <div class="card">
+
+                <h2>Monthly Return Report</h2>
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Total Returns</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% returnReport.forEach(report => { %>
+
+                            <tr>
+
+                                <td><%= report.month %></td>
+
+                                <td><%= report.year %></td>
+
+                                <td><%= report.total_returns %></td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

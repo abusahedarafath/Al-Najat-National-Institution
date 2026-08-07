@@ -1,0 +1,209 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Transport Route Details</h1>
+
+                    <p>View complete transport route information.</p>
+
+                </div>
+
+                <a
+                    href="/admin/transport-routes"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th>Route Code</th>
+
+                            <td>
+
+                                <%= route.route_code %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Route Name</th>
+
+                            <td>
+
+                                <%= route.route_name %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Start Point</th>
+
+                            <td>
+
+                                <%= route.start_point %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>End Point</th>
+
+                            <td>
+
+                                <%= route.end_point %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Distance</th>
+
+                            <td>
+
+                                <%= route.distance %> KM
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Monthly Fee</th>
+
+                            <td>
+
+                                ₹ <%= Number(route.monthly_fee).toFixed(2) %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Status</th>
+
+                            <td>
+
+                                <% if (route.status === "Active") { %>
+
+                                    <span class="badge badge-success">
+
+                                        Active
+
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="badge badge-danger">
+
+                                        Inactive
+
+                                    </span>
+
+                                <% } %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Created At</th>
+
+                            <td>
+
+                                <%= route.created_at ? new Date(route.created_at).toLocaleString() : "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Updated At</th>
+
+                            <td>
+
+                                <%= route.updated_at ? new Date(route.updated_at).toLocaleString() : "-" %>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div class="form-actions" style="margin-top:25px;">
+
+                    <a
+                        href="/admin/transport-route/<%= route.id %>/edit"
+                        class="btn btn-primary">
+
+                        Edit
+
+                    </a>
+
+                    <form
+                        action="/admin/transport-route/<%= route.id %>/delete"
+                        method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('Are you sure you want to delete this route?');">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                    <a
+                        href="/admin/transport-routes"
+                        class="btn btn-secondary">
+
+                        Back to List
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

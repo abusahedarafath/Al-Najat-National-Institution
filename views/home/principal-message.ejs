@@ -1,0 +1,55 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include("../partials/navbar") %>
+
+<section class="chairman-section">
+
+    <div class="chairman-container">
+
+        <div class="chairman-image">
+
+            <% if(principal.image){ %>
+
+                <img
+                    src="/uploads/principal/<%= principal.image %>"
+                    alt="<%= principal.name %>">
+
+            <% } %>
+
+        </div>
+
+        <div class="chairman-content">
+
+            <span class="section-title">
+
+                Principal's Message
+
+            </span>
+
+            <h2>
+
+                <%= principal.name %>
+
+            </h2>
+
+            <h4>
+
+                <%= principal.designation %>
+
+            </h4>
+
+            <p>
+
+                <%= principal.message %>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<%- include("../partials/footer") %>

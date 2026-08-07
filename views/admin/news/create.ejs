@@ -1,125 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Add News</title>
-
-<link rel="stylesheet" href="/css/admin.css">
-
-</head>
-<body>
+<%- include("../partials/header") %>
 
 <div class="admin-layout">
 
-<%- include("../../partials/admin-sidebar") %>
+    <%- include("../partials/sidebar") %>
 
-<main class="admin-content">
+    <main class="admin-content">
 
-<div class="container">
+        <div class="container">
 
-<div class="page-header">
+            <div class="page-header">
 
-<h1 class="page-title">Add News</h1>
+                <h1>Add News</h1>
 
-<a href="/admin/news" class="btn btn-secondary">Back</a>
+                <a href="/admin/news" class="btn btn-secondary">
+                    Back
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/news/create"
+                    method="POST"
+                    enctype="multipart/form-data">
+
+                    <div class="form-group">
+
+                        <label for="title">Title</label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="description">Description</label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="6"
+                            class="form-control"></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="image">News Image</label>
+
+                        <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            class="form-control">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="publish_date">Publish Date</label>
+
+                        <input
+                            type="date"
+                            id="publish_date"
+                            name="publish_date"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="status">Status</label>
+
+                        <select
+                            id="status"
+                            name="status"
+                            class="form-control">
+
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+                            Save News
+                        </button>
+
+                        <a
+                            href="/admin/news"
+                            class="btn btn-secondary">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
 
-<div class="card">
-
-<form action="/admin/news/create"
-method="POST"
-enctype="multipart/form-data">
-
-<div class="form-group">
-
-<label>Title</label>
-
-<input
-type="text"
-name="title"
-class="form-control"
-required>
-
-</div>
-
-<div class="form-group">
-
-<label>Description</label>
-
-<textarea
-name="description"
-rows="6"
-class="form-control"></textarea>
-
-</div>
-
-<div class="form-group">
-
-<label>News Image</label>
-
-<input
-type="file"
-name="image"
-class="form-control">
-
-</div>
-
-<div class="form-group">
-
-<label>Publish Date</label>
-
-<input
-type="date"
-name="publish_date"
-class="form-control"
-required>
-
-</div>
-
-<div class="form-group">
-
-<label>Status</label>
-
-<select
-name="status"
-class="form-control">
-
-<option value="Active">Active</option>
-
-<option value="Inactive">Inactive</option>
-
-</select>
-
-</div>
-
-<button
-type="submit"
-class="btn btn-success">
-
-Save News
-
-</button>
-
-<a
-href="/admin/news"
-class="btn btn-secondary">
-
-Cancel
-
-</a>
-
-</form>
-
-</div>
-
-</div>
-
-</main>
-
-</div>
-
-</body>
-</html>
+<%- include("../partials/footer") %>

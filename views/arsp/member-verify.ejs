@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/arsp.css">
+
+<style>
+
+.verify-box{
+    max-width:700px;
+    margin:40px auto;
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+.verify-logo{
+    width:90px;
+    height:90px;
+    object-fit:contain;
+    margin:auto;
+    margin-bottom:15px;
+}
+
+.verify-photo{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid #198754;
+    margin:20px auto;
+}
+
+.verify-ok{
+    color:#198754;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.verify-fail{
+    color:#dc3545;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.verify-table{
+    width:100%;
+    margin-top:20px;
+    border-collapse:collapse;
+}
+
+.verify-table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+}
+
+.verify-table td:first-child{
+    width:180px;
+    font-weight:bold;
+}
+
+/* ==========================
+   Mobile Responsive
+========================== */
+
+@media (max-width:768px){
+
+    .container{
+        padding:15px;
+    }
+
+    .verify-box{
+        width:100%;
+        max-width:100%;
+        margin:15px auto;
+        padding:20px 15px;
+        border-radius:14px;
+        box-sizing:border-box;
+    }
+
+    .verify-logo{
+        width:70px;
+        height:70px;
+    }
+
+    .verify-photo{
+        width:120px;
+        height:120px;
+        border-width:4px;
+    }
+
+    .verify-ok,
+    .verify-fail{
+        font-size:22px;
+    }
+
+    .verify-box h2{
+        font-size:18px;
+        line-height:1.4;
+    }
+
+    .verify-box p{
+        font-size:14px;
+    }
+
+    .verify-table td{
+        display:block;
+        width:100%;
+        padding:10px 0;
+        border:none;
+    }
+
+    .verify-table tr{
+        display:block;
+        border-bottom:1px solid #eee;
+        padding:8px 0;
+    }
+
+    .verify-table td:first-child{
+        width:100%;
+        font-size:15px;
+        font-weight:bold;
+        color:#333;
+        padding-bottom:4px;
+    }
+
+    .verify-table td:last-child{
+        font-size:16px;
+        word-break:break-word;
+    }
+
+}
+
+
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="verify-box">
+
+<% if(arsp && arsp.logo){ %>
+
+<img
+src="/uploads/arsp-settings/<%= arsp.logo %>"
+class="verify-logo"
+alt="ARSP Logo">
+
+<% } else { %>
+
+<img
+src="/images/logo.png"
+class="verify-logo"
+alt="Logo">
+
+<% } %>
+
+<h2>
+
+<%= arsp && arsp.organization_name
+? arsp.organization_name
+: "ACTIVE RURAL SOCIAL PROGRESS" %>
+
+</h2>
+
+<p>
+
+<%= arsp && arsp.tagline
+? arsp.tagline
+: "Member Verification Portal" %>
+
+</p>
+
+<% if(valid){ %>
+
+<div class="verify-ok">
+
+✔ VERIFIED MEMBER
+
+</div>
+
+<img
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>"
+class="verify-photo">
+
+<table class="verify-table">
+
+<tr>
+<td>Member ID</td>
+<td><%= member.member_id %></td>
+</tr>
+
+<tr>
+<td>Name</td>
+<td><%= member.full_name %></td>
+</tr>
+
+<tr>
+<td>Mobile</td>
+<td><%= member.mobile || "-" %></td>
+</tr>
+
+<tr>
+<td>Email</td>
+<td><%= member.email || "-" %></td>
+</tr>
+
+<tr>
+<td>Blood Group</td>
+<td><%= member.blood_group || "-" %></td>
+</tr>
+
+<tr>
+<td>District</td>
+<td><%= member.district || "-" %></td>
+</tr>
+
+<tr>
+<td>Status</td>
+<td>
+<span style="color:#198754;font-weight:bold;">
+<%= member.status %>
+</span>
+</td>
+</tr>
+
+<tr>
+<td>Joining Date</td>
+<td>
+<%= member.joining_date ? new Date(member.joining_date).toLocaleDateString("en-GB") : "-" %>
+</td>
+</tr>
+
+</table>
+
+<% } else { %>
+
+<div class="verify-fail">
+
+✖ INVALID MEMBER ID
+
+</div>
+
+<p>
+
+The QR Code or Member ID you scanned is not registered with ARSP.
+
+</p>
+
+<% } %>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

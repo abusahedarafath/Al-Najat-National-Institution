@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/arsp.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div>
+
+<strong>
+
+ACTIVE RURAL SOCIAL PROGRESS
+
+</strong>
+
+</div>
+
+<div>
+
+<a href="/arsp/dashboard">
+
+Dashboard
+
+</a>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="profile">
+
+<img
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>"
+alt="Member">
+
+<h2>
+
+<%= member.full_name %>
+
+</h2>
+
+<p>
+
+<%= member.designation || "ARSP Member" %>
+
+</p>
+
+</div>
+
+<div class="notice-section">
+
+<h2>
+
+Personal Information
+
+</h2>
+
+<div class="notice-card">
+
+<table class="verify-table">
+
+<tr>
+
+<td>Member ID</td>
+
+<td><%= member.member_id %></td>
+
+</tr>
+
+<tr>
+
+<td>Father's Name</td>
+
+<td><%= member.father_name || "-" %></td>
+
+</tr>
+
+<tr>
+
+<td>Mother's Name</td>
+
+<td><%= member.mother_name || "-" %></td>
+
+</tr>
+
+<tr>
+
+<td>Date of Birth</td>
+
+<td>
+
+<%= member.dob || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Gender</td>
+
+<td>
+
+<%= member.gender || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Blood Group</td>
+
+<td>
+
+<%= member.blood_group || "-" %>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<h2>
+
+Contact Information
+
+</h2>
+
+<div class="notice-card">
+
+<table class="verify-table">
+
+<tr>
+
+<td>Mobile</td>
+
+<td>
+
+<%= member.mobile || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Email</td>
+
+<td>
+
+<%= member.email || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Address</td>
+
+<td>
+
+<%= member.address || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>District</td>
+
+<td>
+
+<%= member.district || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>State</td>
+
+<td>
+
+<%= member.state || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>PIN Code</td>
+
+<td>
+
+<%= member.pincode || "-" %>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<h2>
+
+Organization Information
+
+</h2>
+
+<div class="notice-card">
+
+<table class="verify-table">
+
+<tr>
+
+<td>Committee</td>
+
+<td>
+
+<%= member.committee_name || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Designation</td>
+
+<td>
+
+<%= member.designation || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Region</td>
+
+<td>
+
+<%= member.region_name || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Section</td>
+
+<td>
+
+<%= member.section || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Joining Date</td>
+
+<td>
+
+<%= member.joining_date || "-" %>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Status</td>
+
+<td>
+
+<strong style="color:#198754;">
+
+<%= member.status %>
+
+</strong>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

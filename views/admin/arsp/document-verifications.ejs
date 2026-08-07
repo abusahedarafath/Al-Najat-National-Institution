@@ -1,0 +1,96 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+<%- include("../partials/sidebar") %>
+
+<main class="admin-content">
+
+<div class="container">
+
+<div class="page-header">
+<h1>Document Verification</h1>
+</div>
+
+<div class="profile-card">
+
+<table class="table">
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>Document No.</th>
+<th>Member</th>
+<th>Document Type</th>
+<th>Issue Date</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<% if(documents.length){ %>
+
+<% documents.forEach((doc,index)=>{ %>
+
+<tr>
+
+<td><%= index+1 %></td>
+
+<td><%= doc.document_number %></td>
+
+<td><%= doc.full_name %></td>
+
+<td><%= doc.document_type %></td>
+
+<td><%= new Date(doc.issue_date).toLocaleDateString("en-GB") %></td>
+
+<td>
+
+<% if(doc.status==="Valid"){ %>
+
+<span style="color:green;font-weight:bold;">
+✔ Valid
+</span>
+
+<% } else { %>
+
+<span style="color:red;font-weight:bold;">
+✖ Revoked
+</span>
+
+<% } %>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+<% } else { %>
+
+<tr>
+
+<td colspan="6" style="text-align:center;">
+No documents found.
+</td>
+
+</tr>
+
+<% } %>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+
+RTSE Section <%= section %> Certificates
+
+</title>
+
+<style>
+
+*{
+
+box-sizing:border-box;
+
+}
+
+body{
+
+margin:0;
+
+padding:20px;
+
+background:#eee;
+
+font-family:"Times New Roman",serif;
+
+}
+
+.toolbar{
+
+text-align:center;
+
+margin-bottom:20px;
+
+}
+
+.toolbar button{
+
+padding:12px 25px;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+.page{
+
+width:1123px;
+
+height:794px;
+
+background:#fff;
+
+margin:0 auto 25px auto;
+
+border:10px solid #b8860b;
+
+padding:35px;
+
+page-break-after:always;
+
+position:relative;
+
+}
+
+.inner{
+
+height:100%;
+
+border:3px solid #b8860b;
+
+padding:25px;
+
+}
+
+.header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.logo{
+
+width:100px;
+
+height:100px;
+
+object-fit:contain;
+
+}
+
+.photo{
+
+width:120px;
+
+height:140px;
+
+border:2px solid #555;
+
+object-fit:cover;
+
+}
+
+.title{
+
+flex:1;
+
+text-align:center;
+
+}
+
+.title h1{
+
+margin:0;
+
+font-size:36px;
+
+color:#004a99;
+
+}
+
+.title h2{
+
+margin:8px 0;
+
+color:#8b0000;
+
+}
+
+.title h3{
+
+margin:0;
+
+}
+
+.name{
+
+font-size:34px;
+
+font-weight:bold;
+
+color:#004a99;
+
+margin-top:25px;
+
+text-align:center;
+
+}
+
+.text{
+
+font-size:22px;
+
+line-height:1.8;
+
+text-align:center;
+
+margin-top:20px;
+
+}
+
+.info{
+
+margin-top:25px;
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+.info td{
+
+border:1px solid #999;
+
+padding:10px;
+
+font-size:18px;
+
+}
+
+.footer{
+
+margin-top:45px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:flex-end;
+
+}
+
+.signature{
+
+width:230px;
+
+text-align:center;
+
+border-top:1px solid #000;
+
+padding-top:8px;
+
+}
+
+.qr{
+
+width:90px;
+
+height:90px;
+
+}
+
+.number{
+
+position:absolute;
+
+top:18px;
+
+right:30px;
+
+font-weight:bold;
+
+font-size:16px;
+
+}
+
+@media print{
+
+.toolbar{
+
+display:none;
+
+}
+
+body{
+
+background:#fff;
+
+padding:0;
+
+}
+
+.page{
+
+margin:0;
+
+border:none;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="toolbar">
+
+<button onclick="window.print()">
+
+🖨 Print / Save PDF
+
+</button>
+
+</div>
+
+<% certificates.forEach(certificate=>{ %>
+
+<div class="page">
+
+<div class="number">
+
+Certificate No.
+
+<strong>
+
+<%= certificate.certificate_no %>
+
+</strong>
+
+</div>
+
+<div class="inner">
+
+<div class="header">
+
+<img
+
+src="/uploads/arsp-settings/<%= setting.logo %>"
+
+class="logo">
+
+<div class="title">
+
+<h1>
+
+ACTIVE RURAL SOCIAL PROGRESS
+
+</h1>
+
+<h2>
+
+Ratabari Talent Search Examination
+
+</h2>
+
+<h3>
+
+Official Certificate
+
+</h3>
+
+</div>
+
+<img
+
+src="/uploads/rtse/<%= certificate.photo %>"
+
+class="photo">
+
+</div>
+
+<div class="name">
+
+<%= certificate.full_name %>
+
+</div>
+
+<div class="text">
+
+This certificate is proudly presented for successful participation and achievement in the
+
+<strong>
+
+Ratabari Talent Search Examination
+
+</strong>
+
+conducted by
+
+<strong>
+
+Active Rural Social Progress (ARSP)
+
+</strong>.
+
+</div>
+
+<table class="info">
+
+<tr>
+
+<td>Registration No.</td>
+
+<td><%= certificate.registration_no %></td>
+
+<td>Roll No.</td>
+
+<td><%= certificate.roll_no %></td>
+
+</tr>
+
+<tr>
+
+<td>School</td>
+
+<td><%= certificate.school_name %></td>
+
+<td>Section</td>
+
+<td><%= certificate.section %></td>
+
+</tr>
+
+<tr>
+
+<td>Marks</td>
+
+<td><%= certificate.marks %></td>
+
+<td>Grade</td>
+
+<td><%= certificate.grade %></td>
+
+</tr>
+
+<tr>
+
+<td>Certificate</td>
+
+<td><%= certificate.certificate_type %></td>
+
+<td>Overall Rank</td>
+
+<td><%= certificate.overall_rank || "-" %></td>
+
+</tr>
+
+</table>
+
+<div class="footer">
+
+<div>
+
+<img
+
+src="/uploads/rtse-certificates/<%= certificate.qr_code %>"
+
+class="qr">
+
+</div>
+
+<div class="signature">
+
+Controller of Examination
+
+</div>
+
+<div class="signature">
+
+President, ARSP
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<% }) %>
+
+</body>
+
+</html>

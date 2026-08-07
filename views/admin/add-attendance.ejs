@@ -1,0 +1,167 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Mark Student Attendance</h1>
+
+                    <p>Add a new attendance record.</p>
+
+                </div>
+
+                <a
+                    href="/admin/attendance"
+                    class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/attendance/add"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>Student</label>
+
+                        <select
+                            name="student_id"
+                            required>
+
+                            <option value="">Select Student</option>
+
+                            <% students.forEach(student => { %>
+
+                                <option value="<%= student.id %>">
+
+                                    <%= student.name %> (Roll: <%= student.roll_number %>)
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Class</label>
+
+                        <select
+                            name="class_id"
+                            required>
+
+                            <option value="">Select Class</option>
+
+                            <% classes.forEach(cls => { %>
+
+                                <option value="<%= cls.id %>">
+
+                                    <%= cls.class_name %>
+
+                                </option>
+
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Attendance Date</label>
+
+                        <input
+                            type="date"
+                            name="attendance_date"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select
+                            name="status"
+                            required>
+
+                            <option value="Present">
+
+                                Present
+
+                            </option>
+
+                            <option value="Absent">
+
+                                Absent
+
+                            </option>
+
+                            <option value="Leave">
+
+                                Leave
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Remarks</label>
+
+                        <textarea
+                            name="remarks"
+                            rows="4"
+                            placeholder="Optional remarks..."></textarea>
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save Attendance
+
+                        </button>
+
+                        <a
+                            href="/admin/attendance"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

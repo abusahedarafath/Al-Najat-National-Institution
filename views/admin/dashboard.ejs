@@ -1,62 +1,211 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-
-    <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
+<%- include("./partials/header") %>
 
 <div class="admin-layout">
 
-    <%- include("../partials/admin-sidebar") %>
+    <%- include("./partials/sidebar") %>
 
     <main class="admin-content">
 
         <div class="container">
 
-    <h1>Admin Dashboard</h1>
+            <!-- Page Header -->
+            <div class="page-header">
 
-    <div class="dashboard-grid">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Welcome to the Al-Najat National Institution ERP Admin Panel.</p>
+                </div>
 
-        <div class="card">
-            <h2>Total Applications</h2>
-            <h1><%= totalApplications || 0 %></h1>
+            </div>
+
+            <!-- Statistics -->
+            <div class="dashboard-grid">
+
+                <div class="card stat-card">
+                    <h3>Total Applications</h3>
+                    <h1><%= totalApplications || 0 %></h1>
+
+                    <a href="/admin/applications" class="btn btn-primary">
+                        View Applications
+                    </a>
+                </div>
+
+                <div class="card stat-card">
+                    <h3>Pending Applications</h3>
+                    <h1><%= pendingApplications || 0 %></h1>
+
+                    <a href="/admin/applications" class="btn btn-warning">
+                        Review Pending
+                    </a>
+                </div>
+
+                <div class="card stat-card">
+                    <h3>Approved Applications</h3>
+                    <h1><%= approvedApplications || 0 %></h1>
+
+                    <a href="/admin/students" class="btn btn-success">
+                        View Students
+                    </a>
+                </div>
+
+                <div class="card stat-card">
+                    <h3>Rejected Applications</h3>
+                    <h1><%= rejectedApplications || 0 %></h1>
+
+                    <a href="/admin/applications" class="btn btn-danger">
+                        View Details
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+
+                <h2>Quick Actions</h2>
+
+                <div class="quick-actions">
+
+                    <a href="/admin/applications" class="quick-card">
+                        <div class="quick-icon">📄</div>
+                        <h3>Applications</h3>
+                        <p>Review admission applications.</p>
+                    </a>
+
+                    <a href="/admin/students" class="quick-card">
+                        <div class="quick-icon">🎓</div>
+                        <h3>Students</h3>
+                        <p>Manage student records.</p>
+                    </a>
+
+                    <a href="/admin/teachers" class="quick-card">
+                        <div class="quick-icon">👨‍🏫</div>
+                        <h3>Teachers</h3>
+                        <p>Manage teacher records.</p>
+                    </a>
+
+                    <a href="/admin/notices" class="quick-card">
+                        <div class="quick-icon">📢</div>
+                        <h3>Notices</h3>
+                        <p>Create and publish notices.</p>
+                    </a>
+
+                    <a href="/admin/news" class="quick-card">
+                        <div class="quick-icon">📰</div>
+                        <h3>News</h3>
+                        <p>Manage news and events.</p>
+                    </a>
+
+                    <a href="/admin/gallery" class="quick-card">
+                        <div class="quick-icon">🖼️</div>
+                        <h3>Gallery</h3>
+                        <p>Manage albums and images.</p>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Recent Applications -->
+            <div class="card">
+
+                <div class="page-header">
+
+                    <h2>Recent Admission Applications</h2>
+
+                    <a href="/admin/applications" class="btn btn-primary">
+                        View All
+                    </a>
+
+                </div>
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Application No.</th>
+                            <th>Student Name</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% if (recentApplications.length === 0) { %>
+
+                            <tr>
+                                <td colspan="5" style="text-align:center;">
+                                    No applications found.
+                                </td>
+                            </tr>
+
+                        <% } else { %>
+
+                            <% recentApplications.forEach(app => { %>
+
+                                <tr>
+
+                                    <td><%= app.application_no %></td>
+
+                                    <td><%= app.full_name %></td>
+
+                                    <td>
+
+                                        <% if (app.status === "Approved") { %>
+
+                                            <span class="badge badge-success">
+                                                Approved
+                                            </span>
+
+                                        <% } else if (app.status === "Rejected") { %>
+
+                                            <span class="badge badge-danger">
+                                                Rejected
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="badge badge-warning">
+                                                Pending
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+                                        <%= new Date(app.created_at).toLocaleDateString() %>
+                                    </td>
+
+                                    <td>
+
+                                        <a href="/admin/application/<%= app.id %>"
+                                           class="btn btn-primary">
+                                            View
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
 
-        <div class="card">
-            <h2>Pending</h2>
-            <h1><%= pendingApplications || 0 %></h1>
-        </div>
-
-        <div class="card">
-            <h2>Approved</h2>
-            <h1><%= approvedApplications || 0 %></h1>
-        </div>
-
-        <div class="card">
-            <h2>Rejected</h2>
-            <h1><%= rejectedApplications || 0 %></h1>
-        </div>
-
-    </div>
-
-<div class="card">
-
-    <h2>Quick Actions</h2>
-
-    <p><a href="/admin/applications">📝 Manage Applications</a></p>
-    <p><a href="/admin/students">👨‍🎓 Manage Students</a></p>
-    <p><a href="/admin/notices">📢 Manage Notices</a></p>
-    <p><a href="/admin/settings">⚙️ Settings</a></p>
-
-</div>
-
-        </div>
     </main>
+
 </div>
 
-</body>
-</html>
+<%- include("./partials/footer") %>

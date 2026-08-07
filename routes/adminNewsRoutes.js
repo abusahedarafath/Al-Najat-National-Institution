@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const adminNewsController = require("../controllers/adminNewsController");
 const authMiddleware = require("../middleware/auth");
+
+router.use("/admin", authMiddleware.isAdmin);
+
+
+
+
+const adminNewsController = require("../controllers/adminNewsController");
 const createUploader = require("../middleware/uploadFactory");
 
 const upload = createUploader("news");

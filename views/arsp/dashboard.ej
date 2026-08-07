@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/arsp.css">
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div>
+
+<strong><%= member.full_name %></strong>
+
+</div>
+
+<div>
+
+<a href="/arsp/logout">
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="profile">
+
+<img
+src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>"
+alt="Member">
+
+<h2>
+
+<%= member.full_name %>
+
+</h2>
+
+<p>
+
+<strong>Member ID:</strong>
+<%= member.member_id %>
+
+</p>
+
+<p>
+
+<strong>Status:</strong>
+<%= member.status %>
+
+</p>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>
+
+🆔 Digital ID Card
+
+</h3>
+
+<a href="/arsp/member/<%= member.member_id %>">
+
+Open
+
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+🔑 Change Password
+
+</h3>
+
+<a href="/arsp/change-password">
+
+Open
+
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+👤 My Profile
+
+</h3>
+
+<a href="/arsp/member/<%= member.member_id %>">
+
+View
+
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+🚪 Logout
+
+</h3>
+
+<a href="/arsp/logout">
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

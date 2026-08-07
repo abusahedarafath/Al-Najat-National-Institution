@@ -1,0 +1,736 @@
+<%- include('../partials/header') %>
+
+<link rel="stylesheet" href="/css/home.css">
+
+<%- include('../partials/navbar') %>
+
+
+
+<!-- =====================================
+     HERO SECTION
+===================================== -->
+
+<section class="hero-slider">
+
+    <% if (sliders && sliders.length) { %>
+
+        <% sliders.forEach((slider,index)=>{ %>
+
+            <div class="slide <%= index === 0 ? 'active' : '' %>">
+
+                <img
+                    src="/uploads/sliders/<%= slider.image %>"
+                    alt="<%= slider.title %>">
+
+                <div class="hero-overlay"></div>
+
+                <div class="hero-content">
+
+                    <h1><%= slider.title %></h1>
+
+                    <p><%= slider.subtitle %></p>
+
+                    <% if (slider.button_text) { %>
+
+                        <a
+                            href="<%= slider.button_link %>"
+                            class="btn hero-btn">
+
+                            <%= slider.button_text %>
+
+                        </a>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+    <button class="prev">&#10094;</button>
+
+    <button class="next">&#10095;</button>
+
+</section>
+
+
+
+
+
+
+
+
+<!-- =====================================
+     WELCOME SECTION
+===================================== -->
+
+<% if (welcome) { %>
+
+<section class="welcome-section">
+
+    <div class="container">
+
+        <div class="welcome-wrapper">
+
+            <div class="welcome-image">
+
+                <% if (welcome.image) { %>
+
+                    <img
+                        src="/uploads/welcome/<%= welcome.image %>"
+                        alt="<%= welcome.title %>">
+
+                <% } %>
+
+            </div>
+
+            <div class="welcome-content">
+
+                <span class="section-badge">
+
+                    <%= welcome.small_title %>
+
+                </span>
+
+                <h2>
+
+                    <%= welcome.title %>
+
+                </h2>
+
+                <p>
+
+                    <%= welcome.description %>
+
+                </p>
+
+                <% if (welcome.button_text) { %>
+
+                    <a
+                        href="<%= welcome.button_link %>"
+                        class="btn welcome-btn">
+
+                        <%= welcome.button_text %>
+
+                    </a>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+
+
+
+
+
+<!-- =====================================
+     QUICK ACCESS
+===================================== -->
+
+<section class="quick-access">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Quick Access
+
+            </span>
+
+            <h2>
+
+                Important Links
+
+            </h2>
+
+            <p>
+
+                Access important services, information and resources.
+
+            </p>
+
+        </div>
+
+        <div class="quick-grid">
+
+            <% if (quickAccess && quickAccess.length > 0) { %>
+
+                <% quickAccess.forEach(item => { %>
+
+                    <a
+                        href="<%= item.link %>"
+                        class="quick-card">
+
+                        <div class="quick-icon">
+
+                            <i class="<%= item.icon %>"></i>
+
+                        </div>
+
+                        <h3>
+
+                            <%= item.title %>
+
+                        </h3>
+
+                        <p>
+
+                            <%= item.description %>
+
+                        </p>
+
+                    </a>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <div class="empty-box">
+
+                    No Quick Access items found.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+<!-- =====================================
+     CHAIRMAN MESSAGE
+===================================== -->
+
+<% if (chairman) { %>
+
+<section class="message-section">
+
+    <div class="container">
+
+        <div class="message-wrapper">
+
+            <div class="message-image">
+
+                <img
+                    src="/uploads/chairman/<%= chairman.image %>"
+                    alt="<%= chairman.name %>">
+
+            </div>
+
+            <div class="message-content">
+
+                <span class="section-badge">
+
+                    Chairman's Message
+
+                </span>
+
+                <h2>
+
+                    <%= chairman.name %>
+
+                </h2>
+
+                <h4>
+
+                    <%= chairman.designation %>
+
+                </h4>
+
+                <p>
+
+                    <%= chairman.message.substring(0,300) %>...
+
+                </p>
+
+                <a
+                    href="/chairman-message"
+                    class="btn message-btn">
+
+                    Read Full Message
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+
+
+
+<!-- =====================================
+     PRINCIPAL MESSAGE
+===================================== -->
+
+<% if (principal) { %>
+
+<section class="message-section">
+
+    <div class="container">
+
+        <div class="message-wrapper">
+
+            <div class="message-image">
+
+                <% if (principal.image) { %>
+
+                    <img
+                        src="/uploads/principal/<%= principal.image %>"
+                        alt="<%= principal.name %>">
+
+                <% } %>
+
+            </div>
+
+            <div class="message-content">
+
+                <span class="section-badge">
+
+                    Principal's Message
+
+                </span>
+
+                <h2>
+
+                    <%= principal.name %>
+
+                </h2>
+
+                <h4>
+
+                    <%= principal.designation %>
+
+                </h4>
+
+                <p>
+
+                    <%= principal.message.substring(0,300) %>...
+
+                </p>
+
+                <a
+                    href="/principal-message"
+                    class="btn message-btn">
+
+                    Read Full Message
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+
+
+<!-- =====================================
+     CHANCELLOR MESSAGE
+===================================== -->
+
+<% if (chancellor) { %>
+
+<section class="message-section">
+
+    <div class="container">
+
+        <div class="message-wrapper">
+
+            <div class="message-image">
+
+                <% if (chancellor.image) { %>
+
+                    <img
+                        src="/uploads/chancellor/<%= chancellor.image %>"
+                        alt="<%= chancellor.name %>">
+
+                <% } %>
+
+            </div>
+
+            <div class="message-content">
+
+                <span class="section-badge">
+
+                    Chancellor's Message
+
+                </span>
+
+                <h2>
+
+                    <%= chancellor.name %>
+
+                </h2>
+
+                <h4>
+
+                    <%= chancellor.designation %>
+
+                </h4>
+
+                <p>
+
+                    <%= chancellor.message.substring(0,300) %>...
+
+                </p>
+
+                <a
+                    href="/chancellor-message"
+                    class="btn message-btn">
+
+                    Read Full Message
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<% } %>
+
+
+
+
+
+
+
+
+
+<!-- =====================================
+     STATISTICS
+===================================== -->
+
+<section class="stats-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Our Achievements
+
+            </span>
+
+            <h2>
+
+                Institution Statistics
+
+            </h2>
+
+        </div>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <h2>2500+</h2>
+
+                <p>Students</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>120+</h2>
+
+                <p>Teachers</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>98%</h2>
+
+                <p>Success Rate</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>25+</h2>
+
+                <p>Courses</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- =====================================
+     WHY CHOOSE US
+===================================== -->
+
+<section class="features-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                Why Choose Us
+
+            </span>
+
+            <h2>
+
+                Why Choose Al-Najat?
+
+            </h2>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                <h3>Quality Education</h3>
+
+                <p>
+
+                    Experienced teachers and modern learning methods.
+
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <h3>Islamic Environment</h3>
+
+                <p>
+
+                    Academic excellence with moral and Islamic values.
+
+                </p>
+
+            </div>
+
+            <div class="feature-card">
+
+                <h3>Excellent Results</h3>
+
+                <p>
+
+                    Helping students achieve success in every field.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+<!-- =====================================
+     LATEST NEWS
+===================================== -->
+
+<section class="latest-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                News & Updates
+
+            </span>
+
+            <h2>
+
+                Latest News
+
+            </h2>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <% if (news && news.length) { %>
+
+                <% news.forEach(item => { %>
+
+                    <div class="feature-card">
+
+                        <h3><%= item.title %></h3>
+
+                        <p><%= item.publish_date %></p>
+
+                        <a
+                            href="/news/<%= item.id %>"
+                            class="btn">
+
+                            Read More
+
+                        </a>
+
+                    </div>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <div class="empty-box">
+
+                    No news available.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+<!-- =====================================
+     LATEST NEWS
+===================================== -->
+
+<section class="latest-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-badge">
+
+                News & Updates
+
+            </span>
+
+            <h2>
+
+                Latest News
+
+            </h2>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <% if (news && news.length) { %>
+
+                <% news.forEach(item => { %>
+
+                    <div class="feature-card">
+
+                        <h3><%= item.title %></h3>
+
+                        <p><%= item.publish_date %></p>
+
+                        <a
+                            href="/news/<%= item.id %>"
+                            class="btn">
+
+                            Read More
+
+                        </a>
+
+                    </div>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <div class="empty-box">
+
+                    No news available.
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+<script src="/js/home-slider.js"></script>
+
+<%- include('../partials/footer') %>

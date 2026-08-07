@@ -1,0 +1,147 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Class Management</h1>
+                    <p>Manage all classes, sections and academic sessions.</p>
+                </div>
+
+                <a href="/admin/class/add" class="btn btn-primary">
+                    + Add Class
+                </a>
+
+            </div>
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Class</th>
+                        <th>Code</th>
+                        <th>Section</th>
+                        <th>Academic Session</th>
+                        <th>Class Teacher</th>
+                        <th>Capacity</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% if (classes && classes.length > 0) { %>
+
+                        <% classes.forEach(classData => { %>
+
+                            <tr>
+
+                                <td><%= classData.class_name %></td>
+
+                                <td><%= classData.class_code %></td>
+
+                                <td><%= classData.section %></td>
+
+                                <td><%= classData.academic_session %></td>
+
+                                <td>
+                                    <%= classData.class_teacher || "Not Assigned" %>
+                                </td>
+
+                                <td><%= classData.capacity %></td>
+
+                                <td>
+
+                                    <% if (classData.status === "Active") { %>
+
+                                        <span class="badge badge-success">
+                                            Active
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-danger">
+                                            Inactive
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="/admin/class/<%= classData.id %>"
+                                            class="btn btn-primary">
+                                            View
+                                        </a>
+
+                                        <a
+                                            href="/admin/class/<%= classData.id %>/edit"
+                                            class="btn btn-success">
+                                            Edit
+                                        </a>
+
+                                        <form
+                                            action="/admin/class/<%= classData.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Delete this class?')">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+
+                            <td colspan="8" style="text-align:center;">
+
+                                No classes found.
+
+                            </td>
+
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>
