@@ -12,7 +12,7 @@ exports.registerPage = async (req, res) => {
         return res.render(
             "arsp/register",
             {
-                title: "Become an ARSP Member",
+               title: "Active Rural Social Progress",
                 setting
             }
         );
