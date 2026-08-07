@@ -251,11 +251,16 @@
 
                                 </label>
 
-                                <textarea
-                                    name="message"
-                                    rows="8"
-                                    class="form-control"
-                                    required><%= personality.message %></textarea>
+
+<textarea
+    id="message"
+    name="message"
+    rows="8"
+    class="form-control"
+    required><%= personality.message %></textarea>
+
+
+
 
                             </div>
 
@@ -266,12 +271,12 @@
                                     Biography
 
                                 </label>
-
-                                <textarea
-                                    name="biography"
-                                    rows="8"
-                                    class="form-control"
-                                    required><%= personality.biography %></textarea>
+<textarea
+    id="biography"
+    name="biography"
+    rows="8"
+    class="form-control"
+    required><%= personality.biography %></textarea>
 
                             </div>
 
@@ -298,3 +303,14 @@
 </div>
 
 <%- include("../partials/footer") %>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+
+<script>
+ClassicEditor
+    .create(document.querySelector('#message'))
+    .catch(error => console.error(error));
+
+ClassicEditor
+    .create(document.querySelector('#biography'))
+    .catch(error => console.error(error));
+</script>
