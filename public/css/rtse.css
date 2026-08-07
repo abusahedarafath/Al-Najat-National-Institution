@@ -1,0 +1,72 @@
+/* RTSE Public Application */
+
+.rtse-page{
+    padding:120px 15px 60px;
+    background:#f5f7fb;
+    min-height:100vh;
+}
+
+.profile-card{
+    background:#fff;
+    border-radius:16px;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.profile-card h1{
+    text-align:center;
+    color:#0b6b3a;
+    margin-bottom:25px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+.form-group{
+    margin-bottom:20px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#444;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    min-height:46px;
+    padding:12px 14px;
+    border:1px solid #d6d6d6;
+    border-radius:10px;
+    font-size:15px;
+    box-sizing:border-box;
+}
+
+.form-group textarea{
+    min-height:140px;
+    resize:vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+    border-color:#0b6b3a;
+    outline:none;
+    box-shadow:0 0 0 4px rgba(11,107,58,.12);
+}
+
+@media(max-width:768px){
+    .rtse-page{
+        padding-top:95px;
+    }
+
+    .profile-card{
+        padding:20px;
+    }
+}

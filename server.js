@@ -1,6 +1,11 @@
 const express = require("express");
 const path = require("path");
 
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+
+
 const homeRoutes = require("./routes/homeRoutes");
 const aboutRoutes = require("./routes/aboutRoutes");
 const admissionRoutes = require("./routes/admissionRoutes");
@@ -61,6 +66,15 @@ const adminRtseRoutes = require("./routes/adminRtseRoutes");
 
 
 const app = express();
+app.use(
+    helmet({
+        contentSecurityPolicy: false
+    })
+);
+app.use(compression());
+app.use(morgan("dev"));
+
+
 const PORT = process.env.PORT || 3000;
 
 // Body Parser
@@ -72,7 +86,7 @@ app.use(loadWebsiteData);
 // Session
 app.use(
     session({
-        secret: "al_najat_secret_key",
+       secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         cookie: {
@@ -183,7 +197,16 @@ app.use("/admin", siteSettingRoutes);
 
 app.use("/admin", adminRtseRoutes);
 
+// 404 Handler
+app.use((req, res) => {
+    res.status(404).render("errors/404");
+});
 
+// 500 Error Handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).render("errors/500");
+});
 
 // Start Server
 app.listen(PORT, () => {
