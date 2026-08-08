@@ -136,6 +136,18 @@ router.post(
 
 );
 
+
+
+// =====================================
+// Permanently Delete Application
+// =====================================
+
+router.post(
+    "/rtse/application/:id/delete",
+    auth.isLoggedIn,
+    adminRtseController.permanentlyDeleteApplication
+);
+
 // =====================================
 // Generate Roll Numbers
 // =====================================

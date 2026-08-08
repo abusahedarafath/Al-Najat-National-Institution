@@ -503,6 +503,45 @@ exports.restoreApplication = async (req, res) => {
 
 
 // =====================================
+// Permanently Delete RTSE Application
+// =====================================
+
+exports.permanentlyDeleteApplication = async (req, res) => {
+
+    try {
+
+        const deleted = await RtseApplication.permanentDelete(
+            req.params.id
+        );
+
+        if (!deleted) {
+
+            return res.status(404).send(
+                "RTSE Application not found"
+            );
+
+        }
+
+        res.redirect("/admin/rtse/archive");
+
+    } catch (error) {
+
+        console.error(
+            "RTSE permanent delete error:",
+            error
+        );
+
+        res.status(500).send(
+            "Database Error"
+        );
+
+    }
+
+};
+
+
+
+// =====================================
 // Generate Roll Numbers
 // =====================================
 

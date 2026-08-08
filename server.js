@@ -1,4 +1,8 @@
 require("dotenv").config();
+console.log("DB_HOST:", process.env.DB_HOST);
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_PASSWORD:", process.env.DB_PASSWORD ? "***SET***" : "NOT SET");
+console.log("DB_NAME:", process.env.DB_NAME);
 
 const express = require("express");
 const path = require("path");
@@ -62,6 +66,7 @@ const chancellorMessageRoutes = require("./routes/chancellorMessageRoutes");
 const quickAccessRoutes = require("./routes/quickAccessRoutes");
 const chairmanMessageRoutes = require("./routes/chairmanMessageRoutes");
 const siteSettingRoutes = require("./routes/siteSettingRoutes");
+const footerRoutes = require("./routes/footerRoutes");
 const rtseRoutes = require("./routes/rtse");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
 
@@ -157,6 +162,8 @@ app.use(adminGalleryRoutes);
 app.use("/", publicRoutes);
 app.use(galleryRoutes);
 app.use("/", identityCardRoutes);
+
+app.use("/", footerRoutes);
 
 // ===============================
 // RTSE Public Routes

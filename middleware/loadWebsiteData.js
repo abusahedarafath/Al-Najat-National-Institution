@@ -1,42 +1,51 @@
 const Menu = require("../models/Menu");
 const SiteSetting = require("../models/SiteSetting");
 const ArspSetting = require("../models/ArspSetting");
+const FooterSetting = require("../models/FooterSetting");
+const FooterLink = require("../models/FooterLink");
+const News = require("../models/News");
 
 module.exports = async (req, res, next) => {
+
+    // =====================================
+    // Default Global Website Data
+    // =====================================
 
     res.locals.menus = [];
     res.locals.siteSettings = {};
     res.locals.arspSettings = {};
+    res.locals.footerSettings = {};
+    res.locals.footerLinks = [];
+    res.locals.latestNews = [];
 
-    // ==========================
+
+    // =====================================
     // Website Menu
-    // ==========================
+    // =====================================
 
     try {
 
-        res.locals.menus = await Menu.getActive();
+        res.locals.menus =
+            await Menu.getActive();
 
     } catch (err) {
 
-        console.error("Menu Load Error:", err);
+        console.error(
+            "Menu Load Error:",
+            err
+        );
 
     }
 
-    // ==========================
+
+    // =====================================
     // Website Settings
-    // ==========================
+    // =====================================
 
     try {
 
-        if (
-            SiteSetting &&
-            typeof SiteSetting.get === "function"
-        ) {
-
-            res.locals.siteSettings =
-                await SiteSetting.get();
-
-        }
+        res.locals.siteSettings =
+            await SiteSetting.get();
 
     } catch (err) {
 
@@ -47,21 +56,15 @@ module.exports = async (req, res, next) => {
 
     }
 
-    // ==========================
+
+    // =====================================
     // ARSP Settings
-    // ==========================
+    // =====================================
 
     try {
 
-        if (
-            ArspSetting &&
-            typeof ArspSetting.get === "function"
-        ) {
-
-            res.locals.arspSettings =
-                await ArspSetting.get();
-
-        }
+        res.locals.arspSettings =
+            await ArspSetting.get();
 
     } catch (err) {
 
@@ -71,6 +74,64 @@ module.exports = async (req, res, next) => {
         );
 
     }
+
+
+    // =====================================
+    // Footer Settings
+    // =====================================
+
+    try {
+
+        res.locals.footerSettings =
+            await FooterSetting.get();
+
+    } catch (err) {
+
+        console.error(
+            "Footer Settings Error:",
+            err
+        );
+
+    }
+
+
+    // =====================================
+    // Footer Links
+    // =====================================
+
+    try {
+
+        res.locals.footerLinks =
+            await FooterLink.getAll();
+
+    } catch (err) {
+
+        console.error(
+            "Footer Links Error:",
+            err
+        );
+
+    }
+
+
+    // =====================================
+    // Latest Published News
+    // =====================================
+
+    try {
+
+        res.locals.latestNews =
+            await News.getLatest(3);
+
+    } catch (err) {
+
+        console.error(
+            "Latest News Load Error:",
+            err
+        );
+
+    }
+
 
     next();
 

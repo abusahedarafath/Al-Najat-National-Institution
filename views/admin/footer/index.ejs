@@ -1,0 +1,464 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Footer Management</h1>
+
+                <p>
+                    Manage the public website footer.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             FOOTER SETTINGS
+        ====================================== -->
+
+
+<div class="form-group">
+
+    <label>Footer Logo</label>
+
+    <% if (settings && settings.logo) { %>
+
+        <img
+            src="/uploads/footer/<%= settings.logo %>"
+            alt="Footer Logo"
+            style="
+                max-width:180px;
+                max-height:100px;
+                display:block;
+                margin-bottom:15px;
+                object-fit:contain;
+            ">
+
+    <% } %>
+
+    <input
+        type="file"
+        name="logo"
+        accept=".png,.jpg,.jpeg,.webp,.svg">
+
+    <small>
+        Upload the logo that should appear in the public footer.
+    </small>
+
+</div>
+        <form
+            action="/admin/footer/settings"
+            method="POST"
+            class="admin-form">
+
+            <h2>Footer Information</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Footer Description</label>
+
+                    <textarea
+                        name="description"
+                        rows="5"><%= settings?.description || "" %></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Address</label>
+
+                    <textarea
+                        name="address"
+                        rows="3"><%= settings?.address || "" %></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Phone</label>
+
+                    <input
+                        type="text"
+                        name="phone"
+                        value="<%= settings?.phone || "" %>">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="<%= settings?.email || "" %>">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>WhatsApp</label>
+
+                    <input
+                        type="text"
+                        name="whatsapp"
+                        value="<%= settings?.whatsapp || "" %>">
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <h2>Social Media</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Facebook</label>
+                    <input
+                        type="url"
+                        name="facebook"
+                        value="<%= settings?.facebook || "" %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Instagram</label>
+                    <input
+                        type="url"
+                        name="instagram"
+                        value="<%= settings?.instagram || "" %>">
+                </div>
+
+                <div class="form-group">
+                    <label>YouTube</label>
+                    <input
+                        type="url"
+                        name="youtube"
+                        value="<%= settings?.youtube || "" %>">
+                </div>
+
+                <div class="form-group">
+                    <label>X / Twitter</label>
+                    <input
+                        type="url"
+                        name="twitter"
+                        value="<%= settings?.twitter || "" %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Telegram</label>
+                    <input
+                        type="url"
+                        name="telegram"
+                        value="<%= settings?.telegram || "" %>">
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <h2>Copyright</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Copyright Text</label>
+
+                    <input
+                        type="text"
+                        name="copyright_text"
+                        value="<%= settings?.copyright_text || "" %>">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Developer / Credit Text</label>
+
+                    <input
+                        type="text"
+                        name="developer_text"
+                        value="<%= settings?.developer_text || "" %>">
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn-save">
+
+                Save Footer Settings
+
+            </button>
+
+        </form>
+
+
+        <!-- =====================================
+             ADD LINK
+        ====================================== -->
+
+        <form
+            action="/admin/footer/link"
+            method="POST"
+            class="admin-form"
+            style="margin-top:30px;">
+
+            <h2>Add Footer Link</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Section</label>
+
+                    <select name="section">
+
+                        <option value="quick">
+                            Quick Links
+                        </option>
+
+                        <option value="important">
+                            Important Links
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Link Name</label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>URL</label>
+
+                    <input
+                        type="text"
+                        name="url"
+                        placeholder="/about"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Order</label>
+
+                    <input
+                        type="number"
+                        name="sort_order"
+                        value="0">
+
+                </div>
+
+            </div>
+
+
+            <label style="display:block;margin-bottom:15px;">
+
+                <input
+                    type="checkbox"
+                    name="is_active"
+                    value="1"
+                    checked>
+
+                Active
+
+            </label>
+
+
+            <button
+                type="submit"
+                class="btn-save">
+
+                Add Link
+
+            </button>
+
+        </form>
+
+
+        <!-- =====================================
+             EXISTING LINKS
+        ====================================== -->
+
+        <div
+            class="admin-form"
+            style="margin-top:30px;">
+
+            <h2>Footer Links</h2>
+
+            <% if (links && links.length) { %>
+
+                <% links.forEach(link => { %>
+
+                    <form
+                        action="/admin/footer/link/<%= link.id %>/edit"
+                        method="POST"
+                        style="
+                            padding:15px 0;
+                            border-bottom:1px solid #ddd;
+                        ">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label>Section</label>
+
+                                <select name="section">
+
+                                    <option
+                                        value="quick"
+                                        <%= link.section === "quick" ? "selected" : "" %>>
+
+                                        Quick Links
+
+                                    </option>
+
+                                    <option
+                                        value="important"
+                                        <%= link.section === "important" ? "selected" : "" %>>
+
+                                        Important Links
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>Name</label>
+
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value="<%= link.title %>"
+                                    required>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>URL</label>
+
+                                <input
+                                    type="text"
+                                    name="url"
+                                    value="<%= link.url %>"
+                                    required>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>Order</label>
+
+                                <input
+                                    type="number"
+                                    name="sort_order"
+                                    value="<%= link.sort_order %>">
+
+                            </div>
+
+                        </div>
+
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                value="1"
+                                <%= link.is_active ? "checked" : "" %>>
+
+                            Active
+
+                        </label>
+
+
+                        <button
+                            type="submit"
+                            class="btn-save">
+
+                            Save
+
+                        </button>
+
+                    </form>
+
+
+                    <form
+                        action="/admin/footer/link/<%= link.id %>/delete"
+                        method="POST"
+                        style="margin-top:-55px;margin-bottom:20px;text-align:right;">
+
+                        <button
+                            type="submit"
+                            class="btn-danger"
+                            onclick="return confirm('Delete this footer link?')">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <p>
+                    No footer links have been added yet.
+                </p>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

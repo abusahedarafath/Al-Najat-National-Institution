@@ -381,22 +381,15 @@ static async permanentDelete(id){
 
     }
 
-    await db.query(
+await db.query(
+    `DELETE
+     FROM rtse_applications
+     WHERE id=?`,
+    [id]
+);
 
-        `DELETE
-         FROM rtse_applications
-         WHERE id=?`,
-
-        [
-
-            id
-
-        ]
-
-    );
-
+return true;
 }
-
 
 
 // =====================================

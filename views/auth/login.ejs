@@ -20,9 +20,21 @@
 
     <div class="login-card">
 
-        <img src="/images/logo.png" class="login-logo" alt="School Logo">
+<img
+    src="<%= siteSettings && siteSettings.logo
+        ? '/uploads/site-settings/' + siteSettings.logo
+        : '/images/logo.png' %>"
+    class="login-logo"
+    alt="<%= siteSettings && siteSettings.institution_name
+        ? siteSettings.institution_name
+        : 'Institution Logo' %>">
+       
+<h2>
+    <%= siteSettings && siteSettings.institution_name
+        ? siteSettings.institution_name
+        : 'Al-Najat National Institution' %>
+</h2>
 
-        <h2>Al-Najat National Institution</h2>
 
         <p>ERP Login Portal</p>
 

@@ -2,62 +2,277 @@
 
     <div class="footer-container">
 
+        <!-- =========================
+             ORGANIZATION
+        ========================== -->
+
         <div class="footer-column">
 
-            <img src="/images/logo.png" alt="Logo" class="footer-logo">
+            <img
+                src="<%= siteSettings && siteSettings.logo
+                    ? '/uploads/site-settings/' + siteSettings.logo
+                    : '/images/logo.png' %>"
+                alt="<%= siteSettings && siteSettings.institution_name
+                    ? siteSettings.institution_name
+                    : 'Institution Logo' %>"
+                class="footer-logo">
 
-            <h3>Al-Najat National Institution</h3>
+            <h3>
+                <%= siteSettings && siteSettings.institution_name
+                    ? siteSettings.institution_name
+                    : 'Al-Najat National Institution' %>
+            </h3>
 
             <p>
-                Providing quality education with Islamic values,
-                modern learning and character development.
+                <%= footerSettings && footerSettings.description
+                    ? footerSettings.description
+                    : (siteSettings && siteSettings.tagline
+                        ? siteSettings.tagline
+                        : 'Providing quality education with Islamic values, modern learning and character development.') %>
             </p>
 
         </div>
+
+
+        <!-- =========================
+             QUICK LINKS
+        ========================== -->
 
         <div class="footer-column">
 
             <h3>Quick Links</h3>
 
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/admission2027">Admission</a></li>
-                <li><a href="/gallery">Gallery</a></li>
-                <li><a href="/notice">Notice</a></li>
-                <li><a href="/contact">Contact</a></li>
+
+                <% if (footerLinks && footerLinks.length) { %>
+
+                    <% footerLinks
+                        .filter(link => link.section === "quick" && link.is_active)
+                        .forEach(link => { %>
+
+                        <li>
+                            <a href="<%= link.url %>">
+                                <%= link.title %>
+                            </a>
+                        </li>
+
+                    <% }) %>
+
+                <% } else { %>
+
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="/admission2027">Admission</a>
+                    </li>
+
+                    <li>
+                        <a href="/gallery">Gallery</a>
+                    </li>
+
+                    <li>
+                        <a href="/notice">Notice</a>
+                    </li>
+
+                    <li>
+                        <a href="/contact">Contact</a>
+                    </li>
+
+                <% } %>
+
             </ul>
 
         </div>
+
+
+        <!-- =========================
+             LATEST NEWS
+        ========================== -->
 
         <div class="footer-column">
 
             <h3>Latest News</h3>
 
             <ul>
-                <li>Admission Open 2027</li>
-                <li>New Academic Session</li>
-                <li>Annual Sports Week</li>
+
+                <% if (latestNews && latestNews.length) { %>
+
+                    <% latestNews.forEach(news => { %>
+
+                        <li>
+                            <a href="/news/<%= news.id %>">
+                                <%= news.title %>
+                            </a>
+                        </li>
+
+                    <% }) %>
+
+                <% } else { %>
+
+                    <li>
+                        No latest news available.
+                    </li>
+
+                <% } %>
+
             </ul>
 
         </div>
+
+
+        <!-- =========================
+             CONTACT
+        ========================== -->
 
         <div class="footer-column">
 
             <h3>Contact</h3>
 
-            <p>📍 Ratabari, Sribhumi, Assam</p>
+            <% if (footerSettings && footerSettings.address) { %>
 
-            <p>📞 +91 XXXXX XXXXX</p>
+                <p>
+                    📍 <%= footerSettings.address %>
+                </p>
 
-            <p>✉ info@alnajat.edu.in</p>
+            <% } %>
+
+
+            <% if (footerSettings && footerSettings.phone) { %>
+
+                <p>
+                    📞 <%= footerSettings.phone %>
+                </p>
+
+            <% } %>
+
+
+            <% if (footerSettings && footerSettings.email) { %>
+
+                <p>
+                    ✉ <%= footerSettings.email %>
+                </p>
+
+            <% } %>
+
+
+            <% if (footerSettings && footerSettings.whatsapp) { %>
+
+                <p>
+                    💬 <%= footerSettings.whatsapp %>
+                </p>
+
+            <% } %>
+
+
+            <!-- Social Media -->
+
+            <div class="footer-social">
+
+                <% if (footerSettings && footerSettings.facebook) { %>
+
+                    <a
+                        href="<%= footerSettings.facebook %>"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Facebook">
+
+                        <i class="fab fa-facebook-f"></i>
+
+                    </a>
+
+                <% } %>
+
+
+                <% if (footerSettings && footerSettings.instagram) { %>
+
+                    <a
+                        href="<%= footerSettings.instagram %>"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Instagram">
+
+                        <i class="fab fa-instagram"></i>
+
+                    </a>
+
+                <% } %>
+
+
+                <% if (footerSettings && footerSettings.youtube) { %>
+
+                    <a
+                        href="<%= footerSettings.youtube %>"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="YouTube">
+
+                        <i class="fab fa-youtube"></i>
+
+                    </a>
+
+                <% } %>
+
+
+                <% if (footerSettings && footerSettings.twitter) { %>
+
+                    <a
+                        href="<%= footerSettings.twitter %>"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="X">
+
+                        <i class="fab fa-x-twitter"></i>
+
+                    </a>
+
+                <% } %>
+
+
+                <% if (footerSettings && footerSettings.telegram) { %>
+
+                    <a
+                        href="<%= footerSettings.telegram %>"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Telegram">
+
+                        <i class="fab fa-telegram"></i>
+
+                    </a>
+
+                <% } %>
+
+            </div>
 
         </div>
 
     </div>
 
+
+    <!-- =========================
+         COPYRIGHT
+    ========================== -->
+
     <div class="footer-bottom">
 
-        © 2026 Al-Najat National Institution. All Rights Reserved.
+        <%= footerSettings && footerSettings.copyright_text
+            ? footerSettings.copyright_text
+            : '© ' + new Date().getFullYear() + ' ' +
+              (siteSettings && siteSettings.institution_name
+                  ? siteSettings.institution_name
+                  : 'Al-Najat National Institution') +
+              '. All Rights Reserved.' %>
+
+
+        <% if (footerSettings && footerSettings.developer_text) { %>
+
+            <span>
+                <%= footerSettings.developer_text %>
+            </span>
+
+        <% } %>
 
     </div>
 
@@ -65,7 +280,6 @@
 
 
 <script src="/js/honour-heart-popup.js"></script>
-
 
 </body>
 </html>
