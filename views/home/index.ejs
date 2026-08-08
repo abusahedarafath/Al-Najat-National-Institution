@@ -306,157 +306,136 @@
 
 
 
+<% if (achievements && achievements.length > 0) { %>
 
+    <!-- =====================================================
+         STATISTICS / OUR ACHIEVEMENTS
+    ===================================================== -->
 
-<!-- =====================================================
-     STATISTICS
-===================================================== -->
+    <section class="stats-section">
 
-<section class="stats-section">
+        <div class="container">
 
-    <div class="container">
+            <div class="section-header">
 
-        <div class="section-header">
+                <span class="section-badge">
+                    Our Achievements
+                </span>
 
-            <span class="section-badge">
-
-                Our Achievements
-
-            </span>
-
-            <h2>
-
-                Institution Statistics
-
-            </h2>
-
-            <p>
-
-                Our growth in numbers reflects our commitment to quality education.
-
-            </p>
-
-        </div>
-
-        <div class="stats-grid">
-
-            <div class="stat-card">
-
-                <h2>2500+</h2>
-
-                <p>Students</p>
-
-            </div>
-
-            <div class="stat-card">
-
-                <h2>120+</h2>
-
-                <p>Teachers</p>
-
-            </div>
-
-            <div class="stat-card">
-
-                <h2>98%</h2>
-
-                <p>Success Rate</p>
-
-            </div>
-
-            <div class="stat-card">
-
-                <h2>25+</h2>
-
-                <p>Courses</p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-
-
-
-
-<!-- =====================================================
-     WHY CHOOSE US
-===================================================== -->
-
-<section class="features-section">
-
-    <div class="container">
-
-        <div class="section-header">
-
-            <span class="section-badge">
-
-                Why Choose Us
-
-            </span>
-
-            <h2>
-
-                Why Choose Al-Najat?
-
-            </h2>
-
-            <p>
-
-                Building knowledge, character and leadership through quality education.
-
-            </p>
-
-        </div>
-
-        <div class="feature-grid">
-
-            <div class="feature-card">
-
-                <h3>Quality Education</h3>
+                <h2>
+                    Institution Statistics
+                </h2>
 
                 <p>
-
-                    Experienced teachers and modern teaching methods.
-
+                    Our growth in numbers reflects our commitment to quality education.
                 </p>
 
             </div>
 
-            <div class="feature-card">
+            <div class="stats-grid">
 
-                <h3>Islamic Environment</h3>
+                <% achievements.forEach(achievement => { %>
 
-                <p>
+                    <div class="stat-card">
 
-                    Academic excellence with Islamic values and moral education.
+                        <h2>
+                            <%= achievement.value %>
+                        </h2>
 
-                </p>
+                        <p>
+                            <%= achievement.title %>
+                        </p>
 
-            </div>
+                        <% if (achievement.description) { %>
 
-            <div class="feature-card">
+                            <small>
+                                <%= achievement.description %>
+                            </small>
 
-                <h3>Excellent Results</h3>
+                        <% } %>
 
-                <p>
+                    </div>
 
-                    Consistent academic performance and student success.
-
-                </p>
+                <% }) %>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
+<% } %>
+
+
+
+
+
+
+
+<% if (features && features.length > 0) { %>
+
+    <!-- =====================================================
+         WHY CHOOSE US
+    ===================================================== -->
+
+    <section class="features-section">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <span class="section-badge">
+                    Why Choose Us
+                </span>
+
+                <h2>
+                    Why Choose Al-Najat?
+                </h2>
+
+                <p>
+                    Building knowledge, character and leadership through quality education.
+                </p>
+
+            </div>
+
+            <div class="feature-grid">
+
+                <% features.forEach(feature => { %>
+
+                    <div class="feature-card">
+
+                        <% if (feature.icon) { %>
+
+                            <i class="<%= feature.icon %>"></i>
+
+                        <% } %>
+
+                        <h3>
+                            <%= feature.title %>
+                        </h3>
+
+                        <p>
+                            <%= feature.description %>
+                        </p>
+
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+        </div>
+
+    </section>
+
+<% } %>	
+
+
+
+
+
+
+
 
 
 

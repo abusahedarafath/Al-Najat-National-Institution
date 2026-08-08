@@ -12,60 +12,102 @@ const Menu = require("../models/Menu");
 const personalityModel = require("../models/personalityModel");
 
 const HonourHeartAwardee = require("../models/HonourHeartAwardee");
+const HomepageAchievement =
+    require("../models/HomepageAchievement");
 
+const HomepageFeature =
+    require("../models/HomepageFeature");
 
 // ======================================
 // Home Page
 // ======================================
+
 exports.index = async (req, res) => {
     try {
+
         const sliders = await HeroSlider.getActive();
         const notices = await Notice.getLatest(5);
         const news = await News.getLatest(5);
 
         const chairmanResult = await ChairmanMessage.get();
+
         const chairman =
             chairmanResult && chairmanResult.length > 0
                 ? chairmanResult[0]
                 : null;
 
-        const principalResult = await PrincipalMessage.get();
+        const principalResult =
+            await PrincipalMessage.get();
+
         const principal =
             principalResult && principalResult.length > 0
                 ? principalResult[0]
                 : null;
 
-        const chancellorResult = await ChancellorMessage.get();
+        const chancellorResult =
+            await ChancellorMessage.get();
+
         const chancellor =
             chancellorResult && chancellorResult.length > 0
                 ? chancellorResult[0]
                 : null;
 
-        const welcome = await WelcomeSection.getActive();
-        const quickButtons = await QuickButton.getActive();
-        const siteSettings = await SiteSetting.get();
+        const welcome =
+            await WelcomeSection.getActive();
 
-        // Fixed for mysql2/promise
-        const personalities = await personalityModel.getHomepage();
-        const honourHeartPopup = await HonourHeartAwardee.getPopup();
-        res.render("home/index", {
-            title: "Home | Al-Najat National Institution",
-            sliders,
-            notices,
-            news,
-            chairman,
-            principal,
-            chancellor,
-            personalities,
-            siteSettings,
-            welcome,
-            quickButtons,
-           honourHeartPopup
-        });
+        const quickButtons =
+            await QuickButton.getActive();
+
+        const siteSettings =
+            await SiteSetting.get();
+
+        const achievements =
+            await HomepageAchievement.getActive();
+
+        const features =
+            await HomepageFeature.getActive();
+
+        const personalities =
+            await personalityModel.getHomepage();
+
+        const honourHeartPopup =
+            await HonourHeartAwardee.getPopup();
+
+        res.render(
+            "home/index",
+            {
+                title:
+                    "Home | Al-Najat National Institution",
+
+                sliders,
+                notices,
+                news,
+
+                chairman,
+                principal,
+                chancellor,
+
+                personalities,
+                siteSettings,
+                welcome,
+                quickButtons,
+
+                honourHeartPopup,
+
+                achievements,
+                features
+            }
+        );
 
     } catch (err) {
-        console.error("Home Controller Error:", err);
-        res.status(500).send("Internal Server Error");
+
+        console.error(
+            "Home Controller Error:",
+            err
+        );
+
+        res.status(500)
+            .send("Internal Server Error");
     }
 };
 

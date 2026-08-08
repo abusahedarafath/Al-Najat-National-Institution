@@ -1,0 +1,172 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>Why Choose Us</h1>
+
+                <a
+                    href="/admin/homepage/features/create"
+                    class="btn-save">
+
+                    <i class="fas fa-plus"></i>
+                    Add New
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <% if (features && features.length > 0) { %>
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Order</th>
+                                <th>Icon</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% features.forEach(feature => { %>
+
+                                <tr>
+
+                                    <td>
+                                        <%= feature.display_order %>
+                                    </td>
+
+                                    <td>
+
+                                        <% if (feature.icon) { %>
+
+                                            <i class="<%= feature.icon %>"></i>
+
+                                        <% } else { %>
+
+                                            -
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+                                            <%= feature.title %>
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+                                        <%= feature.description %>
+                                    </td>
+
+                                    <td>
+
+                                        <% if (feature.is_active) { %>
+
+                                            <span class="badge badge-success">
+                                                Active
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="badge badge-warning">
+                                                Inactive
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/homepage/features/<%= feature.id %>/edit"
+                                            class="btn-save">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/homepage/features/<%= feature.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn-danger"
+                                                onclick="return confirm('Delete this item?');">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                <% } else { %>
+
+                    <div style="text-align:center;padding:40px;">
+
+                        <h3>
+                            No Why Choose Us items found.
+                        </h3>
+
+                        <p>
+                            Add your first item to display it on the homepage.
+                        </p>
+
+                        <br>
+
+                        <a
+                            href="/admin/homepage/features/create"
+                            class="btn-save">
+
+                            <i class="fas fa-plus"></i>
+                            Add Why Choose Us
+
+                        </a>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>

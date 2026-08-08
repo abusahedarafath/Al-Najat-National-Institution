@@ -1,0 +1,160 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>Our Achievements</h1>
+
+                <a
+                    href="/admin/homepage/achievements/create"
+                    class="btn-save">
+
+                    <i class="fas fa-plus"></i>
+                    Add Achievement
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <% if (achievements && achievements.length > 0) { %>
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Order</th>
+                                <th>Value</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% achievements.forEach(achievement => { %>
+
+                                <tr>
+
+                                    <td>
+                                        <%= achievement.display_order %>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            <%= achievement.value %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <%= achievement.title %>
+                                    </td>
+
+                                    <td>
+                                        <%= achievement.description || "-" %>
+                                    </td>
+
+                                    <td>
+
+                                        <% if (achievement.is_active) { %>
+
+                                            <span class="badge badge-success">
+                                                Active
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="badge badge-warning">
+                                                Inactive
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/homepage/achievements/<%= achievement.id %>/edit"
+                                            class="btn-save">
+
+                                            Edit
+
+                                        </a>
+
+                                        <form
+                                            action="/admin/homepage/achievements/<%= achievement.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn-danger"
+                                                onclick="return confirm('Delete this achievement?');">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                <% } else { %>
+
+                    <div style="text-align:center;padding:40px;">
+
+                        <h3>
+                            No achievements found.
+                        </h3>
+
+                        <p>
+                            Add your first achievement to display it on the homepage.
+                        </p>
+
+                        <br>
+
+                        <a
+                            href="/admin/homepage/achievements/create"
+                            class="btn-save">
+
+                            <i class="fas fa-plus"></i>
+                            Add Achievement
+
+                        </a>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>

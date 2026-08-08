@@ -15,7 +15,7 @@ router.get(
 
     "/rtse",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.dashboard
 
@@ -30,7 +30,7 @@ router.get(
 
     "/rtse/application/:id",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.applicationDetails
 
@@ -45,7 +45,7 @@ router.get(
 
     "/rtse/application/:id/approve",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.approveApplication
 
@@ -60,7 +60,7 @@ router.get(
 
     "/rtse/application/:id/reject",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.rejectApplication
 
@@ -75,7 +75,7 @@ router.get(
 
     "/rtse/application/:id/edit",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.editApplicationPage
 
@@ -85,7 +85,7 @@ router.post(
 
     "/rtse/application/:id/edit",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.updateApplication
 
@@ -100,7 +100,7 @@ router.post(
 
     "/rtse/application/:id/archive",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.archiveApplication
 
@@ -115,7 +115,7 @@ router.get(
 
     "/rtse/archive",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.archive
 
@@ -130,7 +130,7 @@ router.post(
 
     "/rtse/application/:id/restore",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.restoreApplication
 
@@ -144,7 +144,7 @@ router.post(
 
 router.post(
     "/rtse/application/:id/delete",
-    auth.isLoggedIn,
+    auth.isAdmin,
     adminRtseController.permanentlyDeleteApplication
 );
 
@@ -156,7 +156,7 @@ router.get(
 
     "/rtse/generate-roll/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateRollNumbers
 
@@ -171,7 +171,7 @@ router.get(
 
     "/rtse/generate-admit/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateAdmitCards
 
@@ -186,7 +186,7 @@ router.get(
 
     "/rtse/export",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.exportExcel
 
@@ -201,7 +201,7 @@ router.get(
 
     "/rtse/export/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.exportSectionExcel
 
@@ -216,7 +216,7 @@ router.get(
 
     "/rtse/generate-roll/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateRollNumbers
 
@@ -231,7 +231,7 @@ router.get(
 
     "/rtse/generate-admit/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateAdmitCards
 
@@ -246,7 +246,7 @@ router.get(
 
     "/rtse/export",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.exportExcel
 
@@ -261,7 +261,7 @@ router.get(
 
     "/rtse/export/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.exportSectionExcel
 
@@ -278,7 +278,7 @@ router.get(
 
     "/rtse/admit-generator/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.admitGenerationPage
 
@@ -287,7 +287,7 @@ router.get(
 
 router.post(
     "/rtse/admit-generator/:section",
-    auth.isLoggedIn,
+    auth.isAdmin,
     adminRtseController.generateAdmitCards
 );
 
@@ -299,7 +299,7 @@ router.get(
 
     "/rtse/application/:id/admit-card",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.viewAdmitCard
 
@@ -314,7 +314,7 @@ router.get(
 
     "/rtse/open-applications",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.openApplications
 
@@ -329,7 +329,7 @@ router.get(
 
     "/rtse/close-applications",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.closeApplications
 
@@ -345,7 +345,7 @@ router.get(
 
     "/rtse/publish-admit",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.publishAdmitCards
 
@@ -360,7 +360,7 @@ router.get(
 
     "/rtse/hide-admit",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.hideAdmitCards
 
@@ -375,7 +375,7 @@ router.get(
 
     "/rtse/exam-settings",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.examSettingPage
 
@@ -385,7 +385,7 @@ router.post(
 
     "/rtse/exam-settings",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.saveExamSettings
 
@@ -399,7 +399,7 @@ router.get(
 
     "/rtse/seat-plan",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.seatPlanPage
 
@@ -409,7 +409,7 @@ router.post(
 
     "/rtse/seat-plan",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateSeatPlan
 
@@ -423,7 +423,7 @@ router.get(
 
     "/rtse/seat-plan/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.roomWiseSeatPlan
 
@@ -441,7 +441,7 @@ router.get(
 
     "/rtse/attendance-sheet/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.attendanceSheet
 
@@ -456,7 +456,7 @@ router.get(
 
     "/rtse/results",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.resultDashboard
 
@@ -466,7 +466,7 @@ router.get(
 
     "/rtse/result/:id",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.resultEntryPage
 
@@ -476,7 +476,7 @@ router.post(
 
     "/rtse/result/:id",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.saveResult
 
@@ -491,7 +491,7 @@ router.get(
 
     "/rtse/results/generate-rankings",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateRankings
 
@@ -506,7 +506,7 @@ router.get(
 
     "/rtse/results/merit-list",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.overallMeritList
 
@@ -516,7 +516,7 @@ router.get(
 
     "/rtse/results/merit-list/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.sectionMeritList
 
@@ -530,7 +530,7 @@ router.get(
 
     "/rtse/results/publish",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.publishResults
 
@@ -540,7 +540,7 @@ router.get(
 
     "/rtse/results/hide",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.hideResults
 
@@ -557,7 +557,7 @@ router.get(
 
     "/rtse/certificate/:id/generate",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateCertificate
 
@@ -571,7 +571,7 @@ router.get(
 
     "/rtse/certificate/:id",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.viewCertificate
 
@@ -587,7 +587,7 @@ router.get(
 
     "/rtse/certificates/publish",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.publishCertificates
 
@@ -597,7 +597,7 @@ router.get(
 
     "/rtse/certificates/hide",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.hideCertificates
 
@@ -612,7 +612,7 @@ router.get(
 
     "/rtse/certificates/generate-all",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateCertificates
 
@@ -622,7 +622,7 @@ router.get(
 
     "/rtse/certificates/generate/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.generateCertificates
 
@@ -638,7 +638,7 @@ router.get(
 
     "/rtse/certificates/section/:section",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.sectionCertificates
 
@@ -653,7 +653,7 @@ router.get(
 
     "/rtse/certificates/all",
 
-    auth.isLoggedIn,
+    auth.isAdmin,
 
     adminRtseController.allCertificates
 

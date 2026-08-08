@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middleware/auth");
+
 
 const authMiddleware = require("../middleware/auth");
 
@@ -16,6 +18,8 @@ const adminController = require("../controllers/adminController");
 const studentAdminController = require("../controllers/studentAdminController");
 const adminHeroSliderController = require("../controllers/adminHeroSliderController");
 const websiteController = require("../controllers/websiteController");
+const adminHomepageFeatureController = require("../controllers/adminHomepageFeatureController");
+const adminHomepageAchievementController = require("../controllers/adminHomepageAchievementController");
 
 // ===============================
 // Dashboard
@@ -159,5 +163,87 @@ router.post(
     "/admin/student/:id/delete",
     studentAdminController.deleteStudent
 );
+
+// =====================================
+// Homepage - Why Choose Us
+// =====================================
+
+router.get(
+    "/admin/homepage/features",
+    auth.isLoggedIn,
+    adminHomepageFeatureController.index
+);
+
+router.get(
+    "/admin/homepage/features/create",
+    auth.isLoggedIn,
+    adminHomepageFeatureController.createPage
+);
+
+router.post(
+    "/admin/homepage/features/create",
+    auth.isLoggedIn,
+    adminHomepageFeatureController.create
+);
+
+router.get(
+    "/admin/homepage/features/:id/edit",
+    auth.isLoggedIn,
+    adminHomepageFeatureController.editPage
+);
+
+router.post(
+    "/admin/homepage/features/:id/edit",
+    auth.isLoggedIn,
+    adminHomepageFeatureController.update
+);
+
+router.post(
+    "/admin/homepage/features/:id/delete",
+    auth.isLoggedIn,
+    adminHomepageFeatureController.delete
+);
+
+
+// =====================================
+// Homepage - Our Achievements
+// =====================================
+
+router.get(
+    "/admin/homepage/achievements",
+    auth.isLoggedIn,
+    adminHomepageAchievementController.index
+);
+
+router.get(
+    "/admin/homepage/achievements/create",
+    auth.isLoggedIn,
+    adminHomepageAchievementController.createPage
+);
+
+router.post(
+    "/admin/homepage/achievements/create",
+    auth.isLoggedIn,
+    adminHomepageAchievementController.create
+);
+
+router.get(
+    "/admin/homepage/achievements/:id/edit",
+    auth.isLoggedIn,
+    adminHomepageAchievementController.editPage
+);
+
+router.post(
+    "/admin/homepage/achievements/:id/edit",
+    auth.isLoggedIn,
+    adminHomepageAchievementController.update
+);
+
+router.post(
+    "/admin/homepage/achievements/:id/delete",
+    auth.isLoggedIn,
+    adminHomepageAchievementController.delete
+);
+
 
 module.exports = router;

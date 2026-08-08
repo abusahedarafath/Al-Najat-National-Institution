@@ -1,0 +1,133 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>Add Why Choose Us</h1>
+
+                <a
+                    href="/admin/homepage/features"
+                    class="btn-cancel">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+            <div class="profile-card">
+
+                <form
+                    action="/admin/homepage/features/create"
+                    method="POST">
+
+                    <div class="form-group">
+
+                        <label>
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            name="title"
+                            required
+                            placeholder="Quality Education">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            name="description"
+                            rows="5"
+                            required
+                            placeholder="Experienced teachers and modern teaching methods."></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Font Awesome Icon
+                        </label>
+
+                        <input
+                            type="text"
+                            name="icon"
+                            placeholder="fas fa-graduation-cap">
+
+                        <small>
+                            Example: fas fa-graduation-cap
+                        </small>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Order
+                        </label>
+
+                        <input
+                            type="number"
+                            name="display_order"
+                            value="0"
+                            min="0">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                checked>
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                    <br>
+
+                    <button
+                        type="submit"
+                        class="btn-save">
+
+                        Save
+
+                    </button>
+
+                    <a
+                        href="/admin/homepage/features"
+                        class="btn-cancel">
+
+                        Cancel
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../../partials/footer") %>
