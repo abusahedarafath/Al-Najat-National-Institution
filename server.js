@@ -137,6 +137,9 @@ app.use("/", admissionRoutes);
 // Login routes MUST come before protected admin routes
 app.use("/", authRoutes);
 
+// RTSE public routes MUST be registered before admin routes
+app.use("/rtse", rtseRoutes);
+
 app.use("/", adminRoutes);
 app.use("/", personalityRoutes);
 app.use("/", menuRoutes);
@@ -167,9 +170,7 @@ app.use("/", footerRoutes);
 
 // ===============================
 // RTSE Public Routes
-// ===============================
 
-app.use("/rtse", rtseRoutes);
 
 
 // ===============================
