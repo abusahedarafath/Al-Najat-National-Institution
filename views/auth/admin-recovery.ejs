@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %></title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/auth.css"
+    >
+
+    <style>
+
+        .recovery-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .recovery-card {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+        }
+
+        .recovery-card h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .recovery-card .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .btn-recovery {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .alert-danger {
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .warning {
+            margin-top: 20px;
+            padding: 12px;
+            background: #fff3cd;
+            color: #664d03;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="recovery-container">
+
+    <div class="recovery-card">
+
+        <h2>Admin Account Recovery</h2>
+
+        <p class="description">
+            Set a new Admin ID and password.
+        </p>
+
+        <% if (error) { %>
+
+            <div class="alert-danger">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+        <form
+            action="/abc/efg/hij/klm/nop/000/arsp/6901/3922"
+            method="POST"
+        >
+
+            <div class="form-group">
+
+                <label for="username">
+                    New Admin ID
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    class="form-control"
+                    minlength="4"
+                    maxlength="100"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">
+                    New Password
+                </label>
+
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="confirmPassword">
+                    Confirm Password
+                </label>
+
+                <input
+                    id="confirmPassword"
+                    type="password"
+                    name="confirmPassword"
+                    class="form-control"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-recovery"
+            >
+                Change Admin Credentials
+            </button>
+
+        </form>
+
+
+        <div class="warning">
+
+            <strong>Important:</strong>
+
+            After successful recovery, the previous Admin ID
+            will become inactive and its password will no longer
+            work.
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

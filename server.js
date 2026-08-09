@@ -35,6 +35,8 @@ const honourHeartRoutes = require("./routes/honourHeartRoutes");
 
 
 const authRoutes = require("./routes/authRoutes");
+const adminRecoveryRoutes = require("./routes/adminRecoveryRoutes");
+
 const studentRoutes = require("./routes/studentRoutes");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -138,7 +140,7 @@ app.use("/", admissionRoutes);
 
 // Login routes MUST come before protected admin routes
 app.use("/", authRoutes);
-
+app.use("/", adminRecoveryRoutes);
 // RTSE public routes MUST be registered before admin routes
 app.use("/rtse", rtseRoutes);
 
