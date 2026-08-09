@@ -6,7 +6,6 @@ const path = require("path");
 
 const rtseController =
     require("../controllers/rtseController");
-const studentAuth = require("../middleware/studentAuth");
 
 // =====================================
 // Upload Configuration
@@ -59,7 +58,6 @@ router.get("/", (req, res) => {
 
 router.get(
     "/apply",
-    studentAuth.isStudentLoggedIn,
     rtseController.applicationPage
 );
 
@@ -70,7 +68,6 @@ router.get(
 
 router.post(
     "/apply",
-    studentAuth.isStudentLoggedIn,
 
     upload.fields([
         {
@@ -93,7 +90,6 @@ router.post(
 
 router.get(
     "/review",
-    studentAuth.isStudentLoggedIn,
     rtseController.reviewApplication
 );
 
@@ -103,7 +99,6 @@ router.get(
 
 router.get(
     "/edit",
-    studentAuth.isStudentLoggedIn,
     rtseController.editApplication
 );
 
@@ -113,7 +108,6 @@ router.get(
 
 router.post(
     "/confirm",
-    studentAuth.isStudentLoggedIn,
     rtseController.confirmApplication
 );
 
