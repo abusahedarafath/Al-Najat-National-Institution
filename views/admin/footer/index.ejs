@@ -26,35 +26,7 @@
         ====================================== -->
 
 
-<div class="form-group">
 
-    <label>Footer Logo</label>
-
-    <% if (settings && settings.logo) { %>
-
-        <img
-            src="/uploads/footer/<%= settings.logo %>"
-            alt="Footer Logo"
-            style="
-                max-width:180px;
-                max-height:100px;
-                display:block;
-                margin-bottom:15px;
-                object-fit:contain;
-            ">
-
-    <% } %>
-
-    <input
-        type="file"
-        name="logo"
-        accept=".png,.jpg,.jpeg,.webp,.svg">
-
-    <small>
-        Upload the logo that should appear in the public footer.
-    </small>
-
-</div>
         <form
             action="/admin/footer/settings"
             method="POST"
@@ -456,6 +428,231 @@
             <% } %>
 
         </div>
+
+        <!-- =====================================
+             SOCIAL MEDIA LINKS
+        ====================================== -->
+
+        <div class="admin-form" style="margin-top:30px;">
+
+            <h2>Social Media Links</h2>
+
+            <!-- Add Social Link -->
+
+            <form
+                action="/admin/footer/social"
+                method="POST"
+                class="admin-form"
+                style="padding:0;border:0;"
+            >
+
+                <h3>Add Social Link</h3>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Platform Name</label>
+
+                        <input
+                            type="text"
+                            name="platform"
+                            placeholder="Facebook"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Font Awesome Icon Class</label>
+
+                        <input
+                            type="text"
+                            name="icon_class"
+                            placeholder="fa-brands fa-facebook-f"
+                            required
+                        >
+
+                        <small>
+                            Example: fa-brands fa-facebook-f
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL</label>
+
+                        <input
+                            type="url"
+                            name="url"
+                            placeholder="https://example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Order</label>
+
+                        <input
+                            type="number"
+                            name="sort_order"
+                            value="0"
+                        >
+                    </div>
+
+                </div>
+
+                <label style="display:block;margin-bottom:15px;">
+
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="1"
+                        checked
+                    >
+
+                    Active
+
+                </label>
+
+                <button
+                    type="submit"
+                    class="btn-save"
+                >
+                    Add Social Link
+                </button>
+
+            </form>
+
+
+            <!-- Existing Social Links -->
+
+            <div style="margin-top:30px;">
+
+                <h3>Existing Social Links</h3>
+
+                <% if (socialLinks && socialLinks.length) { %>
+
+                    <% socialLinks.forEach(social => { %>
+
+                        <div
+                            style="
+                                padding:15px 0;
+                                border-bottom:1px solid #ddd;
+                            "
+                        >
+
+                            <form
+                                action="/admin/footer/social/<%= social.id %>/edit"
+                                method="POST"
+                            >
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+
+                                        <label>Platform</label>
+
+                                        <input
+                                            type="text"
+                                            name="platform"
+                                            value="<%= social.platform %>"
+                                            required
+                                        >
+
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        <label>Icon Class</label>
+
+                                        <input
+                                            type="text"
+                                            name="icon_class"
+                                            value="<%= social.icon_class || '' %>"
+                                            required
+                                        >
+
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        <label>URL</label>
+
+                                        <input
+                                            type="url"
+                                            name="url"
+                                            value="<%= social.url %>"
+                                            required
+                                        >
+
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        <label>Order</label>
+
+                                        <input
+                                            type="number"
+                                            name="sort_order"
+                                            value="<%= social.sort_order %>"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                                <label>
+
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        value="1"
+                                        <%= social.is_active ? "checked" : "" %>
+                                    >
+
+                                    Active
+
+                                </label>
+
+                                <button
+                                    type="submit"
+                                    class="btn-save"
+                                >
+                                    Save
+                                </button>
+
+                            </form>
+
+                            <form
+                                action="/admin/footer/social/<%= social.id %>/delete"
+                                method="POST"
+                                style="margin-top:-45px;margin-bottom:20px;text-align:right;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn-danger"
+                                    onclick="return confirm('Delete this social link?')"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    <% }) %>
+
+                <% } else { %>
+
+                    <p>
+                        No social media links have been added yet.
+                    </p>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
 
     </main>
 

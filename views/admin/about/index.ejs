@@ -1,0 +1,156 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>About Us</h1>
+                    <p>Manage the public About Us content of the organization.</p>
+                </div>
+
+                <a
+                    href="/admin/about/create"
+                    class="btn btn-primary">
+                    + Add About Section
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <table class="admin-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Section Key</th>
+                            <th>Title</th>
+                            <th>Order</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% if (sections && sections.length > 0) { %>
+
+                            <% sections.forEach(section => { %>
+
+                                <tr>
+
+                                    <td>
+                                        <%= section.id %>
+                                    </td>
+
+                                    <td>
+                                        <%= section.section_key %>
+                                    </td>
+
+                                    <td>
+                                        <%= section.title %>
+                                    </td>
+
+                                    <td>
+                                        <%= section.display_order %>
+                                    </td>
+
+                                    <td>
+
+                                        <% if (section.is_active) { %>
+
+                                            <span class="badge badge-success">
+                                                Active
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="badge badge-danger">
+                                                Inactive
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/about/<%= section.id %>/edit"
+                                            class="btn btn-sm btn-primary">
+                                            Edit
+                                        </a>
+
+                                        <form
+                                            action="/admin/about/<%= section.id %>/toggle"
+                                            method="POST"
+                                            style="display:inline;">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-secondary">
+
+                                                <%= section.is_active
+                                                    ? "Deactivate"
+                                                    : "Activate" %>
+
+                                            </button>
+
+                                        </form>
+
+                                        <form
+                                            action="/admin/about/<%= section.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Are you sure you want to delete this About Us section?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-danger">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        <% } else { %>
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    style="text-align:center; padding:30px;">
+
+                                    No About Us sections have been added yet.
+
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>

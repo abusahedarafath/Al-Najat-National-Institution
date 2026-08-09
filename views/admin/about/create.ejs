@@ -1,0 +1,149 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Add About Section</h1>
+                    <p>Create content for the public About Us page.</p>
+                </div>
+
+                <a
+                    href="/admin/about"
+                    class="btn btn-secondary">
+                    ← Back
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/about/create"
+                    method="POST"
+                    class="admin-form">
+
+                    <div class="form-group">
+
+                        <label>
+                            Section Key
+                        </label>
+
+                        <input
+                            type="text"
+                            name="section_key"
+                            placeholder="about-introduction"
+                            required>
+
+                        <small>
+                            Use a unique key such as
+                            about-introduction, mission, vision, history.
+                        </small>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            name="title"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Content
+                        </label>
+
+                        <textarea
+                            name="content"
+                            rows="10"
+                            required></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Image Filename
+                        </label>
+
+                        <input
+                            type="text"
+                            name="image"
+                            placeholder="about.jpg">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Order
+                        </label>
+
+                        <input
+                            type="number"
+                            name="display_order"
+                            value="0"
+                            min="0">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                value="1"
+                                checked>
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save About Section
+
+                        </button>
+
+                        <a
+                            href="/admin/about"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>

@@ -8,28 +8,25 @@
 
         <div class="footer-column">
 
-            <img
-                src="<%= siteSettings && siteSettings.logo
-                    ? '/uploads/site-settings/' + siteSettings.logo
-                    : '/images/logo.png' %>"
-                alt="<%= siteSettings && siteSettings.institution_name
-                    ? siteSettings.institution_name
-                    : 'Institution Logo' %>"
-                class="footer-logo">
+            <% if (siteSettings && siteSettings.logo) { %>
+                <img
+                    src="/uploads/site-settings/<%= siteSettings.logo %>"
+                    alt="<%= siteSettings.institution_name || '' %>"
+                    class="footer-logo"
+                >
+            <% } %>
 
-            <h3>
-                <%= siteSettings && siteSettings.institution_name
-                    ? siteSettings.institution_name
-                    : 'Al-Najat National Institution' %>
-            </h3>
+            <% if (siteSettings && siteSettings.institution_name) { %>
+                <h3>
+                    <%= siteSettings.institution_name %>
+                </h3>
+            <% } %>
 
-            <p>
-                <%= footerSettings && footerSettings.description
-                    ? footerSettings.description
-                    : (siteSettings && siteSettings.tagline
-                        ? siteSettings.tagline
-                        : 'Providing quality education with Islamic values, modern learning and character development.') %>
-            </p>
+            <% if (footerSettings && footerSettings.description) { %>
+                <p>
+                    <%= footerSettings.description %>
+                </p>
+            <% } %>
 
         </div>
 
@@ -57,28 +54,6 @@
                         </li>
 
                     <% }) %>
-
-                <% } else { %>
-
-                    <li>
-                        <a href="/">Home</a>
-                    </li>
-
-                    <li>
-                        <a href="/admission2027">Admission</a>
-                    </li>
-
-                    <li>
-                        <a href="/gallery">Gallery</a>
-                    </li>
-
-                    <li>
-                        <a href="/notice">Notice</a>
-                    </li>
-
-                    <li>
-                        <a href="/contact">Contact</a>
-                    </li>
 
                 <% } %>
 
@@ -109,12 +84,6 @@
 
                     <% }) %>
 
-                <% } else { %>
-
-                    <li>
-                        No latest news available.
-                    </li>
-
                 <% } %>
 
             </ul>
@@ -131,120 +100,65 @@
             <h3>Contact</h3>
 
             <% if (footerSettings && footerSettings.address) { %>
-
                 <p>
                     📍 <%= footerSettings.address %>
                 </p>
-
             <% } %>
-
 
             <% if (footerSettings && footerSettings.phone) { %>
-
                 <p>
-                    📞 <%= footerSettings.phone %>
+                    📞
+                    <a href="tel:<%= footerSettings.phone %>">
+                        <%= footerSettings.phone %>
+                    </a>
                 </p>
-
             <% } %>
-
 
             <% if (footerSettings && footerSettings.email) { %>
-
                 <p>
-                    ✉ <%= footerSettings.email %>
+                    ✉
+                    <a href="mailto:<%= footerSettings.email %>">
+                        <%= footerSettings.email %>
+                    </a>
                 </p>
-
             <% } %>
 
-
             <% if (footerSettings && footerSettings.whatsapp) { %>
-
                 <p>
                     💬 <%= footerSettings.whatsapp %>
                 </p>
-
             <% } %>
 
 
             <!-- Social Media -->
 
-            <div class="footer-social">
+            <% if (footerSocialLinks && footerSocialLinks.length) { %>
 
-                <% if (footerSettings && footerSettings.facebook) { %>
+                <div class="footer-social">
 
-                    <a
-                        href="<%= footerSettings.facebook %>"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label="Facebook">
+                    <% footerSocialLinks
+                        .filter(social => social.is_active)
+                        .forEach(social => { %>
 
-                        <i class="fab fa-facebook-f"></i>
+                        <a
+                            href="<%= social.url %>"
+                            target="_blank"
+                            rel="noopener"
+                            aria-label="<%= social.platform %>"
+                            title="<%= social.platform %>"
+                        >
 
-                    </a>
+                            <% if (social.icon_class) { %>
+                                <i class="<%= social.icon_class %>"></i>
+                            <% } %>
 
-                <% } %>
+                        </a>
 
+                    <% }) %>
 
-                <% if (footerSettings && footerSettings.instagram) { %>
+                </div>
 
-                    <a
-                        href="<%= footerSettings.instagram %>"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label="Instagram">
-
-                        <i class="fab fa-instagram"></i>
-
-                    </a>
-
-                <% } %>
-
-
-                <% if (footerSettings && footerSettings.youtube) { %>
-
-                    <a
-                        href="<%= footerSettings.youtube %>"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label="YouTube">
-
-                        <i class="fab fa-youtube"></i>
-
-                    </a>
-
-                <% } %>
-
-
-                <% if (footerSettings && footerSettings.twitter) { %>
-
-                    <a
-                        href="<%= footerSettings.twitter %>"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label="X">
-
-                        <i class="fab fa-x-twitter"></i>
-
-                    </a>
-
-                <% } %>
-
-
-                <% if (footerSettings && footerSettings.telegram) { %>
-
-                    <a
-                        href="<%= footerSettings.telegram %>"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label="Telegram">
-
-                        <i class="fab fa-telegram"></i>
-
-                    </a>
-
-                <% } %>
-
-            </div>
+            <% } %>
 
         </div>
 
@@ -257,27 +171,19 @@
 
     <div class="footer-bottom">
 
-        <%= footerSettings && footerSettings.copyright_text
-            ? footerSettings.copyright_text
-            : '© ' + new Date().getFullYear() + ' ' +
-              (siteSettings && siteSettings.institution_name
-                  ? siteSettings.institution_name
-                  : 'Al-Najat National Institution') +
-              '. All Rights Reserved.' %>
-
+        <% if (footerSettings && footerSettings.copyright_text) { %>
+            <%= footerSettings.copyright_text %>
+        <% } %>
 
         <% if (footerSettings && footerSettings.developer_text) { %>
-
             <span>
                 <%= footerSettings.developer_text %>
             </span>
-
         <% } %>
 
     </div>
 
 </footer>
-
 
 <script src="/js/honour-heart-popup.js"></script>
 

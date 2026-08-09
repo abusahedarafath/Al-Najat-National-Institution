@@ -1,0 +1,148 @@
+<%- include("../partials/header") %>
+
+<div class="container" style="max-width:800px;margin:40px auto;">
+
+    <div class="profile-card" style="padding:40px;">
+
+        <div style="text-align:center;">
+
+            <h1>Application Submitted Successfully</h1>
+
+            <h3>
+                Ratabari Talent Search Examination (RTSE)
+            </h3>
+
+            <hr>
+
+        </div>
+
+        <table class="admin-table">
+
+            <tbody>
+
+                <tr>
+
+                    <th width="260">
+                        Registration Number
+                    </th>
+
+                    <td>
+
+                        <strong
+                        style="font-size:22px;color:#006400;">
+
+                            <%= registrationNo %>
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+                        Examination Year
+                    </th>
+
+                    <td>
+
+                        <%= applicationYear %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+                        Section
+                    </th>
+
+                    <td>
+
+                        SECTION <%= section %>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+                        Application Status
+                    </th>
+
+                    <td>
+
+                        <span class="badge badge-warning">
+
+                            Pending Approval
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <div
+        style="margin-top:30px;
+        padding:20px;
+        border:1px dashed #999;
+        border-radius:8px;">
+
+            <strong>Important Instructions</strong>
+
+            <ul>
+
+                <li>
+                    Keep this Registration Number safely.
+                </li>
+
+                <li>
+                    It will be required for Admit Card, Result and Certificate.
+                </li>
+
+                <li>
+                    Wait for application approval.
+                </li>
+
+                <li>
+                    Roll Number will be generated later by ARSP.
+                </li>
+
+            </ul>
+
+        </div>
+
+        <div
+        style="margin-top:30px;
+        text-align:center;">
+
+            <button
+                onclick="window.print()"
+                class="btn-save">
+
+                Print Acknowledgement
+
+            </button>
+
+            <a
+                href="/"
+                class="btn-view">
+
+                Home
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

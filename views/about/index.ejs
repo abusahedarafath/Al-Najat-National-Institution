@@ -1,21 +1,81 @@
 <%- include('../partials/header') %>
+
 <link rel="stylesheet" href="/css/about.css">
 
 <%- include('../partials/navbar') %>
 
-<section class="about-section">
+<section class="about-page">
 
     <div class="container">
 
-        <h1>About Al-Najat National Institution</h1>
+        <div class="about-header">
+            <span class="section-badge">About Us</span>
 
-        <p>
-            Al-Najat National Institution is committed to providing
-            quality education by integrating Islamic values with
-            modern academic excellence. We strive to develop
-            knowledgeable, disciplined, and responsible students
-            who contribute positively to society.
-        </p>
+            <h1>About Our Organization</h1>
+
+            <p>
+                Learn about our organization, our purpose,
+                our values and our commitment to positive
+                social development.
+            </p>
+        </div>
+
+
+        <% if (sections && sections.length > 0) { %>
+
+            <div class="about-content">
+
+                <% sections.forEach((section) => { %>
+
+                    <article class="about-card">
+
+                        <div class="about-card-content">
+
+                            <h2>
+                                <%= section.title %>
+                            </h2>
+
+                            <% if (section.image) { %>
+
+                                <div class="about-image">
+                                    <img
+                                        src="/uploads/about/<%= section.image %>"
+                                        alt="<%= section.title %>"
+                                    >
+                                </div>
+
+                            <% } %>
+
+                            <% if (section.content) { %>
+
+                                <div class="about-text">
+                                    <%- section.content %>
+                                </div>
+
+                            <% } %>
+
+                        </div>
+
+                    </article>
+
+                <% }); %>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="about-empty">
+
+                <h2>About Our Organization</h2>
+
+                <p>
+                    Information about our organization will
+                    be published here soon.
+                </p>
+
+            </div>
+
+        <% } %>
 
     </div>
 

@@ -20,6 +20,8 @@ const adminHeroSliderController = require("../controllers/adminHeroSliderControl
 const websiteController = require("../controllers/websiteController");
 const adminHomepageFeatureController = require("../controllers/adminHomepageFeatureController");
 const adminHomepageAchievementController = require("../controllers/adminHomepageAchievementController");
+const adminAboutController = require("../controllers/adminAboutController");
+
 
 // ===============================
 // Dashboard
@@ -136,6 +138,56 @@ router.post(
     "/admin/sliders/:id/toggle",
     adminHeroSliderController.toggleStatus
 );
+
+
+
+// ===============================
+// Website Management - About Us
+// ===============================
+
+router.get(
+    "/admin/about",
+    auth.isLoggedIn,
+    adminAboutController.index
+);
+
+router.get(
+    "/admin/about/create",
+    auth.isLoggedIn,
+    adminAboutController.createPage
+);
+
+router.post(
+    "/admin/about/create",
+    auth.isLoggedIn,
+    adminAboutController.create
+);
+
+router.get(
+    "/admin/about/:id/edit",
+    auth.isLoggedIn,
+    adminAboutController.editPage
+);
+
+router.post(
+    "/admin/about/:id/edit",
+    auth.isLoggedIn,
+    adminAboutController.update
+);
+
+router.post(
+    "/admin/about/:id/delete",
+    auth.isLoggedIn,
+    adminAboutController.delete
+);
+
+router.post(
+    "/admin/about/:id/toggle",
+    auth.isLoggedIn,
+    adminAboutController.toggle
+);
+
+
 
 // ===============================
 // Website Management

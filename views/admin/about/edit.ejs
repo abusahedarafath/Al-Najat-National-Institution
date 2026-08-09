@@ -1,0 +1,145 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Edit About Section</h1>
+                    <p>Update public About Us content.</p>
+                </div>
+
+                <a
+                    href="/admin/about"
+                    class="btn btn-secondary">
+                    ← Back
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <form
+                    action="/admin/about/<%= section.id %>/edit"
+                    method="POST"
+                    class="admin-form">
+
+                    <div class="form-group">
+
+                        <label>
+                            Section Key
+                        </label>
+
+                        <input
+                            type="text"
+                            name="section_key"
+                            value="<%= section.section_key %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            name="title"
+                            value="<%= section.title %>"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Content
+                        </label>
+
+                        <textarea
+                            name="content"
+                            rows="10"
+                            required><%= section.content || "" %></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Image Filename
+                        </label>
+
+                        <input
+                            type="text"
+                            name="image"
+                            value="<%= section.image || "" %>">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Order
+                        </label>
+
+                        <input
+                            type="number"
+                            name="display_order"
+                            value="<%= section.display_order || 0 %>"
+                            min="0">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                value="1"
+                                <%= section.is_active ? "checked" : "" %>>
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Update About Section
+
+                        </button>
+
+                        <a
+                            href="/admin/about"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>

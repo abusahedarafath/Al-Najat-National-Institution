@@ -1,0 +1,308 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/rtse.css">
+
+<%- include("../partials/navbar") %>
+
+<div class="rtse-page">
+
+    <div class="container" style="max-width:900px;margin:30px auto;">
+
+        <div class="profile-card">
+
+            <h1 style="text-align:center;">
+                Review RTSE Application
+            </h1>
+
+            <p style="text-align:center;color:#666;">
+                Please check every detail carefully before confirming.
+            </p>
+
+            <% if (typeof error !== "undefined" && error) { %>
+
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+
+            <% } %>
+
+            <!-- PHOTO -->
+
+            <div style="text-align:center;margin:25px 0;">
+
+                <% if (draft.photo) { %>
+
+                    <img
+                        src="/uploads/rtse/<%= draft.photo %>"
+                        alt="Candidate Photo"
+                        style="
+                            width:140px;
+                            height:170px;
+                            object-fit:cover;
+                            border-radius:8px;
+                            border:2px solid #ddd;
+                        "
+                    >
+
+                <% } %>
+
+            </div>
+
+            <!-- PERSONAL DETAILS -->
+
+            <h3 class="review-heading">
+                Personal Details
+            </h3>
+
+            <table class="admin-table">
+
+                <tbody>
+
+                    <tr>
+                        <th>Full Name</th>
+                        <td><%= draft.full_name %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Father's Name</th>
+                        <td><%= draft.father_name %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Mother's Name</th>
+                        <td><%= draft.mother_name %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Gender</th>
+                        <td><%= draft.gender %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td><%= draft.dob %></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <!-- CONTACT -->
+
+            <h3 class="review-heading">
+                Contact Details
+            </h3>
+
+            <table class="admin-table">
+
+                <tbody>
+
+                    <tr>
+                        <th>Mobile</th>
+                        <td><%= draft.mobile %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Email</th>
+                        <td><%= draft.email || "Not provided" %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Address</th>
+                        <td><%= draft.address || "Not provided" %></td>
+                    </tr>
+
+                    <tr>
+                        <th>District</th>
+                        <td><%= draft.district %></td>
+                    </tr>
+
+                    <tr>
+                        <th>State</th>
+                        <td><%= draft.state %></td>
+                    </tr>
+
+                    <tr>
+                        <th>PIN Code</th>
+                        <td><%= draft.pincode || "Not provided" %></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <!-- EXAM DETAILS -->
+
+            <h3 class="review-heading">
+                Examination Details
+            </h3>
+
+            <table class="admin-table">
+
+                <tbody>
+
+                    <tr>
+                        <th>School</th>
+                        <td><%= draft.school_name %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Class</th>
+                        <td>Class <%= draft.class %></td>
+                    </tr>
+
+                    <tr>
+                        <th>Section</th>
+                        <td>SECTION <%= draft.section %></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <!-- DOCUMENT -->
+
+            <h3 class="review-heading">
+                Uploaded Documents
+            </h3>
+
+            <table class="admin-table">
+
+                <tbody>
+
+                    <tr>
+                        <th>Candidate Photo</th>
+                        <td>Uploaded</td>
+                    </tr>
+
+                    <tr>
+                        <th>Identity Document</th>
+                        <td>
+                            <% if (draft.identity_document) { %>
+                                Uploaded
+                            <% } else { %>
+                                Not provided
+                            <% } %>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <!-- DECLARATION -->
+
+            <div
+                style="
+                    margin-top:30px;
+                    padding:18px;
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                    background:#f8f9fa;
+                "
+            >
+
+                <label
+                    style="
+                        display:flex;
+                        gap:10px;
+                        align-items:flex-start;
+                        cursor:pointer;
+                    "
+                >
+
+                    <input
+                        type="checkbox"
+                        id="declaration"
+                        style="margin-top:4px;"
+                    >
+
+                    <span>
+                        I hereby declare that the information provided in this
+                        application is true and correct to the best of my knowledge.
+                        I understand that providing false or misleading information
+                        may result in cancellation of my application.
+                    </span>
+
+                </label>
+
+            </div>
+
+            <!-- ACTIONS -->
+
+            <div
+                style="
+                    display:flex;
+                    gap:12px;
+                    justify-content:center;
+                    flex-wrap:wrap;
+                    margin-top:30px;
+                "
+            >
+
+                <a
+                    href="/rtse/edit"
+                    class="btn-view"
+                >
+                    ← Edit Application
+                </a>
+
+                <form
+                    action="/rtse/confirm"
+                    method="POST"
+                    style="margin:0;"
+                >
+
+                    <button
+                        type="submit"
+                        id="confirmButton"
+                        class="btn-save"
+                        disabled
+                    >
+                        Confirm & Submit Application
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const declaration =
+    document.getElementById("declaration");
+
+const confirmButton =
+    document.getElementById("confirmButton");
+
+declaration.addEventListener("change", function () {
+
+    confirmButton.disabled = !this.checked;
+
+});
+
+</script>
+
+<style>
+
+.review-heading {
+    margin-top:30px;
+    margin-bottom:10px;
+    padding-bottom:8px;
+    border-bottom:2px solid #ddd;
+}
+
+#confirmButton:disabled {
+    opacity:0.5;
+    cursor:not-allowed;
+}
+
+</style>
+
+<%- include("../partials/footer") %>

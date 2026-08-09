@@ -3,6 +3,7 @@ const SiteSetting = require("../models/SiteSetting");
 const ArspSetting = require("../models/ArspSetting");
 const FooterSetting = require("../models/FooterSetting");
 const FooterLink = require("../models/FooterLink");
+const FooterSocialLink = require("../models/FooterSocialLink");
 const News = require("../models/News");
 
 module.exports = async (req, res, next) => {
@@ -16,6 +17,7 @@ module.exports = async (req, res, next) => {
     res.locals.arspSettings = {};
     res.locals.footerSettings = {};
     res.locals.footerLinks = [];
+res.locals.footerSocialLinks = [];
     res.locals.latestNews = [];
 
 
@@ -113,6 +115,19 @@ module.exports = async (req, res, next) => {
 
     }
 
+
+    // =====================================
+    // Footer Social Links
+    // =====================================
+    try {
+        res.locals.footerSocialLinks =
+            await FooterSocialLink.getAll();
+    } catch (err) {
+        console.error(
+            "Footer Social Links Error:",
+            err
+        );
+    }
 
     // =====================================
     // Latest Published News

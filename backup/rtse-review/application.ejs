@@ -1,0 +1,367 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/rtse.css">
+
+<%- include("../partials/navbar") %>
+
+<div class="rtse-page">
+
+    <div class="container" style="max-width:900px;margin:auto;">
+
+        <div class="profile-card">
+
+            <h1 style="text-align:center;">
+                RTSE 2026 Online Application
+            </h1>
+
+            <p style="text-align:center;color:#666;">
+                Enter your details carefully before proceeding to review.
+            </p>
+
+            <% if (typeof error !== "undefined" && error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form
+                action="/rtse/apply"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            name="full_name"
+                            value="<%= draft && draft.full_name ? draft.full_name : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Father's Name</label>
+                        <input
+                            type="text"
+                            name="father_name"
+                            value="<%= draft && draft.father_name ? draft.father_name : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mother's Name</label>
+                        <input
+                            type="text"
+                            name="mother_name"
+                            value="<%= draft && draft.mother_name ? draft.mother_name : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+
+                        <select name="gender" required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            <option value="Male"
+                                <%= draft && draft.gender === "Male" ? "selected" : "" %>>
+                                Male
+                            </option>
+
+                            <option value="Female"
+                                <%= draft && draft.gender === "Female" ? "selected" : "" %>>
+                                Female
+                            </option>
+
+                            <option value="Other"
+                                <%= draft && draft.gender === "Other" ? "selected" : "" %>>
+                                Other
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+
+                        <input
+                            type="date"
+                            name="dob"
+                            value="<%= draft && draft.dob ? draft.dob : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+
+                        <input
+                            type="text"
+                            name="mobile"
+                            value="<%= draft && draft.mobile ? draft.mobile : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            value="<%= draft && draft.email ? draft.email : '' %>"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>School Name</label>
+
+                        <input
+                            type="text"
+                            name="school_name"
+                            value="<%= draft && draft.school_name ? draft.school_name : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>District</label>
+
+                        <input
+                            type="text"
+                            name="district"
+                            value="<%= draft && draft.district ? draft.district : '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>State</label>
+
+                        <input
+                            type="text"
+                            name="state"
+                            value="<%= draft && draft.state ? draft.state : 'Assam' %>"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>PIN Code</label>
+
+                        <input
+                            type="text"
+                            name="pincode"
+                            value="<%= draft && draft.pincode ? draft.pincode : '' %>"
+                        >
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Class</label>
+
+                        <select
+                            id="studentClass"
+                            name="class"
+                            required
+                        >
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            <option value="4"
+                                <%= draft && String(draft.class) === "4" ? "selected" : "" %>>
+                                Class IV
+                            </option>
+
+                            <option value="5"
+                                <%= draft && String(draft.class) === "5" ? "selected" : "" %>>
+                                Class V
+                            </option>
+
+                            <option value="6"
+                                <%= draft && String(draft.class) === "6" ? "selected" : "" %>>
+                                Class VI
+                            </option>
+
+                            <option value="7"
+                                <%= draft && String(draft.class) === "7" ? "selected" : "" %>>
+                                Class VII
+                            </option>
+
+                            <option value="8"
+                                <%= draft && String(draft.class) === "8" ? "selected" : "" %>>
+                                Class VIII
+                            </option>
+
+                            <option value="9"
+                                <%= draft && String(draft.class) === "9" ? "selected" : "" %>>
+                                Class IX
+                            </option>
+
+                            <option value="10"
+                                <%= draft && String(draft.class) === "10" ? "selected" : "" %>>
+                                Class X
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Section</label>
+
+                        <input
+                            id="section"
+                            value="<%= draft && draft.section ? draft.section : '' %>"
+                            readonly
+                        >
+
+                    </div>
+
+                    <div
+                        class="form-group"
+                        style="grid-column:1/-1;"
+                    >
+
+                        <label>Address</label>
+
+                        <textarea
+                            name="address"
+                            rows="3"
+                        ><%= draft && draft.address ? draft.address : '' %></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Candidate Photo</label>
+
+                        <input
+                            type="file"
+                            name="photo"
+                            accept="image/*"
+                            <%= draft && draft.photo ? "" : "required" %>
+                        >
+
+                        <% if (draft && draft.photo) { %>
+
+                            <small style="display:block;margin-top:6px;color:#555;">
+                                Existing photo is already uploaded.
+                                Upload a new photo only if you want to replace it.
+                            </small>
+
+                        <% } %>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Identity Document</label>
+
+                        <input
+                            type="file"
+                            name="identity_document"
+                            accept=".pdf,image/*"
+                        >
+
+                        <% if (draft && draft.identity_document) { %>
+
+                            <small style="display:block;margin-top:6px;color:#555;">
+                                Existing identity document is saved.
+                            </small>
+
+                        <% } %>
+
+                    </div>
+
+                </div>
+
+                <div
+                    style="
+                        margin-top:25px;
+                        padding:15px;
+                        background:#f8f9fa;
+                        border-radius:8px;
+                        border:1px solid #ddd;
+                    "
+                >
+
+                    <strong>Before proceeding</strong>
+
+                    <p style="margin:8px 0 0;color:#555;">
+                        Please review your application carefully on the next page.
+                        You will be able to edit your information before final submission.
+                    </p>
+
+                </div>
+
+                <div
+                    style="
+                        margin-top:25px;
+                        text-align:center;
+                    "
+                >
+
+                    <button
+                        type="submit"
+                        class="btn-save"
+                    >
+                        Review Application
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const cls = document.getElementById("studentClass");
+const sec = document.getElementById("section");
+
+function updateSection() {
+
+    let s = "";
+
+    if (cls.value === "4" || cls.value === "5") {
+        s = "A";
+    }
+    else if (cls.value === "6" || cls.value === "7") {
+        s = "B";
+    }
+    else if (cls.value === "8") {
+        s = "C";
+    }
+    else if (cls.value === "9") {
+        s = "D";
+    }
+    else if (cls.value === "10") {
+        s = "E";
+    }
+
+    sec.value = s;
+}
+
+cls.addEventListener("change", updateSection);
+
+updateSection();
+
+</script>
+
+<%- include("../partials/footer") %>

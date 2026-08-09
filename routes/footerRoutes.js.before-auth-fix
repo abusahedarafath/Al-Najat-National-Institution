@@ -59,24 +59,4 @@ router.post(
 );
 
 
-
-// =====================================
-// Footer Social Links
-// =====================================
-
-router.post(
-    "/admin/footer/social",
-    footerController.addSocialLink
-);
-
-router.post(
-    "/admin/footer/social/:id/edit",
-    footerController.updateSocialLink
-);
-
-router.post(
-    "/admin/footer/social/:id/delete",
-    footerController.deleteSocialLink
-);
-
 module.exports = router;

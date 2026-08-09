@@ -1,25 +1,29 @@
 const express = require("express");
 const router = express.Router();
+
 const multer = require("multer");
 const path = require("path");
 
-const rtsePublicController =
-    require("../controllers/rtsePublicController");
+const rtseController =
+    require("../controllers/rtseController");
 
 // =====================================
-// RTSE Upload Configuration
+// Upload Configuration
 // =====================================
 
 const storage = multer.diskStorage({
 
     destination(req, file, cb) {
+
         cb(
             null,
             "public/uploads/rtse"
         );
+
     },
 
     filename(req, file, cb) {
+
         cb(
             null,
             Date.now() +
@@ -27,6 +31,7 @@ const storage = multer.diskStorage({
             Math.round(Math.random() * 1E9) +
             path.extname(file.originalname)
         );
+
     }
 
 });
@@ -35,32 +40,35 @@ const upload = multer({
     storage
 });
 
-// =====================================
-// RTSE Home
-// =====================================
-
-router.get(
-    "/",
-    (req, res) => {
-        res.redirect("/rtse/apply");
-    }
-);
 
 // =====================================
-// Application Form
+// PUBLIC RTSE HOME
+// =====================================
+
+router.get("/", (req, res) => {
+
+    res.redirect("/rtse/apply");
+
+});
+
+
+// =====================================
+// PUBLIC APPLICATION FORM
 // =====================================
 
 router.get(
     "/apply",
-    rtsePublicController.applicationPage
+    rtseController.applicationPage
 );
 
+
 // =====================================
-// Prepare Application for Review
+// PUBLIC APPLICATION SUBMISSION
 // =====================================
 
 router.post(
     "/apply",
+
     upload.fields([
         {
             name: "photo",
@@ -71,34 +79,54 @@ router.post(
             maxCount: 1
         }
     ]),
-    rtsePublicController.submitApplication
+
+    rtseController.submitApplication
 );
 
+
 // =====================================
-// Review Application
+// PUBLIC RESULT PORTAL
 // =====================================
 
 router.get(
-    "/review",
-    rtsePublicController.reviewApplication
+    "/result",
+    rtseController.resultPortal
 );
-
-// =====================================
-// Edit Application
-// =====================================
-
-router.get(
-    "/edit",
-    rtsePublicController.editApplication
-);
-
-// =====================================
-// Confirm & Submit
-// =====================================
 
 router.post(
-    "/confirm",
-    rtsePublicController.confirmApplication
+    "/result",
+    rtseController.searchResult
 );
+
+router.get(
+    "/result/:id",
+    rtseController.viewResult
+);
+
+
+// =====================================
+// PUBLIC CERTIFICATE PORTAL
+// =====================================
+
+router.get(
+    "/certificate",
+    rtseController.certificatePortal
+);
+
+router.post(
+    "/certificate",
+    rtseController.searchCertificate
+);
+
+
+// =====================================
+// PUBLIC CERTIFICATE VERIFICATION
+// =====================================
+
+router.get(
+    "/verify/certificate/:number",
+    rtseController.verifyCertificate
+);
+
 
 module.exports = router;
