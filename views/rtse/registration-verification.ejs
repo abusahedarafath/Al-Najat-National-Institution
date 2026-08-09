@@ -1,0 +1,185 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/rtse.css">
+
+<%- include("../partials/navbar") %>
+
+<div class="rtse-page">
+
+    <div
+        class="container"
+        style="max-width:700px;margin:50px auto;"
+    >
+
+        <div class="profile-card">
+
+            <% if (application) { %>
+
+                <div style="text-align:center;">
+
+                    <div
+                        style="
+                            font-size:50px;
+                            color:#17843b;
+                            margin-bottom:10px;
+                        "
+                    >
+                        ✓
+                    </div>
+
+                    <h1>
+                        Registration Verified
+                    </h1>
+
+                    <p style="color:#666;">
+                        This is a valid RTSE 2026 registration.
+                    </p>
+
+                </div>
+
+
+                <table class="admin-table">
+
+                    <tbody>
+
+                        <tr>
+                            <th>
+                                Registration Number
+                            </th>
+
+                            <td>
+                                <strong>
+                                    <%= application.registration_no %>
+                                </strong>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th>
+                                Candidate Name
+                            </th>
+
+                            <td>
+                                <%= application.full_name %>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th>
+                                Examination Year
+                            </th>
+
+                            <td>
+                                <%= application.application_year %>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th>
+                                Class
+                            </th>
+
+                            <td>
+                                Class <%= application.class %>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th>
+                                Section
+                            </th>
+
+                            <td>
+                                SECTION <%= application.section %>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th>
+                                School
+                            </th>
+
+                            <td>
+                                <%= application.school_name %>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th>
+                                Application Status
+                            </th>
+
+                            <td>
+                                <strong>
+                                    <%= application.status %>
+                                </strong>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+                <div
+                    style="
+                        margin-top:25px;
+                        padding:15px;
+                        text-align:center;
+                        background:#f8f9fa;
+                        border:1px solid #ddd;
+                        border-radius:8px;
+                    "
+                >
+
+                    <strong>
+                        Official RTSE Registration Verification
+                    </strong>
+
+                    <br>
+
+                    <small>
+                        This verification page does not display
+                        private contact or identity information.
+                    </small>
+
+                </div>
+
+
+            <% } else { %>
+
+                <div style="text-align:center;">
+
+                    <h1>
+                        Registration Not Found
+                    </h1>
+
+                    <p>
+                        <%= error || "The registration could not be verified." %>
+                    </p>
+
+                    <a
+                        href="/rtse/registration-slip"
+                        class="btn-view"
+                    >
+                        Try Again
+                    </a>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

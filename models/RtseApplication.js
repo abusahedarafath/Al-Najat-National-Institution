@@ -201,6 +201,62 @@ static async getById(id){
 
 
 // =====================================
+// Get Application By Registration + Mobile
+// =====================================
+
+static async getByRegistrationAndMobile(
+    registrationNo,
+    mobile
+){
+
+    const [rows] = await db.query(
+        `SELECT *
+         FROM rtse_applications
+         WHERE registration_no=?
+         AND mobile=?
+         AND archive=0
+         LIMIT 1`,
+        [
+            registrationNo,
+            mobile
+        ]
+    );
+
+    return rows[0] || null;
+}
+
+
+// =====================================
+// Get Public Verification Details
+// =====================================
+
+static async getPublicVerification(
+    registrationNo
+){
+
+    const [rows] = await db.query(
+        `SELECT
+            registration_no,
+            application_year,
+            full_name,
+            school_name,
+            class,
+            section,
+            status
+         FROM rtse_applications
+         WHERE registration_no=?
+         AND archive=0
+         LIMIT 1`,
+        [
+            registrationNo
+        ]
+    );
+
+    return rows[0] || null;
+}
+
+
+// =====================================
 // Update Status
 // =====================================
 

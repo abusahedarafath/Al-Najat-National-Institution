@@ -1,142 +1,341 @@
 <%- include("../partials/header") %>
 
-<div class="container" style="max-width:800px;margin:40px auto;">
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/rtse.css">
 
-    <div class="profile-card" style="padding:40px;">
+<div class="rtse-slip-page">
 
-        <div style="text-align:center;">
+    <div class="rtse-slip">
 
-            <h1>Application Submitted Successfully</h1>
+        <!-- =========================
+             HEADER
+        ========================== -->
+        <div class="slip-header">
 
-            <h3>
-                Ratabari Talent Search Examination (RTSE)
-            </h3>
+            <div class="slip-logo">
+                <img
+                    src="<%= siteSettings && siteSettings.logo
+                        ? '/uploads/site-settings/' + siteSettings.logo
+                        : '/images/logo.png' %>"
+                    alt="<%= siteSettings && siteSettings.institution_name
+                        ? siteSettings.institution_name
+                        : 'Al-Najat National Institution' %>"
+                >
+            </div>
 
-            <hr>
+            <div class="slip-title">
+
+                <h1>
+                    <%= siteSettings && siteSettings.institution_name
+                        ? siteSettings.institution_name
+                        : 'AL-NAJAT NATIONAL INSTITUTION' %>
+                </h1>
+
+                <h2>
+                    Ratabari Talent Search Examination 2026
+                </h2>
+
+                <div class="organized-by">
+                    Organized by
+                    <strong>ARSP</strong>
+                    <span>Active Rural Social Progress</span>
+                </div>
+
+                <div class="slip-subtitle">
+                    ONLINE REGISTRATION SLIP
+                </div>
+
+            </div>
 
         </div>
 
-        <table class="admin-table">
 
-            <tbody>
+        <!-- =========================
+             SUCCESS BANNER
+        ========================== -->
+        <div class="success-banner">
+            <strong>APPLICATION SUBMITTED SUCCESSFULLY</strong>
+            <span>
+                Your RTSE application has been successfully registered.
+            </span>
+        </div>
 
-                <tr>
 
-                    <th width="260">
-                        Registration Number
-                    </th>
+        <!-- =========================
+             REGISTRATION INFORMATION
+        ========================== -->
+        <div class="registration-box">
 
-                    <td>
+            <div>
+                <span>Registration Number</span>
+                <strong class="registration-number">
+                    <%= application.registration_no %>
+                </strong>
+            </div>
 
-                        <strong
-                        style="font-size:22px;color:#006400;">
+            <div>
+                <span>Application Year</span>
+                <strong>
+                    <%= application.application_year %>
+                </strong>
+            </div>
 
-                            <%= registrationNo %>
+            <div>
+                <span>Section</span>
+                <strong>
+                    SECTION <%= application.section %>
+                </strong>
+            </div>
 
+            <div>
+                <span>Status</span>
+                <strong class="pending-status">
+                    Pending Approval
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             CANDIDATE DETAILS
+        ========================== -->
+        <div class="slip-section">
+
+            <div class="section-title">
+                CANDIDATE DETAILS
+            </div>
+
+            <div class="candidate-layout">
+
+                <div class="candidate-photo">
+
+                    <% if (application.photo) { %>
+
+                        <img
+                            src="/uploads/rtse/<%= application.photo %>"
+                            alt="Candidate Photograph"
+                        >
+
+                    <% } else { %>
+
+                        <div class="photo-placeholder">
+                            PHOTO
+                        </div>
+
+                    <% } %>
+
+                    <div class="photo-caption">
+                        Candidate Photograph
+                    </div>
+
+                </div>
+
+
+                <div class="candidate-details">
+
+                    <div class="detail-row">
+                        <span>Full Name</span>
+                        <strong>
+                            <%= application.full_name %>
                         </strong>
+                    </div>
 
-                    </td>
+                    <div class="detail-row">
+                        <span>Father's Name</span>
+                        <strong>
+                            <%= application.father_name %>
+                        </strong>
+                    </div>
 
-                </tr>
+                    <div class="detail-row">
+                        <span>Mother's Name</span>
+                        <strong>
+                            <%= application.mother_name %>
+                        </strong>
+                    </div>
 
-                <tr>
+                    <div class="detail-row">
+                        <span>Date of Birth</span>
+                        <strong>
+                            <%= application.dob %>
+                        </strong>
+                    </div>
 
-                    <th>
-                        Examination Year
-                    </th>
+                    <div class="detail-row">
+                        <span>Gender</span>
+                        <strong>
+                            <%= application.gender %>
+                        </strong>
+                    </div>
 
-                    <td>
+                </div>
 
-                        <%= applicationYear %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-                        Section
-                    </th>
-
-                    <td>
-
-                        SECTION <%= section %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-                        Application Status
-                    </th>
-
-                    <td>
-
-                        <span class="badge badge-warning">
-
-                            Pending Approval
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-        <div
-        style="margin-top:30px;
-        padding:20px;
-        border:1px dashed #999;
-        border-radius:8px;">
-
-            <strong>Important Instructions</strong>
-
-            <ul>
-
-                <li>
-                    Keep this Registration Number safely.
-                </li>
-
-                <li>
-                    It will be required for Admit Card, Result and Certificate.
-                </li>
-
-                <li>
-                    Wait for application approval.
-                </li>
-
-                <li>
-                    Roll Number will be generated later by ARSP.
-                </li>
-
-            </ul>
+            </div>
 
         </div>
 
-        <div
-        style="margin-top:30px;
-        text-align:center;">
+
+        <!-- =========================
+             EXAMINATION DETAILS
+        ========================== -->
+        <div class="slip-section">
+
+            <div class="section-title">
+                EXAMINATION DETAILS
+            </div>
+
+            <div class="two-column">
+
+                <div class="detail-row">
+                    <span>School Name</span>
+                    <strong>
+                        <%= application.school_name %>
+                    </strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Class</span>
+                    <strong>
+                        Class <%= application.class %>
+                    </strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Section</span>
+                    <strong>
+                        SECTION <%= application.section %>
+                    </strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>District</span>
+                    <strong>
+                        <%= application.district %>
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             CONTACT DETAILS
+        ========================== -->
+        <div class="slip-section">
+
+            <div class="section-title">
+                CONTACT DETAILS
+            </div>
+
+            <div class="two-column">
+
+                <div class="detail-row">
+                    <span>Mobile Number</span>
+                    <strong>
+                        <%= application.mobile %>
+                    </strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Email</span>
+                    <strong>
+                        <%= application.email || "Not provided" %>
+                    </strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>State</span>
+                    <strong>
+                        <%= application.state %>
+                    </strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>PIN Code</span>
+                    <strong>
+                        <%= application.pincode || "Not provided" %>
+                    </strong>
+                </div>
+
+                <div class="detail-row full-width">
+                    <span>Address</span>
+                    <strong>
+                        <%= application.address || "Not provided" %>
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             IMPORTANT INSTRUCTIONS
+        ========================== -->
+        <div class="instruction-box">
+
+            <h3>Important Instructions</h3>
+
+            <ol>
+                <li>
+                    Keep this registration slip safely for future reference.
+                </li>
+
+                <li>
+                    Your registration number will be required for future RTSE services.
+                </li>
+
+                <li>
+                    Your application is currently pending approval.
+                </li>
+
+                <li>
+                    Admit card and examination details will be available after approval.
+                </li>
+            </ol>
+
+        </div>
+
+
+        <!-- =========================
+             FOOTER
+        ========================== -->
+        <div class="slip-footer">
+
+            <div>
+                <strong>Ratabari Talent Search Examination 2026</strong>
+                <br>
+                Organized by
+                <strong class="footer-arsp">ARSP</strong>
+                — Active Rural Social Progress
+            </div>
+
+            <div class="signature-box">
+                Authorized Signatory
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+        <div class="slip-actions">
 
             <button
                 onclick="window.print()"
-                class="btn-save">
-
-                Print Acknowledgement
-
+                class="btn-save"
+            >
+                Print / Save PDF
             </button>
 
             <a
                 href="/"
-                class="btn-view">
-
+                class="btn-view"
+            >
                 Home
-
             </a>
 
         </div>
@@ -144,5 +343,604 @@
     </div>
 
 </div>
+
+
+<style>
+
+/* =====================================================
+   RTSE REGISTRATION SLIP
+===================================================== */
+
+.rtse-slip-page {
+    background: #f2f4f7;
+    padding: 25px 15px;
+}
+
+.rtse-slip {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    border: 1px solid #d8dce2;
+    box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    padding: 24px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.slip-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 14px;
+    border-bottom: 3px solid #1d6b3b;
+}
+
+.slip-logo {
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.slip-logo img {
+    max-width: 90px;
+    max-height: 90px;
+    object-fit: contain;
+}
+
+.slip-title {
+    flex: 1;
+    text-align: center;
+}
+
+.slip-title h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .4px;
+    color: #123d25;
+    text-transform: uppercase;
+}
+
+.slip-title h2 {
+    margin: 5px 0 3px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #222;
+    text-transform: uppercase;
+}
+
+.organized-by {
+    font-size: 13px;
+    margin-top: 4px;
+    color: #555;
+}
+
+.organized-by strong {
+    display: inline-block;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: #166534;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.organized-by span {
+    font-weight: 600;
+}
+
+.slip-subtitle {
+    margin-top: 7px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #555;
+}
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+.success-banner {
+    margin-top: 13px;
+    padding: 9px 12px;
+    background: #edf8f0;
+    border: 1px solid #b9dfc1;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.success-banner strong {
+    display: block;
+    color: #176b35;
+    font-size: 13px;
+}
+
+.success-banner span {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #555;
+}
+
+
+/* =====================================================
+   REGISTRATION BOX
+===================================================== */
+
+.registration-box {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.registration-box > div {
+    border: 1px solid #d7dce0;
+    border-radius: 4px;
+    padding: 7px;
+    text-align: center;
+}
+
+.registration-box span {
+    display: block;
+    font-size: 9px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.registration-box strong {
+    display: block;
+    font-size: 12px;
+    color: #222;
+}
+
+.registration-box .registration-number {
+    font-size: 15px;
+    color: #155d32;
+    letter-spacing: .5px;
+}
+
+.pending-status {
+    color: #a66a00 !important;
+}
+
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+.slip-section {
+    margin-top: 11px;
+}
+
+.section-title {
+    padding: 5px 8px;
+    background: #edf3ef;
+    border-left: 4px solid #1d6b3b;
+    font-size: 11px;
+    font-weight: 800;
+    color: #173d27;
+    letter-spacing: .5px;
+}
+
+
+/* =====================================================
+   CANDIDATE
+===================================================== */
+
+.candidate-layout {
+    display: flex;
+    gap: 14px;
+    padding-top: 8px;
+}
+
+.candidate-photo {
+    width: 100px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.candidate-photo img,
+.photo-placeholder {
+    width: 90px;
+    height: 105px;
+    object-fit: cover;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+}
+
+.photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f4f4;
+    color: #888;
+    font-size: 11px;
+}
+
+.photo-caption {
+    margin-top: 3px;
+    font-size: 8px;
+    color: #777;
+}
+
+.candidate-details {
+    flex: 1;
+}
+
+
+/* =====================================================
+   DETAIL ROWS
+===================================================== */
+
+.detail-row {
+    display: flex;
+    min-height: 25px;
+    border-bottom: 1px solid #e7e7e7;
+    align-items: center;
+}
+
+.detail-row span {
+    width: 125px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #666;
+}
+
+.detail-row strong {
+    flex: 1;
+    font-size: 11px;
+    color: #222;
+    word-break: break-word;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+}
+
+.two-column .full-width {
+    grid-column: 1 / -1;
+}
+
+
+/* =====================================================
+   INSTRUCTIONS
+===================================================== */
+
+.instruction-box {
+    margin-top: 11px;
+    padding: 8px 11px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.instruction-box h3 {
+    margin: 0 0 4px;
+    font-size: 11px;
+}
+
+.instruction-box ol {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.instruction-box li {
+    margin: 2px 0;
+    font-size: 9px;
+    line-height: 1.25;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.slip-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #ddd;
+    font-size: 9px;
+    color: #555;
+}
+
+.slip-footer strong {
+    color: #333;
+}
+
+.footer-arsp {
+    color: #176b35 !important;
+    font-size: 11px;
+}
+
+.signature-box {
+    min-width: 130px;
+    padding-top: 20px;
+    text-align: center;
+    border-top: 1px solid #555;
+    font-size: 9px;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.slip-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.slip-actions button,
+.slip-actions a {
+    padding: 9px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .rtse-slip-page {
+        padding: 10px 5px;
+    }
+
+    .rtse-slip {
+        padding: 14px;
+    }
+
+    .slip-header {
+        gap: 10px;
+    }
+
+    .slip-logo {
+        width: 65px;
+        height: 65px;
+    }
+
+    .slip-logo img {
+        max-width: 65px;
+        max-height: 65px;
+    }
+
+    .slip-title h1 {
+        font-size: 15px;
+    }
+
+    .slip-title h2 {
+        font-size: 12px;
+    }
+
+    .organized-by {
+        font-size: 9px;
+    }
+
+    .organized-by strong {
+        font-size: 11px;
+    }
+
+    .registration-box {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .candidate-layout {
+        gap: 8px;
+    }
+
+    .candidate-photo {
+        width: 80px;
+    }
+
+    .candidate-photo img,
+    .photo-placeholder {
+        width: 75px;
+        height: 90px;
+    }
+
+    .detail-row span {
+        width: 100px;
+    }
+
+}
+
+
+/* =====================================================
+   PRINT — ONE PAGE A4
+===================================================== */
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 8mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    .rtse-slip-page,
+    .rtse-slip-page * {
+        visibility: visible;
+    }
+
+    .rtse-slip-page {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        background: #fff;
+    }
+
+    .rtse-slip {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 10px;
+        border: 1px solid #999;
+        box-shadow: none;
+    }
+
+    .slip-actions {
+        display: none !important;
+    }
+
+    .slip-header {
+        padding-bottom: 8px;
+    }
+
+    .slip-logo {
+        width: 70px;
+        height: 70px;
+    }
+
+    .slip-logo img {
+        max-width: 70px;
+        max-height: 70px;
+    }
+
+    .slip-title h1 {
+        font-size: 18px;
+    }
+
+    .slip-title h2 {
+        font-size: 15px;
+    }
+
+    .organized-by {
+        font-size: 10px;
+    }
+
+    .organized-by strong {
+        font-size: 12px;
+    }
+
+    .slip-subtitle {
+        margin-top: 4px;
+        font-size: 9px;
+    }
+
+    .success-banner {
+        margin-top: 8px;
+        padding: 6px;
+    }
+
+    .registration-box {
+        margin-top: 8px;
+        gap: 5px;
+    }
+
+    .registration-box > div {
+        padding: 5px;
+    }
+
+    .slip-section {
+        margin-top: 7px;
+    }
+
+    .section-title {
+        padding: 4px 6px;
+        font-size: 9px;
+    }
+
+    .candidate-layout {
+        padding-top: 5px;
+        gap: 10px;
+    }
+
+    .candidate-photo {
+        width: 80px;
+    }
+
+    .candidate-photo img,
+    .photo-placeholder {
+        width: 72px;
+        height: 85px;
+    }
+
+    .detail-row {
+        min-height: 21px;
+    }
+
+    .detail-row span {
+        width: 110px;
+        font-size: 8px;
+    }
+
+    .detail-row strong {
+        font-size: 9px;
+    }
+
+    .instruction-box {
+        margin-top: 7px;
+        padding: 6px 8px;
+    }
+
+    .instruction-box h3 {
+        font-size: 9px;
+        margin-bottom: 2px;
+    }
+
+    .instruction-box li {
+        font-size: 7.5px;
+        margin: 1px 0;
+    }
+
+    .slip-footer {
+        margin-top: 7px;
+        padding-top: 5px;
+        font-size: 7.5px;
+    }
+
+    .signature-box {
+        min-width: 100px;
+        padding-top: 15px;
+        font-size: 7.5px;
+    }
+
+}
+
+</style>
 
 <%- include("../partials/footer") %>

@@ -85,6 +85,58 @@ router.post(
 
 
 // =====================================
+// REVIEW APPLICATION
+// =====================================
+
+router.get(
+    "/review",
+    rtseController.reviewApplication
+);
+
+// =====================================
+// EDIT APPLICATION
+// =====================================
+
+router.get(
+    "/edit",
+    rtseController.editApplication
+);
+
+// =====================================
+// CONFIRM & SUBMIT APPLICATION
+// =====================================
+
+router.post(
+    "/confirm",
+    rtseController.confirmApplication
+);
+
+// =====================================
+// PERMANENT REGISTRATION SLIP
+// =====================================
+
+router.get(
+    "/registration-slip",
+    rtseController.registrationSlipPage
+);
+
+router.post(
+    "/registration-slip",
+    rtseController.registrationSlipSearch
+);
+
+
+// =====================================
+// PUBLIC RTSE REGISTRATION VERIFICATION
+// =====================================
+
+router.get(
+    "/verify/:registrationNo",
+    rtseController.verifyRegistration
+);
+
+
+// =====================================
 // PUBLIC RESULT PORTAL
 // =====================================
 

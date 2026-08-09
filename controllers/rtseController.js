@@ -16,105 +16,714 @@ require("../models/RtseApplication");
 
 
 // =====================================
+// RTSE Application Helpers
+// =====================================
+
+const fs = require("fs");
+const path = require("path");
+
+function deleteRtseFile(filename) {
+
+    if (!filename) return;
+
+    const filePath = path.join(
+        __dirname,
+        "..",
+        "public",
+        "uploads",
+        "rtse",
+        filename
+    );
+
+    if (fs.existsSync(filePath)) {
+
+        try {
+            fs.unlinkSync(filePath);
+        } catch (err) {
+            console.error(
+                "Unable to delete RTSE file:",
+                err.message
+            );
+        }
+
+    }
+};
+
+
+// =====================================
 // Application Form
 // =====================================
 
 exports.applicationPage = async (req, res) => {
 
+    const draft = req.session.rtseDraft || {};
+
     res.render(
-
         "rtse/application",
-
         {
-
-            title: "RTSE Online Application"
-
+            title: "RTSE Online Application",
+            draft
         }
-
     );
 
 };
 
 
 // =====================================
-// Submit Application
+// Prepare Application for Review
 // =====================================
 
 exports.submitApplication = async (req, res) => {
 
     try {
 
-        const result =
-            await RtseApplication.create({
+        const oldDraft =
+            req.session.rtseDraft || {};
 
-                full_name: req.body.full_name,
-                father_name: req.body.father_name,
-                mother_name: req.body.mother_name,
-                gender: req.body.gender,
-                dob: req.body.dob,
-                mobile: req.body.mobile,
-                email: req.body.email,
-                school_name: req.body.school_name,
-                district: req.body.district,
-                state: req.body.state,
-                pincode: req.body.pincode,
-                class: req.body.class,
-                address: req.body.address,
+        const photoFile =
+            req.files &&
+            req.files.photo &&
+            req.files.photo[0]
+                ? req.files.photo[0].filename
+                : oldDraft.photo || null;
 
-                photo:
-                    req.files.photo[0].filename,
 
-                identity_document:
+        const identityFile =
+            req.files &&
+            req.files.identity_document &&
+            req.files.identity_document[0]
+                ? req.files.identity_document[0].filename
+                : oldDraft.identity_document || null;
 
-                    req.files.identity_document
 
-                    ? req.files.identity_document[0].filename
+        if (!photoFile) {
 
-                    : null
+            return res.render(
+                "rtse/application",
+                {
+                    title: "RTSE Online Application",
+                    error: "Candidate photograph is required.",
+                    draft: req.body || {}
+                }
+            );
 
-            });
+        }
 
-        res.render(
 
-            "rtse/acknowledgement",
+        // Remove old photo if a new one was uploaded
 
-            {
+        if (
+            oldDraft.photo &&
+            photoFile !== oldDraft.photo
+        ) {
 
-                title: "Application Submitted",
+            deleteRtseFile(
+                oldDraft.photo
+            );
 
-                registrationNo:
-                    result.registration_no,
+        }
 
-                section:
-                    result.section,
 
-                applicationYear:
-                    new Date().getFullYear()
+        // Remove old identity document
+        // if a new one was uploaded
 
-            }
+        if (
+            oldDraft.identity_document &&
+            identityFile !== oldDraft.identity_document
+        ) {
 
+            deleteRtseFile(
+                oldDraft.identity_document
+            );
+
+        }
+
+
+        const section =
+            RtseApplication.getSection(
+                req.body.class
+            );
+
+
+        const draft = {
+
+            full_name:
+                req.body.full_name || "",
+
+            father_name:
+                req.body.father_name || "",
+
+            mother_name:
+                req.body.mother_name || "",
+
+            gender:
+                req.body.gender || "",
+
+            dob:
+                req.body.dob || "",
+
+            mobile:
+                req.body.mobile || "",
+
+            email:
+                req.body.email || "",
+
+            school_name:
+                req.body.school_name || "",
+
+            district:
+                req.body.district || "",
+
+            state:
+                req.body.state || "Assam",
+
+            pincode:
+                req.body.pincode || "",
+
+            class:
+                req.body.class || "",
+
+            section,
+
+            address:
+                req.body.address || "",
+
+            photo:
+                photoFile,
+
+            identity_document:
+                identityFile
+
+        };
+
+
+        // IMPORTANT:
+        // Nothing is inserted into the database here.
+
+        req.session.rtseDraft = draft;
+
+
+        return res.redirect(
+            "/rtse/review"
         );
 
     }
 
     catch (err) {
 
-        console.error(err);
+        console.error(
+            "RTSE review error:",
+            err
+        );
+
+        return res.render(
+            "rtse/application",
+            {
+                title: "RTSE Online Application",
+                error:
+                    "Unable to prepare the application for review.",
+                draft: req.body || {}
+            }
+        );
+
+    }
+
+};
+
+
+// =====================================
+// Review Application
+// =====================================
+
+exports.reviewApplication = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const draft =
+            req.session.rtseDraft;
+
+
+        if (!draft) {
+
+            return res.redirect(
+                "/rtse/apply"
+            );
+
+        }
+
 
         res.render(
-
-            "rtse/application",
-
+            "rtse/review",
             {
+                title:
+                    "Review RTSE Application",
 
-                title: "RTSE Online Application",
+                draft
+            }
+        );
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "RTSE review page error:",
+            err
+        );
+
+        res.redirect(
+            "/rtse/apply"
+        );
+
+    }
+
+};
+
+
+// =====================================
+// Edit Application
+// =====================================
+
+exports.editApplication = async (
+    req,
+    res
+) => {
+
+    return res.redirect(
+        "/rtse/apply"
+    );
+
+};
+
+
+// =====================================
+// Confirm & Submit Application
+// =====================================
+
+exports.confirmApplication = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const draft =
+            req.session.rtseDraft;
+
+
+        if (!draft) {
+
+            return res.redirect(
+                "/rtse/apply"
+            );
+
+        }
+
+
+        // =================================
+        // DATABASE INSERT HAPPENS HERE
+        // ONLY AFTER CONFIRMATION
+        // =================================
+
+        const result =
+            await RtseApplication.create({
+
+                full_name:
+                    draft.full_name,
+
+                father_name:
+                    draft.father_name,
+
+                mother_name:
+                    draft.mother_name,
+
+                gender:
+                    draft.gender,
+
+                dob:
+                    draft.dob,
+
+                mobile:
+                    draft.mobile,
+
+                email:
+                    draft.email,
+
+                school_name:
+                    draft.school_name,
+
+                district:
+                    draft.district,
+
+                state:
+                    draft.state,
+
+                pincode:
+                    draft.pincode,
+
+                class:
+                    draft.class,
+
+                address:
+                    draft.address,
+
+                photo:
+                    draft.photo,
+
+                identity_document:
+                    draft.identity_document
+
+            });
+
+
+        const application = {
+
+            registration_no:
+                result.registration_no,
+
+            application_year:
+                new Date().getFullYear(),
+
+            section:
+                result.section,
+
+            full_name:
+                draft.full_name,
+
+            father_name:
+                draft.father_name,
+
+            mother_name:
+                draft.mother_name,
+
+            gender:
+                draft.gender,
+
+            dob:
+                draft.dob,
+
+            mobile:
+                draft.mobile,
+
+            email:
+                draft.email,
+
+            school_name:
+                draft.school_name,
+
+            district:
+                draft.district,
+
+            state:
+                draft.state,
+
+            pincode:
+                draft.pincode,
+
+            class:
+                draft.class,
+
+            address:
+                draft.address,
+
+            photo:
+                draft.photo,
+
+            identity_document:
+                draft.identity_document
+
+        };
+
+
+        // Remove draft after successful
+        // database insertion
+
+        delete req.session.rtseDraft;
+
+
+        return res.render(
+            "rtse/acknowledgement",
+            {
+                title:
+                    "RTSE Registration Successful",
+
+                application
+            }
+        );
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "RTSE confirmation error:",
+            err
+        );
+
+
+        return res.render(
+            "rtse/review",
+            {
+                title:
+                    "Review RTSE Application",
+
+                draft:
+                    req.session.rtseDraft || {},
 
                 error:
-
-                    "Unable to submit application."
-
+                    "Unable to submit the application. Please try again."
             }
+        );
 
+    }
+
+};
+
+
+// =====================================
+
+// =====================================
+// Permanent Registration Slip Page
+// =====================================
+
+exports.registrationSlipPage = async (req, res) => {
+
+    res.render(
+        "rtse/registration-slip-search",
+        {
+            title: "RTSE Registration Slip",
+            application: null,
+            error: null
+        }
+    );
+
+};
+
+
+// =====================================
+// Search Registration Slip
+// =====================================
+
+exports.registrationSlipSearch = async (req, res) => {
+
+    try {
+
+        const registrationNo =
+            String(req.body.registration_no || "")
+                .trim()
+                .toUpperCase();
+
+        const mobile =
+            String(req.body.mobile || "")
+                .trim();
+
+        if (!registrationNo || !mobile) {
+
+            return res.render(
+                "rtse/registration-slip-search",
+                {
+                    title: "RTSE Registration Slip",
+                    application: null,
+                    error:
+                        "Please enter your registration number and mobile number."
+                }
+            );
+
+        }
+
+        const application =
+            await RtseApplication.getByRegistrationAndMobile(
+                registrationNo,
+                mobile
+            );
+
+        if (!application) {
+
+            return res.render(
+                "rtse/registration-slip-search",
+                {
+                    title: "RTSE Registration Slip",
+                    application: null,
+                    error:
+                        "No RTSE application was found with the provided details."
+                }
+            );
+
+        }
+
+        return res.render(
+            "rtse/acknowledgement",
+            {
+                title: "RTSE Registration Slip",
+
+                application: {
+                    registration_no:
+                        application.registration_no,
+
+                    application_year:
+                        application.application_year,
+
+                    section:
+                        application.section,
+
+                    full_name:
+                        application.full_name,
+
+                    father_name:
+                        application.father_name,
+
+                    mother_name:
+                        application.mother_name,
+
+                    gender:
+                        application.gender,
+
+                    dob:
+                        application.dob,
+
+                    mobile:
+                        application.mobile,
+
+                    email:
+                        application.email,
+
+                    school_name:
+                        application.school_name,
+
+                    district:
+                        application.district,
+
+                    state:
+                        application.state,
+
+                    pincode:
+                        application.pincode,
+
+                    class:
+                        application.class,
+
+                    address:
+                        application.address,
+
+                    photo:
+                        application.photo,
+
+                    identity_document:
+                        application.identity_document,
+
+                    status:
+                        application.status
+                }
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "RTSE registration slip error:",
+            err
+        );
+
+        return res.render(
+            "rtse/registration-slip-search",
+            {
+                title: "RTSE Registration Slip",
+                application: null,
+                error:
+                    "Unable to retrieve the registration slip."
+            }
+        );
+
+    }
+
+};
+
+
+// =====================================
+// Public Registration Verification
+// =====================================
+
+exports.verifyRegistration = async (req, res) => {
+
+    try {
+
+        const registrationNo =
+            String(req.params.registrationNo || "")
+                .trim()
+                .toUpperCase();
+
+        if (!registrationNo) {
+
+            return res.status(400).render(
+                "rtse/registration-verification",
+                {
+                    title:
+                        "RTSE Registration Verification",
+
+                    application: null,
+
+                    error:
+                        "Invalid registration number."
+                }
+            );
+
+        }
+
+        const application =
+            await RtseApplication.getPublicVerification(
+                registrationNo
+            );
+
+        if (!application) {
+
+            return res.status(404).render(
+                "rtse/registration-verification",
+                {
+                    title:
+                        "RTSE Registration Verification",
+
+                    application: null,
+
+                    error:
+                        "Registration number not found."
+                }
+            );
+
+        }
+
+        return res.render(
+            "rtse/registration-verification",
+            {
+                title:
+                    "RTSE Registration Verification",
+
+                application,
+
+                error: null
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "RTSE verification error:",
+            err
+        );
+
+        return res.status(500).render(
+            "rtse/registration-verification",
+            {
+                title:
+                    "RTSE Registration Verification",
+
+                application: null,
+
+                error:
+                    "Unable to verify the registration."
+            }
         );
 
     }
@@ -123,8 +732,8 @@ exports.submitApplication = async (req, res) => {
 
 
 
-// =====================================
 // Result Portal
+
 // =====================================
 
 exports.resultPortal = async (req,res)=>{

@@ -1,0 +1,118 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/rtse.css">
+
+<%- include("../partials/navbar") %>
+
+<div class="rtse-page">
+
+    <div
+        class="container"
+        style="max-width:600px;margin:50px auto;"
+    >
+
+        <div class="profile-card">
+
+            <h1 style="text-align:center;">
+                RTSE Registration Slip
+            </h1>
+
+            <p style="text-align:center;color:#666;">
+                Retrieve your RTSE 2026 registration slip
+            </p>
+
+
+            <% if (error) { %>
+
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+
+            <% } %>
+
+
+            <form
+                action="/rtse/registration-slip"
+                method="POST"
+            >
+
+                <div class="form-group">
+
+                    <label>
+                        Registration Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="registration_no"
+                        placeholder="Example: ARSP2600017"
+                        required
+                        autocomplete="off"
+                        style="text-transform:uppercase;"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Registered Mobile Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        name="mobile"
+                        placeholder="Enter registered mobile number"
+                        required
+                        autocomplete="tel"
+                    >
+
+                </div>
+
+
+                <div
+                    style="
+                        margin-top:20px;
+                        padding:14px;
+                        background:#f8f9fa;
+                        border:1px solid #ddd;
+                        border-radius:7px;
+                        font-size:14px;
+                        color:#555;
+                    "
+                >
+
+                    Your mobile number is used only to verify
+                    your registration before displaying the
+                    complete registration slip.
+
+                </div>
+
+
+                <div
+                    style="
+                        text-align:center;
+                        margin-top:25px;
+                    "
+                >
+
+                    <button
+                        type="submit"
+                        class="btn-save"
+                    >
+                        View Registration Slip
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>
