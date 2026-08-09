@@ -18,10 +18,6 @@ router.use(
     auth.isAdmin
 );
 
-router.use(
-    auth.isLoggedIn
-);
-
 
 // =====================================
 // Footer Management
