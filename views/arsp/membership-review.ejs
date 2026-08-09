@@ -1,0 +1,603 @@
+<%- include("../partials/header") %>
+<%- include("../partials/navbar") %>
+
+<link rel="stylesheet" href="/css/arsp-register.css">
+
+<style>
+.review-page {
+    background:#f5f7fa;
+    padding:40px 15px;
+}
+
+.review-container {
+    max-width:1100px;
+    margin:auto;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    overflow:hidden;
+}
+
+.review-header {
+    background:#0B6B3A;
+    color:#fff;
+    text-align:center;
+    padding:30px 20px;
+}
+
+.review-logo {
+    height:85px;
+    width:auto;
+    background:#fff;
+    padding:7px;
+    border-radius:10px;
+    object-fit:contain;
+    margin-bottom:12px;
+}
+
+.review-header h1 {
+    margin:0;
+    font-size:30px;
+}
+
+.review-header p {
+    margin:8px 0;
+    opacity:.95;
+}
+
+.review-header h2 {
+    margin:15px 0 0;
+    font-size:22px;
+    letter-spacing:.8px;
+}
+
+.review-content {
+    padding:35px;
+}
+
+.review-warning {
+    background:#fff3cd;
+    color:#664d03;
+    border:1px solid #ffecb5;
+    padding:16px;
+    border-radius:8px;
+    margin-bottom:30px;
+    line-height:1.6;
+}
+
+.review-section {
+    margin-bottom:35px;
+}
+
+.review-section-title {
+    font-size:21px;
+    font-weight:700;
+    color:#0B6B3A;
+    border-bottom:2px solid #198754;
+    padding-bottom:8px;
+    margin-bottom:18px;
+}
+
+.summary-grid {
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px 20px;
+}
+
+.summary-item {
+    border:1px solid #e2e6ea;
+    background:#fafbfc;
+    border-radius:7px;
+    padding:12px 14px;
+}
+
+.summary-label {
+    display:block;
+    font-size:13px;
+    color:#6c757d;
+    font-weight:600;
+    margin-bottom:5px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+}
+
+.summary-value {
+    display:block;
+    color:#212529;
+    font-size:15px;
+    font-weight:500;
+    word-break:break-word;
+}
+
+.summary-item.full {
+    grid-column:1 / -1;
+}
+
+.photo-card {
+    text-align:center;
+}
+
+.applicant-photo {
+    width:180px;
+    height:220px;
+    object-fit:contain;
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:5px;
+    background:#fff;
+}
+
+.documents-grid {
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:18px;
+}
+
+.document-card {
+    border:1px solid #e2e6ea;
+    border-radius:8px;
+    padding:18px;
+    text-align:center;
+    background:#fafbfc;
+}
+
+.document-card h4 {
+    margin:0 0 14px;
+    color:#343a40;
+}
+
+.document-btn {
+    display:inline-block;
+    background:#0B6B3A;
+    color:#fff !important;
+    text-decoration:none;
+    padding:9px 15px;
+    border-radius:6px;
+    font-size:14px;
+}
+
+.document-btn:hover {
+    background:#09592f;
+}
+
+.no-document {
+    color:#888;
+    font-size:14px;
+}
+
+.review-actions {
+    text-align:center;
+    margin-top:35px;
+    padding-top:25px;
+    border-top:1px solid #e5e5e5;
+}
+
+.review-btn {
+    display:inline-block;
+    border:none;
+    border-radius:8px;
+    padding:13px 25px;
+    margin:5px;
+    font-size:16px;
+    cursor:pointer;
+    text-decoration:none;
+}
+
+.edit-btn {
+    background:#6c757d;
+    color:#fff !important;
+}
+
+.edit-btn:hover {
+    background:#5a6268;
+}
+
+.confirm-btn {
+    background:#0B6B3A;
+    color:#fff;
+}
+
+.confirm-btn:hover {
+    background:#09592f;
+}
+
+.review-note {
+    text-align:center;
+    color:#666;
+    margin-top:15px;
+    font-size:14px;
+    line-height:1.6;
+}
+
+@media(max-width:768px) {
+
+    .review-page {
+        padding:20px 10px;
+    }
+
+    .review-content {
+        padding:20px 15px;
+    }
+
+    .review-header {
+        padding:25px 15px;
+    }
+
+    .review-header h1 {
+        font-size:24px;
+    }
+
+    .review-header h2 {
+        font-size:18px;
+    }
+
+    .summary-grid {
+        grid-template-columns:1fr;
+    }
+
+    .summary-item.full {
+        grid-column:auto;
+    }
+
+    .documents-grid {
+        grid-template-columns:1fr;
+    }
+
+    .review-btn {
+        display:block;
+        width:100%;
+        box-sizing:border-box;
+        margin:8px 0;
+    }
+}
+</style>
+
+<div class="review-page">
+
+    <div class="review-container">
+
+        <!-- HEADER -->
+        <div class="review-header">
+
+            <% if (setting && setting.logo) { %>
+
+                <img
+                    src="/uploads/arsp-settings/<%= setting.logo %>"
+                    class="review-logo"
+                    alt="<%= setting.organization_name || 'ARSP' %>"
+                >
+
+            <% } %>
+
+            <h1>
+                <%= setting?.organization_name || "Active Rural Social Progress" %>
+            </h1>
+
+            <p>
+                <%= setting?.tagline || "" %>
+            </p>
+
+            <h2>
+                REVIEW MEMBERSHIP REGISTRATION
+            </h2>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="review-content">
+
+            <!-- WARNING -->
+            <div class="review-warning">
+
+                <strong>Review your application carefully.</strong>
+
+                <br>
+
+                Please verify all the information and uploaded documents
+                shown below before submitting your membership registration.
+
+                <br>
+
+                Your application will be submitted to ARSP only after you
+                click <strong>Confirm &amp; Submit Registration</strong>.
+
+            </div>
+
+
+            <!-- PERSONAL INFORMATION -->
+            <div class="review-section">
+
+                <div class="review-section-title">
+                    Personal Information
+                </div>
+
+                <div class="summary-grid">
+
+                    <div class="summary-item">
+                        <span class="summary-label">Full Name</span>
+                        <span class="summary-value">
+                            <%= data.full_name || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Father's Name</span>
+                        <span class="summary-value">
+                            <%= data.father_name || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Mother's Name</span>
+                        <span class="summary-value">
+                            <%= data.mother_name || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Gender</span>
+                        <span class="summary-value">
+                            <%= data.gender || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Date of Birth</span>
+                        <span class="summary-value">
+                            <%= data.dob || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Blood Group</span>
+                        <span class="summary-value">
+                            <%= data.blood_group || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Occupation</span>
+                        <span class="summary-value">
+                            <%= data.occupation || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Nationality</span>
+                        <span class="summary-value">
+                            <%= data.nationality || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Joining Date</span>
+                        <span class="summary-value">
+                            <%= data.joining_date || "—" %>
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTACT INFORMATION -->
+            <div class="review-section">
+
+                <div class="review-section-title">
+                    Contact Information
+                </div>
+
+                <div class="summary-grid">
+
+                    <div class="summary-item">
+                        <span class="summary-label">Mobile Number</span>
+                        <span class="summary-value">
+                            <%= data.mobile || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Email Address</span>
+                        <span class="summary-value">
+                            <%= data.email || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item full">
+                        <span class="summary-label">Address</span>
+                        <span class="summary-value">
+                            <%= data.address || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">District</span>
+                        <span class="summary-value">
+                            <%= data.district || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">State</span>
+                        <span class="summary-value">
+                            <%= data.state || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">PIN Code</span>
+                        <span class="summary-value">
+                            <%= data.pincode || "—" %>
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- IDENTITY INFORMATION -->
+            <div class="review-section">
+
+                <div class="review-section-title">
+                    Identity Information
+                </div>
+
+                <div class="summary-grid">
+
+                    <div class="summary-item">
+                        <span class="summary-label">Identity Type</span>
+                        <span class="summary-value">
+                            <%= data.identity_type || "—" %>
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Identity Number</span>
+                        <span class="summary-value">
+                            <%= data.identity_number || "—" %>
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- UPLOADED DOCUMENTS -->
+            <div class="review-section">
+
+                <div class="review-section-title">
+                    Uploaded Documents
+                </div>
+
+                <div class="documents-grid">
+
+                    <!-- PHOTO -->
+                    <div class="document-card">
+
+                        <h4>Applicant Photograph</h4>
+
+                        <% if (files && files.photo) { %>
+
+                            <img
+                                src="/uploads/arsp-members/<%= files.photo %>"
+                                alt="Applicant Photo"
+                                class="applicant-photo"
+                            >
+
+                        <% } else { %>
+
+                            <div class="no-document">
+                                Photograph not uploaded
+                            </div>
+
+                        <% } %>
+
+                    </div>
+
+
+                    <!-- ID FRONT -->
+                    <div class="document-card">
+
+                        <h4>Identity Front</h4>
+
+                        <% if (files && files.identity_front) { %>
+
+                            <a
+                                href="/uploads/arsp-members/<%= files.identity_front %>"
+                                target="_blank"
+                                class="document-btn"
+                            >
+                                View Document
+                            </a>
+
+                        <% } else { %>
+
+                            <div class="no-document">
+                                Document not uploaded
+                            </div>
+
+                        <% } %>
+
+                    </div>
+
+
+                    <!-- ID BACK -->
+                    <div class="document-card">
+
+                        <h4>Identity Back</h4>
+
+                        <% if (files && files.identity_back) { %>
+
+                            <a
+                                href="/uploads/arsp-members/<%= files.identity_back %>"
+                                target="_blank"
+                                class="document-btn"
+                            >
+                                View Document
+                            </a>
+
+                        <% } else { %>
+
+                            <div class="no-document">
+                                Document not uploaded
+                            </div>
+
+                        <% } %>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+            <div class="review-actions">
+
+                <a
+                    href="/arsp/register"
+                    class="review-btn edit-btn"
+                >
+                    ← Edit Information
+                </a>
+
+
+                <form
+                    action="/arsp/register/confirm"
+                    method="POST"
+                    style="display:inline;"
+                    onsubmit="return confirm('Are you sure you want to confirm and submit your ARSP membership registration?');"
+                >
+
+                    <button
+                        type="submit"
+                        class="review-btn confirm-btn"
+                    >
+                        ✓ Confirm &amp; Submit Registration
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div class="review-note">
+
+                By clicking
+                <strong>Confirm &amp; Submit Registration</strong>,
+                you confirm that all information provided above is correct
+                and you agree to submit this membership application to ARSP.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

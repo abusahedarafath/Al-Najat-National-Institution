@@ -88,8 +88,18 @@ upload.fields([
     }
 
 ]),
-arspPublicController.register
+arspPublicController.review
 
+);
+
+    
+// =====================================
+// Confirm Membership Registration
+// =====================================
+
+router.post(
+    "/arsp/register/confirm",
+    arspPublicController.confirm
 );
 
 module.exports = router;

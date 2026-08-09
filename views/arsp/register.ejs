@@ -661,13 +661,29 @@ preview.style.display="block";
 </div>
 
 <script>
-window.addEventListener("pageshow", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
+    const oldData = <%- JSON.stringify(old || {}) %>;
     const form = document.getElementById("registrationForm");
 
-    if (form) {
-        form.reset();
-    }
+    if (!form) return;
+
+    Object.keys(oldData).forEach(function (name) {
+
+        const field = form.elements[name];
+
+        if (!field) return;
+
+        // Browsers do not allow file inputs to be restored.
+        if (field.type === "file") return;
+
+        if (field.type === "checkbox" || field.type === "radio") {
+            field.checked = field.value === oldData[name];
+            return;
+        }
+
+        field.value = oldData[name] || "";
+    });
 
 });
 </script>
