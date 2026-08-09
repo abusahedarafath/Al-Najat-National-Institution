@@ -36,7 +36,9 @@ router.get(
 
 router.get(
     "/admin",
-    adminDashboardController.dashboard
+    (req, res) => {
+        res.redirect("/admin/rtse");
+    }
 );
 
 router.get(

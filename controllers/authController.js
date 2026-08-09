@@ -151,7 +151,7 @@ exports.login = async (req, res) => {
 
             case "admin":
 
-                return res.redirect("/admin");
+                return res.redirect("/admin/rtse");
 
 
             case "teacher":
