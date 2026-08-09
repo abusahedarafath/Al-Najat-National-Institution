@@ -68,6 +68,7 @@ const chairmanMessageRoutes = require("./routes/chairmanMessageRoutes");
 const siteSettingRoutes = require("./routes/siteSettingRoutes");
 const footerRoutes = require("./routes/footerRoutes");
 const rtseRoutes = require("./routes/rtse");
+const seoRoutes = require("./routes/seoRoutes");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
 
 
@@ -131,6 +132,7 @@ app.set("views", path.join(__dirname, "views"));
 // ===============================
 
 app.use("/", homeRoutes);
+app.use("/", seoRoutes);
 app.use("/", aboutRoutes);
 app.use("/", admissionRoutes);
 
