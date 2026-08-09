@@ -77,7 +77,7 @@ exports.index = async (req, res) => {
             "home/index",
             {
                 title:
-                    "Home | Al-Najat National Institution",
+                    "Home | Active Rural Social Progress",
 
                 sliders,
                 notices,
