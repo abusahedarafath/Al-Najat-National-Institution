@@ -83,17 +83,15 @@ img{
 
 }
 
+
 .admin-sidebar{
-
     position:fixed;
-
     left:0;
-
     top:0;
+    bottom:0;
 
     width:260px;
-
-   min-height:100%;
+    height:100vh;
 
     background:linear-gradient(
         180deg,
@@ -102,26 +100,53 @@ img{
     );
 
     overflow-y:auto;
+    overflow-x:hidden;
 
     color:#fff;
-
     z-index:1000;
 
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,.35) transparent;
 }
 
+
+.admin-sidebar::-webkit-scrollbar{
+    width:6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.35);
+    border-radius:10px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover{
+    background:rgba(255,255,255,.55);
+}
+
+.sidebar-nav{
+    width:100%;
+    padding-bottom:30px;
+}
+
+
+
 .admin-content{
-
     margin-left:260px;
-
     margin-top:70px;
 
     padding:30px;
 
     width:calc(100% - 260px);
-
     min-height:calc(100vh - 70px);
-
 }
+
+
+
+
 
 .container{
 
@@ -135,14 +160,12 @@ img{
    TOPBAR
 ================================ */
 
-.topbar{
 
+.topbar{
     position:fixed;
 
     left:260px;
-
     right:0;
-
     top:0;
 
     height:70px;
@@ -150,9 +173,7 @@ img{
     background:#fff;
 
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
 
     padding:0 25px;
@@ -160,8 +181,9 @@ img{
     box-shadow:var(--shadow);
 
     z-index:999;
-
 }
+
+
 
 .topbar-left{
 
@@ -860,46 +882,95 @@ img{
 
 }
 
+
+
 /* =====================================================
-   DESKTOP FIRST
+   DESKTOP LAYOUT
 ===================================================== */
 
 html{
-
-    min-width:1400px;
-
+    min-width:0;
 }
 
 body{
-
-    overflow-x:auto;
-
+    overflow-x:hidden;
 }
 
 .menu-toggle{
-
     display:none !important;
-
 }
 
 .sidebar-overlay{
-
     display:none !important;
-
 }
 
 /* =====================================================
-   RESPONSIVE
+   DESKTOP SIDEBAR
 ===================================================== */
 
-@media screen and (max-width:1400px){
+.admin-sidebar{
+    position:fixed;
 
-    html{
+    top:0;
+    left:0;
+    bottom:0;
 
-        min-width:1400px;
+    width:260px;
+    height:100vh;
 
-    }
+    overflow-y:auto;
+    overflow-x:hidden;
 
+    z-index:1000;
+}
+
+/* Sidebar scrollbar */
+
+.admin-sidebar::-webkit-scrollbar{
+    width:6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.35);
+    border-radius:10px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover{
+    background:rgba(255,255,255,.55);
+}
+
+/* =====================================================
+   DESKTOP CONTENT
+===================================================== */
+
+.admin-content{
+    margin-left:260px;
+    margin-top:70px;
+
+    width:calc(100% - 260px);
+    min-height:calc(100vh - 70px);
+
+    padding:30px;
+}
+
+/* =====================================================
+   DESKTOP TOPBAR
+===================================================== */
+
+.topbar{
+    position:fixed;
+
+    top:0;
+    left:260px;
+    right:0;
+
+    height:70px;
+
+    z-index:999;
 }
 
 
@@ -1452,3 +1523,655 @@ body{
 
 
 
+/* =====================================================
+   RESPONSIVE ADMIN SIDEBAR
+   Desktop + Tablet + Mobile
+===================================================== */
+
+/* -------------------------------
+   TABLET / MOBILE
+-------------------------------- */
+
+@media screen and (max-width: 991px){
+
+    html{
+        min-width:0;
+    }
+
+    body{
+        overflow-x:hidden;
+    }
+
+    /* Show menu button */
+    .menu-toggle{
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+
+        width:42px;
+        height:42px;
+
+        border:none;
+        border-radius:8px;
+
+        background:#f3f4f6;
+        color:var(--primary);
+
+        cursor:pointer;
+        font-size:18px;
+    }
+
+    /* Sidebar becomes an off-canvas menu */
+    .admin-sidebar{
+        position:fixed;
+
+        top:0;
+        left:0;
+        bottom:0;
+
+        width:280px;
+        max-width:85vw;
+        height:100vh;
+
+        transform:translateX(-100%);
+
+        transition:transform .3s ease;
+
+        overflow-y:auto;
+        overflow-x:hidden;
+
+        z-index:2000;
+    }
+
+    /* Sidebar open */
+    .admin-sidebar.sidebar-open{
+    transform:translateX(0);
+}
+
+    /* Dark background behind sidebar */
+    .sidebar-overlay{
+        display:block !important;
+
+        position:fixed;
+
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+
+        background:rgba(0,0,0,.45);
+
+        opacity:0;
+        visibility:hidden;
+
+        transition:opacity .3s ease,
+                   visibility .3s ease;
+
+        z-index:1900;
+    }
+
+    
+.sidebar-overlay.show{
+    opacity:1;
+    visibility:visible;
+}
+
+
+    /* Topbar uses full screen */
+    .topbar{
+        left:0;
+        right:0;
+
+        width:100%;
+        height:70px;
+
+        padding:0 15px;
+
+        z-index:1500;
+    }
+
+    /* Main content uses full width */
+    .admin-content{
+        margin-left:0;
+        margin-top:70px;
+
+        width:100%;
+
+        min-height:calc(100vh - 70px);
+
+        padding:20px 15px;
+    }
+
+    /* Keep sidebar contents readable */
+    .sidebar-nav{
+        padding:15px 12px 35px;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media screen and (max-width:600px){
+
+    .topbar{
+        height:60px;
+        padding:0 10px;
+    }
+
+    .topbar-left{
+        gap:8px;
+    }
+
+    .topbar-left h2{
+        font-size:18px;
+    }
+
+    .topbar-right{
+        gap:8px;
+    }
+
+    .admin-profile{
+        gap:6px;
+    }
+
+    .admin-profile img{
+        width:34px;
+        height:34px;
+    }
+
+    .admin-profile strong{
+        font-size:12px;
+    }
+
+    .admin-profile small{
+        font-size:9px;
+    }
+
+    .top-icon{
+        width:34px;
+        height:34px;
+    }
+
+    .admin-content{
+        margin-top:60px;
+        padding:15px 10px;
+    }
+
+    .page-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+    .page-header h1{
+        font-size:24px;
+    }
+
+    .admin-sidebar{
+        width:270px;
+        max-width:85vw;
+    }
+
+}
+
+
+/* =====================================================
+   PREVENT HORIZONTAL OVERFLOW
+===================================================== */
+
+@media screen and (max-width:991px){
+
+    .admin-content,
+    .admin-content *{
+        max-width:100%;
+    }
+
+    .admin-table-wrapper,
+    .table-responsive{
+        width:100%;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+
+}
+
+
+
+
+/* =====================================================
+   RTSE SECTION CARDS
+   Responsive Section A-E Layout
+===================================================== */
+
+.rtse-section-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:20px;
+    width:100%;
+    margin-top:10px;
+}
+
+.rtse-section-card{
+    width:100%;
+    min-width:0;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.rtse-section-card h3{
+    margin:0;
+    color:var(--primary);
+    font-size:20px;
+}
+
+.rtse-section-card hr{
+    margin:10px 0 15px;
+    border:0;
+    border-top:1px solid var(--border);
+}
+
+.rtse-section-card p{
+    margin:7px 0;
+    font-size:14px;
+}
+
+.rtse-section-card h2{
+    margin:5px 0 12px;
+    color:#222;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media screen and (max-width:768px){
+
+    .rtse-section-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        gap:12px;
+    }
+
+    .rtse-section-card{
+        padding:14px;
+        border-radius:10px;
+    }
+
+    .rtse-section-card h3{
+        font-size:16px;
+    }
+
+    .rtse-section-card p{
+        font-size:12px;
+    }
+
+    .rtse-section-card h2{
+        font-size:22px;
+    }
+
+    .rtse-section-card .btn-view,
+    .rtse-section-card .btn-save,
+    .rtse-section-card .btn-warning{
+        font-size:11px;
+        padding:7px 9px;
+        min-width:0;
+    }
+}
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media screen and (max-width:400px){
+
+    .rtse-section-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        gap:8px;
+    }
+
+    .rtse-section-card{
+        padding:10px;
+    }
+
+    .rtse-section-card h3{
+        font-size:14px;
+    }
+
+    .rtse-section-card p{
+        font-size:11px;
+    }
+
+    .rtse-section-card h2{
+        font-size:19px;
+    }
+
+    .rtse-section-card .btn-view,
+    .rtse-section-card .btn-save,
+    .rtse-section-card .btn-warning{
+        width:100%;
+        margin:2px 0;
+        font-size:10px;
+    }
+}
+
+
+
+
+
+/* =====================================================
+   RTSE DASHBOARD - FINAL RESPONSIVE GRID
+===================================================== */
+
+.rtse-header-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+
+/* =====================================================
+   OVERALL STATISTICS
+===================================================== */
+
+.rtse-statistics-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:20px;
+    width:100%;
+    margin-bottom:30px;
+}
+
+.rtse-stat-card{
+    width:100%;
+    min-width:0;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:22px;
+    box-shadow:var(--shadow);
+}
+
+.rtse-stat-card h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:#333;
+}
+
+.rtse-stat-card h1{
+    margin:0;
+    font-size:32px;
+    color:var(--primary);
+}
+
+.rtse-stat-pending{
+    color:#f39c12 !important;
+}
+
+.rtse-stat-approved{
+    color:green !important;
+}
+
+.rtse-stat-rejected{
+    color:red !important;
+}
+
+
+/* =====================================================
+   ROLL & ADMIT MANAGEMENT
+===================================================== */
+
+.rtse-management-card{
+    width:100%;
+    min-width:0;
+    margin-bottom:30px;
+    overflow:hidden;
+}
+
+.rtse-management-card > h2{
+    margin:0 0 20px;
+}
+
+
+/* =====================================================
+   SECTION A-E
+===================================================== */
+
+.rtse-section-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:20px;
+    width:100%;
+    min-width:0;
+}
+
+.rtse-section-card{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+}
+
+.rtse-section-card h3{
+    margin:0;
+    color:var(--primary);
+    font-size:20px;
+}
+
+.rtse-section-card hr{
+    margin:10px 0 15px;
+    border:0;
+    border-top:1px solid var(--border);
+}
+
+.rtse-section-card p{
+    margin:7px 0;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.rtse-section-card h2{
+    margin:5px 0 12px;
+    color:#222;
+}
+
+
+/* =====================================================
+   SECTION BUTTONS
+===================================================== */
+
+.rtse-section-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    width:100%;
+    margin-top:15px;
+    margin-bottom:10px;
+}
+
+.rtse-section-actions a{
+    max-width:100%;
+}
+
+.rtse-generation-action{
+    display:flex;
+    flex-wrap:wrap;
+    width:100%;
+    max-width:100%;
+}
+
+
+/* =====================================================
+   APPLICATION TABLE
+===================================================== */
+
+.rtse-table-wrapper{
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media screen and (max-width:991px){
+
+    .rtse-statistics-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:15px;
+    }
+
+    .rtse-section-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:15px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media screen and (max-width:600px){
+
+    .rtse-statistics-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+
+    .rtse-stat-card{
+        padding:14px;
+        border-radius:10px;
+    }
+
+    .rtse-stat-card h3{
+        font-size:13px;
+        line-height:1.3;
+    }
+
+    .rtse-stat-card h1{
+        font-size:25px;
+    }
+
+
+    .rtse-management-card{
+        padding:15px;
+    }
+
+    .rtse-management-card > h2{
+        font-size:19px;
+        line-height:1.3;
+    }
+
+
+    .rtse-section-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+
+    .rtse-section-card{
+        padding:12px;
+        border-radius:10px;
+    }
+
+    .rtse-section-card h3{
+        font-size:15px;
+    }
+
+    .rtse-section-card p{
+        font-size:11px;
+        line-height:1.35;
+    }
+
+    .rtse-section-card h2{
+        font-size:21px;
+    }
+
+    .rtse-section-actions{
+        flex-direction:column;
+    }
+
+    .rtse-section-actions a{
+        width:100%;
+        text-align:center;
+        font-size:11px;
+        padding:8px 6px;
+    }
+
+    .rtse-generation-action a,
+    .rtse-generation-action button,
+    .rtse-generation-action span{
+        width:100%;
+        text-align:center;
+        font-size:11px;
+        padding:8px 6px;
+    }
+
+    .rtse-header-actions{
+        width:100%;
+        justify-content:flex-start;
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media screen and (max-width:400px){
+
+    .rtse-statistics-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+    }
+
+    .rtse-stat-card{
+        padding:11px;
+    }
+
+    .rtse-stat-card h3{
+        font-size:12px;
+    }
+
+    .rtse-stat-card h1{
+        font-size:22px;
+    }
+
+
+    .rtse-section-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+    }
+
+    .rtse-section-card{
+        padding:10px;
+    }
+
+    .rtse-section-card h3{
+        font-size:13px;
+    }
+
+    .rtse-section-card p{
+        font-size:10px;
+    }
+
+    .rtse-section-card h2{
+        font-size:18px;
+    }
+
+}

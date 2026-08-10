@@ -8,30 +8,26 @@
 
         <div class="container">
 
-            <!-- ========================= -->
-            <!-- Page Header -->
-            <!-- ========================= -->
+            <!-- =====================================================
+                 PAGE HEADER
+            ====================================================== -->
 
             <div class="page-header">
 
                 <h1>
-
                     RTSE Examination Dashboard
-
                 </h1>
 
-                <div
-                    style="display:flex;gap:10px;flex-wrap:wrap;">
+                <div class="rtse-header-actions">
 
                     <% if(setting.application_open){ %>
 
                         <a
                             href="/admin/rtse/close-applications"
                             class="btn-danger"
-                            onclick="return confirm('Close RTSE Applications?');">
-
+                            onclick="return confirm('Close RTSE Applications?');"
+                        >
                             🔒 Close Applications
-
                         </a>
 
                     <% } else { %>
@@ -39,282 +35,273 @@
                         <a
                             href="/admin/rtse/open-applications"
                             class="btn-save"
-                            onclick="return confirm('Open RTSE Applications?');">
-
-                            🟢 Open Applications
-
+                            onclick="return confirm('Open RTSE Applications?');"
+                        >
+                            🔓 Open Applications
                         </a>
 
                     <% } %>
 
-<% if(admitGenerated){ %>
 
-    <% if(setting.admit_publish){ %>
+                    <% if(admitGenerated){ %>
 
-        <a
-            href="/admin/rtse/hide-admit"
-            class="btn-warning"
-            onclick="return confirm('Hide Admit Cards?');">
+                        <% if(setting.admit_publish){ %>
 
-            🙈 Hide Admit Cards
+                            <a
+                                href="/admin/rtse/hide-admit"
+                                class="btn-warning"
+                                onclick="return confirm('Hide Admit Cards?');"
+                            >
+                                🙈 Hide Admit Cards
+                            </a>
 
-        </a>
+                        <% } else { %>
 
-    <% } else { %>
+                            <a
+                                href="/admin/rtse/publish-admit"
+                                class="btn-save"
+                                onclick="return confirm('Publish Admit Cards?');"
+                            >
+                                📢 Publish Admit Cards
+                            </a>
 
-        <a
-            href="/admin/rtse/publish-admit"
-            class="btn-save"
-            onclick="return confirm('Publish Admit Cards?');">
+                        <% } %>
 
-            📢 Publish Admit Cards
+                    <% } %>
 
-        </a>
-
-    <% } %>
-
-<% } %>
 
                     <a
                         href="/admin/rtse/export"
-                        class="btn-view">
-
+                        class="btn-view"
+                    >
                         📊 Export Excel
-
                     </a>
+
 
                     <a
                         href="/admin/rtse/archive"
-                        class="btn-warning">
-
+                        class="btn-warning"
+                    >
                         🗂 Archive
-
                     </a>
 
                 </div>
 
             </div>
 
-            <!-- ========================= -->
-            <!-- Statistics -->
-            <!-- ========================= -->
 
-            <div class="dashboard-grid">
+            <!-- =====================================================
+                 OVERALL STATISTICS
+            ====================================================== -->
 
-                <div class="dashboard-card">
+            <div class="rtse-statistics-grid">
+
+                <!-- Total -->
+
+                <div class="rtse-stat-card">
 
                     <h3>Total Applications</h3>
 
                     <h1>
-
                         <%= total %>
-
                     </h1>
 
                 </div>
 
-                <div class="dashboard-card">
+
+                <!-- Pending -->
+
+                <div class="rtse-stat-card">
 
                     <h3>Pending</h3>
 
-                    <h1 style="color:#f39c12;">
-
+                    <h1 class="rtse-stat-pending">
                         <%= pending %>
-
                     </h1>
 
                 </div>
 
-                <div class="dashboard-card">
+
+                <!-- Approved -->
+
+                <div class="rtse-stat-card">
 
                     <h3>Approved</h3>
 
-                    <h1 style="color:green;">
-
+                    <h1 class="rtse-stat-approved">
                         <%= approved %>
-
                     </h1>
 
                 </div>
 
-                <div class="dashboard-card">
+
+                <!-- Rejected -->
+
+                <div class="rtse-stat-card">
 
                     <h3>Rejected</h3>
 
-                    <h1 style="color:red;">
-
+                    <h1 class="rtse-stat-rejected">
                         <%= rejected %>
-
                     </h1>
 
                 </div>
 
             </div>
 
-            <!-- ========================= -->
-            <!-- Roll & Admit Management -->
-            <!-- ========================= -->
 
-            <div class="profile-card">
+            <!-- =====================================================
+                 ROLL & ADMIT MANAGEMENT
+            ====================================================== -->
+
+            <div class="profile-card rtse-management-card">
 
                 <h2>
-
                     Roll Number & Admit Card Management
-
                 </h2>
 
-                <br>
 
-                <div class="dashboard-grid">
+                <!-- =================================================
+                     SECTION A-E GRID
+                ================================================== -->
 
-
-
+                <div class="rtse-section-grid">
 
                     <% ["A","B","C","D","E"].forEach(section=>{ %>
 
                         <% const data =
                             sectionStats.find(
                                 s => s.section === section
-                            ) || {}; %>
+                            ) || {};
+                        %>
 
-                        <div class="dashboard-card">
+
+                        <!-- ==============================
+                             SECTION CARD
+                        =============================== -->
+
+                        <div class="rtse-section-card">
 
                             <h3>
-
                                 SECTION <%= section %>
-
                             </h3>
 
                             <hr>
 
+
                             <p>
-
                                 Total Applications
-
                             </p>
 
                             <h2>
-
                                 <%= data.total || 0 %>
-
                             </h2>
 
-                            <p>
 
+                            <p>
                                 Approved :
                                 <strong>
-
                                     <%= data.approved || 0 %>
-
                                 </strong>
-
                             </p>
 
-                            <p>
 
+                            <p>
                                 Pending :
                                 <strong>
-
                                     <%= data.pending || 0 %>
-
                                 </strong>
-
                             </p>
 
-                            <p>
 
+                            <p>
                                 Roll Generated :
                                 <strong>
-
-<%= Number(data.roll_generated || 0) %>
+                                    <%= Number(data.roll_generated || 0) %>
                                 </strong>
-
                             </p>
+
 
                             <p>
-
                                 Admit Generated :
                                 <strong>
-
-<%= Number(data.admit_generated || 0) %>
+                                    <%= Number(data.admit_generated || 0) %>
                                 </strong>
-
                             </p>
 
-                            <br>
 
-                            <div
-                                style="
-                                    display:flex;
-                                    gap:8px;
-                                    flex-wrap:wrap;
-                                    margin-bottom:10px;
-                                ">
+                            <!-- SECTION ACTIONS -->
+
+                            <div class="rtse-section-actions">
 
                                 <a
                                     href="/admin/rtse/approved/<%= section %>"
-                                    class="btn-view">
-
+                                    class="btn-view"
+                                >
                                     👥 Manage Approved Students
-
                                 </a>
+
 
                                 <a
                                     href="/admin/rtse/export/<%= section %>"
-                                    class="btn-save">
-
+                                    class="btn-save"
+                                >
                                     📊 Section Excel
-
                                 </a>
 
                             </div>
 
-                            <% if(setting.application_open){ %>
 
-                                <button
-                                    class="btn-warning"
-                                    disabled>
+                            <!-- GENERATION ACTION -->
 
-                                    Applications Open
+                            <div class="rtse-generation-action">
 
-                                </button>
+                                <% if(setting.application_open){ %>
 
-                            <% } else { %>
+                                    <button
+                                        class="btn-warning"
+                                        disabled
+                                    >
+                                        Applications Open
+                                    </button>
 
-<% if(Number(data.roll_generated || 0) === 0){ %>
-                                    <a
-
-                                        href="/admin/rtse/generate-roll/<%= section %>"
-
-                                        class="btn-save"
-
-                                        onclick="return confirm('Generate Roll Numbers for Section <%= section %>?')">
-
-                                        Generate Roll Number
-
-                                    </a>
-
-<% } else if(Number(data.admit_generated || 0) === 0){ %>        
-        <a  href="/admin/rtse/admit-generator/<%= section %>"
-
-                                        class="btn-view">
-
-                                        Generate Admit Cards
-
-                                    </a>
 
                                 <% } else { %>
 
-                                    <span
-                                        class="badge badge-success">
 
-                                        ✔ Admit Cards Generated
+                                    <% if(Number(data.roll_generated || 0) === 0){ %>
 
-                                    </span>
+                                        <a
+                                            href="/admin/rtse/generate-roll/<%= section %>"
+                                            class="btn-save"
+                                            onclick="return confirm('Generate Roll Numbers for Section <%= section %>?')"
+                                        >
+                                            Generate Roll Number
+                                        </a>
+
+
+                                    <% } else if(Number(data.admit_generated || 0) === 0){ %>
+
+                                        <a
+                                            href="/admin/rtse/admit-generator/<%= section %>"
+                                            class="btn-view"
+                                        >
+                                            Generate Admit Cards
+                                        </a>
+
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-success">
+                                            ✔ Admit Cards Generated
+                                        </span>
+
+                                    <% } %>
+
 
                                 <% } %>
 
-                            <% } %>
+                            </div>
 
                         </div>
 
@@ -324,264 +311,281 @@
 
             </div>
 
-            <!-- ========================= -->
-            <!-- Application Registry -->
-            <!-- ========================= -->
+
+            <!-- =====================================================
+                 APPLICATION REGISTRY
+            ====================================================== -->
 
             <div class="profile-card">
 
-                <table class="admin-table">
+                <div class="rtse-table-wrapper">
 
-                    <thead>
+                    <table class="admin-table">
 
-                        <tr>
+                        <thead>
 
-                            <th>Reg. No.</th>
+                            <tr>
 
-                            <th>Photo</th>
+                                <th>
+                                    Reg. No.
+                                </th>
 
-                            <th>Student</th>
+                                <th>
+                                    Photo
+                                </th>
 
-                            <th>School</th>
+                                <th>
+                                    Student
+                                </th>
 
-                            <th>Class</th>
+                                <th>
+                                    School
+                                </th>
 
-                            <th>Section</th>
+                                <th>
+                                    Class
+                                </th>
 
-                            <th>Status</th>
+                                <th>
+                                    Section
+                                </th>
 
-                            <th width="380">
+                                <th>
+                                    Status
+                                </th>
 
-                                Actions
+                                <th width="380">
+                                    Actions
+                                </th>
 
-                            </th>
+                            </tr>
 
-                        </tr>
+                        </thead>
 
-                    </thead>
 
-                    <tbody>
+                        <tbody>
 
+                            <% applications.forEach(application=>{ %>
 
+                                <tr>
 
+                                    <!-- REGISTRATION -->
 
-                    <% applications.forEach(application=>{ %>
-
-                        <tr>
-
-                            <td>
-
-                                <strong>
-
-                                    <%= application.registration_no %>
-
-                                </strong>
-
-                            </td>
-
-                            <td>
-
-                                <% if(application.photo){ %>
-
-                                    <img
-
-                                        src="/uploads/rtse/<%= application.photo %>"
-
-                                        style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
-
-                                <% } else { %>
-
-                                    -
-
-                                <% } %>
-
-                            </td>
-
-                            <td>
-
-                                <strong>
-
-                                    <%= application.full_name %>
-
-                                </strong>
-
-                                <br>
-
-                                <small>
-
-                                    <%= application.mobile %>
-
-                                </small>
-
-                            </td>
-
-                            <td>
-
-                                <%= application.school_name %>
-
-                            </td>
-
-                            <td>
-
-                                <%= application.class %>
-
-                            </td>
-
-                            <td>
-
-                                <strong>
-
-                                    <%= application.section %>
-
-                                </strong>
-
-                            </td>
-
-                            <td>
-
-                                <% if(application.status==="Approved"){ %>
-
-                                    <span class="badge badge-success">
-
-                                        Approved
-
-                                    </span>
-
-                                <% }else if(application.status==="Rejected"){ %>
-
-                                    <span class="badge badge-danger">
-
-                                        Rejected
-
-                                    </span>
-
-                                <% }else{ %>
-
-                                    <span class="badge badge-warning">
-
-                                        Pending
-
-                                    </span>
-
-                                <% } %>
-
-                                <% if(application.roll_no){ %>
-
-                                    <br>
-
-                                    <small>
+                                    <td>
 
                                         <strong>
-
-                                            <%= application.roll_no %>
-
+                                            <%= application.registration_no %>
                                         </strong>
 
-                                    </small>
-
-                                <% } %>
-
-                            </td>
-
-                            <td>
-
-                                <a
-                                   href="/admin/rtse/application/<%= application.id %>"
-                                    class="btn-view">
-
-                                    View
-
-                                </a>
-
-                                <a
-                                    href="/admin/rtse/application/<%= application.id %>/edit"
-                                    class="btn-save">
-
-                                    Edit
-
-                                </a>
-
-                               <% if(application.status === "Pending"){ %>
-
-    <a
-        href="/admin/rtse/application/<%= application.id %>/approve"
-        class="btn-save">
-
-        Approve
-
-    </a>
-
-    <a
-        href="/admin/rtse/application/<%= application.id %>/reject"
-        class="btn-warning">
-
-        Reject
-
-    </a>
-
-<% } else if(application.status === "Approved"){ %>
-
-    <span class="btn-save"
-          style="cursor:default;background:#28a745;">
-
-        ✓ Approved
-
-    </span>
-
-    <a
-        href="/admin/rtse/application/<%= application.id %>/reject"
-        class="btn-warning"
-        onclick="return confirm('Reject this approved application?');">
-
-        Reject
-
-    </a>
-
-<% } else if(application.status === "Rejected"){ %>
-
-    <a
-        href="/admin/rtse/application/<%= application.id %>/approve"
-        class="btn-save"
-        onclick="return confirm('Approve this rejected application?');">
-
-        Approve
-
-    </a>
-
-    <span class="btn-danger"
-          style="cursor:default;">
-
-        ✗ Rejected
-
-    </span>
-
-<% } %>
-
-<% if(application.roll_no && application.admit_generated == 1){ %>
+                                    </td>
 
 
-    <a
-        href="/admin/rtse/application/<%= application.id %>/admit-card"
-        class="btn-view">
+                                    <!-- PHOTO -->
 
-        Admit Card
+                                    <td>
 
-    </a>
+                                        <% if(application.photo){ %>
 
-<% } %>
+                                            <img
+                                                src="/uploads/rtse/<%= application.photo %>"
+                                                style="width:60px;height:60px;border-radius:50%;object-fit:cover;"
+                                            >
+
+                                        <% } else { %>
+
+                                            -
+
+                                        <% } %>
+
+                                    </td>
 
 
-                            </td>
+                                    <!-- STUDENT -->
 
-                        </tr>
+                                    <td>
 
-                    <% }) %>
+                                        <strong>
+                                            <%= application.full_name %>
+                                        </strong>
+
+                                        <br>
+
+                                        <small>
+                                            <%= application.mobile %>
+                                        </small>
+
+                                    </td>
 
 
+                                    <!-- SCHOOL -->
 
-                    </tbody>
+                                    <td>
+                                        <%= application.school_name %>
+                                    </td>
 
-                </table>
+
+                                    <!-- CLASS -->
+
+                                    <td>
+                                        <%= application.class %>
+                                    </td>
+
+
+                                    <!-- SECTION -->
+
+                                    <td>
+
+                                        <strong>
+                                            <%= application.section %>
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        <% if(application.status === "Approved"){ %>
+
+                                            <span class="badge badge-success">
+                                                Approved
+                                            </span>
+
+
+                                        <% } else if(application.status === "Rejected"){ %>
+
+                                            <span class="badge badge-danger">
+                                                Rejected
+                                            </span>
+
+
+                                        <% } else { %>
+
+                                            <span class="badge badge-warning">
+                                                Pending
+                                            </span>
+
+                                        <% } %>
+
+
+                                        <% if(application.roll_no){ %>
+
+                                            <br>
+
+                                            <small>
+
+                                                <strong>
+                                                    <%= application.roll_no %>
+                                                </strong>
+
+                                            </small>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/rtse/application/<%= application.id %>"
+                                            class="btn-view"
+                                        >
+                                            View
+                                        </a>
+
+
+                                        <a
+                                            href="/admin/rtse/application/<%= application.id %>/edit"
+                                            class="btn-save"
+                                        >
+                                            Edit
+                                        </a>
+
+
+                                        <% if(application.status === "Pending"){ %>
+
+                                            <a
+                                                href="/admin/rtse/application/<%= application.id %>/approve"
+                                                class="btn-save"
+                                            >
+                                                Approve
+                                            </a>
+
+
+                                            <a
+                                                href="/admin/rtse/application/<%= application.id %>/reject"
+                                                class="btn-warning"
+                                            >
+                                                Reject
+                                            </a>
+
+
+                                        <% } else if(application.status === "Approved"){ %>
+
+                                            <span
+                                                class="btn-save"
+                                                style="cursor:default;background:#28a745;"
+                                            >
+                                                ✓ Approved
+                                            </span>
+
+
+                                            <a
+                                                href="/admin/rtse/application/<%= application.id %>/reject"
+                                                class="btn-warning"
+                                                onclick="return confirm('Reject this approved application?');"
+                                            >
+                                                Reject
+                                            </a>
+
+
+                                        <% } else if(application.status === "Rejected"){ %>
+
+                                            <a
+                                                href="/admin/rtse/application/<%= application.id %>/approve"
+                                                class="btn-save"
+                                                onclick="return confirm('Approve this rejected application?');"
+                                            >
+                                                Approve
+                                            </a>
+
+
+                                            <span
+                                                class="btn-danger"
+                                                style="cursor:default;"
+                                            >
+                                                ✗ Rejected
+                                            </span>
+
+                                        <% } %>
+
+
+                                        <% if(application.roll_no && application.admit_generated == 1){ %>
+
+                                            <a
+                                                href="/admin/rtse/application/<%= application.id %>/admit-card"
+                                                class="btn-view"
+                                            >
+                                                Admit Card
+                                            </a>
+
+                                        <% } %>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
