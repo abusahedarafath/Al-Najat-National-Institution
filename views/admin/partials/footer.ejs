@@ -28,6 +28,61 @@
 
         }
 
+/* ==========================================
+   ADMIN SCROLL POSITION PRESERVATION
+   Keeps the admin page at the same scroll
+   position after approve/reject/save/etc.
+========================================== */
+(function () {
+    const scrollKey =
+        "adminScrollY:" + window.location.pathname;
+
+    function restoreScrollPosition() {
+        const saved =
+            sessionStorage.getItem(scrollKey);
+
+        if (saved === null) return;
+
+        const y = parseInt(saved, 10);
+
+        if (Number.isNaN(y)) return;
+
+        const html = document.documentElement;
+        const previousBehavior =
+            html.style.scrollBehavior;
+
+        html.style.scrollBehavior = "auto";
+
+        window.scrollTo(0, y);
+
+        requestAnimationFrame(function () {
+            window.scrollTo(0, y);
+
+            html.style.scrollBehavior =
+                previousBehavior;
+        });
+
+        sessionStorage.removeItem(scrollKey);
+    }
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+            sessionStorage.setItem(
+                scrollKey,
+                String(window.scrollY)
+            );
+        }
+    );
+
+    window.addEventListener(
+        "load",
+        restoreScrollPosition
+    );
+})();
+
+
+
 
     /* ==========================================
    MODERN ERP SIDEBAR
@@ -89,11 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-});
-
-
-
-    </script>
+});</script>
 
 </body>
 
