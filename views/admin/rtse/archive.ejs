@@ -36,7 +36,35 @@
 
             <% }else{ %>
 
-            <table class="admin-table">
+            <div class="profile-card rtse-search-card" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;">
+        <div>
+            <h2 style="margin:0;">Search Archived Applications</h2>
+            <p style="margin:5px 0 0;color:#666;font-size:13px;">
+                Search by Name, Registration No., Mobile, School, Class or Section
+            </p>
+        </div>
+
+        <div style="flex:1;min-width:220px;max-width:500px;position:relative;">
+            <i class="fas fa-search"
+               style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#777;"></i>
+
+            <input
+                type="search"
+                id="rtseArchiveSearch"
+                placeholder="Search archived applicant..."
+                autocomplete="off"
+                style="width:100%;padding:12px 15px 12px 42px;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none;"
+            >
+        </div>
+    </div>
+
+    <div id="rtseArchiveSearchResult"
+         style="margin-top:10px;font-size:13px;color:#666;">
+    </div>
+</div>
+
+<table class="admin-table" id="rtseArchiveTable">
 
                 <thead>
 
@@ -195,5 +223,56 @@
     </main>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("rtseArchiveSearch");
+    const resultText = document.getElementById("rtseArchiveSearchResult");
+    const table = document.getElementById("rtseArchiveTable");
+
+    if (!searchInput || !table) return;
+
+    const rows = Array.from(
+        table.querySelectorAll("tbody tr")
+    );
+
+    function filterArchivedApplications() {
+
+        const query = searchInput.value.trim().toLowerCase();
+
+        let visible = 0;
+
+        rows.forEach(row => {
+
+            const text = row.textContent
+                .toLowerCase()
+                .replace(/\s+/g, " ");
+
+            const match = !query || text.includes(query);
+
+            row.style.display = match ? "" : "none";
+
+            if (match) visible++;
+        });
+
+        if (!query) {
+            resultText.textContent = "";
+        } else {
+            resultText.textContent =
+                visible +
+                (visible === 1
+                    ? " application found."
+                    : " applications found.");
+        }
+    }
+
+    searchInput.addEventListener(
+        "input",
+        filterArchivedApplications
+    );
+
+});
+</script>
 
 <%- include("../partials/footer") %>

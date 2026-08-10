@@ -198,6 +198,15 @@ router.get(
 // =====================================
 
 router.get(
+    "/rtse/export/approved",
+    auth.isAdmin,
+    adminRtseController.exportApprovedExcel
+);
+
+// =====================================
+// Export Section Wise
+// =====================================
+router.get(
 
     "/rtse/export/:section",
 

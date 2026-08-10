@@ -766,87 +766,32 @@ async (req, res) => {
 // =====================================
 
 exports.exportExcel = async (req, res) => {
-
     try {
-
-        const applications =
-            await RtseApplication.getAll();
-
-        const workbook = new ExcelJS.Workbook();
-
-        const sheet =
-            workbook.addWorksheet("RTSE Applications");
-
-        sheet.columns = [
-
-            { header: "Registration No", key: "registration_no", width: 20 },
-            { header: "Roll No", key: "roll_no", width: 18 },
-            { header: "Student Name", key: "full_name", width: 30 },
-            { header: "Father Name", key: "father_name", width: 30 },
-            { header: "School", key: "school_name", width: 35 },
-            { header: "Class", key: "class", width: 10 },
-            { header: "Section", key: "section", width: 10 },
-            { header: "Mobile", key: "mobile", width: 18 },
-            { header: "Status", key: "status", width: 15 },
-            { header: "Room", key: "room_no", width: 10 },
-            { header: "Seat", key: "seat_no", width: 10 }
-
-        ];
-
-        applications.forEach(student => {
-
-            sheet.addRow(student);
-
-        });
-
-        sheet.getRow(1).font = {
-
-            bold: true
-
-        };
-
-        res.setHeader(
-
-            "Content-Type",
-
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-
-        );
-
-        res.setHeader(
-
-            "Content-Disposition",
-
-            'attachment; filename="RTSE_Applications.xlsx"'
-
-        );
-
-        await workbook.xlsx.write(res);
-
-        res.end();
-
-    }
-
-    catch (err) {
-
+        await RtseExcel.exportAll(req, res);
+    } catch (err) {
         console.error(err);
-
-        req.flash(
-
-            "error",
-
-            "Unable to export Excel."
-
-        );
-
+        req.flash("error", "Unable to export Excel.");
         res.redirect("/admin/rtse");
-
     }
+};
 
+// =====================================
+// Export Approved Applications
+// =====================================
+exports.exportApprovedExcel = async (req, res) => {
+    try {
+        await RtseExcel.exportApproved(req, res);
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Unable to export approved students Excel.");
+        res.redirect("/admin/rtse");
+    }
 };
 
 // =====================================
 // Export Section Wise
+// =====================================
+
 // =====================================
 
 exports.exportSectionExcel = async (req, res) => {

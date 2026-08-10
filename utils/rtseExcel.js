@@ -27,6 +27,20 @@ class RtseExcel {
     // Export Section Wise
     // =====================================
 
+    static async exportApproved(req, res) {
+        const students = (await RtseApplication.getAll())
+            .filter(student => student.status === "Approved");
+
+        return this.buildExcel(
+            students,
+            "RTSE-Approved-Students.xlsx",
+            res
+        );
+    }
+
+    // =====================================
+    // Export Section Wise
+    // =====================================
     static async exportSection(req, res, section) {
 
         const students =
@@ -96,6 +110,16 @@ class RtseExcel {
                 header: "Father's Name",
                 key: "father_name",
                 width: 30
+            },
+                                                              {
+                header: "Date of Birth",
+                key: "dob",
+                width: 16
+            },
+                                                              {
+                header: "Gender",
+                key: "gender",
+                width: 12
             },
 
             {
@@ -203,7 +227,10 @@ class RtseExcel {
                 father_name:
                     student.father_name,
 
-                school_name:
+                
+                dob: student.dob,
+                gender: student.gender,
+school_name:
                     student.school_name,
 
                 class:
