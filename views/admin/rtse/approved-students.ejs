@@ -1,0 +1,344 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        Approved Students —
+                        Section <%= section %>
+                    </h1>
+
+                    <p>
+                        Only approved RTSE students of
+                        Section <%= section %> are shown here.
+                    </p>
+
+                </div>
+
+                <div
+                    style="display:flex;gap:10px;flex-wrap:wrap;">
+
+                    <a
+                        href="/admin/rtse"
+                        class="btn-view">
+
+                        ← RTSE Dashboard
+
+                    </a>
+
+                    <a
+                        href="/admin/rtse/export/<%= section %>"
+                        class="btn-save">
+
+                        📊 Section <%= section %> Excel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        Approved Students
+                    </h3>
+
+                    <h1>
+                        <%= students.length %>
+                    </h1>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        Roll Generated
+                    </h3>
+
+                    <h1>
+
+                        <%= students.filter(
+                            s => s.roll_number
+                        ).length %>
+
+                    </h1>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        Admit Generated
+                    </h3>
+
+                    <h1>
+
+                        <%= students.filter(
+                            s => Number(s.admit_generated) === 1
+                        ).length %>
+
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <div
+                    style="overflow-x:auto;">
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Reg. No.</th>
+
+                                <th>Photo</th>
+
+                                <th>Student</th>
+
+                                <th>Class</th>
+
+                                <th>Roll</th>
+
+                                <th>Number</th>
+
+                                <th>Admit</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <% if(!students.length){ %>
+
+                                <tr>
+
+                                    <td
+                                        colspan="8"
+                                        style="text-align:center;padding:30px;">
+
+                                        No approved students
+                                        found in Section
+                                        <%= section %>.
+
+                                    </td>
+
+                                </tr>
+
+                            <% } %>
+
+
+                            <% students.forEach(student => { %>
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            <%= student.registration_no %>
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <% if(student.photo){ %>
+
+                                            <img
+                                                src="/uploads/rtse/<%= student.photo %>"
+                                                alt="Student"
+                                                style="
+                                                    width:55px;
+                                                    height:55px;
+                                                    border-radius:50%;
+                                                    object-fit:cover;
+                                                ">
+
+                                        <% } else { %>
+
+                                            -
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <strong>
+                                            <%= student.full_name %>
+                                        </strong>
+
+                                        <br>
+
+                                        <small>
+                                            <%= student.school_name %>
+                                        </small>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <%= student.class %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <% if(student.roll_no){ %>
+
+                                            <strong>
+                                                <%= student.roll_no.split("-")[0] %>
+                                            </strong>
+
+                                        <% } else { %>
+
+                                            -
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <strong>
+                                            <%= student.roll_number || "-" %>
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <% if(Number(student.admit_generated) === 1){ %>
+
+                                            <span
+                                                class="badge badge-success">
+
+                                                Generated
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span
+                                                class="badge badge-warning">
+
+                                                Not Generated
+
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div
+                                            style="
+                                                display:flex;
+                                                gap:6px;
+                                                flex-wrap:wrap;
+                                            ">
+
+                                            <a
+                                                href="/admin/rtse/application/<%= student.id %>"
+                                                class="btn-view">
+
+                                                View
+
+                                            </a>
+
+
+                                            <a
+                                                href="/admin/rtse/application/<%= student.id %>/edit"
+                                                class="btn-save">
+
+                                                Edit
+
+                                            </a>
+
+
+                                            <form
+                                                method="POST"
+                                                action="/admin/rtse/approved/<%= section %>/<%= student.id %>/pending"
+                                                style="display:inline;">
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn-warning"
+                                                    onclick="return confirm('Move this student back to Pending? Roll and admit information will be cleared.');">
+
+                                                    Make Pending
+
+                                                </button>
+
+                                            </form>
+
+
+                                            <form
+                                                method="POST"
+                                                action="/admin/rtse/approved/<%= section %>/<%= student.id %>/remove"
+                                                style="display:inline;">
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn-danger"
+                                                    onclick="return confirm('Remove this approved student and move them to Archive?');">
+
+                                                    Remove
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

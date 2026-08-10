@@ -243,6 +243,32 @@
 
                             <br>
 
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:8px;
+                                    flex-wrap:wrap;
+                                    margin-bottom:10px;
+                                ">
+
+                                <a
+                                    href="/admin/rtse/approved/<%= section %>"
+                                    class="btn-view">
+
+                                    👥 Manage Approved Students
+
+                                </a>
+
+                                <a
+                                    href="/admin/rtse/export/<%= section %>"
+                                    class="btn-save">
+
+                                    📊 Section Excel
+
+                                </a>
+
+                            </div>
+
                             <% if(setting.application_open){ %>
 
                                 <button

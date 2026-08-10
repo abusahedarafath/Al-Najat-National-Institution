@@ -208,66 +208,51 @@ router.get(
 );
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =====================================
-// Generate Roll Numbers
+// Manage Approved Students
 // =====================================
 
 router.get(
-
-    "/rtse/generate-roll/:section",
-
+    "/rtse/approved/:section",
     auth.isAdmin,
-
-    adminRtseController.generateRollNumbers
-
+    adminRtseController.approvedStudents
 );
 
 
 // =====================================
-// Generate Admit Cards
+// Make Approved Student Pending
 // =====================================
 
-router.get(
-
-    "/rtse/generate-admit/:section",
-
+router.post(
+    "/rtse/approved/:section/:id/pending",
     auth.isAdmin,
-
-    adminRtseController.generateAdmitCards
-
+    adminRtseController.makeApprovedStudentPending
 );
 
 
 // =====================================
-// Export All Applications
+// Remove Approved Student
 // =====================================
 
-router.get(
-
-    "/rtse/export",
-
+router.post(
+    "/rtse/approved/:section/:id/remove",
     auth.isAdmin,
-
-    adminRtseController.exportExcel
-
+    adminRtseController.removeApprovedStudent
 );
-
-
-// =====================================
-// Export Section Wise Excel
-// =====================================
-
-router.get(
-
-    "/rtse/export/:section",
-
-    auth.isAdmin,
-
-    adminRtseController.exportSectionExcel
-
-);
-
-
 
 
 // =====================================

@@ -20,6 +20,7 @@ const RtseCertificateService =
 require("../services/rtseCertificateService");
 
 const ExcelJS = require("exceljs");
+const RtseExcel = require("../utils/rtseExcel");
 
 // =====================================
 // RTSE Dashboard
@@ -622,6 +623,144 @@ exports.generateAdmitCards = async (req, res) => {
     }
 
 };
+// =====================================
+// Approved Students - Section Wise
+// =====================================
+
+exports.approvedStudents = async (req, res) => {
+
+    try {
+
+        const section =
+            String(req.params.section).toUpperCase();
+
+        if(!["A","B","C","D","E"].includes(section)){
+
+            req.flash(
+                "error",
+                "Invalid RTSE section."
+            );
+
+            return res.redirect("/admin/rtse");
+
+        }
+
+        const students =
+            await RtseApplication.getApprovedSectionStudents(
+                section
+            );
+
+        res.render(
+            "admin/rtse/approved-students",
+            {
+                title:
+                    `Approved Students - Section ${section}`,
+
+                section,
+
+                students
+            }
+        );
+
+    } catch(err) {
+
+        console.error(
+            "Approved Students Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load approved students."
+        );
+
+        res.redirect("/admin/rtse");
+
+    }
+
+};
+
+
+// =====================================
+// Make Approved Student Pending
+// =====================================
+
+exports.makeApprovedStudentPending =
+async (req, res) => {
+
+    try {
+
+        await RtseApplication.makePending(
+            req.params.id
+        );
+
+        req.flash(
+            "success",
+            "Student moved back to Pending."
+        );
+
+        return res.redirect(
+            `/admin/rtse/approved/${req.params.section}`
+        );
+
+    } catch(err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to make student Pending."
+        );
+
+        return res.redirect(
+            `/admin/rtse/approved/${req.params.section}`
+        );
+
+    }
+
+};
+
+
+// =====================================
+// Remove Approved Student
+// =====================================
+
+exports.removeApprovedStudent =
+async (req, res) => {
+
+    try {
+
+        await RtseApplication.archive(
+            req.params.id
+        );
+
+        req.flash(
+            "success",
+            "Approved student removed and moved to Archive."
+        );
+
+        return res.redirect(
+            `/admin/rtse/approved/${req.params.section}`
+        );
+
+    } catch(err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to remove approved student."
+        );
+
+        return res.redirect(
+            `/admin/rtse/approved/${req.params.section}`
+        );
+
+    }
+
+};
+
+
 // =====================================
 // Export All Applications
 // =====================================
