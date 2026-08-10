@@ -102,7 +102,50 @@
                 <div
                     style="overflow-x:auto;">
 
-                    <table class="admin-table">
+                    <!-- =====================================================
+     SECTION STUDENT SEARCH
+===================================================== -->
+
+<div class="profile-card rtse-search-card" style="margin-bottom:20px;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;">
+
+        <div>
+            <h2 style="margin:0;">
+                Search Section <%= section %> Students
+            </h2>
+
+            <p style="margin:5px 0 0;color:#666;font-size:13px;">
+                Search by Name, Registration No., Mobile, School, Class or Section
+            </p>
+        </div>
+
+        <div style="flex:1;min-width:220px;max-width:500px;position:relative;">
+
+            <i
+                class="fas fa-search"
+                style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#777;">
+            </i>
+
+            <input
+                type="search"
+                id="rtseApprovedSearch"
+                placeholder="Search student..."
+                autocomplete="off"
+                style="width:100%;padding:12px 15px 12px 42px;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none;">
+
+        </div>
+
+    </div>
+
+    <div
+        id="rtseApprovedSearchResult"
+        style="margin-top:10px;font-size:13px;color:#666;">
+    </div>
+
+</div>
+
+<table id="rtseApprovedTable" class="admin-table">
 
                         <thead>
 

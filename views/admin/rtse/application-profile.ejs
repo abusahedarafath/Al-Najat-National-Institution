@@ -353,62 +353,77 @@
 
                 </table>
 
-                <div
-                    style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
+                <div style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
 
-                    <a
+                            <% if(application.status === "Pending"){ %>
 
-                        href="/admin/rtse/application/<%= application.id %>/approve"
+                                <a
+                                    href="/admin/rtse/application/<%= application.id %>/approve"
+                                    class="btn-save">
+                                    Approve
+                                </a>
 
-                        class="btn-save">
+                                <a
+                                    href="/admin/rtse/application/<%= application.id %>/reject"
+                                    class="btn-warning">
+                                    Reject
+                                </a>
 
-                        Approve
+                            <% } else if(application.status === "Approved"){ %>
 
-                    </a>
+                                <span
+                                    class="btn-save"
+                                    style="cursor:default;background:#28a745;">
+                                    ✓ Approved
+                                </span>
 
-                    <a
+                                <% if(application.roll_no && application.admit_generated == 1){ %>
 
-                        href="/admin/rtse/application/<%= application.id %>/reject"
+                                    <a
+                                        href="/admin/rtse/application/<%= application.id %>/admit-card"
+                                        class="btn-view">
+                                        Admit Card
+                                    </a>
 
-                        class="btn-warning">
+                                <% } %>
 
-                        Reject
+                            <% } else if(application.status === "Rejected"){ %>
 
-                    </a>
+                                <a
+                                    href="/admin/rtse/application/<%= application.id %>/approve"
+                                    class="btn-save"
+                                    onclick="return confirm('Approve this rejected application?');">
+                                    Approve
+                                </a>
 
-                    <a
+                                <span
+                                    class="btn-danger"
+                                    style="cursor:default;">
+                                    ✗ Rejected
+                                </span>
 
-                        href="/admin/rtse/application/<%= application.id %>/edit"
+                            <% } %>
 
-                        class="btn-view">
+                            <a
+                                href="/admin/rtse/application/<%= application.id %>/edit"
+                                class="btn-view">
+                                Edit
+                            </a>
 
-                        Edit
+                            <form
+                                action="/admin/rtse/application/<%= application.id %>/archive"
+                                method="POST"
+                                style="display:inline;">
 
-                    </a>
+                                <button
+                                    type="submit"
+                                    class="btn-danger"
+                                    onclick="return confirm('Move this application to Archive?')">
+                                    Archive
+                                </button>
 
-                    <form
-
-                        action="/admin/rtse/application/<%= application.id %>/archive"
-
-                        method="POST"
-
-                        style="display:inline;">
-
-                        <button
-
-                            type="submit"
-
-                            class="btn-danger"
-
-                            onclick="return confirm('Move this application to Archive?')">
-
-                            Archive
-
-                        </button>
-
-                    </form>
-
-                </div>
+                            </form>
+                        </div>
 
             </div>
 
