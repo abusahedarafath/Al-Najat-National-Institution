@@ -55,19 +55,34 @@ function deleteRtseFile(filename) {
 // =====================================
 
 exports.applicationPage = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
 
-    const draft = req.session.rtseDraft || {};
-
-    res.render(
-        "rtse/application",
-        {
-            title: "RTSE Online Application",
-            draft
+        if (!setting || Number(setting.application_open) !== 1) {
+            return res.status(403).render(
+                "rtse/application-closed",
+                {
+                    title: "RTSE Application Closed"
+                }
+            );
         }
-    );
 
+        const draft = req.session.rtseDraft || {};
+
+        res.render(
+            "rtse/application",
+            {
+                title: "RTSE Online Application",
+                draft
+            }
+        );
+    } catch (err) {
+        console.error("RTSE application status error:", err);
+        return res.status(500).send(
+            "Unable to check RTSE application status."
+        );
+    }
 };
-
 
 // =====================================
 // Prepare Application for Review
@@ -75,7 +90,19 @@ exports.applicationPage = async (req, res) => {
 
 exports.submitApplication = async (req, res) => {
 
-    try {
+    try { 
+        const setting = await RtseSetting.get();
+
+        if (!setting || Number(setting.application_open) !== 1) {
+            return res.status(403).render(
+                "rtse/application-closed",
+                {
+                    title: "RTSE Application Closed"
+                }
+            );
+        }
+
+
 
         const oldDraft =
             req.session.rtseDraft || {};
