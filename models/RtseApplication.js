@@ -166,7 +166,14 @@ class RtseApplication {
         `SELECT *
          FROM rtse_applications
          WHERE archive=0
-         ORDER BY registration_no ASC`
+         ORDER BY
+             CASE
+                 WHEN status='Pending' THEN 1
+                 WHEN status='Approved' THEN 2
+                 WHEN status='Rejected' THEN 3
+                 ELSE 4
+             END,
+             registration_no ASC`
 
         );
 
@@ -253,6 +260,35 @@ static async getPublicVerification(
     );
 
     return rows[0] || null;
+}
+
+
+// =====================================
+// Move Approved Student Back To Pending
+// =====================================
+
+static async makePending(id){
+
+    await db.query(
+
+        `UPDATE rtse_applications
+
+         SET
+            status='Pending',
+            roll_no=NULL,
+            roll_number=NULL,
+            admit_generated=0,
+            room_no=NULL,
+            seat_no=NULL
+
+         WHERE id=?`,
+
+        [
+            id
+        ]
+
+    );
+
 }
 
 
@@ -678,6 +714,54 @@ static async getSectionStudents(section){
          ORDER BY
 
             roll_no ASC`,
+
+        [
+
+            section
+
+        ]
+
+    );
+
+    return rows;
+
+}
+
+
+// =====================================
+// Get Approved Students - Section Wise
+// =====================================
+
+static async getApprovedSectionStudents(section){
+
+    const [rows] = await db.query(
+
+        `SELECT *
+
+         FROM rtse_applications
+
+         WHERE
+
+            archive=0
+
+         AND
+
+            status='Approved'
+
+         AND
+
+            section=?
+
+         ORDER BY
+
+            CASE
+                WHEN roll_number IS NULL THEN 1
+                ELSE 0
+            END,
+
+            roll_number ASC,
+
+            full_name ASC`,
 
         [
 
