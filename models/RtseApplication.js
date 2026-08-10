@@ -955,19 +955,17 @@ static async getSectionStatistics(){
 
 
 
-
 // =====================================
 // Update Application
 // =====================================
+static async update(id, data) {
 
-static async update(id,data){
+    // Automatically calculate section from the updated class
+    const section = this.getSection(data.class);
 
     await db.query(
-
         `UPDATE rtse_applications
-
          SET
-
             full_name=?,
             father_name=?,
             mother_name=?,
@@ -977,12 +975,10 @@ static async update(id,data){
             district=?,
             state=?,
             class=?,
+            section=?,
             status=?
-
          WHERE id=?`,
-
         [
-
             data.full_name,
             data.father_name,
             data.mother_name,
@@ -992,16 +988,12 @@ static async update(id,data){
             data.district,
             data.state,
             data.class,
+            section,
             data.status,
-
             id
-
         ]
-
     );
-
 }
-
 
 
 
