@@ -77,7 +77,7 @@ exports.index = async (req, res) => {
             "home/index",
             {
                 title:
-                    "Home | Active Rural Social Progress",
+                    "Active Rural Social Progress (ARSP) | Official Website",
 
                 sliders,
                 notices,
