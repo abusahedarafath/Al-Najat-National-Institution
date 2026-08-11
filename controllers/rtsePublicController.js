@@ -35,7 +35,7 @@ exports.applicationPage = async (req, res) => {
     const draft = req.session.rtseDraft || {};
 
     res.render("rtse/application", {
-        title: "RTSE Online Application",
+        title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
         draft
     });
 };
@@ -65,7 +65,7 @@ exports.submitApplication = async (req, res) => {
         // Photo is mandatory for a new application
         if (!photoFile) {
             return res.render("rtse/application", {
-                title: "RTSE Online Application",
+                title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
                 error: "Candidate photograph is required.",
                 draft: req.body
             });
@@ -118,7 +118,7 @@ exports.submitApplication = async (req, res) => {
         console.error("RTSE review error:", err);
 
         return res.render("rtse/application", {
-            title: "RTSE Online Application",
+            title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
             error: "Unable to prepare the application for review.",
             draft: req.body || {}
         });
