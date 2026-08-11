@@ -33,6 +33,38 @@
 <meta name="twitter:description"
       content="<%= typeof metaDescription !== "undefined" ? metaDescription : "Active Rural Social Progress (ARSP) is a social development organization in Ratabari, Assam, working in education, student empowerment, rural development and community initiatives." %>">
 
+
+<!-- =====================================================
+     GOOGLE STRUCTURED DATA
+===================================================== -->
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "https://arsp.co.in/#organization",
+            "name": "Active Rural Social Progress",
+            "alternateName": "ARSP",
+            "url": "https://arsp.co.in/"
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://arsp.co.in/#website",
+            "url": "https://arsp.co.in/",
+            "name": "Active Rural Social Progress",
+            "alternateName": "ARSP",
+            "publisher": {
+                "@id": "https://arsp.co.in/#organization"
+            }
+        }
+    ]
+}
+</script>
+
+
+
 <link rel="stylesheet" href="/css/honour-heart.css">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/arsp-team.css">
