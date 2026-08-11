@@ -22,7 +22,7 @@ exports.team = async (req, res) => {
 
         res.render("arsp/team", {
 
-            title: "ARSP Management Team",
+            title: "ARSP Management Team | Active Rural Social Progress",
 
             founders,
 
@@ -59,7 +59,7 @@ exports.founder = async (req, res) => {
 
         res.render("arsp/founder", {
 
-            title: "Founder",
+            title: "Founder of ARSP | Active Rural Social Progress",
 
             founders
 
@@ -90,7 +90,7 @@ exports.organizingBody = async (req, res) => {
 
         res.render("arsp/organizing-body", {
 
-            title: "Organizing Body",
+            title: "ARSP Organizing Body | Active Rural Social Progress",
 
             organizingBody
 
@@ -121,7 +121,7 @@ exports.chiefAdviser = async (req, res) => {
 
         res.render("arsp/chief-adviser", {
 
-            title: "Chief Adviser",
+            title: "ARSP Chief Adviser | Active Rural Social Progress",
 
             chiefAdviser
 
@@ -152,7 +152,7 @@ exports.advisoryBody = async (req, res) => {
 
         res.render("arsp/advisory-body", {
 
-            title: "Advisory Body",
+            title: "ARSP Advisory Body | Active Rural Social Progress",
 
             advisoryBody
 

@@ -15,7 +15,7 @@ exports.registerPage = async (req, res) => {
         return res.render(
             "arsp/register",
             {
-                title: "Active Rural Social Progress",
+                title: "ARSP Membership Registration | Active Rural Social Progress",
                 setting,
                 old
             }
@@ -30,7 +30,7 @@ exports.registerPage = async (req, res) => {
         return res.render(
             "arsp/register",
             {
-                title: "Become an ARSP Member",
+                title: "ARSP Membership Registration | Active Rural Social Progress",
                 setting,
                 error: err.message,
                 old: {}
