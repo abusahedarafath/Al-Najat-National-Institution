@@ -6,6 +6,7 @@ const arspProfileController = require("../controllers/arspProfileController");
 const arspAuthController = require("../controllers/arspAuthController");
 
 const arspMemberAuth = require("../middleware/arspMemberAuth");
+const arspMemberController = require("../controllers/arspMemberController");
 
 // ======================================
 // Public ARSP Pages
@@ -64,6 +65,23 @@ router.get(
     "/arsp/dashboard",
     arspMemberAuth,
     arspAuthController.dashboard
+);
+
+// =====================================
+// Member Self Profile
+// =====================================
+
+router.get(
+    "/arsp/profile/edit",
+    arspMemberAuth,
+    arspMemberController.editProfilePage
+);
+
+router.post(
+    "/arsp/profile/edit",
+    arspMemberAuth,
+    require("../middleware/uploadFactory")("arsp-members").single("photo"),
+    arspMemberController.updateProfile
 );
 
 router.get(

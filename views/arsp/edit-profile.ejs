@@ -1,0 +1,346 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/arsp.css">
+
+<%- include("../partials/navbar") %>
+
+<div class="container">
+
+    <header class="topbar">
+
+        <div>
+            <strong>ACTIVE RURAL SOCIAL PROGRESS</strong>
+        </div>
+
+        <div>
+            <a href="/arsp/dashboard">Dashboard</a>
+        </div>
+
+    </header>
+
+    <div class="notice-section">
+
+        <h2>Edit My Profile</h2>
+
+        <div class="notice-card">
+
+            <form
+                action="/arsp/profile/edit"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <!-- PROFILE PHOTO -->
+
+                <div style="text-align:center; margin-bottom:25px;">
+
+                    <img
+                        src="<%= member.photo
+                            ? '/uploads/arsp-members/' + member.photo
+                            : '/images/default-user.png' %>"
+                        alt="Profile Photo"
+                        style="
+                            width:130px;
+                            height:130px;
+                            object-fit:cover;
+                            border-radius:50%;
+                            border:3px solid #ddd;
+                            display:block;
+                            margin:0 auto 15px;
+                        "
+                    >
+
+                    <label for="photo">
+                        <strong>Change Profile Photo</strong>
+                    </label>
+
+                    <br>
+
+                    <input
+                        type="file"
+                        id="photo"
+                        name="photo"
+                        accept="image/jpeg,image/png,image/webp"
+                    >
+
+                    <small style="display:block; margin-top:8px;">
+                        JPG, JPEG, PNG or WEBP only.
+                    </small>
+
+                </div>
+
+
+                <!-- ACCOUNT INFORMATION -->
+
+                <h3>Account Information</h3>
+
+                <div class="form-group">
+
+                    <label>Member ID</label>
+
+                    <input
+                        type="text"
+                        value="<%= member.member_id %>"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- PERSONAL INFORMATION -->
+
+                <h3 style="margin-top:25px;">
+                    Personal Information
+                </h3>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input
+                        type="text"
+                        name="full_name"
+                        value="<%= member.full_name || '' %>"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Father's Name</label>
+                    <input
+                        type="text"
+                        name="father_name"
+                        value="<%= member.father_name || '' %>"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Mother's Name</label>
+                    <input
+                        type="text"
+                        name="mother_name"
+                        value="<%= member.mother_name || '' %>"
+                    >
+                </div>
+
+                <div class="form-group">
+
+                    <label>Gender</label>
+
+                    <select name="gender">
+
+                        <option value="">Select Gender</option>
+
+                        <option
+                            value="Male"
+                            <%= member.gender === "Male" ? "selected" : "" %>
+                        >
+                            Male
+                        </option>
+
+                        <option
+                            value="Female"
+                            <%= member.gender === "Female" ? "selected" : "" %>
+                        >
+                            Female
+                        </option>
+
+                        <option
+                            value="Other"
+                            <%= member.gender === "Other" ? "selected" : "" %>
+                        >
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Date of Birth</label>
+
+                    <input
+                        type="date"
+                        name="dob"
+                        value="<%= member.dob
+                            ? new Date(member.dob).toISOString().split('T')[0]
+                            : '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Blood Group</label>
+
+                    <input
+                        type="text"
+                        name="blood_group"
+                        value="<%= member.blood_group || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Occupation</label>
+
+                    <input
+                        type="text"
+                        name="occupation"
+                        value="<%= member.occupation || '' %>"
+                    >
+
+                </div>
+
+
+                <!-- CONTACT -->
+
+                <h3 style="margin-top:25px;">
+                    Contact Information
+                </h3>
+
+                <div class="form-group">
+
+                    <label>Mobile</label>
+
+                    <input
+                        type="text"
+                        name="mobile"
+                        value="<%= member.mobile || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="<%= member.email || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Address</label>
+
+                    <textarea
+                        name="address"
+                        rows="3"
+                    ><%= member.address || '' %></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>District</label>
+
+                    <input
+                        type="text"
+                        name="district"
+                        value="<%= member.district || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>State</label>
+
+                    <input
+                        type="text"
+                        name="state"
+                        value="<%= member.state || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>PIN Code</label>
+
+                    <input
+                        type="text"
+                        name="pincode"
+                        value="<%= member.pincode || '' %>"
+                    >
+
+                </div>
+
+
+                <!-- EMERGENCY CONTACT -->
+
+                <h3 style="margin-top:25px;">
+                    Emergency Contact
+                </h3>
+
+                <div class="form-group">
+
+                    <label>Contact Name</label>
+
+                    <input
+                        type="text"
+                        name="emergency_contact_name"
+                        value="<%= member.emergency_contact_name || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Relationship</label>
+
+                    <input
+                        type="text"
+                        name="emergency_contact_relation"
+                        value="<%= member.emergency_contact_relation || '' %>"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Contact Mobile</label>
+
+                    <input
+                        type="text"
+                        name="emergency_contact_mobile"
+                        value="<%= member.emergency_contact_mobile || '' %>"
+                    >
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div style="margin-top:30px;">
+
+                    <button
+                        type="submit"
+                        class="profile-btn"
+                    >
+                        Save Changes
+                    </button>
+
+                    <a
+                        href="/arsp/dashboard"
+                        class="profile-btn"
+                        style="margin-left:10px;"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

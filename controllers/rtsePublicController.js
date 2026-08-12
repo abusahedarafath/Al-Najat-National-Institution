@@ -28,6 +28,29 @@ function deleteRtseFile(filename) {
 }
 
 // =====================================
+// RTSE Application Open Check
+// =====================================
+exports.requireApplicationOpen = async (req, res, next) => {
+    try {
+        const setting = await RtseSetting.get();
+
+        if (!setting || Number(setting.application_open) !== 1) {
+            return res.status(403).render("rtse/application-closed", {
+                title: "RTSE Application Closed"
+            });
+        }
+
+        next();
+    } catch (err) {
+        console.error("RTSE application status check error:", err);
+
+        return res.status(500).send(
+            "Unable to check RTSE application status."
+        );
+    }
+};
+
+// =====================================
 // Application Form
 // =====================================
 
@@ -166,6 +189,22 @@ exports.confirmApplication = async (req, res) => {
 
         if (!draft) {
             return res.redirect("/rtse/apply");
+        }
+
+        // =========================================
+        // FINAL APPLICATION-OPEN SECURITY CHECK
+        // Prevent submission of an old draft after
+        // the administrator closes applications.
+        // =========================================
+        const setting = await RtseSetting.get();
+
+        if (!setting || Number(setting.application_open) !== 1) {
+            return res.status(403).render(
+                "rtse/application-closed",
+                {
+                    title: "RTSE Application Closed"
+                }
+            );
         }
 
         // Create database record ONLY here.

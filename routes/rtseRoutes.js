@@ -52,6 +52,7 @@ router.get(
 
 router.get(
     "/apply",
+    rtsePublicController.requireApplicationOpen,
     rtsePublicController.applicationPage
 );
 
@@ -61,6 +62,7 @@ router.get(
 
 router.post(
     "/apply",
+    rtsePublicController.requireApplicationOpen,
     upload.fields([
         {
             name: "photo",

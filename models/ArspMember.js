@@ -262,6 +262,59 @@ const [result] = await db.query(sql, [
     }
  
 
+
+    // ==========================
+    // Member Self Profile Update
+    // ==========================
+    static async updateOwnProfile(id, data) {
+
+        const sql = `
+            UPDATE arsp_members
+            SET
+                full_name=?,
+                father_name=?,
+                mother_name=?,
+                gender=?,
+                dob=?,
+                blood_group=?,
+                occupation=?,
+                mobile=?,
+                email=?,
+                address=?,
+                district=?,
+                state=?,
+                pincode=?,
+                emergency_contact_name=?,
+                emergency_contact_relation=?,
+                emergency_contact_mobile=?,
+                photo=?
+            WHERE id=?
+        `;
+
+        const [result] = await db.query(sql, [
+            data.full_name,
+            data.father_name,
+            data.mother_name,
+            data.gender,
+            data.dob,
+            data.blood_group,
+            data.occupation,
+            data.mobile,
+            data.email,
+            data.address,
+            data.district,
+            data.state,
+            data.pincode,
+            data.emergency_contact_name,
+            data.emergency_contact_relation,
+            data.emergency_contact_mobile,
+            data.photo,
+            id
+        ]);
+
+        return result;
+    }
+
     // ==========================
     // Get All Members
     // ==========================

@@ -216,44 +216,90 @@ res.render(
 // =====================================
 
 exports.downloadIdCard = async (req, res) => {
-
     try {
 
-        const member = await ArspMember.getById(
+        // =====================================================
+        // ALWAYS LOAD THE LATEST MEMBER DATA FROM DATABASE
+        // Never use stale session/profile data for the ID card.
+        // =====================================================
 
-            req.session.arspMember.id
+        const memberId = req.session.arspMember.id;
 
-        );
+        // Prevent browser / Android WebView from reusing an old PDF
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+
+        const member = await ArspMember.getById(memberId);
 
         if (!member) {
-
             return res.status(404).send("Member not found.");
+        }
+
+        // =====================================================
+        // LOAD CURRENT MANAGEMENT POSITION
+        // =====================================================
+
+        const position =
+            await ArspManagementPosition.getByMemberId(member.id);
+
+        // Add the current position information to the member
+        // object used by the PDF generator.
+
+        if (position) {
+
+            member.designation =
+                position.designation || position.section || "ARSP Member";
+
+            member.section =
+                position.section || "-";
+
+            member.committee =
+                position.committee_name || "-";
+
+        } else {
+
+            member.designation = "ARSP Member";
+            member.section = "-";
+            member.committee = "-";
 
         }
 
-        const arspSettings = await ArspSetting.get();
+        // =====================================================
+        // LOAD LATEST ARSP SETTINGS
+        // =====================================================
 
-const cardSettings = await IdentityCardSetting.get();
+        const arspSettings =
+            await ArspSetting.get();
 
-return generateIdCard(
-    member,
-    arspSettings,
-    cardSettings,
-    res
-);
+        // =====================================================
+        // LOAD LATEST ID CARD SETTINGS
+        // =====================================================
+
+        const cardSettings =
+            await IdentityCardSetting.get();
+
+        // =====================================================
+        // GENERATE ID CARD USING FRESH DATABASE DATA
+        // =====================================================
+
+        return generateIdCard(
+            member,
+            arspSettings,
+            cardSettings,
+            res
+        );
 
     } catch (err) {
 
-        console.error(err);
+        console.error("❌ Member ID Card Error:", err);
 
-        res.status(500).send(
-
-            "Unable to generate PDF."
-
-        );
-
+        if (!res.headersSent) {
+            return res.status(500).send(
+                "Unable to generate PDF."
+            );
+        }
     }
-
 };
 
 
