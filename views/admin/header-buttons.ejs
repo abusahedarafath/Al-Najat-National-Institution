@@ -1,0 +1,192 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+            <div>
+                <h1>Header Buttons</h1>
+                <p>Manage the buttons displayed below the institution name in the website header.</p>
+            </div>
+
+            <a href="/admin/header-buttons/add" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Add Header Button
+            </a>
+        </div>
+
+        <% if (buttons && buttons.length) { %>
+
+            <div style="overflow-x:auto;">
+
+                <table class="admin-table">
+
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Button</th>
+                            <th>URL</th>
+                            <th>Colour</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% buttons.forEach(button => { %>
+
+                            <tr>
+
+                                <td>
+                                    <strong><%= button.display_order %></strong>
+                                </td>
+
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:10px;">
+
+                                        <% if (button.icon) { %>
+                                            <i
+                                                class="fas fa-<%= button.icon %>"
+                                                style="color:var(--primary);"
+                                            ></i>
+                                        <% } %>
+
+                                        <strong><%= button.title %></strong>
+
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <code><%= button.url %></code>
+                                </td>
+
+                                <td>
+
+                                    <div style="display:flex;align-items:center;gap:8px;">
+
+                                        <span
+                                            style="
+                                                display:inline-block;
+                                                width:28px;
+                                                height:28px;
+                                                border-radius:6px;
+                                                background:<%= button.button_color || '#0b6b35' %>;
+                                                border:1px solid #ddd;
+                                            "
+                                        ></span>
+
+                                        <code>
+                                            <%= button.button_color || '#0b6b35' %>
+                                        </code>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (button.status === "Active") { %>
+
+                                        <span class="badge badge-success">
+                                            Active
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-danger">
+                                            Inactive
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+
+                                        <a
+                                            href="/admin/header-buttons/<%= button.id %>/edit"
+                                            class="btn btn-sm btn-warning"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </a>
+
+                                        <form
+                                            method="POST"
+                                            action="/admin/header-buttons/<%= button.id %>/delete"
+                                            onsubmit="return confirm('Delete this header button?');"
+                                            style="display:inline;"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-danger"
+                                            >
+                                                <i class="fas fa-trash"></i>
+                                                Delete
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="card">
+
+                <div style="text-align:center;padding:40px 20px;">
+
+                    <i
+                        class="fas fa-hand-pointer"
+                        style="
+                            font-size:45px;
+                            color:var(--primary);
+                            margin-bottom:15px;
+                        "
+                    ></i>
+
+                    <h3>No Header Buttons Found</h3>
+
+                    <p>
+                        Add your first button to display it below
+                        the institution name in the website header.
+                    </p>
+
+                    <a
+                        href="/admin/header-buttons/add"
+                        class="btn btn-primary"
+                        style="margin-top:15px;"
+                    >
+                        <i class="fas fa-plus"></i>
+                        Add Header Button
+                    </a>
+
+                </div>
+
+            </div>
+
+        <% } %>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

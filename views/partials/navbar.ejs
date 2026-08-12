@@ -27,9 +27,24 @@
 
         </div>
 
-        <a href="/student/login" class="login-btn">
-            Student Login
-        </a>
+        <div class="header-buttons">
+            <% if (headerButtons && headerButtons.length) { %>
+                <% headerButtons.forEach(button => { %>
+                    <a
+                        href="<%= button.url %>"
+                        class="login-btn header-button"
+                        <% if (button.button_color) { %>
+                            style="background:<%= button.button_color %>;"
+                        <% } %>
+                    >
+                        <% if (button.icon) { %>
+                            <i class="fa-solid fa-<%= button.icon %>"></i>
+                        <% } %>
+                        <%= button.title %>
+                    </a>
+                <% }) %>
+            <% } %>
+        </div>
 
     </div>
 

@@ -1,0 +1,149 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+            <div>
+                <h1>Add Header Button</h1>
+                <p>Create a button that will appear below the institution name in the website header.</p>
+            </div>
+        </div>
+
+        <form
+            action="/admin/header-buttons/add"
+            method="POST"
+            class="admin-form"
+        >
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="title">Button Title *</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Example: Student Login"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="url">Button URL *</label>
+                    <input
+                        type="text"
+                        id="url"
+                        name="url"
+                        placeholder="/student/login"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="icon">Font Awesome Icon</label>
+                    <input
+                        type="text"
+                        id="icon"
+                        name="icon"
+                        placeholder="user"
+                    >
+                    <small>
+                        Enter only the icon name.
+                        Example: user, graduation-cap, phone
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="button_color">Button Colour</label>
+
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <input
+                            type="color"
+                            id="button_color_picker"
+                            value="#0b6b35"
+                            style="width:70px;height:46px;padding:4px;"
+                        >
+
+                        <input
+                            type="text"
+                            id="button_color"
+                            name="button_color"
+                            value="#0b6b35"
+                            placeholder="#0b6b35"
+                        >
+                    </div>
+
+                    <small>
+                        Choose any colour for this button.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="display_order">Display Order</label>
+                    <input
+                        type="number"
+                        id="display_order"
+                        name="display_order"
+                        value="1"
+                        min="1"
+                    >
+                    <small>
+                        Smaller numbers appear first.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="Active" selected>Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="fas fa-save"></i>
+                    Save Header Button
+                </button>
+
+                <a
+                    href="/admin/header-buttons"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>
+
+<script>
+    const colorPicker = document.getElementById("button_color_picker");
+    const colorInput = document.getElementById("button_color");
+
+    colorPicker.addEventListener("input", function () {
+        colorInput.value = this.value;
+    });
+
+    colorInput.addEventListener("input", function () {
+        if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+            colorPicker.value = this.value;
+        }
+    });
+</script>

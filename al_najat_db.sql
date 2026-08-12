@@ -2070,6 +2070,46 @@ COMMIT;
 SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
+-- Table structure for table `header_buttons`
+--
+
+DROP TABLE IF EXISTS `header_buttons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+
+CREATE TABLE `header_buttons` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL,
+  `icon` varchar(100) DEFAULT NULL,
+  `url` varchar(255) NOT NULL,
+  `button_color` varchar(20) DEFAULT 'primary',
+  `display_order` int(11) DEFAULT 1,
+  `status` enum('Active','Inactive') DEFAULT 'Active',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `header_buttons`
+--
+
+SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
+LOCK TABLES `header_buttons` WRITE;
+/*!40000 ALTER TABLE `header_buttons` DISABLE KEYS */;
+
+INSERT INTO `header_buttons` VALUES
+(1,'CHIEF CONTROLLER LOGIN','user-shield','/admin/login','#ba2222',1,'Active','2026-08-12 21:53:21','2026-08-12 21:53:21'),
+(2,'RTSE STUDENT LOGIN',NULL,'/rtse/student/login','#0066ff',2,'Active','2026-08-12 22:15:37','2026-08-12 22:15:37');
+
+/*!40000 ALTER TABLE `header_buttons` ENABLE KEYS */;
+UNLOCK TABLES;
+COMMIT;
+SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
+
+--
 -- Table structure for table `website_quick_buttons`
 --
 

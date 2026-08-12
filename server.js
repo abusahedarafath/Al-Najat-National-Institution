@@ -66,6 +66,7 @@ const welcomeSectionRoutes = require("./routes/welcomeSectionRoutes");
 const principalMessageRoutes = require("./routes/principalMessageRoutes");
 const chancellorMessageRoutes = require("./routes/chancellorMessageRoutes");
 const quickAccessRoutes = require("./routes/quickAccessRoutes");
+const headerButtonRoutes = require("./routes/headerButtonRoutes");
 const chairmanMessageRoutes = require("./routes/chairmanMessageRoutes");
 const siteSettingRoutes = require("./routes/siteSettingRoutes");
 const footerRoutes = require("./routes/footerRoutes");
@@ -201,6 +202,7 @@ app.use("/admin", welcomeSectionRoutes);
 app.use("/admin", principalMessageRoutes);
 app.use("/admin", chancellorMessageRoutes);
 app.use("/admin", quickAccessRoutes);
+app.use("/", headerButtonRoutes);
 app.use("/admin", chairmanMessageRoutes);
 app.use("/admin", siteSettingRoutes);
 

@@ -5,6 +5,7 @@ const FooterSetting = require("../models/FooterSetting");
 const FooterLink = require("../models/FooterLink");
 const FooterSocialLink = require("../models/FooterSocialLink");
 const News = require("../models/News");
+const HeaderButton = require("../models/HeaderButton");
 
 module.exports = async (req, res, next) => {
 
@@ -19,6 +20,7 @@ module.exports = async (req, res, next) => {
     res.locals.footerLinks = [];
 res.locals.footerSocialLinks = [];
     res.locals.latestNews = [];
+    res.locals.headerButtons = [];
 
 
     // =====================================
@@ -127,6 +129,19 @@ res.locals.footerSocialLinks = [];
             "Footer Social Links Error:",
             err
         );
+    }
+
+    // =====================================
+    // Header Buttons
+    // =====================================
+    try {
+        res.locals.headerButtons = await HeaderButton.getActive();
+    } catch (err) {
+        console.error(
+            "Header Buttons Load Error:",
+            err
+        );
+        res.locals.headerButtons = [];
     }
 
     // =====================================
