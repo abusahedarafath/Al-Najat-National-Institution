@@ -1,0 +1,176 @@
+<%- include("../partials/header") %>
+
+<style>
+
+    .rtse-student-login-page {
+        min-height: calc(100vh - 160px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+        background: #f5f7fb;
+    }
+
+    .rtse-login-card {
+        width: 100%;
+        max-width: 430px;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 35px rgba(0,0,0,.10);
+    }
+
+    .rtse-login-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .rtse-login-header h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+
+    .rtse-login-header p {
+        margin: 7px 0 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .rtse-login-group {
+        margin-bottom: 18px;
+    }
+
+    .rtse-login-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .rtse-login-group input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 13px;
+        border: 1px solid #d5d9e2;
+        border-radius: 9px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .rtse-login-group input:focus {
+        border-color: #1d4ed8;
+    }
+
+    .rtse-login-button {
+        width: 100%;
+        border: 0;
+        border-radius: 9px;
+        padding: 13px;
+        background: #1d4ed8;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .rtse-login-error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: 9px;
+        padding: 11px 12px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .rtse-login-help {
+        text-align: center;
+        margin-top: 18px;
+        font-size: 12px;
+        color: #777;
+    }
+
+</style>
+
+<div class="rtse-student-login-page">
+
+    <div class="rtse-login-card">
+
+        <div class="rtse-login-header">
+
+            <h1>RTSE Student Portal</h1>
+
+            <p>
+                Login to check your application status
+            </p>
+
+        </div>
+
+        <% if (error) { %>
+
+            <div class="rtse-login-error">
+                <%= error %>
+            </div>
+
+        <% } %>
+
+        <form
+            method="POST"
+            action="/rtse/student/login"
+        >
+
+            <div class="rtse-login-group">
+
+                <label for="registration_no">
+                    Registration Number
+                </label>
+
+                <input
+                    type="text"
+                    id="registration_no"
+                    name="registration_no"
+                    placeholder="Enter registration number"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="rtse-login-group">
+
+                <label for="mobile">
+                    Initial Password
+                </label>
+
+                <input
+                    type="password"
+                    id="mobile"
+                    name="mobile"
+                    placeholder="Enter your registered mobile number"
+                    autocomplete="current-password"
+                    inputmode="numeric"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="rtse-login-button"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <div class="rtse-login-help">
+            Initial password is your registered mobile number.
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

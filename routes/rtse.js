@@ -7,6 +7,9 @@ const path = require("path");
 const rtseController =
     require("../controllers/rtseController");
 
+const rtseStudentController = require("../controllers/rtseStudentController");
+const rtseStudentAuth = require("../middleware/rtseStudentAuth");
+
 // =====================================
 // Upload Configuration
 // =====================================
@@ -39,6 +42,33 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage
 });
+
+
+// =====================================
+// RTSE STUDENT PORTAL
+// =====================================
+
+router.get(
+    "/student/login",
+    rtseStudentController.loginPage
+);
+
+router.post(
+    "/student/login",
+    rtseStudentController.login
+);
+
+router.get(
+    "/student/dashboard",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.dashboard
+);
+
+router.get(
+    "/student/logout",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.logout
+);
 
 
 // =====================================
@@ -123,6 +153,17 @@ router.get(
 router.post(
     "/registration-slip",
     rtseController.registrationSlipSearch
+);
+
+
+// =====================================
+// AUTHENTICATED RTSE STUDENT APPROVED SLIP
+// =====================================
+
+router.get(
+    "/student/approved-slip",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.approvedSlip
 );
 
 

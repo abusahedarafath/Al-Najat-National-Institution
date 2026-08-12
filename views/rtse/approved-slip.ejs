@@ -1,0 +1,653 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/rtse.css">
+
+<div class="rtse-approved-page">
+
+    <div class="approved-slip">
+
+        <!-- HEADER -->
+        <div class="approved-header">
+
+            <div class="approved-logo">
+                <img
+                    src="<%= siteSettings && siteSettings.logo
+                        ? '/uploads/site-settings/' + siteSettings.logo
+                        : '/images/logo.png' %>"
+                    alt="Institution Logo"
+                >
+            </div>
+
+            <div class="approved-title">
+
+                <h1>
+                    <%= siteSettings && siteSettings.institution_name
+                        ? siteSettings.institution_name
+                        : 'AL-NAJAT NATIONAL INSTITUTION' %>
+                </h1>
+
+                <h2>
+                    Ratabari Talent Search Examination 2026
+                </h2>
+
+                <p>
+                    Organized by
+                    <strong>ARSP</strong>
+                    — Active Rural Social Progress
+                </p>
+
+                <div class="approved-document-title">
+                    APPROVED EXAMINATION SLIP
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVED BANNER -->
+        <div class="approved-banner">
+
+            <strong>APPLICATION APPROVED</strong>
+
+            <span>
+                Your application has been approved for the RTSE 2026 Examination.
+            </span>
+
+        </div>
+
+
+        <!-- REGISTRATION INFORMATION -->
+        <div class="approved-registration-box">
+
+            <div>
+                <span>Registration Number</span>
+                <strong class="approved-registration-number">
+                    <%= application.registration_no %>
+                </strong>
+            </div>
+
+            <div>
+                <span>Application Year</span>
+                <strong>
+                    <%= application.application_year %>
+                </strong>
+            </div>
+
+            <div>
+                <span>Section</span>
+                <strong>
+                    SECTION <%= application.section %>
+                </strong>
+            </div>
+
+            <div>
+                <span>Application Status</span>
+                <strong class="approved-status">
+                    ✓ APPROVED
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- CANDIDATE DETAILS -->
+        <div class="approved-section">
+
+            <div class="approved-section-title">
+                CANDIDATE DETAILS
+            </div>
+
+            <div class="approved-candidate-layout">
+
+                <div class="approved-photo">
+
+                    <% if (application.photo) { %>
+
+                        <img
+                            src="/uploads/rtse/<%= application.photo %>"
+                            alt="Candidate Photograph"
+                        >
+
+                    <% } else { %>
+
+                        <div class="approved-photo-placeholder">
+                            PHOTO
+                        </div>
+
+                    <% } %>
+
+                    <small>
+                        Candidate Photograph
+                    </small>
+
+                </div>
+
+
+                <div class="approved-details">
+
+                    <div>
+                        <span>Full Name</span>
+                        <strong>
+                            <%= application.full_name %>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Father's Name</span>
+                        <strong>
+                            <%= application.father_name %>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Mother's Name</span>
+                        <strong>
+                            <%= application.mother_name %>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Date of Birth</span>
+                        <strong>
+                            <%= application.dob %>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Gender</span>
+                        <strong>
+                            <%= application.gender %>
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXAMINATION DETAILS -->
+        <div class="approved-section">
+
+            <div class="approved-section-title">
+                EXAMINATION DETAILS
+            </div>
+
+            <div class="approved-grid">
+
+                <div>
+                    <span>School Name</span>
+                    <strong>
+                        <%= application.school_name %>
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Class</span>
+                    <strong>
+                        Class <%= application.class %>
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Section</span>
+                    <strong>
+                        SECTION <%= application.section %>
+                    </strong>
+                </div>
+
+                <div>
+                    <span>District</span>
+                    <strong>
+                        <%= application.district %>
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTACT DETAILS -->
+        <div class="approved-section">
+
+            <div class="approved-section-title">
+                CONTACT DETAILS
+            </div>
+
+            <div class="approved-grid">
+
+                <div>
+                    <span>Mobile Number</span>
+                    <strong>
+                        <%= application.mobile %>
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Email</span>
+                    <strong>
+                        <%= application.email || "Not provided" %>
+                    </strong>
+                </div>
+
+                <div>
+                    <span>State</span>
+                    <strong>
+                        <%= application.state %>
+                    </strong>
+                </div>
+
+                <div>
+                    <span>PIN Code</span>
+                    <strong>
+                        <%= application.pincode || "Not provided" %>
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="approved-address">
+                <span>Address</span>
+                <strong>
+                    <%= application.address || "Not provided" %>
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- FEE / APPROVAL INFORMATION -->
+        <div class="approved-fee-box">
+
+            <div class="approved-section-title">
+                EXAMINATION FEE & APPROVAL CONTACT
+            </div>
+
+            <p>
+                For examination fee submission or any clarification
+                regarding the approval of this application, please contact:
+            </p>
+
+            <strong>
+                ABU MD SAHID AHMED
+            </strong>
+
+            <span>
+                President, ARSP
+            </span>
+
+            <strong class="approved-phone">
+                +91 70997 39261
+            </strong>
+
+        </div>
+
+
+        <!-- INSTRUCTIONS -->
+        <div class="approved-instructions">
+
+            <h3>
+                IMPORTANT INSTRUCTIONS
+            </h3>
+
+            <ol>
+
+                <li>
+                    Keep this Approved Examination Slip safely for future reference.
+                </li>
+
+                <li>
+                    Your Registration Number will be required for future RTSE services.
+                </li>
+
+                <li>
+                    Roll Number, examination centre and examination schedule
+                    will be provided/published separately when available.
+                </li>
+
+                <li>
+                    Carry this slip when instructed by the examination authority.
+                </li>
+
+            </ol>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="approved-footer">
+
+            <div>
+                <strong>
+                    Ratabari Talent Search Examination 2026
+                </strong>
+
+                <br>
+
+                Organized by
+                <strong>ARSP</strong>
+                — Active Rural Social Progress
+            </div>
+
+            <div class="approved-signature">
+                Authorized Signatory
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+        <div class="approved-actions">
+
+            <button
+                onclick="window.print()"
+                class="btn-save"
+            >
+                Print / Save PDF
+            </button>
+
+            <a
+                href="/rtse/student/dashboard"
+                class="btn-view"
+            >
+                Student Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.rtse-approved-page {
+    padding: 25px 15px;
+    background: #f4f6f9;
+}
+
+.approved-slip {
+    max-width: 850px;
+    margin: auto;
+    background: #fff;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.approved-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 2px solid #222;
+    padding-bottom: 12px;
+}
+
+.approved-logo img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+}
+
+.approved-title {
+    flex: 1;
+    text-align: center;
+}
+
+.approved-title h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.approved-title h2 {
+    margin: 4px 0;
+    font-size: 17px;
+}
+
+.approved-title p {
+    margin: 3px 0;
+    font-size: 11px;
+}
+
+.approved-document-title {
+    margin-top: 7px;
+    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: .5px;
+}
+
+.approved-banner {
+    margin-top: 10px;
+    padding: 9px;
+    text-align: center;
+    border: 1px solid #198754;
+    border-radius: 5px;
+}
+
+.approved-banner strong {
+    display: block;
+    font-size: 15px;
+}
+
+.approved-banner span {
+    display: block;
+    margin-top: 3px;
+    font-size: 10px;
+}
+
+.approved-registration-box {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 10px;
+    border: 1px solid #bbb;
+}
+
+.approved-registration-box > div {
+    padding: 7px;
+    border-right: 1px solid #ddd;
+}
+
+.approved-registration-box > div:last-child {
+    border-right: none;
+}
+
+.approved-registration-box span,
+.approved-details span,
+.approved-grid span,
+.approved-address span {
+    display: block;
+    font-size: 9px;
+}
+
+.approved-registration-box strong,
+.approved-details strong,
+.approved-grid strong,
+.approved-address strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+}
+
+.approved-registration-number {
+    font-size: 13px !important;
+}
+
+.approved-status {
+    font-size: 11px !important;
+}
+
+.approved-section {
+    margin-top: 9px;
+    border: 1px solid #ccc;
+}
+
+.approved-section-title {
+    padding: 5px 7px;
+    font-weight: bold;
+    font-size: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.approved-candidate-layout {
+    display: flex;
+    gap: 12px;
+    padding: 7px;
+}
+
+.approved-photo {
+    width: 85px;
+    text-align: center;
+}
+
+.approved-photo img,
+.approved-photo-placeholder {
+    width: 75px;
+    height: 90px;
+    object-fit: cover;
+    border: 1px solid #aaa;
+}
+
+.approved-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.approved-photo small {
+    font-size: 7px;
+}
+
+.approved-details {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px 12px;
+}
+
+.approved-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    padding: 7px;
+}
+
+.approved-address {
+    padding: 0 7px 7px;
+}
+
+.approved-fee-box {
+    margin-top: 9px;
+    padding: 7px 9px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.approved-fee-box p {
+    margin: 3px 0;
+    font-size: 9px;
+}
+
+.approved-fee-box > strong {
+    display: block;
+    font-size: 11px;
+}
+
+.approved-fee-box > span {
+    display: block;
+    font-size: 9px;
+}
+
+.approved-phone {
+    margin-top: 2px;
+}
+
+.approved-instructions {
+    margin-top: 9px;
+    padding: 7px 9px;
+    border: 1px solid #ccc;
+}
+
+.approved-instructions h3 {
+    margin: 0 0 3px;
+    font-size: 10px;
+}
+
+.approved-instructions ol {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.approved-instructions li {
+    margin: 2px 0;
+    font-size: 8px;
+}
+
+.approved-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-top: 9px;
+    padding-top: 7px;
+    border-top: 1px solid #aaa;
+    font-size: 8px;
+}
+
+.approved-signature {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.approved-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 6mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    .rtse-approved-page {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .approved-slip {
+        max-width: none !important;
+        padding: 5px !important;
+        margin: 0 !important;
+    }
+
+    .approved-actions {
+        display: none !important;
+    }
+
+    .approved-slip,
+    .approved-section,
+    .approved-fee-box,
+    .approved-instructions {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+}
+
+</style>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,312 @@
+<%- include("../partials/header") %>
+
+<style>
+
+    .rtse-student-dashboard {
+        min-height: calc(100vh - 160px);
+        background: #f5f7fb;
+        padding: 25px 15px;
+    }
+
+    .rtse-dashboard-container {
+        max-width: 850px;
+        margin: auto;
+    }
+
+    .rtse-dashboard-header {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 25px rgba(0,0,0,.07);
+    }
+
+    .rtse-dashboard-header h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+
+    .rtse-dashboard-header p {
+        margin: 6px 0 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .rtse-student-card {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 25px rgba(0,0,0,.07);
+    }
+
+    .rtse-student-card h2 {
+        margin-top: 0;
+        font-size: 19px;
+    }
+
+    .rtse-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .rtse-info-item {
+        background: #f8fafc;
+        border-radius: 9px;
+        padding: 12px;
+    }
+
+    .rtse-info-label {
+        display: block;
+        color: #777;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .rtse-info-value {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .rtse-status-card {
+        text-align: center;
+        border-radius: 15px;
+        padding: 25px;
+        background: #ffffff;
+        box-shadow: 0 6px 25px rgba(0,0,0,.07);
+    }
+
+    .rtse-status-card h2 {
+        margin: 0 0 15px;
+        font-size: 18px;
+    }
+
+    .rtse-status {
+        display: inline-block;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .rtse-status.pending {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .rtse-status.approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .rtse-status.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .rtse-status.other {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .rtse-dashboard-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .rtse-logout {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: #374151;
+        color: #fff;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+
+        .rtse-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .rtse-dashboard-header h1 {
+            font-size: 21px;
+        }
+
+        .rtse-student-card,
+        .rtse-dashboard-header,
+        .rtse-status-card {
+            padding: 17px;
+        }
+
+    }
+
+</style>
+
+<div class="rtse-student-dashboard">
+
+    <div class="rtse-dashboard-container">
+
+        <div class="rtse-dashboard-header">
+
+            <h1>
+                RTSE Student Dashboard
+            </h1>
+
+            <p>
+                RTSE <%= application.application_year %>
+                — Application Status
+            </p>
+
+        </div>
+
+
+        <div class="rtse-student-card">
+
+            <h2>
+                Student Information
+            </h2>
+
+            <div class="rtse-info-grid">
+
+                <div class="rtse-info-item">
+                    <span class="rtse-info-label">
+                        Student Name
+                    </span>
+
+                    <span class="rtse-info-value">
+                        <%= application.full_name %>
+                    </span>
+                </div>
+
+
+                <div class="rtse-info-item">
+                    <span class="rtse-info-label">
+                        Registration Number
+                    </span>
+
+                    <span class="rtse-info-value">
+                        <%= application.registration_no %>
+                    </span>
+                </div>
+
+
+                <div class="rtse-info-item">
+                    <span class="rtse-info-label">
+                        Class
+                    </span>
+
+                    <span class="rtse-info-value">
+                        Class <%= application.class %>
+                    </span>
+                </div>
+
+
+                <div class="rtse-info-item">
+                    <span class="rtse-info-label">
+                        Section
+                    </span>
+
+                    <span class="rtse-info-value">
+                        Section <%= application.section %>
+                    </span>
+                </div>
+
+
+                <div class="rtse-info-item">
+                    <span class="rtse-info-label">
+                        School
+                    </span>
+
+                    <span class="rtse-info-value">
+                        <%= application.school_name %>
+                    </span>
+                </div>
+
+
+                <div class="rtse-info-item">
+                    <span class="rtse-info-label">
+                        Application Year
+                    </span>
+
+                    <span class="rtse-info-value">
+                        <%= application.application_year %>
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="rtse-status-card">
+
+            <h2>
+                APPLICATION STATUS
+            </h2>
+
+            <%
+                const status =
+                    String(application.status || "").toLowerCase();
+
+                let statusClass = "other";
+
+                if (status === "pending") {
+                    statusClass = "pending";
+                } else if (status === "approved") {
+                    statusClass = "approved";
+                } else if (status === "rejected") {
+                    statusClass = "rejected";
+                }
+            %>
+
+            <span class="rtse-status <%= statusClass %>">
+
+                <% if (status === "pending") { %>
+                    🟠 Pending Approval
+                <% } else if (status === "approved") { %>
+                    🟢 Approved
+                <% } else if (status === "rejected") { %>
+                    🔴 Rejected
+                <% } else { %>
+                    <%= application.status || "Unknown" %>
+                <% } %>
+
+            </span>
+
+            
+            <% if (String(application.status || "").toLowerCase() === "approved") { %>
+
+                <div class="rtse-approved-slip-action">
+
+                    <a
+                        href="/rtse/student/approved-slip"
+                        class="rtse-approved-slip-button"
+                    >
+                        ✓ View Approved Examination Slip
+                    </a>
+
+                </div>
+
+            <% } %>
+
+<div class="rtse-dashboard-actions">
+
+                <a
+                    href="/rtse/student/logout"
+                    class="rtse-logout"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

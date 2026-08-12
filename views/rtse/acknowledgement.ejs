@@ -4,6 +4,22 @@
 <link rel="stylesheet" href="/css/rtse.css">
 
 <div class="rtse-slip-page">
+<!-- RTSE-FEE-APPROVAL-NOTICE -->
+<div class="rtse-fee-approval-notice">
+    <div class="notice-title">
+        IMPORTANT NOTICE
+    </div>
+
+    <div class="notice-text">
+        Applicants are requested to contact
+        <strong>ABU MD SAHID AHMED</strong><br>President, ARSP<br><strong>+91 70997 39261</strong>
+        for submission of the examination fee.
+        After submitting the examination fee, please check the
+        <strong>Approval Status</strong>
+        in the final slip of your RTSE Student Application.
+    </div>
+</div>
+
 
     <div class="rtse-slip">
 
@@ -941,6 +957,245 @@
 
 }
 
+
+/* =========================================
+   RTSE Fee & Approval Notice
+   ========================================= */
+.rtse-fee-approval-notice {
+    margin: 18px 0;
+    padding: 14px 16px;
+    border: 1.5px solid #c99a00;
+    border-radius: 8px;
+    background: #fff8df;
+    color: #222;
+    page-break-inside: avoid;
+}
+
+.rtse-fee-approval-notice .notice-title {
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #8a6500;
+    letter-spacing: .3px;
+}
+
+.rtse-fee-approval-notice .notice-text {
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.rtse-fee-approval-notice strong {
+    font-weight: 800;
+}
+
 </style>
+
+
+<!-- RTSE-ONE-PAGE-PRINT-START -->
+<style>
+/*
+ * RTSE 2026 REGISTRATION SLIP
+ * Compact single-page A4 print layout.
+ *
+ * IMPORTANT:
+ * - No student/application information is removed.
+ * - The slip is intentionally compact.
+ * - Remaining A4 space may remain blank.
+ */
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 6mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    body {
+        background: #fff !important;
+        font-size: 9px !important;
+        line-height: 1.15 !important;
+    }
+
+    .rtse-slip-page {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /*
+     * Fee + approval notice
+     */
+    .rtse-fee-approval-notice {
+        margin: 0 0 5px 0 !important;
+        padding: 5px 8px !important;
+        border-radius: 5px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .rtse-fee-approval-notice .notice-title {
+        margin: 0 0 2px 0 !important;
+        font-size: 9px !important;
+        line-height: 1.1 !important;
+    }
+
+    .rtse-fee-approval-notice .notice-text {
+        margin: 0 !important;
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+    }
+
+    /*
+     * Main slip
+     */
+    .rtse-slip {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 7px !important;
+        box-sizing: border-box !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .slip-header {
+        padding-bottom: 5px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .slip-header h1 {
+        margin: 0 !important;
+        font-size: 16px !important;
+        line-height: 1.05 !important;
+    }
+
+    .slip-header h2 {
+        margin: 2px 0 !important;
+        font-size: 12px !important;
+        line-height: 1.05 !important;
+    }
+
+    .slip-header p,
+    .slip-header div {
+        line-height: 1.1 !important;
+    }
+
+    /*
+     * Compact all sections without deleting content.
+     */
+    .rtse-slip h3,
+    .rtse-slip h4 {
+        margin-top: 4px !important;
+        margin-bottom: 2px !important;
+        padding: 3px 5px !important;
+        font-size: 9px !important;
+        line-height: 1.1 !important;
+    }
+
+    .rtse-slip table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin: 0 !important;
+    }
+
+    .rtse-slip table td,
+    .rtse-slip table th {
+        padding: 2px 4px !important;
+        font-size: 8px !important;
+        line-height: 1.15 !important;
+    }
+
+    .rtse-slip p {
+        margin: 1px 0 !important;
+        line-height: 1.15 !important;
+    }
+
+    .rtse-slip .candidate-details,
+    .rtse-slip .exam-details,
+    .rtse-slip .contact-details,
+    .rtse-slip .application-details {
+        margin-top: 4px !important;
+        padding: 4px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /*
+     * Images/photos should remain visible but compact.
+     */
+    .rtse-slip img {
+        max-width: 100% !important;
+    }
+
+    /*
+     * Instructions
+     */
+    .rtse-slip .instructions,
+    .rtse-slip .important-instructions {
+        margin-top: 4px !important;
+        padding: 4px 6px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .rtse-slip .instructions p,
+    .rtse-slip .important-instructions p,
+    .rtse-slip .instructions li,
+    .rtse-slip .important-instructions li {
+        margin: 1px 0 !important;
+        font-size: 7.5px !important;
+        line-height: 1.15 !important;
+    }
+
+    /*
+     * Footer/signature
+     */
+    .slip-footer {
+        margin-top: 4px !important;
+        padding-top: 4px !important;
+        font-size: 7.5px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .slip-footer strong {
+        font-size: 8px !important;
+    }
+
+    .footer-arsp {
+        font-size: 9px !important;
+    }
+
+    /*
+     * Prevent accidental page creation from generic elements.
+     */
+    .rtse-slip-page,
+    .rtse-slip-page * {
+        page-break-before: auto !important;
+        page-break-after: auto !important;
+    }
+
+    .rtse-slip-page,
+    .rtse-slip {
+        overflow: visible !important;
+    }
+}
+
+/*
+ * Screen preview remains readable.
+ * The compact sizing above applies only when printing/PDF.
+ */
+</style>
+<!-- RTSE-ONE-PAGE-PRINT-END -->
+
 
 <%- include("../partials/footer") %>
