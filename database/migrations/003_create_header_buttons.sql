@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS header_buttons (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    icon VARCHAR(100) DEFAULT NULL,
+    url VARCHAR(255) NOT NULL,
+    button_color VARCHAR(20) DEFAULT 'primary',
+    display_order INT(11) DEFAULT 1,
+    status ENUM('Active','Inactive') DEFAULT 'Active',
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_uca1400_ai_ci;
