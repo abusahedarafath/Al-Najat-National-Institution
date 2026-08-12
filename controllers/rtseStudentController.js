@@ -277,12 +277,20 @@ exports.approvedSlip = async (req, res) => {
 
 exports.logout = (req, res) => {
 
-    req.session.destroy(() => {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
 
-        res.redirect(
-            "/rtse/student/login"
-        );
+    req.session.destroy((err) => {
 
+        res.clearCookie("connect.sid", {
+            path: "/"
+        });
+
+        if (err) {
+            console.error("RTSE student logout session error:", err);
+        }
+
+        return res.redirect("/rtse/student/login");
     });
-
 };

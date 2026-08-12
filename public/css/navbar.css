@@ -401,3 +401,70 @@
         font-size:14px;
     }
 }
+
+/* =========================================================
+   RTSE STUDENT HEADER - MOBILE / RESPONSIVE FIX
+   Scoped only to RTSE student pages
+   ========================================================= */
+
+body:has(.rtse-student-header-only) .rtse-student-header-only {
+    width: 100%;
+    margin: 0;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-header-only .header-top {
+    min-height: 0;
+    padding: 18px 20px;
+    box-sizing: border-box;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-header-only .brand {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    gap: 0;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-header-only .logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-header-only .brand-text {
+    text-align: center;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-header-only .brand-text h1 {
+    margin: 8px 0 0;
+    font-size: 21px;
+    line-height: 1.25;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-header-only .brand-text p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+
+    body:has(.rtse-student-header-only) .rtse-student-header-only .header-top {
+        padding: 14px 15px 16px;
+    }
+
+    body:has(.rtse-student-header-only) .rtse-student-header-only .logo {
+        width: 62px;
+        height: 62px;
+    }
+
+    body:has(.rtse-student-header-only) .rtse-student-header-only .brand-text h1 {
+        font-size: 18px;
+        margin-top: 7px;
+    }
+
+    body:has(.rtse-student-header-only) .rtse-student-header-only .brand-text p {
+        font-size: 11px;
+        margin-top: 4px;
+    }
+}

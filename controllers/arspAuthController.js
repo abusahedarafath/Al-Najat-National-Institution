@@ -372,26 +372,22 @@ exports.activity = async (req, res) => {
 
 exports.logout = async (req, res) => {
 
-    if (req.session.arspMember) {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
 
-        await ArspActivityLog.create(
+    req.session.destroy((err) => {
 
-            req.session.arspMember.id,
+        res.clearCookie("connect.sid", {
+            path: "/"
+        });
 
-            "Logged out",
+        if (err) {
+            console.error("Member logout session error:", err);
+        }
 
-            req.ip
-
-        );
-
-    }
-
-    req.session.destroy(() => {
-
-        res.redirect("/arsp/login");
-
+        return res.redirect("/arsp/login");
     });
-
 };
 
 // =====================================

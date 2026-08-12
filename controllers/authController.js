@@ -232,12 +232,20 @@ exports.login = async (req, res) => {
 
 exports.logout = (req, res) => {
 
-    req.session.destroy(() => {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
 
-        res.redirect(
-            "/admin/login"
-        );
+    req.session.destroy((err) => {
 
+        res.clearCookie("connect.sid", {
+            path: "/"
+        });
+
+        if (err) {
+            console.error("Admin logout session error:", err);
+        }
+
+        return res.redirect("/admin/login");
     });
-
 };

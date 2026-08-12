@@ -1,5 +1,4 @@
-exports.isLoggedIn = (req, res, next) => {
-
+module.exports = (req, res, next) => {
     res.setHeader(
         "Cache-Control",
         "no-store, no-cache, must-revalidate, proxy-revalidate"
@@ -7,12 +6,5 @@ exports.isLoggedIn = (req, res, next) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
 
-    if (
-        req.session &&
-        req.session.rtseStudent
-    ) {
-        return next();
-    }
-
-    return res.redirect("/rtse/student/login");
+    next();
 };

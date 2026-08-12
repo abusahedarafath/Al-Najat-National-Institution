@@ -5,6 +5,13 @@ const User = require("../models/userModel");
 // =====================================
 exports.isLoggedIn = async (req, res, next) => {
 
+    res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
     if (!req.session.user) {
         return res.redirect("/admin/login");
     }
@@ -17,6 +24,13 @@ exports.isLoggedIn = async (req, res, next) => {
 // Admin Authentication
 // =====================================
 exports.isAdmin = async (req, res, next) => {
+
+    res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
 
     // ---------------------------------
     // Not logged in
