@@ -578,6 +578,96 @@
 
                     </table>
 
+                    <!-- RTSE-DASHBOARD-PER-PAGE -->
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:flex-end;
+                            align-items:center;
+                            gap:8px;
+                            flex-wrap:wrap;
+                            margin:15px 0;
+                        ">
+
+                        <label
+                            for="rtsePerPage"
+                            style="font-weight:600;">
+                            Applications per page:
+                        </label>
+
+                        <select
+                            id="rtsePerPage"
+                            onchange="changeRtsePerPage(this.value)"
+                            style="
+                                padding:7px 12px;
+                                border:1px solid #ddd;
+                                border-radius:6px;
+                                background:#fff;
+                            ">
+
+                            <% [10, 25, 50, 100].forEach(function(size) { %>
+                                <option
+                                    value="<%= size %>"
+                                    <%= perPage === size ? "selected" : "" %>>
+                                    <%= size %>
+                                </option>
+                            <% }) %>
+
+                        </select>
+
+                    </div>
+
+                    <script>
+                        function changeRtsePerPage(value) {
+                            window.location.href =
+                                "/admin/rtse?perPage=" +
+                                encodeURIComponent(value);
+                        }
+                    </script>
+
+                    <!-- RTSE-DASHBOARD-PAGINATION -->
+                    <% if (typeof totalPages !== "undefined" && totalPages > 1) { %>
+
+                        <div
+                            style="
+                                display:flex;
+                                justify-content:center;
+                                align-items:center;
+                                gap:10px;
+                                flex-wrap:wrap;
+                                margin:20px 0;
+                            ">
+
+                            <% if (page > 1) { %>
+                                <a
+                                    href="/admin/rtse?page=<%= page - 1 %>"
+                                    class="btn btn-secondary">
+                                    <i class="fas fa-chevron-left"></i>
+                                    Previous
+                                </a>
+                            <% } %>
+
+                            <span
+                                style="
+                                    padding:8px 14px;
+                                    font-weight:600;
+                                ">
+                                Page <%= page %> of <%= totalPages %>
+                            </span>
+
+                            <% if (page < totalPages) { %>
+                                <a
+                                    href="/admin/rtse?page=<%= page + 1 %>"
+                                    class="btn btn-primary">
+                                    Next
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <% } %>
+
+                        </div>
+
+                    <% } %>
+
                 </div>
 
             </div>
