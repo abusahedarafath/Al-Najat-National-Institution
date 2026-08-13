@@ -34,37 +34,6 @@ exports.dashboard = async (req, res) => {
 
     try {
 
-        const page =
-            Math.max(1, parseInt(req.query.page, 10) || 1);
-
-        const allowedPerPage = [10, 25, 50, 100];
-
-        const requestedPerPage =
-            parseInt(req.query.perPage, 10) || 10;
-
-        const perPage =
-            allowedPerPage.includes(requestedPerPage)
-                ? requestedPerPage
-                : 10;
-
-        const offset =
-            (page - 1) * perPage;
-
-        const applications =
-            await RtseApplication.getDashboardApplications(
-                perPage,
-                offset
-            );
-
-        const applicationCount =
-            await RtseApplication.getDashboardApplicationCount();
-
-        const totalPages =
-            Math.max(
-                1,
-                Math.ceil(applicationCount / perPage)
-            );
-
         const stats =
             await RtseApplication.getDashboardStats();
 
@@ -90,16 +59,6 @@ console.log("setting:", setting);
             {
 
                 title: "RTSE Dashboard",
-
-                applications,
-
-                page,
-
-                perPage,
-
-                applicationCount,
-
-                totalPages,
 
                 total: stats.total || 0,
 
@@ -136,6 +95,73 @@ console.log("setting:", setting);
     }
 
 };
+
+// =====================================
+// RTSE Student Applications
+// =====================================
+
+exports.applicationsPage = async (req, res) => {
+
+    try {
+
+        const page =
+            Math.max(1, parseInt(req.query.page, 10) || 1);
+
+        const allowedPerPage = [10, 25, 50, 100];
+
+        const requestedPerPage =
+            parseInt(req.query.perPage, 10) || 10;
+
+        const perPage =
+            allowedPerPage.includes(requestedPerPage)
+                ? requestedPerPage
+                : 10;
+
+        const offset =
+            (page - 1) * perPage;
+
+        const applications =
+            await RtseApplication.getDashboardApplications(
+                perPage,
+                offset
+            );
+
+        const applicationCount =
+            await RtseApplication.getDashboardApplicationCount();
+
+        const totalPages =
+            Math.max(
+                1,
+                Math.ceil(applicationCount / perPage)
+            );
+
+        res.render(
+            "admin/rtse/applications",
+            {
+                title: "RTSE Student Applications",
+                applications,
+                page,
+                perPage,
+                applicationCount,
+                totalPages
+            }
+        );
+
+    } catch (err) {
+
+        console.error("RTSE Applications Load Error:", err);
+
+        req.flash(
+            "error",
+            "Unable to load RTSE Student Applications."
+        );
+
+        res.redirect("/admin/rtse");
+
+    }
+
+};
+
 
 // =====================================
 // Application Details

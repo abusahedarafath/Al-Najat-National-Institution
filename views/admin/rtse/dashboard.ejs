@@ -350,379 +350,43 @@
 
     </div>
 
-    <div id="rtseDashboardSearchResult"
-         style="margin-top:10px;font-size:13px;color:#666;">
-    </div>
-</div>
-
-<table class="admin-table" id="rtseApplicationTable">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Reg. No.
-                                </th>
-
-                                <th>
-                                    Photo
-                                </th>
-
-                                <th>
-                                    Student
-                                </th>
-
-                                <th>
-                                    School
-                                </th>
-
-                                <th>
-                                    Class
-                                </th>
-
-                                <th>
-                                    Section
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th width="380">
-                                    Actions
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            <% applications.forEach(application=>{ %>
-
-                                <tr>
-
-                                    <!-- REGISTRATION -->
-
-                                    <td>
-
-                                        <strong>
-                                            <%= application.registration_no %>
-                                        </strong>
-
-                                    </td>
-
-
-                                    <!-- PHOTO -->
-
-                                    <td>
-
-                                        <% if(application.photo){ %>
-
-                                            <img
-                                                src="/uploads/rtse/<%= application.photo %>"
-                                                style="width:60px;height:60px;border-radius:50%;object-fit:cover;"
-                                            >
-
-                                        <% } else { %>
-
-                                            -
-
-                                        <% } %>
-
-                                    </td>
-
-
-                                    <!-- STUDENT -->
-
-                                    <td>
-
-                                        <strong>
-                                            <%= application.full_name %>
-                                        </strong>
-
-                                        <br>
-
-                                        <small>
-                                            <%= application.mobile %>
-                                        </small>
-
-                                    </td>
-
-
-                                    <!-- SCHOOL -->
-
-                                    <td>
-                                        <%= application.school_name %>
-                                    </td>
-
-
-                                    <!-- CLASS -->
-
-                                    <td>
-                                        <%= application.class %>
-                                    </td>
-
-
-                                    <!-- SECTION -->
-
-                                    <td>
-
-                                        <strong>
-                                            <%= application.section %>
-                                        </strong>
-
-                                    </td>
-
-
-                                    <!-- STATUS -->
-                                    <td>
-                                        <% if(application.status === "Approved"){ %>
-                                            <span class="badge badge-success">
-                                                Approved
-                                            </span>
-
-                                        <% } else if(application.status === "Rejected"){ %>
-                                            <span class="badge badge-danger">
-                                                Rejected
-                                            </span>
-
-                                        <% } else { %>
-                                            <span class="badge badge-warning">
-                                                Pending
-                                            </span>
-                                        <% } %>
-
-                                        <% if(application.roll_no){ %>
-                                            <br>
-                                            <small>
-                                                <strong>
-                                                    <%= application.roll_no %>
-                                                </strong>
-                                            </small>
-                                        <% } %>
-                                    </td>
-
-                                    <td>
-
-                                        <a
-                                            href="/admin/rtse/application/<%= application.id %>"
-                                            class="btn-view">
-                                            View
-                                        </a>
-
-                                        <a
-                                            href="/admin/rtse/application/<%= application.id %>/edit"
-                                            class="btn-save">
-                                            Edit
-                                        </a>
-
-                                        <% if(application.status === "Pending"){ %>
-
-                                            <a
-                                                href="/admin/rtse/application/<%= application.id %>/approve"
-                                                class="btn-save">
-                                                Approve
-                                            </a>
-
-                                            <a
-                                                href="/admin/rtse/application/<%= application.id %>/reject"
-                                                class="btn-warning">
-                                                Reject
-                                            </a>
-
-                                        <% } else if(application.status === "Approved"){ %>
-
-                                            <span
-                                                class="btn-save"
-                                                style="cursor:default;background:#28a745;">
-                                                ✓ Approved
-                                            </span>
-
-                                            <% if(application.roll_no && application.admit_generated == 1){ %>
-
-                                                <a
-                                                    href="/admin/rtse/application/<%= application.id %>/admit-card"
-                                                    class="btn-view">
-                                                    Admit Card
-                                                </a>
-
-                                            <% } %>
-
-                                        <% } else if(application.status === "Rejected"){ %>
-
-                                            <a
-                                                href="/admin/rtse/application/<%= application.id %>/approve"
-                                                class="btn-save"
-                                                onclick="return confirm('Approve this rejected application?');">
-                                                Approve
-                                            </a>
-
-                                            <span
-                                                class="btn-danger"
-                                                style="cursor:default;">
-                                                ✗ Rejected
-                                            </span>
-
-                                        <% } %>
-
-                                    </td>
-
-                                </tr>
-
-                            <% }) %>
-
-                        </tbody>
-
-                    </table>
-
-                    <!-- RTSE-DASHBOARD-PER-PAGE -->
-                    <div
-                        style="
-                            display:flex;
-                            justify-content:flex-end;
-                            align-items:center;
-                            gap:8px;
-                            flex-wrap:wrap;
-                            margin:15px 0;
-                        ">
-
-                        <label
-                            for="rtsePerPage"
-                            style="font-weight:600;">
-                            Applications per page:
-                        </label>
-
-                        <select
-                            id="rtsePerPage"
-                            onchange="changeRtsePerPage(this.value)"
-                            style="
-                                padding:7px 12px;
-                                border:1px solid #ddd;
-                                border-radius:6px;
-                                background:#fff;
-                            ">
-
-                            <% [10, 25, 50, 100].forEach(function(size) { %>
-                                <option
-                                    value="<%= size %>"
-                                    <%= perPage === size ? "selected" : "" %>>
-                                    <%= size %>
-                                </option>
-                            <% }) %>
-
-                        </select>
-
-                    </div>
-
-                    <script>
-                        function changeRtsePerPage(value) {
-                            window.location.href =
-                                "/admin/rtse?perPage=" +
-                                encodeURIComponent(value);
-                        }
-                    </script>
-
-                    <!-- RTSE-DASHBOARD-PAGINATION -->
-                    <% if (typeof totalPages !== "undefined" && totalPages > 1) { %>
-
-                        <div
-                            style="
-                                display:flex;
-                                justify-content:center;
-                                align-items:center;
-                                gap:10px;
-                                flex-wrap:wrap;
-                                margin:20px 0;
-                            ">
-
-                            <% if (page > 1) { %>
-                                <a
-                                    href="/admin/rtse?page=<%= page - 1 %>"
-                                    class="btn btn-secondary">
-                                    <i class="fas fa-chevron-left"></i>
-                                    Previous
-                                </a>
-                            <% } %>
-
-                            <span
-                                style="
-                                    padding:8px 14px;
-                                    font-weight:600;
-                                ">
-                                Page <%= page %> of <%= totalPages %>
-                            </span>
-
-                            <% if (page < totalPages) { %>
-                                <a
-                                    href="/admin/rtse?page=<%= page + 1 %>"
-                                    class="btn btn-primary">
-                                    Next
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            <% } %>
-
-                        </div>
-
-                    <% } %>
-
-                </div>
+    
 
             </div>
 
         </div>
+
+    <div
+        style="
+            display:flex;
+            justify-content:center;
+            margin:30px 0;
+        ">
+
+        <a
+            href="/admin/rtse/applications"
+            class="btn-save"
+            style="
+                display:inline-flex;
+                align-items:center;
+                gap:10px;
+                padding:14px 24px;
+                font-size:16px;
+            ">
+
+            <i class="fas fa-users"></i>
+            RTSE Student Applications
+            <i class="fas fa-arrow-right"></i>
+
+        </a>
+
+    </div>
 
     </main>
 
 </div>
 
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    const searchInput = document.getElementById("rtseDashboardSearch");
-    const resultText = document.getElementById("rtseDashboardSearchResult");
-    const table = document.getElementById("rtseApplicationTable");
-
-    if (!searchInput || !table) return;
-
-    const rows = Array.from(
-        table.querySelectorAll("tbody tr")
-    );
-
-    function filterApplications() {
-
-        const query = searchInput.value.trim().toLowerCase();
-        let visible = 0;
-
-        rows.forEach(row => {
-
-            const text = row.textContent
-                .toLowerCase()
-                .replace(/\s+/g, " ");
-
-            const match = !query || text.includes(query);
-
-            row.style.display = match ? "" : "none";
-
-            if (match) visible++;
-        });
-
-        if (!query) {
-            resultText.textContent = "";
-        } else {
-            resultText.textContent =
-                visible + (visible === 1
-                    ? " application found."
-                    : " applications found.");
-        }
-    }
-
-    searchInput.addEventListener("input", filterApplications);
-
-});
-</script>
 
 <%- include("../partials/footer") %>

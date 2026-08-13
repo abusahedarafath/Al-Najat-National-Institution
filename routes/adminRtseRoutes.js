@@ -21,6 +21,20 @@ router.get(
 
 );
 
+// =====================================
+// RTSE Student Applications
+// =====================================
+
+router.get(
+
+    "/rtse/applications",
+
+    auth.isAdmin,
+
+    adminRtseController.applicationsPage
+
+);
+
 
 // =====================================
 // Application Profile
