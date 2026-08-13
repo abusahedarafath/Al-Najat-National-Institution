@@ -52,6 +52,14 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input
+                                type="date"
+                                name="dob"
+                                value="<%= application.dob ? new Date(application.dob).toISOString().split('T')[0] : '' %>">
+                        </div>
+
+                        <div class="form-group">
                             <label>Mobile</label>
                             <input
                                 type="text"
