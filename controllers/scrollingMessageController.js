@@ -1,4 +1,5 @@
 const ScrollingMessage = require("../models/ScrollingMessage");
+const { indiaToUtc, utcToIndia } = require("../utils/indiaDateTime");
 
 exports.index = async (req, res) => {
     try {
@@ -30,8 +31,8 @@ exports.create = async (req, res) => {
             text_color: req.body.text_color,
             display_order: req.body.display_order,
             status: req.body.status,
-            start_date: req.body.start_date || null,
-            end_date: req.body.end_date || null
+            start_date: indiaToUtc(req.body.start_date),
+            end_date: indiaToUtc(req.body.end_date)
         });
 
         req.flash("success", "Scrolling Message added successfully.");
@@ -53,6 +54,9 @@ exports.editPage = async (req, res) => {
             return res.redirect("/admin/scrolling-messages");
         }
 
+        message.start_date = utcToIndia(message.start_date);
+        message.end_date = utcToIndia(message.end_date);
+
         res.render("admin/edit-scrolling-message", {
             title: "Edit Scrolling Message",
             message
@@ -73,8 +77,8 @@ exports.update = async (req, res) => {
             text_color: req.body.text_color,
             display_order: req.body.display_order,
             status: req.body.status,
-            start_date: req.body.start_date || null,
-            end_date: req.body.end_date || null
+            start_date: indiaToUtc(req.body.start_date),
+            end_date: indiaToUtc(req.body.end_date)
         });
 
         req.flash("success", "Scrolling Message updated successfully.");
