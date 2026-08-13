@@ -2175,3 +2175,8 @@ body{
     }
 
 }
+
+/* Keep the active admin section expanded */
+.sidebar-parent.open + .sidebar-children {
+    display: block;
+}

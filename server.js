@@ -115,6 +115,7 @@ app.use(flash());
 
 // Global Flash Variables
 app.use((req, res, next) => {
+    res.locals.currentPath = req.path;
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.info = req.flash("info");
