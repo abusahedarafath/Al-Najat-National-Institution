@@ -1,0 +1,256 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Scrolling Messages</h1>
+                <p>
+                    Manage the announcements displayed between the
+                    website header and navigation bar.
+                </p>
+            </div>
+
+            <a
+                href="/admin/scrolling-messages/add"
+                class="btn btn-primary"
+            >
+                <i class="fas fa-plus"></i>
+                Add Scrolling Message
+            </a>
+
+        </div>
+
+        <% if (messages && messages.length) { %>
+
+            <div style="overflow-x:auto;">
+
+                <table class="admin-table">
+
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Message</th>
+                            <th>Colour</th>
+                            <th>URL</th>
+                            <th>Schedule</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% messages.forEach(message => { %>
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        <%= message.display_order %>
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <strong
+                                        style="color:<%= message.text_color || '#16246D' %>;"
+                                    >
+                                        <%= message.message %>
+                                    </strong>
+                                </td>
+
+                                <td>
+
+                                    <div
+                                        style="
+                                            display:flex;
+                                            align-items:center;
+                                            gap:8px;
+                                        "
+                                    >
+
+                                        <span
+                                            style="
+                                                display:inline-block;
+                                                width:28px;
+                                                height:28px;
+                                                border-radius:6px;
+                                                background:<%= message.text_color || '#16246D' %>;
+                                                border:1px solid #ddd;
+                                            "
+                                        ></span>
+
+                                        <code>
+                                            <%= message.text_color || '#16246D' %>
+                                        </code>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (message.url) { %>
+
+                                        <code>
+                                            <%= message.url %>
+                                        </code>
+
+                                    <% } else { %>
+
+                                        <span style="color:#888;">
+                                            No link
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (message.start_date || message.end_date) { %>
+
+                                        <small>
+
+                                            <% if (message.start_date) { %>
+                                                From:
+                                                <%= new Date(message.start_date).toLocaleString() %>
+                                            <% } %>
+
+                                            <% if (message.end_date) { %>
+                                                <br>
+                                                Until:
+                                                <%= new Date(message.end_date).toLocaleString() %>
+                                            <% } %>
+
+                                        </small>
+
+                                    <% } else { %>
+
+                                        <span style="color:#888;">
+                                            Always
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <% if (message.status === "Active") { %>
+
+                                        <span class="badge badge-success">
+                                            Active
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-danger">
+                                            Inactive
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div
+                                        style="
+                                            display:flex;
+                                            gap:6px;
+                                            flex-wrap:wrap;
+                                        "
+                                    >
+
+                                        <a
+                                            href="/admin/scrolling-messages/<%= message.id %>/edit"
+                                            class="btn btn-sm btn-warning"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </a>
+
+                                        <form
+                                            method="POST"
+                                            action="/admin/scrolling-messages/<%= message.id %>/delete"
+                                            onsubmit="return confirm('Delete this scrolling message?');"
+                                            style="display:inline;"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-danger"
+                                            >
+                                                <i class="fas fa-trash"></i>
+                                                Delete
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="card">
+
+                <div
+                    style="
+                        text-align:center;
+                        padding:40px 20px;
+                    "
+                >
+
+                    <i
+                        class="fas fa-bullhorn"
+                        style="
+                            font-size:45px;
+                            color:var(--primary);
+                            margin-bottom:15px;
+                        "
+                    ></i>
+
+                    <h3>No Scrolling Messages Found</h3>
+
+                    <p>
+                        Add your first announcement to display it
+                        between the header and navigation bar.
+                    </p>
+
+                    <a
+                        href="/admin/scrolling-messages/add"
+                        class="btn btn-primary"
+                        style="margin-top:15px;"
+                    >
+                        <i class="fas fa-plus"></i>
+                        Add Scrolling Message
+                    </a>
+
+                </div>
+
+            </div>
+
+        <% } %>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>

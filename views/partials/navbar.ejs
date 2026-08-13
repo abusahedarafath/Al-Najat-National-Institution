@@ -48,6 +48,39 @@
 
     </div>
 
+    <!-- =====================================
+         SCROLLING NOTICE TICKER
+    ====================================== -->
+
+    <% if (scrollingMessages && scrollingMessages.length) { %>
+
+        <div class="scrolling-messages">
+
+            <div class="scrolling-messages-track">
+
+                <% scrollingMessages.forEach(message => { %>
+
+                    <a
+                        href="<%= message.url || '#' %>"
+                        class="scrolling-message"
+                        style="color:<%= message.text_color %>;"
+                        <% if (!message.url) { %>
+                            onclick="return false;"
+                        <% } %>
+                    >
+                        <i class="fa-solid fa-bullhorn"></i>
+                        <span><%= message.message %></span>
+                    </a>
+
+                <% }) %>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+
     <nav class="navbar">
 
         <%

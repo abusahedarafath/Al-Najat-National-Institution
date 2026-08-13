@@ -1,0 +1,243 @@
+<%- include("./partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("./partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Add Scrolling Message</h1>
+                <p>
+                    Create an announcement that will scroll between
+                    the website header and navigation bar.
+                </p>
+            </div>
+
+        </div>
+
+        <form
+            action="/admin/scrolling-messages/add"
+            method="POST"
+            class="admin-form"
+        >
+
+            <div class="form-grid">
+
+                <div
+                    class="form-group"
+                    style="grid-column:1 / -1;"
+                >
+
+                    <label for="message">
+                        Message *
+                    </label>
+
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="3"
+                        placeholder="Example: RTSE 2026 Online Application — Last date: 20 August 2026. Apply before the deadline."
+                        required
+                    ></textarea>
+
+                    <small>
+                        This text will continuously scroll from right to left.
+                    </small>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="url">
+                        Link URL
+                    </label>
+
+                    <input
+                        type="text"
+                        id="url"
+                        name="url"
+                        placeholder="/rtse/apply"
+                    >
+
+                    <small>
+                        When visitors click the message, they will be taken
+                        to this URL.
+                    </small>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="text_color">
+                        Message Colour
+                    </label>
+
+                    <div
+                        style="
+                            display:flex;
+                            gap:12px;
+                            align-items:center;
+                        "
+                    >
+
+                        <input
+                            type="color"
+                            id="text_color_picker"
+                            value="#D00000"
+                            style="
+                                width:70px;
+                                height:46px;
+                                padding:4px;
+                            "
+                        >
+
+                        <input
+                            type="text"
+                            id="text_color"
+                            name="text_color"
+                            value="#D00000"
+                            placeholder="#D00000"
+                        >
+
+                    </div>
+
+                    <small>
+                        Choose the colour for this individual message.
+                    </small>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="display_order">
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="display_order"
+                        name="display_order"
+                        value="1"
+                        min="1"
+                    >
+
+                    <small>
+                        Smaller numbers appear first.
+                    </small>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select
+                        id="status"
+                        name="status"
+                    >
+                        <option value="Active" selected>
+                            Active
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="start_date">
+                        Start Date & Time
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="start_date"
+                        name="start_date"
+                    >
+
+                    <small>
+                        Leave blank to display immediately.
+                    </small>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="end_date">
+                        End Date & Time
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="end_date"
+                        name="end_date"
+                    >
+
+                    <small>
+                        Leave blank to keep displaying until manually disabled.
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="fas fa-save"></i>
+                    Save Scrolling Message
+                </button>
+
+                <a
+                    href="/admin/scrolling-messages"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+<%- include("./partials/footer") %>
+
+<script>
+
+    const colorPicker =
+        document.getElementById("text_color_picker");
+
+    const colorInput =
+        document.getElementById("text_color");
+
+    colorPicker.addEventListener("input", function () {
+
+        colorInput.value = this.value;
+
+    });
+
+    colorInput.addEventListener("input", function () {
+
+        if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+
+            colorPicker.value = this.value;
+
+        }
+
+    });
+
+</script>

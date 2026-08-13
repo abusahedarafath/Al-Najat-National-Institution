@@ -6,6 +6,9 @@ const FooterLink = require("../models/FooterLink");
 const FooterSocialLink = require("../models/FooterSocialLink");
 const News = require("../models/News");
 const HeaderButton = require("../models/HeaderButton");
+const ScrollingMessage = require("../models/ScrollingMessage");
+
+
 
 module.exports = async (req, res, next) => {
 
@@ -21,6 +24,7 @@ module.exports = async (req, res, next) => {
 res.locals.footerSocialLinks = [];
     res.locals.latestNews = [];
     res.locals.headerButtons = [];
+    res.locals.scrollingMessages = [];
 
 
     // =====================================
@@ -145,6 +149,24 @@ res.locals.footerSocialLinks = [];
     }
 
     // =====================================
+    // Scrolling Messages
+    // =====================================
+    try {
+
+        res.locals.scrollingMessages =
+            await ScrollingMessage.getActive();
+
+    } catch (err) {
+
+        console.error(
+            "Scrolling Messages Load Error:",
+            err
+        );
+
+        res.locals.scrollingMessages = [];
+
+    }
+
     // Latest Published News
     // =====================================
 
