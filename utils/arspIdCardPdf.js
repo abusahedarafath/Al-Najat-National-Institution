@@ -628,8 +628,8 @@ function drawFooter(
         layout.footerHeight;
 
     const qr =
-        member.qr_code
-            ? path.join(
+        member && member.qr_code
+            ? path.resolve(
                 __dirname,
                 "..",
                 "uploads",
@@ -735,11 +735,12 @@ function drawFooter(
 
             layout.cardX + 18,
 
-            footerY + 8,
+            footerY + 5,
 
             {
 
-                fit:[40,40]
+                width:50,
+                height:50
 
             }
 
