@@ -27,35 +27,52 @@
 
         </div>
 
-        <div class="header-buttons">
-            <button
-                type="button"
-                id="openArspScanner"
-                class="login-btn header-button arsp-header-scanner"
-                aria-label="Scan ARSP QR Code">
-                <i class="fa-solid fa-qrcode"></i>
-                Scan QR
-            </button>
+                <div class="header-buttons">
 
-            <% if (headerButtons && headerButtons.length) { %>
-                <% headerButtons.forEach(button => { %>
-                    <a
-                        href="<%= button.url %>"
-                        class="login-btn header-button"
-                        <% if (button.button_color) { %>
-                            style="background:<%= button.button_color %>;"
-                        <% } %>
-                    >
-                        <% if (button.icon) { %>
-                            <i class="fa-solid fa-<%= button.icon %>"></i>
-                        <% } %>
-                        <%= button.title %>
-                    </a>
-                <% }) %>
-            <% } %>
+            <div class="arsp-header-scanner-row">
+
+                <button
+                    type="button"
+                    id="openArspScanner"
+                    class="login-btn header-button arsp-header-scanner"
+                    aria-label="Scan ARSP QR Code">
+
+                    <i class="fa-solid fa-qrcode"></i>
+                    Scan QR Code
+
+                </button>
+
+            </div>
+
+            <div class="header-login-buttons">
+
+                <% if (headerButtons && headerButtons.length) { %>
+
+                    <% headerButtons.forEach(button => { %>
+
+                        <a
+                            href="<%= button.url %>"
+                            class="login-btn header-button"
+                            <% if (button.button_color) { %>
+                                style="background:<%= button.button_color %>;"
+                            <% } %>
+                        >
+
+                            <% if (button.icon) { %>
+                                <i class="fa-solid fa-<%= button.icon %>"></i>
+                            <% } %>
+
+                            <%= button.title %>
+
+                        </a>
+
+                    <% }) %>
+
+                <% } %>
+
+            </div>
+
         </div>
-
-    </div>
 
     <!-- =====================================
          SCROLLING NOTICE TICKER

@@ -543,3 +543,116 @@ body:has(.rtse-student-header-only) .rtse-student-header-only .brand-text p {
     }
 
 }
+
+
+/* =====================================
+   ARSP HEADER SCANNER LAYOUT
+===================================== */
+
+.header-buttons {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.arsp-header-scanner-row {
+    display:flex;
+    justify-content:center;
+    width:100%;
+}
+
+.arsp-header-scanner {
+    padding:11px 26px;
+    cursor:pointer;
+    border:none;
+    font-family:inherit;
+}
+
+.header-login-buttons {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+@media (max-width:768px) {
+
+    .header-buttons {
+        width:100%;
+        gap:8px;
+    }
+
+    .arsp-header-scanner-row {
+        width:100%;
+    }
+
+    .arsp-header-scanner {
+        width:auto !important;
+        min-width:150px;
+        padding:10px 20px;
+    }
+
+    .header-login-buttons {
+        width:100%;
+        justify-content:center;
+        gap:8px;
+    }
+
+    .header-login-buttons .header-button {
+        width:auto !important;
+        min-width:145px;
+    }
+
+}
+
+@media (max-width:576px) {
+
+    .header-buttons {
+        width:100%;
+    }
+
+    .arsp-header-scanner {
+        width:100% !important;
+        max-width:220px;
+    }
+
+    .header-login-buttons {
+        width:100%;
+    }
+
+    .header-login-buttons .header-button {
+        flex:1;
+        min-width:0;
+    }
+
+}
+
+/* =====================================
+   ARSP SCANNER BUTTON - SQUARE STYLE
+===================================== */
+
+.arsp-header-scanner {
+    min-width: 150px !important;
+    min-height: 52px !important;
+    padding: 12px 24px !important;
+    border-radius: 6px !important;
+    font-size: 16px !important;
+    font-weight: 700;
+}
+
+.arsp-header-scanner i {
+    font-size: 17px;
+    margin-right: 7px;
+}
+
+@media (max-width: 576px) {
+    .arsp-header-scanner {
+        min-width: 155px !important;
+        min-height: 52px !important;
+        padding: 12px 22px !important;
+    }
+}
+
