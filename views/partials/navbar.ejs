@@ -28,6 +28,15 @@
         </div>
 
         <div class="header-buttons">
+            <button
+                type="button"
+                id="openArspScanner"
+                class="login-btn header-button arsp-header-scanner"
+                aria-label="Scan ARSP QR Code">
+                <i class="fa-solid fa-qrcode"></i>
+                Scan QR
+            </button>
+
             <% if (headerButtons && headerButtons.length) { %>
                 <% headerButtons.forEach(button => { %>
                     <a
@@ -150,5 +159,8 @@
         <% }) %>
 
     </nav>
+
+    <!-- ARSP QR SCANNER MODAL -->
+    <%- include("../home/arsp-scanner") %>
 
 </header>
