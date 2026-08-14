@@ -666,11 +666,12 @@ exports.generate = async (req, res) => {
     <!-- CERTIFICATE NUMBER -->
     <text
         x="1450"
-        y="1040"
+        y="1015"
         text-anchor="end"
         font-family="Arial, sans-serif"
-        font-size="13"
-        fill="#777">
+        font-size="16"
+        font-weight="700"
+        fill="#333">
         Certificate No: ${escapeXml(certificateNo)}
     </text>
 
