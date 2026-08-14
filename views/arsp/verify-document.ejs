@@ -100,7 +100,30 @@ font-size:13px;
 
 <h2>ARSP Document Verification</h2>
 
-<% if(valid){ %>
+<% if(scannerOnly){ %>
+
+<div class="scanner-only">
+
+    <div class="scanner-only-icon">
+        <i class="fa-solid fa-qrcode"></i>
+    </div>
+
+    <div class="scanner-only-title">
+        Please Verify This QR Code
+    </div>
+
+    <p>
+        Please Verify the QR using the official ARSP QR Scanner.
+    </p>
+
+    <a href="/" class="scanner-only-btn">
+        <i class="fa-solid fa-qrcode"></i>
+        Open Official ARSP QR Scanner
+    </a>
+
+</div>
+
+<% } else if(valid){ %>
 
 <p style="text-align:center;">
 

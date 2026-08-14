@@ -143,6 +143,78 @@
 
 
 
+
+/* =====================================
+   OFFICIAL SCANNER ONLY
+===================================== */
+
+.scanner-only{
+    text-align:center;
+    padding:25px 15px 10px;
+}
+
+.scanner-only-icon{
+    width:82px;
+    height:82px;
+    margin:0 auto 18px;
+    border-radius:18px;
+    background:#16246D;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:38px;
+}
+
+.scanner-only-title{
+    color:#16246D;
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.scanner-only p{
+    color:#666;
+    font-size:16px;
+    line-height:1.7;
+    margin:0 auto 24px;
+    max-width:500px;
+}
+
+.scanner-only-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    background:#16246D;
+    color:#fff;
+    text-decoration:none;
+    padding:13px 22px;
+    border-radius:8px;
+    font-weight:600;
+}
+
+.scanner-only-btn:hover{
+    background:#B8902D;
+}
+
+@media (max-width:768px){
+
+    .scanner-only-title{
+        font-size:22px;
+    }
+
+    .scanner-only p{
+        font-size:14px;
+    }
+
+    .scanner-only-btn{
+        width:100%;
+        box-sizing:border-box;
+    }
+
+}
+
 </style>
 
 </head>
@@ -185,7 +257,30 @@ alt="Logo">
 
 </p>
 
-<% if(valid){ %>
+<% if(scannerOnly){ %>
+
+<div class="scanner-only">
+
+    <div class="scanner-only-icon">
+        <i class="fa-solid fa-qrcode"></i>
+    </div>
+
+    <div class="scanner-only-title">
+        Please Verify This QR Code
+    </div>
+
+    <p>
+        Please Verify the QR using the official ARSP QR Scanner.
+    </p>
+
+    <a href="/" class="scanner-only-btn">
+        <i class="fa-solid fa-qrcode"></i>
+        Open Official ARSP QR Scanner
+    </a>
+
+</div>
+
+<% } else if(valid){ %>
 
 <div class="verify-ok">
 
