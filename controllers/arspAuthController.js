@@ -237,6 +237,44 @@ exports.downloadIdCard = async (req, res) => {
         }
 
         // =====================================================
+        // GUARANTEE MEMBER QR EXISTS BEFORE GENERATING PDF
+        // =====================================================
+        const qrDir = path.join(
+            __dirname,
+            "..",
+            "uploads",
+            "arsp-qr"
+        );
+
+        const qrFilename = member.member_id + ".png";
+        const qrPath = path.join(qrDir, qrFilename);
+
+        if (!member.qr_code || !fs.existsSync(qrPath)) {
+
+            const verifyURL =
+                `${req.protocol}://${req.get("host")}/arsp/verify/${member.id}`;
+
+            const generatedQR =
+                await generateQRCode(
+                    member.member_id,
+                    verifyURL
+                );
+
+            await ArspMember.updateQRCode(
+                member.id,
+                generatedQR
+            );
+
+            member.qr_code = generatedQR;
+
+            console.log(
+                "✅ Member ID QR repaired:",
+                member.member_id,
+                generatedQR
+            );
+        }
+
+        // =====================================================
         // LOAD CURRENT MANAGEMENT POSITION
         // =====================================================
 
