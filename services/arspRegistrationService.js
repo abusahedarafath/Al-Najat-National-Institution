@@ -119,7 +119,7 @@ photo:
 
         // Generate QR Code
         const verifyURL =
-            `${req.protocol}://${req.get("host")}/arsp/verify/${memberId}`;
+            `${req.protocol}://${req.get("host")}/arsp/verify/${data.member_id || memberId}`;
 
         const qrFile =
             await generateQRCode(

@@ -252,7 +252,7 @@ exports.downloadIdCard = async (req, res) => {
         if (!member.qr_code || !fs.existsSync(qrPath)) {
 
             const verifyURL =
-                `${req.protocol}://${req.get("host")}/arsp/verify/${member.id}`;
+                `${req.protocol}://${req.get("host")}/arsp/verify/${member.member_id}`;
 
             const generatedQR =
                 await generateQRCode(
