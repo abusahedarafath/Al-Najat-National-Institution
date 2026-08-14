@@ -73,63 +73,24 @@ exports.verify = async (req, res) => {
 
     try {
 
-       const arsp = await ArspSetting.get();
-       const [rows] = await db.query(
-
-            `SELECT *
-
-             FROM arsp_members
-
-             WHERE member_id=?`,
-
-            [req.params.memberId]
-
-        );
-
-        if(rows.length===0){
+        const arsp = await ArspSetting.get();
 
         return res.render(
+            "arsp/member-verify",
+            {
+                title: "ARSP QR Verification",
+                valid: false,
+                scannerOnly: true,
+                message: "Please Verify the QR using the official ARSP QR Scanner.",
+                arsp
+            }
+        );
 
-    "arsp/member-verify",
-
-    {
-
-        title:"Verification",
-
-        valid:false,
-
-        arsp
-
-    }
-
-);
-        }
-
-  res.render(
-
-    "arsp/member-verify",
-
-    {
-
-        title:"Verification",
-
-        valid:true,
-
-        member:rows[0],
-
-        arsp
-
-    }
-
-);
-
-    }
-
-    catch(err){
+    } catch (err) {
 
         console.error(err);
 
-        res.status(500).send("Internal Server Error");
+        res.status(500).send("Verification failed.");
 
     }
 
