@@ -718,32 +718,43 @@ function drawFooter(
 
         .fill("#123B6D");
 
-    // QR
+    // QR CODE
+    // Always render the member verification QR when the file exists.
 
-    if(
+    if (qr && fs.existsSync(qr)) {
 
-        cardSettings &&
-        cardSettings.qr_enabled === "Yes" &&
-        qr &&
-        fs.existsSync(qr)
+        // White QR background
+        doc
+            .roundedRect(
+                layout.cardX + 12,
+                footerY + 3,
+                56,
+                49,
+                4
+            )
+            .fill("#FFFFFF");
 
-    ){
-
+        // QR code
         doc.image(
-
             qr,
-
-            layout.cardX + 18,
-
+            layout.cardX + 16,
             footerY + 5,
-
             {
-
-                width:50,
-                height:50
-
+                width: 48,
+                height: 45
             }
+        );
 
+        console.log(
+            "✅ MEMBER ID CARD QR RENDERED:",
+            qr
+        );
+
+    } else {
+
+        console.error(
+            "❌ MEMBER ID CARD QR FILE NOT FOUND:",
+            qr
         );
 
     }
