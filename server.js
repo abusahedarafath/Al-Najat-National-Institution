@@ -163,6 +163,7 @@ app.use(honourHeartRoutes);
 app.use(arspSettingRoutes);
 app.use(arspPublicRoutes);
 app.use(require("./routes/arspVerificationRoutes"));
+app.use(require("./routes/arspScannerRoutes"));
 
 app.use("/", studentRoutes);
 app.use("/", admission2027Routes);

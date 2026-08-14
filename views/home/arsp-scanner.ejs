@@ -1,0 +1,90 @@
+<!-- ARSP SCANNER BUTTON -->
+
+<section class="arsp-scanner-section">
+    <div class="container">
+
+        <div class="section-header">
+            <span class="section-badge">ARSP Verification</span>
+
+            <h2>Verify an ARSP ID</h2>
+
+            <p>
+                Check the validity of an ARSP Member ID Card or Appointment Letter.
+            </p>
+
+            <button
+                type="button"
+                id="openArspScanner"
+                class="btn arsp-scanner-open-btn">
+                <i class="fa-solid fa-qrcode"></i>
+                Scan QR Code
+            </button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- SCANNER MODAL -->
+
+<div
+    id="arspScannerModal"
+    class="arsp-scanner-modal"
+    aria-hidden="true">
+
+    <div class="arsp-scanner-modal-content">
+
+        <button
+            type="button"
+            id="closeArspScanner"
+            class="arsp-scanner-close"
+            aria-label="Close">
+            &times;
+        </button>
+
+        <h2>Scan ARSP QR Code</h2>
+
+        <p class="arsp-scanner-help">
+            Point your camera at the Member ID Card or Appointment Letter QR code.
+        </p>
+
+        <div id="arspQrReader"></div>
+
+        <div
+            id="arspScannerStatus"
+            class="arsp-scanner-status">
+            Camera will start when the scanner opens.
+        </div>
+
+        <div
+            id="arspScannerResult"
+            class="arsp-scanner-result">
+        </div>
+
+        <div class="arsp-scanner-divider">
+            <span>OR</span>
+        </div>
+
+        <div class="arsp-manual">
+
+            <input
+                type="text"
+                id="arspManualQr"
+                placeholder="Paste QR URL here">
+
+            <button
+                type="button"
+                id="arspManualVerify"
+                class="btn">
+                Verify
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="/js/arsp-scanner.js"></script>
