@@ -356,6 +356,185 @@
 
         </div>
 
+    <!-- RTSE-LIGHT-APPLICATION-LIST -->
+
+    <div class="profile-card" style="margin-top:25px;">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            flex-wrap:wrap;
+            margin-bottom:20px;
+        ">
+
+            <h2 style="margin:0;">
+                RTSE Student Applications
+            </h2>
+
+            <input
+                type="search"
+                id="rtseDashboardSearch"
+                placeholder="Search applicant..."
+                autocomplete="off"
+                style="
+                    width:280px;
+                    max-width:100%;
+                    padding:10px 14px;
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                "
+            >
+
+        </div>
+
+        <div style="overflow-x:auto;">
+
+            <table class="admin-table" id="rtseApplicationTable">
+
+                <thead>
+
+                    <tr>
+                        <th>Registration No.</th>
+                        <th>Student</th>
+                        <th>School</th>
+                        <th>Class</th>
+                        <th>Section</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% applications.forEach(application => { %>
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    <%= application.registration_no %>
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <%= application.full_name %>
+                                </strong>
+                            </td>
+
+                            <td>
+                                <%= application.school_name || "-" %>
+                            </td>
+
+                            <td>
+                                <%= application.class || "-" %>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <%= application.section || "-" %>
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                <% if(application.status === "Approved"){ %>
+
+                                    <span class="badge badge-success">
+                                        Approved
+                                    </span>
+
+                                <% } else if(application.status === "Rejected"){ %>
+
+                                    <span class="badge badge-danger">
+                                        Rejected
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="badge badge-warning">
+                                        Pending
+                                    </span>
+
+                                <% } %>
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="/admin/rtse/application/<%= application.id %>"
+                                    class="btn-view">
+                                    View
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                    <% if(!applications.length){ %>
+
+                        <tr>
+                            <td colspan="7" style="text-align:center;padding:25px;">
+                                No RTSE applications found.
+                            </td>
+                        </tr>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput =
+            document.getElementById("rtseDashboardSearch");
+
+        const table =
+            document.getElementById("rtseApplicationTable");
+
+        if (!searchInput || !table) return;
+
+        const rows =
+            Array.from(
+                table.querySelectorAll("tbody tr")
+            );
+
+        searchInput.addEventListener("input", function () {
+
+            const query =
+                this.value.trim().toLowerCase();
+
+            rows.forEach(function (row) {
+
+                const text =
+                    row.textContent
+                        .toLowerCase()
+                        .replace(/\s+/g, " ");
+
+                row.style.display =
+                    !query || text.includes(query)
+                        ? ""
+                        : "none";
+
+            });
+
+        });
+
+    });
+    </script>
+
     <div
         style="
             display:flex;

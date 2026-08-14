@@ -355,75 +355,116 @@
 
                 <div style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
 
-                            <% if(application.status === "Pending"){ %>
+                    <% if(application.status === "Pending"){ %>
 
-                                <a
-                                    href="/admin/rtse/application/<%= application.id %>/approve"
-                                    class="btn-save">
-                                    Approve
-                                </a>
+                        <a
+                            href="/admin/rtse/application/<%= application.id %>/approve"
+                            class="btn-save">
+                            Approve
+                        </a>
 
-                                <a
-                                    href="/admin/rtse/application/<%= application.id %>/reject"
-                                    class="btn-warning">
-                                    Reject
-                                </a>
+                        <a
+                            href="/admin/rtse/application/<%= application.id %>/reject"
+                            class="btn-warning">
+                            Reject
+                        </a>
 
-                            <% } else if(application.status === "Approved"){ %>
+                        <a
+                            href="/admin/rtse/application/<%= application.id %>/edit"
+                            class="btn-view">
+                            Edit
+                        </a>
 
-                                <span
-                                    class="btn-save"
-                                    style="cursor:default;background:#28a745;">
-                                    ✓ Approved
-                                </span>
+                        <form
+                            action="/admin/rtse/application/<%= application.id %>/archive"
+                            method="POST"
+                            style="display:inline;">
 
-                                <% if(application.roll_no && application.admit_generated == 1){ %>
+                            <button
+                                type="submit"
+                                class="btn-danger"
+                                onclick="return confirm('Move this application to Archive?')">
+                                Archive
+                            </button>
 
-                                    <a
-                                        href="/admin/rtse/application/<%= application.id %>/admit-card"
-                                        class="btn-view">
-                                        Admit Card
-                                    </a>
+                        </form>
 
-                                <% } %>
+                    <% } else if(application.status === "Approved"){ %>
 
-                            <% } else if(application.status === "Rejected"){ %>
+                        <span
+                            class="btn-save"
+                            style="cursor:default;background:#28a745;">
+                            ✓ Approved
+                        </span>
 
-                                <a
-                                    href="/admin/rtse/application/<%= application.id %>/approve"
-                                    class="btn-save"
-                                    onclick="return confirm('Approve this rejected application?');">
-                                    Approve
-                                </a>
+                        <a
+                            href="/admin/rtse/application/<%= application.id %>/edit"
+                            class="btn-view">
+                            Edit
+                        </a>
 
-                                <span
-                                    class="btn-danger"
-                                    style="cursor:default;">
-                                    ✗ Rejected
-                                </span>
+                        <form
+                            action="/admin/rtse/application/<%= application.id %>/archive"
+                            method="POST"
+                            style="display:inline;">
 
-                            <% } %>
+                            <button
+                                type="submit"
+                                class="btn-danger"
+                                onclick="return confirm('Move this application to Archive?')">
+                                Archive
+                            </button>
+
+                        </form>
+
+                        <% if(application.roll_no && application.admit_generated == 1){ %>
 
                             <a
-                                href="/admin/rtse/application/<%= application.id %>/edit"
+                                href="/admin/rtse/application/<%= application.id %>/admit-card"
                                 class="btn-view">
-                                Edit
+                                Admit Card
                             </a>
 
-                            <form
-                                action="/admin/rtse/application/<%= application.id %>/archive"
-                                method="POST"
-                                style="display:inline;">
+                        <% } %>
 
-                                <button
-                                    type="submit"
-                                    class="btn-danger"
-                                    onclick="return confirm('Move this application to Archive?')">
-                                    Archive
-                                </button>
+                    <% } else if(application.status === "Rejected"){ %>
 
-                            </form>
-                        </div>
+                        <span
+                            class="btn-danger"
+                            style="cursor:default;">
+                            ✗ Rejected
+                        </span>
+
+                        <a
+                            href="/admin/rtse/application/<%= application.id %>/approve"
+                            class="btn-save"
+                            onclick="return confirm('Approve this rejected application?');">
+                            Approve
+                        </a>
+
+                        <a
+                            href="/admin/rtse/application/<%= application.id %>/edit"
+                            class="btn-view">
+                            Edit
+                        </a>
+
+                        <form
+                            action="/admin/rtse/application/<%= application.id %>/archive"
+                            method="POST"
+                            style="display:inline;">
+
+                            <button
+                                type="submit"
+                                class="btn-danger"
+                                onclick="return confirm('Move this application to Archive?')">
+                                Archive
+                            </button>
+
+                        </form>
+
+                    <% } %>
+
+                </div>
 
             </div>
 

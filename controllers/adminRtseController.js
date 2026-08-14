@@ -34,6 +34,9 @@ exports.dashboard = async (req, res) => {
 
     try {
 
+        const applications =
+            await RtseApplication.getAll();
+
         const stats =
             await RtseApplication.getDashboardStats();
 
@@ -59,6 +62,8 @@ console.log("setting:", setting);
             {
 
                 title: "RTSE Dashboard",
+
+                applications,
 
                 total: stats.total || 0,
 
