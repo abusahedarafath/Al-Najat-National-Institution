@@ -61,6 +61,8 @@ const libraryDashboardRoutes = require("./routes/libraryDashboardRoutes");
 const transportRouteRoutes = require("./routes/transportRouteRoutes");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
+const tirangaCertificateRoutes = require("./routes/tirangaCertificateRoutes");
+const adminTirangaCertificateRoutes = require("./routes/adminTirangaCertificateRoutes");
 const certificatePrintRoutes = require("./routes/certificatePrintRoutes");
 const welcomeSectionRoutes = require("./routes/welcomeSectionRoutes");
 const principalMessageRoutes = require("./routes/principalMessageRoutes");
@@ -145,6 +147,7 @@ app.use("/", admissionRoutes);
 
 // Login routes MUST come before protected admin routes
 app.use("/", authRoutes);
+app.use(tirangaCertificateRoutes);
 app.use("/", adminRecoveryRoutes);
 // RTSE public routes MUST be registered before admin routes
 app.use("/rtse", rtseRoutes);
@@ -202,6 +205,7 @@ app.use("/admin", libraryDashboardRoutes);
 app.use("/admin", transportRouteRoutes);
 app.use("/admin", vehicleRoutes);
 app.use("/admin", certificateRoutes);
+app.use(adminTirangaCertificateRoutes);
 app.use("/admin", certificatePrintRoutes);
 app.use("/admin", welcomeSectionRoutes);
 app.use("/admin", principalMessageRoutes);
