@@ -22,3 +22,19 @@ CREATE TABLE IF NOT EXISTS tiranga_certificate_settings (
     PRIMARY KEY (id),
     UNIQUE KEY uq_tiranga_settings_id (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+INSERT INTO tiranga_certificate_settings (
+    id,
+    enabled,
+    organization_name,
+    certificate_title,
+    independence_text,
+    independence_years
+) VALUES (
+    1,
+    1,
+    'ACTIVE RURAL SOCIAL PROGRESS',
+    'TIRANGA CERTIFICATE',
+    '80th INDEPENDENCE',
+    '1947 - 2027'
+);
