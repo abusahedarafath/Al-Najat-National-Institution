@@ -187,6 +187,68 @@ class RtseApplication {
 
     }
 
+    
+    // =====================================
+    // Dashboard Applications - Paginated
+    // =====================================
+
+    static async getDashboardApplications(limit = 10, offset = 0){
+
+        limit = Math.max(
+            1,
+            Math.min(100, Number(limit) || 10)
+        );
+
+        offset = Math.max(
+            0,
+            Number(offset) || 0
+        );
+
+        const [rows] = await db.query(
+            `SELECT
+                id,
+                registration_no,
+                full_name,
+                mobile,
+                school_name,
+                class,
+                section,
+                status,
+                roll_no,
+                photo,
+                admit_generated
+             FROM rtse_applications
+             WHERE archive=0
+             ORDER BY
+                CASE
+                    WHEN status='Pending' THEN 1
+                    WHEN status='Approved' THEN 2
+                    WHEN status='Rejected' THEN 3
+                    ELSE 4
+                END,
+                registration_no ASC
+             LIMIT ? OFFSET ?`,
+            [limit, offset]
+        );
+
+        return rows;
+    }
+
+    // =====================================
+    // Dashboard Application Count
+    // =====================================
+
+    static async getDashboardApplicationCount(){
+
+        const [rows] = await db.query(
+            `SELECT COUNT(*) AS total
+             FROM rtse_applications
+             WHERE archive=0`
+        );
+
+        return Number(rows[0]?.total || 0);
+    }
+
 
 // =====================================
 // Get Application By ID

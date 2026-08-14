@@ -4,6 +4,9 @@ require("../models/RtseApplication");
 const RtseSetting =
 require("../models/RtseSetting");
 
+const SiteSetting =
+require("../models/SiteSetting");
+
 const RtseSeatPlan =
 require("../models/RtseSeatPlan");
 
@@ -129,6 +132,12 @@ exports.applicationsPage = async (req, res) => {
         const applicationCount =
             await RtseApplication.getDashboardApplicationCount();
 
+        const setting =
+            await RtseSetting.get();
+
+        const siteSettings =
+            await SiteSetting.get();
+
         const totalPages =
             Math.max(
                 1,
@@ -143,7 +152,10 @@ exports.applicationsPage = async (req, res) => {
                 page,
                 perPage,
                 applicationCount,
-                totalPages
+                totalPages,
+                arspSettings: setting,
+                siteSettings,
+                currentPath: req.path
             }
         );
 

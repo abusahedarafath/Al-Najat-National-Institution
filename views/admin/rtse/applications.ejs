@@ -205,78 +205,9 @@
 
                                         <a
                                             href="/admin/rtse/application/<%= application.id %>"
-                                            class="btn-view"
-                                        >
+                                            class="btn-view">
                                             View
                                         </a>
-
-                                        <a
-                                            href="/admin/rtse/application/<%= application.id %>/edit"
-                                            class="btn-save"
-                                        >
-                                            Edit
-                                        </a>
-
-                                        <% if(application.status === "Pending"){ %>
-
-                                            <a
-                                                href="/admin/rtse/application/<%= application.id %>/approve"
-                                                class="btn-save"
-                                            >
-                                                Approve
-                                            </a>
-
-                                            <a
-                                                href="/admin/rtse/application/<%= application.id %>/reject"
-                                                class="btn-warning"
-                                            >
-                                                Reject
-                                            </a>
-
-                                        <% } else if(application.status === "Approved"){ %>
-
-                                            <span
-                                                class="btn-save"
-                                                style="
-                                                    cursor:default;
-                                                    background:#28a745;
-                                                "
-                                            >
-                                                ✓ Approved
-                                            </span>
-
-                                            <% if(
-                                                application.roll_no &&
-                                                application.admit_generated == 1
-                                            ){ %>
-
-                                                <a
-                                                    href="/admin/rtse/application/<%= application.id %>/admit-card"
-                                                    class="btn-view"
-                                                >
-                                                    Admit Card
-                                                </a>
-
-                                            <% } %>
-
-                                        <% } else if(application.status === "Rejected"){ %>
-
-                                            <a
-                                                href="/admin/rtse/application/<%= application.id %>/approve"
-                                                class="btn-save"
-                                                onclick="return confirm('Approve this rejected application?');"
-                                            >
-                                                Approve
-                                            </a>
-
-                                            <span
-                                                class="btn-danger"
-                                                style="cursor:default;"
-                                            >
-                                                ✗ Rejected
-                                            </span>
-
-                                        <% } %>
 
                                     </td>
 
