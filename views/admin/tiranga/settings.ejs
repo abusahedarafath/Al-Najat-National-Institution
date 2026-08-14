@@ -1,0 +1,251 @@
+<%- include("../partials/header") %>
+<%- include("../partials/sidebar") %>
+
+<main class="admin-main">
+
+<div class="page-header">
+
+    <div>
+        <h1>Tiranga Certificate</h1>
+        <p>Control the public Tiranga Certificate generator.</p>
+    </div>
+
+    <div>
+        <a
+            href="/tiranga-certificate"
+            target="_blank"
+            class="btn btn-primary">
+            Open Public Form
+        </a>
+
+        <a
+            href="/admin/tiranga-certificate/certificates"
+            class="btn btn-secondary">
+            Generated Certificates
+        </a>
+    </div>
+
+</div>
+
+<% if (typeof success !== "undefined" || typeof querySuccess !== "undefined") { %>
+<div class="alert alert-success">
+    Tiranga Certificate settings updated successfully.
+</div>
+<% } %>
+
+<div class="card">
+
+<form
+    method="POST"
+    action="/admin/tiranga-certificate/settings">
+
+<div class="form-check form-switch mb-4">
+
+<input
+    class="form-check-input"
+    type="checkbox"
+    name="enabled"
+    value="1"
+    id="enabled"
+    <%= settings.enabled ? "checked" : "" %>>
+
+<label
+    class="form-check-label"
+    for="enabled">
+
+    Enable public Tiranga Certificate generation
+
+</label>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>Organization Name</label>
+
+<input
+    class="form-control"
+    name="organization_name"
+    value="<%= settings.organization_name || '' %>"
+    required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Certificate Title</label>
+
+<input
+    class="form-control"
+    name="certificate_title"
+    value="<%= settings.certificate_title || '' %>"
+    required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Independence Text</label>
+
+<input
+    class="form-control"
+    name="independence_text"
+    value="<%= settings.independence_text || '' %>">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Independence Years</label>
+
+<input
+    class="form-control"
+    name="independence_years"
+    value="<%= settings.independence_years || '' %>">
+
+</div>
+
+<div class="col-12 mb-3">
+
+<label>Presented To Text</label>
+
+<input
+    class="form-control"
+    name="presented_text"
+    value="<%= settings.presented_text || '' %>">
+
+</div>
+
+<div class="col-12 mb-3">
+
+<label>Certificate Description</label>
+
+<textarea
+    class="form-control"
+    name="description"
+    rows="5"><%= settings.description || '' %></textarea>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Date Text</label>
+
+<input
+    class="form-control"
+    name="event_date"
+    value="<%= settings.event_date || '' %>">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Footer Text</label>
+
+<input
+    class="form-control"
+    name="footer_text"
+    value="<%= settings.footer_text || '' %>">
+
+</div>
+
+
+
+
+
+<div class="col-md-6 mb-3">
+
+<label>Secretary Name</label>
+
+<input
+    class="form-control"
+    name="signature_name"
+    value="<%= settings.signature_name || '' %>">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Signature Designation</label>
+
+<input
+    class="form-control"
+    name="signature_designation"
+    value="<%= settings.signature_designation || '' %>">
+
+</div>
+
+</div>
+
+<button
+    type="submit"
+    class="btn btn-primary">
+
+    Save Tiranga Certificate Settings
+
+</button>
+
+</form>
+
+<hr class="my-4">
+
+<h3>Certificate Images</h3>
+
+<p class="text-muted">
+Upload the background, logo and signature used by the PDF certificate.
+</p>
+
+<%
+const imageFields = [
+    ["logo", "Logo"],
+    ["background_image", "Certificate Background"],
+    ["signature_image", "Signature"]
+];
+%>
+
+<% imageFields.forEach(item => { %>
+<div class="border rounded p-3 mb-3">
+
+    <h5><%= item[1] %></h5>
+
+    <% if (settings[item[0]]) { %>
+        <div class="mb-3">
+            <img
+                src="/uploads/tiranga/<%= settings[item[0]] %>"
+                style="max-width:300px;max-height:140px;object-fit:contain;"
+                alt="<%= item[1] %>">
+        </div>
+    <% } %>
+
+    <form
+        method="POST"
+        action="/admin/tiranga-certificate/upload-image"
+        enctype="multipart/form-data">
+
+        <input
+            type="hidden"
+            name="image_field"
+            value="<%= item[0] %>">
+
+        <input
+            type="file"
+            name="image"
+            class="form-control mb-3"
+            accept=".jpg,.jpeg,.png,.webp"
+            required>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+            <i class="fas fa-upload"></i>
+            Upload <%= item[1] %>
+        </button>
+
+    </form>
+
+</div>
+<% }) %>
+
+</main>

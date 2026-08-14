@@ -1,0 +1,167 @@
+<%- include("../partials/header") %>
+<%- include("../partials/sidebar") %>
+
+<main class="admin-main">
+
+    <div class="page-header">
+        <div>
+            <h1>Tiranga Certificate Dashboard</h1>
+            <p>View certificate registrations and participant details.</p>
+        </div>
+
+        <div>
+            <a
+                href="/admin/tiranga-certificate"
+                class="btn btn-primary">
+                Tiranga Certificate Settings
+            </a>
+
+            <a
+                href="/admin/tiranga-certificate/certificates"
+                class="btn btn-secondary">
+                Certificate Records
+            </a>
+        </div>
+    </div>
+
+    <!-- STATISTICS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted">
+                        Total Certificates
+                    </div>
+
+                    <h2 class="mt-2 mb-0">
+                        <%= stats.total %>
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted">
+                        Registered Names
+                    </div>
+
+                    <h2 class="mt-2 mb-0">
+                        <%= certificates.length %>
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted">
+                        Registration Status
+                    </div>
+
+                    <h2 class="mt-2 mb-0">
+                        Active
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PARTICIPANT TABLE -->
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="mb-1">
+                        Certificate Registrations
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        Names and mobile numbers submitted through the public certificate form.
+                    </p>
+                </div>
+
+                <strong>
+                    <%= certificates.length %> Records
+                </strong>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Certificate No.</th>
+                            <th>Name</th>
+                            <th>Mobile Number</th>
+                            <th>Generated</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <% if (certificates && certificates.length > 0) { %>
+
+                        <% certificates.forEach((certificate, index) => { %>
+
+                            <tr>
+
+                                <td>
+                                    <%= index + 1 %>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        <%= certificate.certificate_no %>
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <%= certificate.full_name %>
+                                </td>
+
+                                <td>
+                                    <%= certificate.mobile || "-" %>
+                                </td>
+
+                                <td>
+                                    <%= certificate.issue_date
+                                        ? new Date(certificate.issue_date).toLocaleString("en-GB")
+                                        : "-" %>
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <tr>
+                            <td
+                                colspan="5"
+                                class="text-center text-muted py-5">
+                                No Tiranga certificate registrations yet.
+                            </td>
+                        </tr>
+
+                    <% } %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, "Noto Sans Bengali", sans-serif;
+    background: #f3f6fb;
+    color: #142b64;
+}
+
+.tiranga-form-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+}
+
+.tiranga-form-card {
+    width: 100%;
+    max-width: 650px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+
+.logo {
+    display: block;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin: 0 auto 15px;
+}
+
+h1 {
+    text-align: center;
+    margin: 5px 0;
+    font-size: 28px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 20px 0 8px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccd3df;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+.option {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #dce2ec;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #222;
+    line-height: 1.7;
+}
+
+.option input {
+    margin-top: 5px;
+}
+
+.submit {
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+    border: 0;
+    border-radius: 10px;
+    background: #142b64;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.submit:hover {
+    opacity: .92;
+}
+
+.note {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13px;
+    color: #777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="tiranga-form-wrapper">
+
+<div class="tiranga-form-card">
+
+<% if (settings.logo) { %>
+
+<img
+    src="/uploads/tiranga/<%= settings.logo %>"
+    class="logo"
+    alt="Logo">
+
+<% } %>
+
+<h1>
+    <%= settings.certificate_title %>
+</h1>
+
+<div class="subtitle">
+    <%= settings.organization_name %>
+</div>
+
+<form
+    method="POST"
+    action="/tiranga-certificate/generate">
+
+    <label for="full_name">
+        নাম / Name
+    </label>
+
+    <input
+        id="full_name"
+        name="full_name"
+        type="text"
+        maxlength="255"
+        required
+        autocomplete="name"
+        placeholder="আপনার নাম লিখুন">
+
+    <label for="father_name">
+        পিতার নাম / Father's Name
+    </label>
+
+    <input
+        id="father_name"
+        name="father_name"
+        type="text"
+        maxlength="255"
+        required
+        placeholder="পিতার নাম লিখুন">
+
+    <label for="village_name">
+        গ্রামের নাম / Village Name
+    </label>
+
+    <input
+        id="village_name"
+        name="village_name"
+        type="text"
+        maxlength="255"
+        required
+        placeholder="গ্রামের নাম লিখুন">
+
+    <label for="post_office">
+        ডাকঘর / Post Office
+    </label>
+
+    <input
+        id="post_office"
+        name="post_office"
+        type="text"
+        maxlength="255"
+        required
+        placeholder="ডাকঘরের নাম লিখুন">
+
+    <label for="police_station">
+        থানা / Police Station
+    </label>
+
+    <input
+        id="police_station"
+        name="police_station"
+        type="text"
+        maxlength="255"
+        required
+        placeholder="থানার নাম লিখুন">
+
+    <label for="mobile">
+        মোবাইল নম্বর / Mobile Number
+    </label>
+
+    <input
+        id="mobile"
+        name="mobile"
+        type="tel"
+        maxlength="10"
+        minlength="10"
+        required
+        autocomplete="tel"
+        inputmode="numeric"
+        pattern="[6-9][0-9]{9}"
+        placeholder="১০ সংখ্যার মোবাইল নম্বর লিখুন">
+
+<button
+        class="submit"
+        type="submit">
+
+        Download Tiranga Certificate Image Image
+
+    </button>
+
+</form>
+    
+<div style="text-align:center;margin-top:18px;">
+    <button
+        id="downloadPdfBtn"
+        type="button"
+        style="
+            display:none;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            width:100%;
+            max-width:420px;
+            margin:0 auto;
+            padding:14px 20px;
+            border:0;
+            border-radius:10px;
+            background:#16246D;
+            color:#fff;
+            font-size:16px;
+            font-weight:700;
+            cursor:pointer;
+        ">
+        📄 Download Certificate as PDF
+    </button>
+</div>
+
+
+<div class="note">
+    Your certificate image will be generated immediately and downloaded to your device.
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+<script>
+(function () {
+    const form = document.querySelector('form[action="/tiranga-certificate/generate"]');
+
+    if (!form) return;
+
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const button = form.querySelector('.submit');
+        const oldText = button.textContent;
+
+        try {
+            button.disabled = true;
+            button.textContent = 'Generating...';
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(form))
+            });
+
+            if (!response.ok) {
+                throw new Error('Certificate generation failed.');
+            }
+
+            const svgText = await response.text();
+
+              // Capture certificate number for PDF download.
+              const disposition =
+                  response.headers.get('Content-Disposition') || '';
+
+              const filenameMatch =
+                  disposition.match(/filename="?([^"]+)"?/i);
+
+              const certificateNo =
+                  filenameMatch
+                      ? filenameMatch[1].replace(/\.svg$/i, '')
+                      : '';
+
+              const pdfButton =
+                  document.getElementById('downloadPdfBtn');
+
+              if (pdfButton && certificateNo) {
+                  pdfButton.style.display = 'inline-flex';
+                  pdfButton.dataset.certificateNo = certificateNo;
+              }
+
+
+            const svgBlob = new Blob([svgText], {
+                type: 'image/svg+xml'
+            });
+
+            const svgUrl = URL.createObjectURL(svgBlob);
+            const image = new Image();
+
+            await new Promise(function (resolve, reject) {
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = svgUrl;
+            });
+
+            const canvas = document.createElement('canvas');
+
+            /*
+             * Phone-friendly certificate size.
+             * 900 x 600 is deliberately much smaller than the
+             * previous 1600 x 1000 rendering.
+             */
+            canvas.width = 1536;
+            canvas.height = 1085;
+
+            const ctx = canvas.getContext('2d');
+
+            ctx.drawImage(
+                image,
+                0,
+                0,
+                1536,
+                1085
+            );
+
+            URL.revokeObjectURL(svgUrl);
+
+            canvas.toBlob(function (pngBlob) {
+                if (!pngBlob) {
+                    throw new Error('PNG creation failed.');
+                }
+
+                const url = URL.createObjectURL(pngBlob);
+                const link = document.createElement('a');
+
+                link.href = url;
+                link.download = 'Tiranga-Certificate.png';
+
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                setTimeout(function () {
+                    URL.revokeObjectURL(url);
+                }, 1000);
+
+                button.textContent = '✓ Downloaded Successfully';
+
+                alert(
+                    'Certificate downloaded successfully.\\n\\n' +
+                    'Please check your Downloads / Image Gallery.'
+                );
+
+                setTimeout(function () {
+                    button.disabled = false;
+                    button.textContent = oldText;
+                }, 3000);
+
+            }, 'image/png');
+
+        } catch (error) {
+            console.error('Tiranga download error:', error);
+
+            button.disabled = false;
+            button.textContent = oldText;
+
+            alert(
+                'Certificate download failed. Please try again.'
+            );
+        }
+    });
+})();
+
+    
+    // ==========================================
+    // HIGH-QUALITY PDF DOWNLOAD
+    // ==========================================
+    const pdfButton =
+        document.getElementById('downloadPdfBtn');
+
+    if (pdfButton) {
+        pdfButton.addEventListener('click', function () {
+
+            const certificateNo =
+                pdfButton.dataset.certificateNo;
+
+            if (!certificateNo) {
+                alert('Please generate the certificate first.');
+                return;
+            }
+
+            window.location.href =
+                '/tiranga-certificate/pdf/' +
+                encodeURIComponent(certificateNo);
+        });
+    }
+
+</script>

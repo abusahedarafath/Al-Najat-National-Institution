@@ -1,0 +1,79 @@
+<%- include("../partials/header") %>
+<%- include("../partials/sidebar") %>
+
+<main class="admin-main">
+
+<div class="page-header">
+
+<h1>Tiranga Certificates</h1>
+
+<a
+    href="/admin/tiranga-certificate"
+    class="btn btn-primary">
+    Tiranga Certificate Settings
+</a>
+
+</div>
+
+<div class="card">
+
+<div class="table-responsive">
+
+<table class="table">
+
+<thead>
+
+<tr>
+<th>Certificate No.</th>
+<th>Name</th>
+
+<th>Issue Date</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<% if (certificates && certificates.length) { %>
+
+<% certificates.forEach(certificate => { %>
+
+<tr>
+
+<td>
+<%= certificate.certificate_no %>
+</td>
+
+<td>
+<%= certificate.full_name %>
+</td>
+
+
+
+<td>
+<%= new Date(certificate.issue_date).toLocaleString("en-GB") %>
+</td>
+
+</tr>
+
+<% }) %>
+
+<% } else { %>
+
+<tr>
+<td colspan="3" class="text-center">
+No Tiranga certificates generated yet.
+</td>
+</tr>
+
+<% } %>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>

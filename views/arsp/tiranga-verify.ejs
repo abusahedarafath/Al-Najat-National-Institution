@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= title %></title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        .verify-card {
+            width: 100%;
+            max-width: 720px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.10);
+        }
+
+        .brand {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 22px;
+            margin-bottom: 25px;
+        }
+
+        .brand img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            color: #16246D;
+            font-size: 25px;
+        }
+
+        .brand p {
+            margin: 7px 0 0;
+            color: #666;
+        }
+
+        .status {
+            text-align: center;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .valid {
+            background: #e8f7ee;
+            color: #198754;
+        }
+
+        .invalid {
+            background: #fdecec;
+            color: #dc3545;
+        }
+
+        .status-icon {
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        .status h2 {
+            margin: 8px 0 5px;
+        }
+
+        .status p {
+            margin: 0;
+        }
+
+        .certificate-title {
+            text-align: center;
+            color: #16246D;
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .details {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .details td:first-child {
+            width: 40%;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .certificate-number {
+            color: #16246D;
+            font-weight: 700;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 1px solid #eee;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .scanner-note {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .verify-card {
+                padding: 20px 15px;
+                margin: 10px auto;
+                border-radius: 14px;
+            }
+
+            .brand img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .brand h1 {
+                font-size: 20px;
+            }
+
+            .details td {
+                display: block;
+                width: 100% !important;
+                border-bottom: 0;
+                padding: 7px 5px;
+            }
+
+            .details tr {
+                display: block;
+                border-bottom: 1px solid #eee;
+                padding: 5px 0;
+            }
+
+            .details td:first-child {
+                padding-bottom: 2px;
+                color: #555;
+            }
+
+            .details td:last-child {
+                padding-top: 2px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="verify-card">
+
+    <div class="brand">
+
+        <% if (arsp && arsp.logo) { %>
+
+            <img
+                src="/uploads/arsp-settings/<%= arsp.logo %>"
+                alt="ARSP Logo">
+
+        <% } else { %>
+
+            <img
+                src="/images/logo.png"
+                alt="ARSP Logo">
+
+        <% } %>
+
+        <h1>
+            <%= arsp && arsp.organization_name
+                ? arsp.organization_name
+                : "ACTIVE RURAL SOCIAL PROGRESS" %>
+        </h1>
+
+        <p>
+            <%= arsp && arsp.tagline
+                ? arsp.tagline
+                : "Official Verification Portal" %>
+        </p>
+
+    </div>
+
+
+    <% if (certificate) { %>
+
+        <div class="status valid">
+
+            <div class="status-icon">✓</div>
+
+            <h2>VALID TIRANGA CERTIFICATE</h2>
+
+            <p>
+                This certificate has been verified from the official ARSP database.
+            </p>
+
+        </div>
+
+        <div class="certificate-title">
+            TIRANGA CERTIFICATE
+        </div>
+
+        <table class="details">
+
+            <tr>
+                <td>Certificate Number</td>
+                <td class="certificate-number">
+                    <%= certificate.certificate_no %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Participant Name</td>
+                <td>
+                    <%= certificate.full_name || "-" %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Father's Name</td>
+                <td>
+                    <%= certificate.father_name || "-" %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Village</td>
+                <td>
+                    <%= certificate.village_name || "-" %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Post Office</td>
+                <td>
+                    <%= certificate.post_office || "-" %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Police Station</td>
+                <td>
+                    <%= certificate.police_station || "-" %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Mobile</td>
+                <td>
+                    <%= certificate.mobile || "-" %>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Issue Date</td>
+                <td>
+                    <%= certificate.issue_date
+                        ? new Date(certificate.issue_date).toLocaleDateString("en-GB")
+                        : "-" %>
+                </td>
+            </tr>
+
+        </table>
+
+        <div class="scanner-note">
+            Verified electronically through the official ARSP QR verification system.
+        </div>
+
+    <% } else { %>
+
+        <div class="status invalid">
+
+            <div class="status-icon">✕</div>
+
+            <h2>INVALID TIRANGA CERTIFICATE</h2>
+
+            <p>
+                No official Tiranga Certificate was found with this certificate number.
+            </p>
+
+        </div>
+
+    <% } %>
+
+
+    <div class="footer">
+
+        <strong>
+            <%= arsp && arsp.organization_name
+                ? arsp.organization_name
+                : "ACTIVE RURAL SOCIAL PROGRESS" %>
+        </strong>
+
+        <br>
+
+        Official Certificate Verification
+
+    </div>
+
+</div>
+
+</body>
+</html>
