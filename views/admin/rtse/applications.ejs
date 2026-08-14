@@ -93,7 +93,6 @@
                         <thead>
                             <tr>
                                 <th>Registration</th>
-                                <th>Photo</th>
                                 <th>Student</th>
                                 <th>School</th>
                                 <th>Class</th>
@@ -115,27 +114,7 @@
                                         </strong>
                                     </td>
 
-                                    <td>
 
-                                        <% if(application.photo){ %>
-
-                                            <img
-                                                src="/uploads/rtse/<%= application.photo %>"
-                                                style="
-                                                    width:60px;
-                                                    height:60px;
-                                                    border-radius:50%;
-                                                    object-fit:cover;
-                                                "
-                                            >
-
-                                        <% } else { %>
-
-                                            -
-
-                                        <% } %>
-
-                                    </td>
 
                                     <td>
 
@@ -218,7 +197,7 @@
                             <% if(!applications.length){ %>
 
                                 <tr>
-                                    <td colspan="8" style="text-align:center;padding:30px;">
+                                    <td colspan="7" style="text-align:center;padding:30px;">
                                         No applications found.
                                     </td>
                                 </tr>
