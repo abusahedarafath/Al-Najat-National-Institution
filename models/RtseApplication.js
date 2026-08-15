@@ -210,7 +210,70 @@ class RtseApplication {
 
         search = String(search || "").trim();
 
-        const searchValue = `%${search}%`;
+        let whereSql = "archive=0";
+        let params = [];
+
+        /*
+         * Combined Class + Section search.
+         *
+         * 7 B -> Class 7 + Section B
+         * B 7 -> Class 7 + Section B
+         */
+        const combinedMatch =
+            search.match(/^(\d+)\s+([A-Za-z])$/) ||
+            search.match(/^([A-Za-z])\s+(\d+)$/);
+
+        if (combinedMatch) {
+
+            let classValue;
+            let sectionValue;
+
+            if (/^\d+$/.test(combinedMatch[1])) {
+                classValue = combinedMatch[1];
+                sectionValue = combinedMatch[2];
+            } else {
+                sectionValue = combinedMatch[1];
+                classValue = combinedMatch[2];
+            }
+
+            whereSql += `
+                AND class=?
+                AND UPPER(section)=?
+            `;
+
+            params.push(
+                Number(classValue),
+                sectionValue.toUpperCase()
+            );
+
+        } else if (search) {
+
+            const searchValue = `%${search}%`;
+
+            whereSql += `
+                AND (
+                    registration_no LIKE ?
+                    OR full_name LIKE ?
+                    OR mobile LIKE ?
+                    OR school_name LIKE ?
+                    OR CAST(class AS CHAR) LIKE ?
+                    OR section LIKE ?
+                    OR status LIKE ?
+                    OR roll_no LIKE ?
+                )
+            `;
+
+            params.push(
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue
+            );
+        }
 
         const [rows] = await db.query(
             `SELECT
@@ -226,18 +289,7 @@ class RtseApplication {
                 photo,
                 admit_generated
              FROM rtse_applications
-             WHERE archive=0
-               AND (
-                    ? = ''
-                    OR registration_no LIKE ?
-                    OR full_name LIKE ?
-                    OR mobile LIKE ?
-                    OR school_name LIKE ?
-                    OR class LIKE ?
-                    OR section LIKE ?
-                    OR status LIKE ?
-                    OR roll_no LIKE ?
-               )
+             WHERE ${whereSql}
              ORDER BY
                 CASE
                     WHEN status='Pending' THEN 1
@@ -248,15 +300,7 @@ class RtseApplication {
                 registration_no ASC
              LIMIT ? OFFSET ?`,
             [
-                search,
-                searchValue,
-                searchValue,
-                searchValue,
-                searchValue,
-                searchValue,
-                searchValue,
-                searchValue,
-                searchValue,
+                ...params,
                 limit,
                 offset
             ]
@@ -264,6 +308,7 @@ class RtseApplication {
 
         return rows;
     }
+
 
     // =====================================
     // Dashboard Application Count
@@ -273,25 +318,58 @@ class RtseApplication {
 
         search = String(search || "").trim();
 
-        const searchValue = `%${search}%`;
+        let whereSql = "archive=0";
+        let params = [];
 
-        const [rows] = await db.query(
-            `SELECT COUNT(*) AS total
-             FROM rtse_applications
-             WHERE archive=0
-               AND (
-                    ? = ''
-                    OR registration_no LIKE ?
+        /*
+         * Use exactly the same search rules
+         * as getDashboardApplications().
+         */
+        const combinedMatch =
+            search.match(/^(\d+)\s+([A-Za-z])$/) ||
+            search.match(/^([A-Za-z])\s+(\d+)$/);
+
+        if (combinedMatch) {
+
+            let classValue;
+            let sectionValue;
+
+            if (/^\d+$/.test(combinedMatch[1])) {
+                classValue = combinedMatch[1];
+                sectionValue = combinedMatch[2];
+            } else {
+                sectionValue = combinedMatch[1];
+                classValue = combinedMatch[2];
+            }
+
+            whereSql += `
+                AND class=?
+                AND UPPER(section)=?
+            `;
+
+            params.push(
+                Number(classValue),
+                sectionValue.toUpperCase()
+            );
+
+        } else if (search) {
+
+            const searchValue = `%${search}%`;
+
+            whereSql += `
+                AND (
+                    registration_no LIKE ?
                     OR full_name LIKE ?
                     OR mobile LIKE ?
                     OR school_name LIKE ?
-                    OR class LIKE ?
+                    OR CAST(class AS CHAR) LIKE ?
                     OR section LIKE ?
                     OR status LIKE ?
                     OR roll_no LIKE ?
-               )`,
-            [
-                search,
+                )
+            `;
+
+            params.push(
                 searchValue,
                 searchValue,
                 searchValue,
@@ -300,11 +378,19 @@ class RtseApplication {
                 searchValue,
                 searchValue,
                 searchValue
-            ]
+            );
+        }
+
+        const [rows] = await db.query(
+            `SELECT COUNT(*) AS total
+             FROM rtse_applications
+             WHERE ${whereSql}`,
+            params
         );
 
         return Number(rows[0]?.total || 0);
     }
+
 
 
 // =====================================
@@ -983,6 +1069,59 @@ AND
 // Search Applications
 // =====================================
 
+// =====================================
+// Search Approved Students - Section Wise
+// =====================================
+static async searchApprovedSectionStudents(section, keyword = "") {
+
+    const search = `%${String(keyword || "").trim()}%`;
+
+    const [rows] = await db.query(
+        `SELECT *
+         FROM rtse_applications
+         WHERE
+            archive=0
+            AND status='Approved'
+            AND section=?
+            AND (
+                ? = '%%'
+                OR registration_no LIKE ?
+                OR full_name LIKE ?
+                OR mobile LIKE ?
+                OR school_name LIKE ?
+                OR CAST(class AS CHAR) LIKE ?
+                OR section LIKE ?
+                OR roll_no LIKE ?
+                OR CAST(roll_number AS CHAR) LIKE ?
+            )
+         ORDER BY
+            CASE
+                WHEN roll_no IS NULL THEN 1
+                ELSE 0
+            END,
+            roll_no ASC,
+            registration_no ASC`,
+        [
+            section,
+            search,
+            search,
+            search,
+            search,
+            search,
+            search,
+            search,
+            search,
+            search
+        ]
+    );
+
+    return rows;
+}
+
+
+// =====================================
+// Search Applications
+// =====================================
 static async search(keyword){
 
     keyword=`%${keyword}%`;

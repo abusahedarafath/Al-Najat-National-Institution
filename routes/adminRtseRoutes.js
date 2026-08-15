@@ -252,6 +252,17 @@ router.get(
 
 
 // =====================================
+// Live Search Approved Students - Section Wise
+// =====================================
+
+router.get(
+    "/rtse/approved/:section/live-search",
+    auth.isAdmin,
+    adminRtseController.liveApprovedSectionSearch
+);
+
+
+// =====================================
 // Manage Approved Students
 // =====================================
 

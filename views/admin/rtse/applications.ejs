@@ -229,7 +229,7 @@
                     <% if(page > 1){ %>
 
                         <a
-                            href="/admin/rtse/applications?page=<%= page-1 %>&perPage=<%= perPage %>"
+                            href="/admin/rtse/applications?page=<%= page-1 %>&perPage=<%= perPage %>&search=<%= encodeURIComponent(search || "") %>"
                             class="btn btn-secondary"
                         >
                             Previous
@@ -244,7 +244,7 @@
                     <% if(page < totalPages){ %>
 
                         <a
-                            href="/admin/rtse/applications?page=<%= page+1 %>&perPage=<%= perPage %>"
+                            href="/admin/rtse/applications?page=<%= page+1 %>&perPage=<%= perPage %>&search=<%= encodeURIComponent(search || "") %>"
                             class="btn btn-primary"
                         >
                             Next

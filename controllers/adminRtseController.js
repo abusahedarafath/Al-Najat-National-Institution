@@ -809,6 +809,58 @@ exports.approvedStudents = async (req, res) => {
 };
 
 
+
+// =====================================
+// Live Search Approved Students - Section Wise
+// =====================================
+
+exports.liveApprovedSectionSearch = async (req, res) => {
+
+    try {
+
+        const section =
+            String(req.params.section || "").toUpperCase();
+
+        if (!["A", "B", "C", "D", "E"].includes(section)) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Invalid RTSE section."
+            });
+
+        }
+
+        const search =
+            String(req.query.search || "").trim();
+
+        const students =
+            await RtseApplication.searchApprovedSectionStudents(
+                section,
+                search
+            );
+
+        return res.json({
+            success: true,
+            students
+        });
+
+    } catch (err) {
+
+        console.error(
+            "RTSE approved section live search error:",
+            err
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to search approved students."
+        });
+
+    }
+
+};
+
+
 // =====================================
 // Make Approved Student Pending
 // =====================================

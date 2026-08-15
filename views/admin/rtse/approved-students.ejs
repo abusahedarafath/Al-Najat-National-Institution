@@ -153,8 +153,6 @@
 
                                 <th>Reg. No.</th>
 
-                                <th>Photo</th>
-
                                 <th>Student</th>
 
                                 <th>Class</th>
@@ -179,7 +177,7 @@
                                 <tr>
 
                                     <td
-                                        colspan="8"
+                                        colspan="7"
                                         style="text-align:center;padding:30px;">
 
                                         No approved students
@@ -202,29 +200,6 @@
                                         <strong>
                                             <%= student.registration_no %>
                                         </strong>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <% if(student.photo){ %>
-
-                                            <img
-                                                src="/uploads/rtse/<%= student.photo %>"
-                                                alt="Student"
-                                                style="
-                                                    width:55px;
-                                                    height:55px;
-                                                    border-radius:50%;
-                                                    object-fit:cover;
-                                                ">
-
-                                        <% } else { %>
-
-                                            -
-
-                                        <% } %>
 
                                     </td>
 
@@ -319,49 +294,6 @@
 
                                             </a>
 
-
-                                            <a
-                                                href="/admin/rtse/application/<%= student.id %>/edit"
-                                                class="btn-save">
-
-                                                Edit
-
-                                            </a>
-
-
-                                            <form
-                                                method="POST"
-                                                action="/admin/rtse/approved/<%= section %>/<%= student.id %>/pending"
-                                                style="display:inline;">
-
-                                                <button
-                                                    type="submit"
-                                                    class="btn-warning"
-                                                    onclick="return confirm('Move this student back to Pending? Roll and admit information will be cleared.');">
-
-                                                    Make Pending
-
-                                                </button>
-
-                                            </form>
-
-
-                                            <form
-                                                method="POST"
-                                                action="/admin/rtse/approved/<%= section %>/<%= student.id %>/remove"
-                                                style="display:inline;">
-
-                                                <button
-                                                    type="submit"
-                                                    class="btn-danger"
-                                                    onclick="return confirm('Remove this approved student and move them to Archive?');">
-
-                                                    Remove
-
-                                                </button>
-
-                                            </form>
-
                                         </div>
 
                                     </td>
@@ -383,5 +315,266 @@
     </main>
 
 </div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input =
+        document.getElementById("rtseApprovedSearch");
+
+    const table =
+        document.getElementById("rtseApprovedTable");
+
+    const tbody =
+        table
+            ? table.querySelector("tbody")
+            : null;
+
+    const resultText =
+        document.getElementById("rtseApprovedSearchResult");
+
+    if (!input || !tbody) {
+        return;
+    }
+
+    const section =
+        "<%= section %>";
+
+    let searchTimer = null;
+    let controller = null;
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+    function renderStudents(students) {
+
+        if (!students.length) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="7"
+                        style="text-align:center;padding:30px;">
+                        No approved students found in
+                        Section ${escapeHtml(section)}.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        tbody.innerHTML =
+            students.map(function (student) {
+
+                let roll = "-";
+
+                if (student.roll_no) {
+
+                    roll =
+                        escapeHtml(
+                            String(student.roll_no).split("-")[0]
+                        );
+
+                }
+
+                const admit =
+                    Number(student.admit_generated) === 1
+                        ? `
+                            <span class="badge badge-success">
+                                Generated
+                            </span>
+                          `
+                        : `
+                            <span class="badge badge-warning">
+                                Not Generated
+                            </span>
+                          `;
+
+                return `
+                    <tr>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(student.registration_no)}
+                            </strong>
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                ${escapeHtml(student.full_name)}
+                            </strong>
+
+                            <br>
+
+                            <small>
+                                ${escapeHtml(student.school_name)}
+                            </small>
+
+                        </td>
+
+                        <td>
+                            ${escapeHtml(student.class)}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${roll}
+                            </strong>
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(
+                                    student.roll_number || "-"
+                                )}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${admit}
+                        </td>
+
+                        <td style="white-space:nowrap;">
+
+                            <a
+                                href="/admin/rtse/application/${encodeURIComponent(student.id)}"
+                                class="btn-view">
+
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+                `;
+
+            }).join("");
+
+    }
+
+    async function performApprovedSearch() {
+
+        const query =
+            input.value.trim();
+
+        if (controller) {
+            controller.abort();
+        }
+
+        controller =
+            new AbortController();
+
+        try {
+
+            const url =
+                "/admin/rtse/approved/" +
+                encodeURIComponent(section) +
+                "/live-search?search=" +
+                encodeURIComponent(query);
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        signal: controller.signal
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Search request failed."
+                );
+            }
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to search students."
+                );
+            }
+
+            renderStudents(
+                data.students || []
+            );
+
+            if (resultText) {
+
+                if (query) {
+
+                    resultText.textContent =
+                        `${data.students.length} matching student(s)`;
+
+                } else {
+
+                    resultText.textContent =
+                        `${data.students.length} approved student(s) in Section ${section}`;
+
+                }
+
+            }
+
+        } catch (error) {
+
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            console.error(
+                "RTSE approved section search error:",
+                error
+            );
+
+            if (resultText) {
+                resultText.textContent =
+                    "Unable to search students.";
+            }
+
+        }
+
+    }
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            clearTimeout(searchTimer);
+
+            searchTimer =
+                setTimeout(
+                    performApprovedSearch,
+                    150
+                );
+
+        }
+    );
+
+    /*
+     * Initial state.
+     * The server-rendered approved students remain visible.
+     * No additional request is made until the administrator searches.
+     */
+
+});
+
+</script>
 
 <%- include("../partials/footer") %>
