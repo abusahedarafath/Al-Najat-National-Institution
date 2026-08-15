@@ -214,6 +214,7 @@
 
             </div>
 
+            <div id="rtsePagination">
             <% if(totalPages > 1){ %>
 
                 <div style="
@@ -272,7 +273,8 @@ function changeRtsePerPage(value) {
             ? searchInput.value.trim()
             : "";
 
-    const params = new URLSearchParams();
+    const params =
+        new URLSearchParams();
 
     params.set("perPage", value);
 
@@ -285,38 +287,234 @@ function changeRtsePerPage(value) {
         params.toString();
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+
+document.addEventListener("DOMContentLoaded", function () {
 
     const input =
         document.getElementById("rtseApplicationSearch");
 
-    if (!input) return;
+    const table =
+        document.getElementById("rtseApplicationTable");
 
-    input.addEventListener("keydown", function(event) {
+    const tbody =
+        table ? table.querySelector("tbody") : null;
 
-        if (event.key !== "Enter") return;
+    const totalText =
+        document.querySelector(".page-header p");
 
-        event.preventDefault();
+    const perPageSelect =
+        document.getElementById("rtsePerPage");
 
-        const query =
-            this.value.trim();
+    if (!input || !tbody) return;
 
-        const params =
-            new URLSearchParams();
+    let searchTimer = null;
+    let controller = null;
 
-        params.set("perPage", "<%= perPage %>");
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-        if (query) {
-            params.set("search", query);
+    function renderApplications(applications) {
+
+        if (!applications.length) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="7"
+                        style="text-align:center;padding:30px;">
+                        No applications found.
+                    </td>
+                </tr>
+            `;
+
+            return;
         }
 
-        window.location.href =
-            "/admin/rtse/applications?" +
-            params.toString();
+        tbody.innerHTML = applications.map(function (application) {
+
+            let statusHtml = "";
+
+            if (application.status === "Approved") {
+
+                statusHtml = `
+                    <span class="badge badge-success">
+                        Approved
+                    </span>
+                `;
+
+            } else if (application.status === "Rejected") {
+
+                statusHtml = `
+                    <span class="badge badge-danger">
+                        Rejected
+                    </span>
+                `;
+
+            } else {
+
+                statusHtml = `
+                    <span class="badge badge-warning">
+                        Pending
+                    </span>
+                `;
+            }
+
+            if (application.roll_no) {
+
+                statusHtml += `
+                    <br>
+                    <small>
+                        <strong>
+                            ${escapeHtml(application.roll_no)}
+                        </strong>
+                    </small>
+                `;
+            }
+
+            return `
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(application.registration_no)}
+                        </strong>
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(application.full_name)}
+                        </strong>
+                        <br>
+                        <small>
+                            ${escapeHtml(application.mobile)}
+                        </small>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(application.school_name)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(application.class)}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(application.section)}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${statusHtml}
+                    </td>
+
+                    <td style="white-space:nowrap;">
+                        <a
+                            href="/admin/rtse/application/${encodeURIComponent(application.id)}"
+                            class="btn-view">
+                            View
+                        </a>
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+    }
+
+    async function performLiveSearch() {
+
+        const query =
+            input.value.trim();
+
+        if (controller) {
+            controller.abort();
+        }
+
+        controller =
+            new AbortController();
+
+        try {
+
+            const perPage =
+                perPageSelect
+                    ? perPageSelect.value
+                    : "<%= perPage %>";
+
+            const url =
+                "/admin/rtse/applications/live-search" +
+                "?search=" +
+                encodeURIComponent(query) +
+                "&perPage=" +
+                encodeURIComponent(perPage);
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        signal: controller.signal
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error("Search request failed.");
+            }
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to search."
+                );
+            }
+
+            renderApplications(
+                data.applications || []
+            );
+
+            if (totalText) {
+
+                totalText.textContent =
+                    `${data.applicationCount || 0} total applications`;
+            }
+
+        } catch (error) {
+
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            console.error(
+                "RTSE live search error:",
+                error
+            );
+        }
+    }
+
+    input.addEventListener("input", function () {
+
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(
+            performLiveSearch,
+            150
+        );
 
     });
 
 });
+
 </script>
 
 <%- include("../partials/footer") %>

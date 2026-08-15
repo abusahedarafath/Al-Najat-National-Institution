@@ -344,6 +344,55 @@ async(req,res)=>{
 
 
 // =====================================
+
+// =====================================
+// RTSE Live Application Search
+// =====================================
+
+exports.liveApplicationSearch = async (req, res) => {
+
+    try {
+
+        const search =
+            String(req.query.search || "").trim();
+
+        const perPage = Math.min(
+            100,
+            Math.max(1, parseInt(req.query.perPage, 10) || 10)
+        );
+
+        const applications =
+            await RtseApplication.getDashboardApplications(
+                perPage,
+                0,
+                search
+            );
+
+        const applicationCount =
+            await RtseApplication.getDashboardApplicationCount(
+                search
+            );
+
+        return res.json({
+            success: true,
+            applications,
+            applicationCount
+        });
+
+    } catch (err) {
+
+        console.error(
+            "RTSE Live Application Search Error:",
+            err
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to search RTSE applications."
+        });
+    }
+};
+
 // Edit Application Page
 // =====================================
 

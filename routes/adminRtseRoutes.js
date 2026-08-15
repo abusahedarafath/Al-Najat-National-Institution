@@ -22,6 +22,12 @@ router.get(
 );
 
 // =====================================
+// RTSE Live Application Search
+router.get(
+    "/rtse/applications/live-search",
+    adminRtseController.liveApplicationSearch
+);
+
 // RTSE Student Applications
 // =====================================
 
