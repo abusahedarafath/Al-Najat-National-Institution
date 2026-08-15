@@ -292,30 +292,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (!input) return;
 
-    let searchTimer;
+    input.addEventListener("keydown", function(event) {
 
-    input.addEventListener("input", function() {
+        if (event.key !== "Enter") return;
 
-        clearTimeout(searchTimer);
+        event.preventDefault();
 
         const query =
             this.value.trim();
 
-        searchTimer = setTimeout(function() {
+        const params =
+            new URLSearchParams();
 
-            const params = new URLSearchParams();
+        params.set("perPage", "<%= perPage %>");
 
-            params.set("perPage", "<%= perPage %>");
+        if (query) {
+            params.set("search", query);
+        }
 
-            if (query) {
-                params.set("search", query);
-            }
-
-            window.location.href =
-                "/admin/rtse/applications?" +
-                params.toString();
-
-        }, 500);
+        window.location.href =
+            "/admin/rtse/applications?" +
+            params.toString();
 
     });
 
