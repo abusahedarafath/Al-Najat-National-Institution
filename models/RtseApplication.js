@@ -195,7 +195,8 @@ class RtseApplication {
     static async getDashboardApplications(
         limit = 10,
         offset = 0,
-        search = ""
+        search = "",
+        status = ""
     ){
 
         limit = Math.max(
@@ -209,9 +210,21 @@ class RtseApplication {
         );
 
         search = String(search || "").trim();
+        status = String(status || "").trim();
+
+        const allowedStatuses = [
+            "Pending",
+            "Approved",
+            "Rejected"
+        ];
 
         let whereSql = "archive=0";
         let params = [];
+
+        if (allowedStatuses.includes(status)) {
+            whereSql += " AND status=?";
+            params.push(status);
+        }
 
         /*
          * Combined Class + Section search.
@@ -310,21 +323,28 @@ class RtseApplication {
     }
 
 
-    // =====================================
-    // Dashboard Application Count
-    // =====================================
-
-    static async getDashboardApplicationCount(search = ""){
+    static async getDashboardApplicationCount(
+        search = "",
+        status = ""
+    ){
 
         search = String(search || "").trim();
+        status = String(status || "").trim();
+
+        const allowedStatuses = [
+            "Pending",
+            "Approved",
+            "Rejected"
+        ];
 
         let whereSql = "archive=0";
         let params = [];
 
-        /*
-         * Use exactly the same search rules
-         * as getDashboardApplications().
-         */
+        if (allowedStatuses.includes(status)) {
+            whereSql += " AND status=?";
+            params.push(status);
+        }
+
         const combinedMatch =
             search.match(/^(\d+)\s+([A-Za-z])$/) ||
             search.match(/^([A-Za-z])\s+(\d+)$/);
@@ -391,11 +411,6 @@ class RtseApplication {
         return Number(rows[0]?.total || 0);
     }
 
-
-
-// =====================================
-// Get Application By ID
-// =====================================
 
 static async getById(id){
 

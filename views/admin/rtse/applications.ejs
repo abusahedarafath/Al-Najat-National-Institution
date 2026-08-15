@@ -11,10 +11,12 @@
             <div class="page-header">
 
                 <div>
-                    <h1>RTSE Student Applications</h1>
-
+                    <h1>
+                        <%= status ? `RTSE ${status} Applications` : "RTSE Student Applications" %>
+                    </h1>
                     <p style="margin:5px 0;color:#777;">
-                        <%= applicationCount %> total applications
+                        <%= applicationCount %>
+                        <%= status ? `${status.toLowerCase()} applications` : "total applications" %>
                     </p>
                 </div>
 
@@ -229,7 +231,7 @@
                     <% if(page > 1){ %>
 
                         <a
-                            href="/admin/rtse/applications?page=<%= page-1 %>&perPage=<%= perPage %>&search=<%= encodeURIComponent(search || "") %>"
+                            href="/admin/rtse/applications?page=<%= page-1 %>&perPage=<%= perPage %>&search=<%= encodeURIComponent(search || "") %>&status=<%= encodeURIComponent(status || "") %>"
                             class="btn btn-secondary"
                         >
                             Previous
@@ -244,7 +246,7 @@
                     <% if(page < totalPages){ %>
 
                         <a
-                            href="/admin/rtse/applications?page=<%= page+1 %>&perPage=<%= perPage %>&search=<%= encodeURIComponent(search || "") %>"
+                            href="/admin/rtse/applications?page=<%= page+1 %>&perPage=<%= perPage %>&search=<%= encodeURIComponent(search || "") %>&status=<%= encodeURIComponent(status || "") %>"
                             class="btn btn-primary"
                         >
                             Next
@@ -447,12 +449,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     ? perPageSelect.value
                     : "<%= perPage %>";
 
-            const url =
-                "/admin/rtse/applications/live-search" +
-                "?search=" +
-                encodeURIComponent(query) +
-                "&perPage=" +
-                encodeURIComponent(perPage);
+            const status =
+                  "<%= typeof status !== 'undefined' ? status : '' %>";
+
+              const url =
+                  "/admin/rtse/applications/live-search" +
+                  "?search=" +
+                  encodeURIComponent(query) +
+                  "&perPage=" +
+                  encodeURIComponent(perPage) +
+                  "&status=" +
+                  encodeURIComponent(status);
 
             const response =
                 await fetch(
@@ -485,9 +492,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (totalText) {
 
-                totalText.textContent =
-                    `${data.applicationCount || 0} total applications`;
-            }
+                  const currentStatus =
+                      "<%= typeof status !== 'undefined' ? status : '' %>";
+
+                  totalText.textContent =
+                      currentStatus
+                          ? `${data.applicationCount || 0} ${currentStatus.toLowerCase()} applications`
+                          : `${data.applicationCount || 0} total applications`;
+              }
 
         } catch (error) {
 

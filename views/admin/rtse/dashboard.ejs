@@ -104,57 +104,60 @@
 
                 <!-- Total -->
 
-                <div class="rtse-stat-card">
-
+                <a
+                    href="/admin/rtse/applications"
+                    class="rtse-stat-card rtse-stat-card-link"
+                >
                     <h3>Total Applications</h3>
 
                     <h1>
                         <%= total %>
                     </h1>
-
-                </div>
+                </a>
 
 
                 <!-- Pending -->
 
-                <div class="rtse-stat-card">
-
+                <a
+                    href="/admin/rtse/applications?status=Pending"
+                    class="rtse-stat-card rtse-stat-card-link"
+                >
                     <h3>Pending</h3>
 
                     <h1 class="rtse-stat-pending">
                         <%= pending %>
                     </h1>
-
-                </div>
+                </a>
 
 
                 <!-- Approved -->
 
-                <div class="rtse-stat-card">
-
+                <a
+                    href="/admin/rtse/applications?status=Approved"
+                    class="rtse-stat-card rtse-stat-card-link"
+                >
                     <h3>Approved</h3>
 
                     <h1 class="rtse-stat-approved">
                         <%= approved %>
                     </h1>
-
-                </div>
+                </a>
 
 
                 <!-- Rejected -->
 
-                <div class="rtse-stat-card">
-
+                <a
+                    href="/admin/rtse/applications?status=Rejected"
+                    class="rtse-stat-card rtse-stat-card-link"
+                >
                     <h3>Rejected</h3>
 
                     <h1 class="rtse-stat-rejected">
                         <%= rejected %>
                     </h1>
-
-                </div>
+                </a>
 
             </div>
-
 
             <!-- =====================================================
                  ROLL & ADMIT MANAGEMENT
@@ -345,32 +348,6 @@
             </div>
 
         </div>
-
-    <div
-        style="
-            display:flex;
-            justify-content:center;
-            margin:30px 0;
-        ">
-
-        <a
-            href="/admin/rtse/applications"
-            class="btn-save"
-            style="
-                display:inline-flex;
-                align-items:center;
-                gap:10px;
-                padding:14px 24px;
-                font-size:16px;
-            ">
-
-            <i class="fas fa-users"></i>
-            RTSE Student Applications
-            <i class="fas fa-arrow-right"></i>
-
-        </a>
-
-    </div>
 
     </main>
 

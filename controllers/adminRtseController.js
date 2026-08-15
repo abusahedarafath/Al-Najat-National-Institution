@@ -123,6 +123,20 @@ exports.applicationsPage = async (req, res) => {
         const search =
             String(req.query.search || "").trim();
 
+        const status =
+            String(req.query.status || "").trim();
+
+        const allowedStatuses = [
+            "Pending",
+            "Approved",
+            "Rejected"
+        ];
+
+        const activeStatus =
+            allowedStatuses.includes(status)
+                ? status
+                : "";
+
         const offset =
             (page - 1) * perPage;
 
@@ -130,12 +144,14 @@ exports.applicationsPage = async (req, res) => {
             await RtseApplication.getDashboardApplications(
                 perPage,
                 offset,
-                search
+                search,
+                activeStatus
             );
 
         const applicationCount =
             await RtseApplication.getDashboardApplicationCount(
-                search
+                search,
+                activeStatus
             );
 
         const setting =
@@ -153,11 +169,15 @@ exports.applicationsPage = async (req, res) => {
         res.render(
             "admin/rtse/applications",
             {
-                title: "RTSE Student Applications",
+                title: activeStatus
+                    ? `RTSE ${activeStatus} Applications`
+                    : "RTSE Student Applications",
+
                 applications,
                 page,
                 perPage,
                 search,
+                status: activeStatus,
                 applicationCount,
                 totalPages,
                 arspSettings: setting,
@@ -168,7 +188,10 @@ exports.applicationsPage = async (req, res) => {
 
     } catch (err) {
 
-        console.error("RTSE Applications Load Error:", err);
+        console.error(
+            "RTSE Applications Load Error:",
+            err
+        );
 
         req.flash(
             "error",
@@ -176,9 +199,7 @@ exports.applicationsPage = async (req, res) => {
         );
 
         res.redirect("/admin/rtse");
-
     }
-
 };
 
 
@@ -350,33 +371,52 @@ async(req,res)=>{
 // =====================================
 
 exports.liveApplicationSearch = async (req, res) => {
-
     try {
 
         const search =
             String(req.query.search || "").trim();
 
+        const status =
+            String(req.query.status || "").trim();
+
+        const allowedStatuses = [
+            "Pending",
+            "Approved",
+            "Rejected"
+        ];
+
+        const activeStatus =
+            allowedStatuses.includes(status)
+                ? status
+                : "";
+
         const perPage = Math.min(
             100,
-            Math.max(1, parseInt(req.query.perPage, 10) || 10)
+            Math.max(
+                1,
+                parseInt(req.query.perPage, 10) || 10
+            )
         );
 
         const applications =
             await RtseApplication.getDashboardApplications(
                 perPage,
                 0,
-                search
+                search,
+                activeStatus
             );
 
         const applicationCount =
             await RtseApplication.getDashboardApplicationCount(
-                search
+                search,
+                activeStatus
             );
 
         return res.json({
             success: true,
             applications,
-            applicationCount
+            applicationCount,
+            status: activeStatus
         });
 
     } catch (err) {
