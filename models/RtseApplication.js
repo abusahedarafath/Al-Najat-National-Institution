@@ -1024,8 +1024,9 @@ static async getSectionStatistics(){
 // Update Application
 // =====================================
 static async update(id, data) {
-
-    // Automatically calculate section from the updated class
+    // Recalculate section automatically from the updated class.
+    // Student-uploaded photo and identity_document are intentionally
+    // NOT included here and therefore cannot be changed by this edit.
     const section = this.getSection(data.class);
 
     await db.query(
@@ -1034,26 +1035,34 @@ static async update(id, data) {
             full_name=?,
             father_name=?,
             mother_name=?,
+            gender=?,
+            dob=?,
             mobile=?,
             email=?,
             school_name=?,
             district=?,
             state=?,
+            pincode=?,
             class=?,
             section=?,
+            address=?,
             status=?
          WHERE id=?`,
         [
             data.full_name,
             data.father_name,
             data.mother_name,
+            data.gender,
+            data.dob,
             data.mobile,
             data.email,
             data.school_name,
             data.district,
             data.state,
+            data.pincode,
             data.class,
             section,
+            data.address,
             data.status,
             id
         ]
