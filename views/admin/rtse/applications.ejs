@@ -430,6 +430,76 @@ document.addEventListener("DOMContentLoaded", function () {
         }).join("");
     }
 
+    function renderPagination(applicationCount, perPage, search, status) {
+
+        const pagination =
+            document.getElementById("rtsePagination");
+
+        if (!pagination) return;
+
+        const totalPages = Math.max(
+            1,
+            Math.ceil(
+                (Number(applicationCount) || 0) /
+                Number(perPage || 10)
+            )
+        );
+
+        const currentPage = 1;
+
+        if (totalPages <= 1) {
+            pagination.innerHTML = "";
+            return;
+        }
+
+        const searchParam =
+            encodeURIComponent(search || "");
+
+        const statusParam =
+            encodeURIComponent(status || "");
+
+        const perPageParam =
+            encodeURIComponent(perPage || 10);
+
+        let html = `
+            <div style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:10px;
+                flex-wrap:wrap;
+                margin:20px 0;
+            ">
+        `;
+
+        html += `
+            <span style="padding:8px 14px;font-weight:600;">
+                Page ${currentPage} of ${totalPages}
+            </span>
+        `;
+
+        if (currentPage < totalPages) {
+
+            const nextPage =
+                currentPage + 1;
+
+            html += `
+                <a
+                    href="/admin/rtse/applications?page=${nextPage}&perPage=${perPageParam}&search=${searchParam}&status=${statusParam}"
+                    class="btn btn-primary"
+                >
+                    Next
+                </a>
+            `;
+        }
+
+        html += `
+            </div>
+        `;
+
+        pagination.innerHTML = html;
+    }
+
     async function performLiveSearch() {
 
         const query =
@@ -489,6 +559,17 @@ document.addEventListener("DOMContentLoaded", function () {
             renderApplications(
                 data.applications || []
             );
+              const currentStatusForPagination =
+                  "<%= typeof status !== 'undefined' ? status : '' %>";
+
+              renderPagination(
+                  data.applicationCount || 0,
+                  perPage,
+                  query,
+                  currentStatusForPagination
+              );
+
+
 
             if (totalText) {
 
