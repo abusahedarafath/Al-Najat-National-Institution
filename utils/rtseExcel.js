@@ -179,6 +179,7 @@ class RtseExcel {
         for(const student of students){
 
             let commonRoll = "";
+              let rollNumber = "";
             let fullRoll = "";
 
             if(student.roll_no){
@@ -190,6 +191,9 @@ class RtseExcel {
 
                     commonRoll =
                         parts[0];
+
+                      rollNumber =
+                          parts.slice(1).join("-");
 
                     fullRoll =
                         student.roll_no;
@@ -207,7 +211,7 @@ class RtseExcel {
             }
 
 
-            sheet.addRow({
+            const excelRow = sheet.addRow({
 
                 registration_no:
                     student.registration_no,
@@ -216,7 +220,7 @@ class RtseExcel {
                     commonRoll,
 
                 roll_number:
-                    student.roll_number || "",
+                    rollNumber,
 
                 full_roll_no:
                     fullRoll,
@@ -255,6 +259,9 @@ school_name:
 
             });
 
+              const actualRowNumber =
+                  excelRow.number;
+
 
             if(student.photo){
 
@@ -284,14 +291,18 @@ school_name:
                         });
 
 
-                    sheet.addImage(
-                        imageId,
-                        `A${rowNumber}:A${rowNumber}`
-                    );
+                    sheet.addImage(imageId, {
+                          tl: {
+                              col: 0,
+                              row: actualRowNumber - 1
+                          },
+                          ext: {
+                              width: 100,
+                              height: 55
+                          }
+                      });
 
-
-                    sheet.getRow(rowNumber)
-                        .height = 55;
+                      sheet.getRow(actualRowNumber).height = 55;
 
                 }
 

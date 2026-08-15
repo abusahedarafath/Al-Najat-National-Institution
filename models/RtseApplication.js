@@ -166,10 +166,18 @@ class RtseApplication {
                 id,
                 registration_no,
                 full_name,
+                father_name,
+                dob,
+                gender,
                 school_name,
                 class,
                 section,
-                status
+                district,
+                mobile,
+                status,
+                roll_no,
+                admit_generated,
+                photo
              FROM rtse_applications
              WHERE archive=0
              ORDER BY
