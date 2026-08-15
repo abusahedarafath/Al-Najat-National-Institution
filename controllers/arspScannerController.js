@@ -69,6 +69,60 @@ exports.verify = async (req, res) => {
         }
 
         // ==========================================
+        // TIRANGA CERTIFICATE QR
+        // /arsp/tiranga/verify/TIRANGA-000001
+        // ==========================================
+        const tirangaMatch =
+            pathname.match(/^\/arsp\/tiranga\/verify\/([^/]+)$/);
+
+        if (tirangaMatch) {
+            const certificateNo =
+                decodeURIComponent(tirangaMatch[1]);
+
+            const [rows] = await db.query(
+                `SELECT
+                    certificate_no,
+                    full_name,
+                    father_name,
+                    village_name,
+                    post_office,
+                    police_station,
+                    mobile,
+                    issue_date
+                 FROM tiranga_certificates
+                 WHERE certificate_no = ?
+                 LIMIT 1`,
+                [certificateNo]
+            );
+
+            if (!rows.length) {
+                return res.json({
+                    type: "tiranga",
+                    valid: false,
+                    message: "Invalid Tiranga Certificate."
+                });
+            }
+
+            const certificate = rows[0];
+
+            return res.json({
+                type: "tiranga",
+                valid: true,
+                message: "Valid Tiranga Certificate",
+                certificate: {
+                    certificate_no: certificate.certificate_no,
+                    full_name: certificate.full_name,
+                    father_name: certificate.father_name,
+                    village_name: certificate.village_name,
+                    post_office: certificate.post_office,
+                    police_station: certificate.police_station,
+                    mobile: certificate.mobile,
+                    issue_date: certificate.issue_date
+                }
+            });
+        }
+
+        // ==========================================
         // APPOINTMENT LETTER QR
         // /arsp/document/verify/ARSP-APPT-...
         // ==========================================
@@ -138,5 +192,43 @@ exports.verify = async (req, res) => {
             valid: false,
             message: "Verification service temporarily unavailable."
         });
+    }
+};
+
+exports.tirangaVerifyPage = async (req, res) => {
+    try {
+        const certificateNo = String(req.params.certificateNo || "").trim();
+
+        const [rows] = await db.query(
+            `SELECT
+                certificate_no,
+                full_name,
+                father_name,
+                village_name,
+                post_office,
+                police_station,
+                mobile,
+                issue_date
+             FROM tiranga_certificates
+             WHERE certificate_no = ?
+             LIMIT 1`,
+            [certificateNo]
+        );
+
+        const certificate = rows[0] || null;
+
+        const ArspSetting = require("../models/ArspSetting");
+        const arsp = await ArspSetting.get();
+
+        res.render("arsp/tiranga-verify", {
+            title: certificate
+                ? "Valid Tiranga Certificate"
+                : "Invalid Tiranga Certificate",
+            certificate,
+            arsp
+        });
+    } catch (err) {
+        console.error("Tiranga verification page error:", err);
+        res.status(500).send("Unable to verify Tiranga Certificate.");
     }
 };
