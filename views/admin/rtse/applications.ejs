@@ -37,6 +37,8 @@
                 <input
                     type="search"
                     id="rtseApplicationSearch"
+                    name="search"
+                    value="<%= typeof search !== 'undefined' ? search : '' %>"
                     placeholder="Search applications..."
                     style="
                         min-width:240px;
@@ -260,13 +262,27 @@
 </div>
 
 <script>
-
 function changeRtsePerPage(value) {
 
-    window.location.href =
-        "/admin/rtse/applications?perPage=" +
-        encodeURIComponent(value);
+    const searchInput =
+        document.getElementById("rtseApplicationSearch");
 
+    const search =
+        searchInput
+            ? searchInput.value.trim()
+            : "";
+
+    const params = new URLSearchParams();
+
+    params.set("perPage", value);
+
+    if (search) {
+        params.set("search", search);
+    }
+
+    window.location.href =
+        "/admin/rtse/applications?" +
+        params.toString();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -274,41 +290,36 @@ document.addEventListener("DOMContentLoaded", function() {
     const input =
         document.getElementById("rtseApplicationSearch");
 
-    const table =
-        document.getElementById("rtseApplicationTable");
+    if (!input) return;
 
-    if (!input || !table) return;
-
-    const rows =
-        Array.from(
-            table.querySelectorAll("tbody tr")
-        );
+    let searchTimer;
 
     input.addEventListener("input", function() {
 
+        clearTimeout(searchTimer);
+
         const query =
-            this.value
-                .trim()
-                .toLowerCase();
+            this.value.trim();
 
-        rows.forEach(function(row) {
+        searchTimer = setTimeout(function() {
 
-            const text =
-                row.textContent
-                    .toLowerCase()
-                    .replace(/\s+/g, " ");
+            const params = new URLSearchParams();
 
-            row.style.display =
-                !query || text.includes(query)
-                    ? ""
-                    : "none";
+            params.set("perPage", "<%= perPage %>");
 
-        });
+            if (query) {
+                params.set("search", query);
+            }
+
+            window.location.href =
+                "/admin/rtse/applications?" +
+                params.toString();
+
+        }, 500);
 
     });
 
 });
-
 </script>
 
 <%- include("../partials/footer") %>

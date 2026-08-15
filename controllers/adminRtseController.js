@@ -120,17 +120,23 @@ exports.applicationsPage = async (req, res) => {
                 ? requestedPerPage
                 : 10;
 
+        const search =
+            String(req.query.search || "").trim();
+
         const offset =
             (page - 1) * perPage;
 
         const applications =
             await RtseApplication.getDashboardApplications(
                 perPage,
-                offset
+                offset,
+                search
             );
 
         const applicationCount =
-            await RtseApplication.getDashboardApplicationCount();
+            await RtseApplication.getDashboardApplicationCount(
+                search
+            );
 
         const setting =
             await RtseSetting.get();
@@ -151,6 +157,7 @@ exports.applicationsPage = async (req, res) => {
                 applications,
                 page,
                 perPage,
+                search,
                 applicationCount,
                 totalPages,
                 arspSettings: setting,

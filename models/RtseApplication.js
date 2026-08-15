@@ -192,7 +192,11 @@ class RtseApplication {
     // Dashboard Applications - Paginated
     // =====================================
 
-    static async getDashboardApplications(limit = 10, offset = 0){
+    static async getDashboardApplications(
+        limit = 10,
+        offset = 0,
+        search = ""
+    ){
 
         limit = Math.max(
             1,
@@ -203,6 +207,10 @@ class RtseApplication {
             0,
             Number(offset) || 0
         );
+
+        search = String(search || "").trim();
+
+        const searchValue = `%${search}%`;
 
         const [rows] = await db.query(
             `SELECT
@@ -219,6 +227,17 @@ class RtseApplication {
                 admit_generated
              FROM rtse_applications
              WHERE archive=0
+               AND (
+                    ? = ''
+                    OR registration_no LIKE ?
+                    OR full_name LIKE ?
+                    OR mobile LIKE ?
+                    OR school_name LIKE ?
+                    OR class LIKE ?
+                    OR section LIKE ?
+                    OR status LIKE ?
+                    OR roll_no LIKE ?
+               )
              ORDER BY
                 CASE
                     WHEN status='Pending' THEN 1
@@ -228,7 +247,19 @@ class RtseApplication {
                 END,
                 registration_no ASC
              LIMIT ? OFFSET ?`,
-            [limit, offset]
+            [
+                search,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                limit,
+                offset
+            ]
         );
 
         return rows;
@@ -238,12 +269,38 @@ class RtseApplication {
     // Dashboard Application Count
     // =====================================
 
-    static async getDashboardApplicationCount(){
+    static async getDashboardApplicationCount(search = ""){
+
+        search = String(search || "").trim();
+
+        const searchValue = `%${search}%`;
 
         const [rows] = await db.query(
             `SELECT COUNT(*) AS total
              FROM rtse_applications
-             WHERE archive=0`
+             WHERE archive=0
+               AND (
+                    ? = ''
+                    OR registration_no LIKE ?
+                    OR full_name LIKE ?
+                    OR mobile LIKE ?
+                    OR school_name LIKE ?
+                    OR class LIKE ?
+                    OR section LIKE ?
+                    OR status LIKE ?
+                    OR roll_no LIKE ?
+               )`,
+            [
+                search,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue,
+                searchValue
+            ]
         );
 
         return Number(rows[0]?.total || 0);
