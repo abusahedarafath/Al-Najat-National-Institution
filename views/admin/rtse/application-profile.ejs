@@ -13,7 +13,7 @@
                 <h1>RTSE Application Profile</h1>
 
                 <a
-                    href="/admin/rtse/applications?page=<%= Math.max(1, parseInt(returnPage, 10) || 1) %>&perPage=<%= [10,25,50,100].includes(parseInt(returnPerPage, 10)) ? parseInt(returnPerPage, 10) : 10 %>&search=<%= encodeURIComponent(returnSearch || "") %>&status=<%= encodeURIComponent(returnStatus || "") %>"
+                    href="javascript:history.back();"
                     class="btn-cancel">
 
                     ← Back

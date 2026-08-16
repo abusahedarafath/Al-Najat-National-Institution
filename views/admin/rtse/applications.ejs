@@ -522,6 +522,34 @@ document.addEventListener("DOMContentLoaded", function () {
             const status =
                   "<%= typeof status !== 'undefined' ? status : '' %>";
 
+              // Keep live-search state in the current URL
+              // without creating a new browser-history entry.
+              const browserParams =
+                  new URLSearchParams(window.location.search);
+
+              if (query) {
+                  browserParams.set("search", query);
+              } else {
+                  browserParams.delete("search");
+              }
+
+              browserParams.set("perPage", perPage);
+
+              if (status) {
+                  browserParams.set("status", status);
+              } else {
+                  browserParams.delete("status");
+              }
+
+              browserParams.set("page", "1");
+
+              window.history.replaceState(
+                  null,
+                  "",
+                  "/admin/rtse/applications?" +
+                  browserParams.toString()
+              );
+
               const url =
                   "/admin/rtse/applications/live-search" +
                   "?search=" +
