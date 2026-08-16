@@ -187,7 +187,7 @@
                                     <td style="white-space:nowrap;">
 
                                         <a
-                                            href="/admin/rtse/application/<%= application.id %>"
+                                            href="/admin/rtse/application/<%= application.id %>?returnPage=<%= page %>&returnPerPage=<%= perPage %>&returnSearch=<%= encodeURIComponent(search || "") %>&returnStatus=<%= encodeURIComponent(status || "") %>"
                                             class="btn-view">
                                             View
                                         </a>
@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <td style="white-space:nowrap;">
                         <a
-                            href="/admin/rtse/application/${encodeURIComponent(application.id)}"
+                            href="/admin/rtse/application/${encodeURIComponent(application.id)}?returnPage=${encodeURIComponent(new URLSearchParams(window.location.search).get("page") || "1")}&returnPerPage=${encodeURIComponent(perPageSelect ? perPageSelect.value : "<%= perPage %>")}&returnSearch=${encodeURIComponent(input ? input.value.trim() : "")}&returnStatus=${encodeURIComponent("<%= typeof status !== 'undefined' ? status : '' %>")}"
                             class="btn-view">
                             View
                         </a>

@@ -239,7 +239,19 @@ async (req,res)=>{
                 title:
                     "RTSE Application",
 
-                application
+                application,
+
+                returnPage:
+                    req.query.returnPage || 1,
+
+                returnPerPage:
+                    req.query.returnPerPage || 10,
+
+                returnSearch:
+                    req.query.returnSearch || "",
+
+                returnStatus:
+                    req.query.returnStatus || ""
 
             }
 
