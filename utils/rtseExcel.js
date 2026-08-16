@@ -71,12 +71,7 @@ class RtseExcel {
         sheet.columns = [
 
             {
-                header: "Photo",
-                key: "photo",
-                width: 18
-            },
 
-            {
                 header: "Registration No.",
                 key: "registration_no",
                 width: 20
@@ -258,56 +253,6 @@ school_name:
                         : "No"
 
             });
-
-              const actualRowNumber =
-                  excelRow.number;
-
-
-            if(student.photo){
-
-                const imagePath =
-                    path.join(
-                        __dirname,
-                        "..",
-                        "public",
-                        "uploads",
-                        "rtse",
-                        student.photo
-                    );
-
-
-                if(fs.existsSync(imagePath)){
-
-                    const imageId =
-                        workbook.addImage({
-
-                            filename:
-                                imagePath,
-
-                            extension:
-                                path.extname(imagePath)
-                                    .replace(".","")
-
-                        });
-
-
-                    sheet.addImage(imageId, {
-                          tl: {
-                              col: 0,
-                              row: actualRowNumber - 1
-                          },
-                          ext: {
-                              width: 100,
-                              height: 55
-                          }
-                      });
-
-                      sheet.getRow(actualRowNumber).height = 55;
-
-                }
-
-            }
-
 
             rowNumber++;
 
