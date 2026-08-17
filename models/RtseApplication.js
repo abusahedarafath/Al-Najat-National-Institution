@@ -226,7 +226,15 @@ class RtseApplication {
             "Rejected"
         ];
 
-        let whereSql = "archive=0";
+        let whereSql = `
+            archive=0
+            AND NOT EXISTS (
+                SELECT 1
+                FROM rtse_exam_attendance ea
+                WHERE ea.application_id = rtse_applications.id
+                  AND ea.attendance_status = 'PRESENT'
+            )
+        `;
         let params = [];
 
         if (allowedStatuses.includes(status)) {
@@ -345,7 +353,15 @@ class RtseApplication {
             "Rejected"
         ];
 
-        let whereSql = "archive=0";
+        let whereSql = `
+            archive=0
+            AND NOT EXISTS (
+                SELECT 1
+                FROM rtse_exam_attendance ea
+                WHERE ea.application_id = rtse_applications.id
+                  AND ea.attendance_status = 'PRESENT'
+            )
+        `;
         let params = [];
 
         if (allowedStatuses.includes(status)) {

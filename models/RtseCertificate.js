@@ -275,7 +275,7 @@ static async getPendingStudents(section = null){
 
         WHERE
 
-            r.result_status='Pass'
+            r.id IS NOT NULL
 
         AND
 

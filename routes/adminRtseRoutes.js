@@ -474,6 +474,17 @@ router.get(
 
 
 // =====================================
+// Attendance Management
+// =====================================
+
+router.post(
+    "/rtse/attendance/absent/:id",
+    auth.isAdmin,
+    adminRtseController.markAttendanceAbsent
+);
+
+
+// =====================================
 // Result Management
 // =====================================
 
@@ -496,6 +507,18 @@ router.get(
     adminRtseController.resultEntryPage
 
 );
+
+
+// =====================================
+// Reset Result to Pending
+// =====================================
+
+router.post(
+    "/rtse/result/:id/reset-pending",
+    auth.isAdmin,
+    adminRtseController.resetResultPending
+);
+
 
 router.post(
 

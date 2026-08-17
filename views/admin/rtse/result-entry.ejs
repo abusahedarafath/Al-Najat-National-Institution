@@ -212,51 +212,62 @@
 
                         </div>
 
-                        <div class="form-group">
-
-                            <label>
-
-                                Result Status
-
-                            </label>
-
-                            <select
-
-                                name="result_status">
-
-                                <option value="Pass">
-
-                                    Pass
-
-                                </option>
-
-                                <option value="Fail">
-
-                                    Fail
-
-                                </option>
-
-                                <option value="Absent">
-
-                                    Absent
-
-                                </option>
-
-                            </select>
-
-                        </div>
+                        <input
+    type="hidden"
+    name="result_status"
+    value="Entered">
 
                     </div>
 
-                    <button
 
-                        class="btn-save"
 
-                        type="submit">
 
-                        Save Result
+
+                    <div
+                        style="
+                            display:flex;
+                            gap:10px;
+                            flex-wrap:wrap;
+                            margin-top:20px;
+                        ">
+
+                        <button
+                            class="btn-save"
+                            type="submit">
+
+                            💾 Save Changes
+
+                        </button>
+
+                        <% if (result) { %>
+
+                        <button
+                        type="submit"
+                        formnovalidate
+                        formaction="/admin/rtse/result/<%= student.id %>/reset-pending"
+                        formmethod="POST"
+                        class="btn-warning"
+                        onclick="return confirm('Reset this result to Pending? The student will remain PRESENT and stay in the Result Dashboard.')">
+
+                        ↩ Reset Result to Pending
 
                     </button>
+
+                        <% } %>
+
+                        <button
+                            type="submit"
+                            formnovalidate
+                            formaction="/admin/rtse/attendance/absent/<%= student.id %>"
+                            formmethod="POST"
+                            class="btn-warning"
+                            onclick="return confirm('Mark this student ABSENT? The student will leave the Result Dashboard and return to the main RTSE Application Dashboard.')">
+
+                            ✕ Mark Attendance Absent
+
+                        </button>
+
+                    </div>
 
                 </form>
 

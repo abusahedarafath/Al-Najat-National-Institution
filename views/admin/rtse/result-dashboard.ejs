@@ -221,6 +221,60 @@ Certificate PDF Downloads
 
             </div>
 
+            <!-- Result Statistics -->
+
+            <div
+                style="
+                    display:grid;
+                    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+                    gap:15px;
+                    margin-bottom:20px;
+                ">
+
+                <div class="profile-card">
+
+                    <h3>
+                        <%= stats.total %>
+                    </h3>
+
+                    <p>
+                        Total Students
+                    </p>
+
+                </div>
+
+                <div class="profile-card">
+
+                    <h3>
+                        <%= stats.entered %>
+                    </h3>
+
+                    <p>
+                        Results Entered
+                    </p>
+
+                </div>
+
+                <div class="profile-card">
+
+                    <h3>
+                        <%= stats.pending %>
+                    </h3>
+
+                    <p>
+                        Pending
+                    </p>
+
+                </div>
+
+
+
+
+
+
+
+            </div>
+
             <!-- Search -->
 
             <div class="profile-card">
@@ -317,152 +371,179 @@ Certificate PDF Downloads
 
                     <thead>
 
-                        <tr>
+    <tr>
 
-                            <th>
+        <th>
+            Roll No.
+        </th>
 
-                                Roll No.
+        <th>
+            Registration
+        </th>
 
-                            </th>
+        <th>
+            Student
+        </th>
 
-                            <th>
+        <th>
+            Section
+        </th>
 
-                                Registration
+        <th>
+            Marks
+        </th>
 
-                            </th>
+        <th>
+            Percentage
+        </th>
 
-                            <th>
+        <th>
+            Grade
+        </th>
 
-                                Student
+        <th>
+            Result
+        </th>
 
-                            </th>
+        <th>
+            Section Rank
+        </th>
 
-                            <th>
+        <th>
+            Overall Rank
+        </th>
 
-                                School
+        <th>
+            Action
+        </th>
 
-                            </th>
+    </tr>
 
-                            <th>
+</thead>
 
-                                Section
+<tbody>
 
-                            </th>
+<% students.forEach(student => { %>
 
-                            <th>
+    <tr>
 
-                                Result
+        <td>
+            <strong>
+                <%= student.roll_no || "-" %>
+            </strong>
+        </td>
 
-                            </th>
+        <td>
+            <%= student.registration_no || "-" %>
+        </td>
 
-                            <th>
+        <td>
 
-                                Action
+            <strong>
+                <%= student.full_name %>
+            </strong>
 
-                            </th>
+            <br>
 
-                        </tr>
+            <small>
+                <%= student.school_name || "-" %>
+            </small>
 
-                    </thead>
+        </td>
 
-                    <tbody>
+        <td>
+            <%= student.section || "-" %>
+        </td>
 
-                        <% students.forEach(student=>{ %>
+        <td>
+            <%= student.marks != null
+                ? student.marks
+                : "-" %>
+        </td>
 
-                        <tr>
+        <td>
+            <%= student.percentage != null
+                ? student.percentage + "%"
+                : "-" %>
+        </td>
 
-                            <td>
+        <td>
+            <%= student.grade || "-" %>
+        </td>
 
-                                <%= student.roll_no || "-" %>
+        <td>
 
-                            </td>
+    <% if (!student.result_id) { %>
 
-                            <td>
+        <span class="badge badge-warning">
+            Pending
+        </span>
 
-                                <%= student.registration_no %>
+    <% } else { %>
 
-                            </td>
+        <span class="badge badge-success">
+            Entered
+        </span>
 
-                            <td>
+    <% } %>
 
-                                <strong>
+</td>
 
-                                    <%= student.full_name %>
+        <td>
+            <%= student.section_rank || "-" %>
+        </td>
 
-                                </strong>
+        <td>
+            <%= student.overall_rank || "-" %>
+        </td>
 
-                            </td>
+        <td>
 
-                            <td>
+            <a
+                href="/admin/rtse/result/<%= student.application_id %>"
+                class="btn-save">
 
-                                <%= student.school_name %>
+                <%= student.result_id
+                    ? "Edit Result"
+                    : "Enter Result" %>
 
-                            </td>
+            </a>
 
-                            <td>
+            <% if (student.result_id) { %>
 
-                                <%= student.section %>
+                <a
+                    href="/admin/rtse/certificate/<%= student.application_id %>"
+                    class="btn-view">
 
-                            </td>
+                    Certificate
 
+                </a>
 
-<% if(student.result_status){ %>
+            <% } %>
 
-<a
+        </td>
 
-    href="/admin/rtse/certificate/<%= student.id %>"
+    </tr>
 
-    class="btn-view">
+<% }) %>
 
-    Certificate
+<% if (!students.length) { %>
 
-</a>
+    <tr>
+
+        <td
+            colspan="11"
+            style="text-align:center;padding:30px;">
+
+            No students found.
+
+        </td>
+
+    </tr>
 
 <% } %>
 
-
-
-                            <td>
-
-                                <% if(student.result_status){ %>
-
-                                    <span class="badge badge-success">
-
-                                        Entered
-
-                                    </span>
-
-                                <% }else{ %>
-
-                                    <span class="badge badge-warning">
-
-                                        Pending
-
-                                    </span>
-
-                                <% } %>
-
-                            </td>
-
-                            <td>
-
-                                <a
-
-                                    href="/admin/rtse/result/<%= student.id %>"
-
-                                    class="btn-save">
-
-                                    Enter Result
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                        <% }) %>
-
-                    </tbody>
+</tbody>
 
                 </table>
 

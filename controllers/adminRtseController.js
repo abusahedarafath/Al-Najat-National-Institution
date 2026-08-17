@@ -24,6 +24,8 @@ require("../services/rtseCertificateService");
 
 const ExcelJS = require("exceljs");
 const RtseExcel = require("../utils/rtseExcel");
+const QRCode = require("qrcode");
+const RtseExamAttendance = require("../models/RtseExamAttendance");
 
 // =====================================
 // RTSE Dashboard
@@ -782,6 +784,18 @@ exports.generateAdmitCards = async (req, res) => {
 
         await RtseApplication.generateAdmitCards(req.params.section);
 
+        // Create secure attendance/QR records for generated admits.
+        // This does not modify student-uploaded files.
+        const qrCreated =
+            await RtseExamAttendance.ensureForSection(
+                req.params.section
+            );
+
+        console.log(
+            "RTSE QR attendance records created:",
+            qrCreated
+        );
+
         req.flash(
             "success",
             "Admit Cards generated successfully."
@@ -1157,6 +1171,33 @@ exports.viewAdmitCard = async (req, res) => {
         const setting =
             await ArspSetting.get();
 
+        // Guarantee an attendance QR record for a generated admit.
+        let attendance = null;
+
+        if (
+            Number(student.admit_generated) === 1 &&
+            student.status === "Approved" &&
+            student.roll_no
+        ) {
+            attendance =
+                await RtseExamAttendance.ensureForApplication(
+                    student.id
+                );
+        }
+
+        let qrData = null;
+
+        if (attendance && attendance.qr_token) {
+            qrData = await QRCode.toDataURL(
+                attendance.qr_token,
+                {
+                    width: 180,
+                    margin: 2,
+                    errorCorrectionLevel: "M"
+                }
+            );
+        }
+
         res.render(
 
             "admin/rtse/admit-card",
@@ -1168,6 +1209,10 @@ exports.viewAdmitCard = async (req, res) => {
                 setting,
 
                 student,
+
+                attendance,
+
+                qrData,
 
                 examYear:
                     new Date().getFullYear()
@@ -1650,6 +1695,69 @@ exports.attendanceSheet = async (req, res) => {
 
 
 // =====================================
+// Reset Attendance to ABSENT
+// =====================================
+
+exports.markAttendanceAbsent = async (req, res) => {
+
+    try {
+
+        const applicationId =
+            req.params.id;
+
+        const attendance =
+            await RtseExamAttendance.markAbsent(
+                applicationId
+            );
+
+        // Remove any existing result because the candidate
+        // is no longer PRESENT for the examination.
+        await RtseResult.deleteByApplication(
+            applicationId
+        );
+
+        if (!attendance) {
+
+            req.flash(
+                "error",
+                "Attendance could not be reset."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+        }
+
+        req.flash(
+            "success",
+            "Attendance reset to ABSENT. Student returned to the RTSE Application Dashboard."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Reset Attendance Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to reset attendance."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+    }
+
+};
+
+
+// =====================================
 // Result Dashboard
 // =====================================
 
@@ -1657,26 +1765,53 @@ exports.resultDashboard = async (req, res) => {
 
     try {
 
+        const search =
+            String(req.query.search || "").trim();
+
+        const section =
+            String(req.query.section || "").trim();
+
         const students =
-            await RtseApplication.getAll();
+            await RtseResult.getDashboardResults(
+                search,
+                section
+            );
 
         const setting =
             await RtseSetting.get();
 
+        const total =
+            students.length;
+
+        const entered =
+            students.filter(
+                student => student.result_id
+            ).length;
+
+        const pending =
+            students.filter(
+                student => !student.result_id
+            ).length;
+
         res.render(
-
             "admin/rtse/result-dashboard",
-
             {
-
                 title: "RTSE Result Dashboard",
 
                 students,
 
-                setting
+                setting,
 
+                search,
+
+                section,
+
+                stats: {
+                    total,
+                    entered,
+                    pending
+                }
             }
-
         );
 
     } catch (err) {
@@ -1684,14 +1819,13 @@ exports.resultDashboard = async (req, res) => {
         console.error(err);
 
         req.flash(
-
             "error",
-
             "Unable to load Result Dashboard."
-
         );
 
-        return res.redirect("/admin/rtse");
+        return res.redirect(
+            "/admin/rtse"
+        );
 
     }
 
@@ -1761,61 +1895,83 @@ exports.saveResult = async (req, res) => {
 
     try {
 
-        const old =
-            await RtseResult.getByApplication(
-                req.params.id
+        const applicationId =
+            req.params.id;
+
+        const resultStatus =
+            String(
+                req.body.result_status || ""
+            ).trim();
+
+        // =====================================
+        // Reset Result to Pending
+        // =====================================
+
+        if (resultStatus === "Pending") {
+
+            await RtseResult.deleteByApplication(
+                applicationId
             );
 
-        if(old){
+            req.flash(
+                "success",
+                "Result reset to Pending successfully."
+            );
 
-            await RtseResult.update(
-
-                req.params.id,
-
-                req.body
-
+            return res.redirect(
+                "/admin/rtse/results"
             );
 
         }
 
-        else{
+        // =====================================
+        // Save / Update Result
+        // =====================================
+
+        const old =
+            await RtseResult.getByApplication(
+                applicationId
+            );
+
+        if (old) {
+
+            await RtseResult.update(
+                applicationId,
+                req.body
+            );
+
+        } else {
 
             req.body.application_id =
-                req.params.id;
+                applicationId;
 
             await RtseResult.save(
-
                 req.body
-
             );
 
         }
 
         req.flash(
-
             "success",
-
             "Result saved successfully."
-
         );
 
-        res.redirect("/admin/rtse/results");
+        return res.redirect(
+            "/admin/rtse/results"
+        );
 
-    }
-
-    catch(err){
+    } catch (err) {
 
         console.error(err);
 
         req.flash(
-
             "error",
-
             "Unable to save result."
-
         );
 
-        res.redirect("/admin/rtse/results");
+        return res.redirect(
+            "/admin/rtse/results"
+        );
 
     }
 
@@ -1824,7 +1980,66 @@ exports.saveResult = async (req, res) => {
 
 
 // =====================================
+// Reset Result to Pending
+// =====================================
+
+exports.resetResultPending = async (req, res) => {
+
+    try {
+
+        const applicationId =
+            req.params.id;
+
+        if (!applicationId) {
+
+            req.flash(
+                "error",
+                "Invalid student application."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+
+        }
+
+        await RtseResult.deleteByApplication(
+            applicationId
+        );
+
+        req.flash(
+            "success",
+            "Result reset to Pending successfully."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Reset Result Pending Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to reset result."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    }
+
+};
+
+
+// =====================================
 // Generate Rankings
+
 // =====================================
 
 exports.generateRankings = async (req, res) => {

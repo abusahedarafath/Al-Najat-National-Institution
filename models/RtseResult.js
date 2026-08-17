@@ -32,7 +32,7 @@ class RtseResult {
                 data.percentage,
                 data.grade,
                 data.rank_no,
-                data.result_status
+                'Entered'
 
             ]
 
@@ -69,10 +69,30 @@ class RtseResult {
                 data.percentage,
                 data.grade,
                 data.rank_no,
-                data.result_status,
+                'Entered',
 
                 id
 
+            ]
+
+        );
+
+    }
+
+
+    // =====================================
+    // Delete / Reset Result to Pending
+    // =====================================
+
+    static async deleteByApplication(id){
+
+        await db.query(
+
+            `DELETE FROM rtse_results
+             WHERE application_id=?`,
+
+            [
+                id
             ]
 
         );
@@ -158,6 +178,123 @@ class RtseResult {
 
 
 
+
+// =====================================
+// Result Dashboard
+// =====================================
+
+static async getDashboardResults(
+    search = "",
+    section = "",
+    resultFilter = ""
+){
+
+    search = String(search || "").trim();
+    section = String(section || "").trim();
+    resultFilter = String(resultFilter || "").trim();
+
+    let sql = `
+        SELECT
+
+            a.id AS application_id,
+            a.registration_no,
+            a.roll_no,
+            a.full_name,
+            a.school_name,
+            a.section,
+            a.class,
+            a.status AS application_status,
+            a.admit_generated,
+
+            r.id AS result_id,
+            r.marks,
+            r.percentage,
+            r.grade,
+            r.result_status,
+            r.section_rank,
+            r.overall_rank
+
+        FROM rtse_applications a
+
+        INNER JOIN rtse_exam_attendance ea
+            ON ea.application_id = a.id
+            AND ea.attendance_status = 'PRESENT'
+
+        LEFT JOIN rtse_results r
+            ON r.application_id = a.id
+
+        WHERE
+            a.archive = 0
+            AND a.status = 'Approved'
+            AND a.admit_generated = 1
+    `;
+
+    const params = [];
+
+    if (search) {
+
+        sql += `
+            AND (
+                a.registration_no LIKE ?
+                OR a.roll_no LIKE ?
+                OR a.full_name LIKE ?
+                OR a.school_name LIKE ?
+            )
+        `;
+
+        const keyword = `%${search}%`;
+
+        params.push(
+            keyword,
+            keyword,
+            keyword,
+            keyword
+        );
+    }
+
+    if (section) {
+
+        sql += `
+            AND a.section = ?
+        `;
+
+        params.push(section);
+    }
+
+    if (resultFilter === "Pending") {
+
+        sql += `
+            AND r.id IS NULL
+        `;
+
+    } else if (resultFilter === "Entered") {
+
+        sql += `
+            AND r.id IS NOT NULL
+        `;
+
+    }
+
+    sql += `
+        ORDER BY
+            a.section ASC,
+            CASE
+                WHEN r.overall_rank IS NULL THEN 999999
+                ELSE r.overall_rank
+            END ASC,
+            a.roll_no ASC,
+            a.full_name ASC
+    `;
+
+    const [rows] = await db.query(
+        sql,
+        params
+    );
+
+    return rows;
+}
+
+
 // =====================================
 // Generate Section-wise Rank
 // =====================================
@@ -181,9 +318,7 @@ static async generateSectionRanks(section){
 
             a.section=?
 
-        AND
-
-            r.result_status='Pass'
+        AND r.id IS NOT NULL
 
         ORDER BY
 
@@ -248,9 +383,7 @@ static async generateOverallRank(){
 
             ON a.id=r.application_id
 
-        WHERE
-
-            r.result_status='Pass'
+        WHERE r.id IS NOT NULL
 
         ORDER BY
 
@@ -314,9 +447,7 @@ static async getOverallMeritList(){
 
             ON a.id=r.application_id
 
-        WHERE
-
-            r.result_status='Pass'
+        WHERE r.id IS NOT NULL
 
         ORDER BY
 
@@ -360,9 +491,7 @@ static async getSectionMeritList(section){
 
             a.section=?
 
-        AND
-
-            r.result_status='Pass'
+        AND r.id IS NOT NULL
 
         ORDER BY
 
