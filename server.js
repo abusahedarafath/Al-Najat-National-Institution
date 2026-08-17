@@ -76,6 +76,7 @@ const footerRoutes = require("./routes/footerRoutes");
 const rtseRoutes = require("./routes/rtse");
 const seoRoutes = require("./routes/seoRoutes");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
+const superScannerRoutes = require("./routes/superScannerRoutes");
 
 
 
@@ -93,6 +94,7 @@ const PORT = process.env.PORT || 3000;
 
 // Body Parser
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Website Data (Menus + Site Settings)
 app.use(loadWebsiteData);
@@ -147,6 +149,7 @@ app.use("/", admissionRoutes);
 
 // Login routes MUST come before protected admin routes
 app.use("/", authRoutes);
+app.use("/", superScannerRoutes);
 app.use(tirangaCertificateRoutes);
 app.use("/", adminRecoveryRoutes);
 // RTSE public routes MUST be registered before admin routes

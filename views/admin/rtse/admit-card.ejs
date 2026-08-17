@@ -132,6 +132,44 @@ td{
 
 }
 
+.qr-section{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    border-top:2px solid #000;
+
+    padding-top:15px;
+
+}
+
+.qr-title{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+
+}
+
+.qr-box img{
+
+    width:180px;
+
+    height:180px;
+
+}
+
+.qr-note{
+
+    margin-top:8px;
+
+    font-size:12px;
+
+}
+
 .print{
 
     margin-top:30px;
@@ -391,6 +429,32 @@ Controller of Examination
 </div>
 
 </div>
+
+<% if (attendance && attendance.qr_token) { %>
+
+<div class="qr-section">
+
+    <div class="qr-title">
+        Examination Entry QR
+    </div>
+
+    <div class="qr-box">
+
+        <img
+            src="<%= qrData %>"
+            alt="RTSE Examination QR Code">
+
+    </div>
+
+    <div class="qr-note">
+
+        Scan this QR code at the examination centre.
+
+    </div>
+
+</div>
+
+<% } %>
 
 <div class="print">
 

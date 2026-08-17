@@ -94,3 +94,75 @@ exports.isAdmin = async (req, res, next) => {
         );
     }
 };
+
+
+// =====================================
+// Super Scanner Authentication
+// =====================================
+exports.isSuperScanner = async (req, res, next) => {
+
+    res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    // ---------------------------------
+    // Not logged in
+    // ---------------------------------
+    if (!req.session.user) {
+        return res.redirect("/admin/login");
+    }
+
+    // ---------------------------------
+    // Session role check
+    // ---------------------------------
+    if (req.session.user.role !== "super_scanner") {
+        return res.status(403).render("errors/403", {
+            title: "Access Denied"
+        });
+    }
+
+    try {
+
+        // ---------------------------------
+        // Verify current database status
+        // ---------------------------------
+        const user = await User.findById(
+            req.session.user.id
+        );
+
+        // User no longer exists
+        if (!user) {
+            return req.session.destroy(() => {
+                res.redirect("/admin/login");
+            });
+        }
+
+        // ---------------------------------
+        // Account must remain active
+        // ---------------------------------
+        if (
+            user.status !== "Active" ||
+            user.role !== "super_scanner"
+        ) {
+            return req.session.destroy(() => {
+                res.redirect("/admin/login");
+            });
+        }
+
+        return next();
+
+    } catch (error) {
+
+        console.error(
+            "Super Scanner Authentication Error:",
+            error
+        );
+
+        return res.status(500).send(
+            "Authentication error."
+        );
+    }
+};

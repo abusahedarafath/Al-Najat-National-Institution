@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title><%= title %></title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .scanner-page {
+            min-height: 100vh;
+        }
+
+        .scanner-header {
+            background: #111827;
+            color: #ffffff;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .scanner-header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .scanner-user {
+            margin-top: 5px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .scanner-container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px 18px;
+        }
+
+        .welcome-card,
+        .scanner-card {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .welcome-card {
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-card h2 {
+            margin-top: 0;
+        }
+
+        .scanner-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .scanner-card {
+            padding: 25px;
+        }
+
+        .scanner-card h3 {
+            margin-top: 0;
+        }
+
+        .scanner-icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .logout-btn {
+            color: #ffffff;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+
+            .scanner-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .scanner-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scanner-container {
+                padding: 18px 12px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="scanner-page">
+
+    <header class="scanner-header">
+
+        <div>
+
+            <h1>
+                Super Scanner Dashboard
+            </h1>
+
+            <div class="scanner-user">
+                Logged in as:
+                <strong>
+                    <%= user.username %>
+                </strong>
+            </div>
+
+        </div>
+
+        <a
+            href="/admin/logout"
+            class="logout-btn">
+            Logout
+        </a>
+
+    </header>
+
+    <main class="scanner-container">
+
+        <section class="welcome-card">
+
+            <h2>
+                Examination Scanner
+            </h2>
+
+            <p>
+                Use this dashboard to scan RTSE admit cards
+                and record examination attendance.
+            </p>
+
+            <p>
+                <strong>
+                    QR Scanner will be added in the next step.
+                </strong>
+            </p>
+
+        </section>
+
+        <section class="scanner-grid">
+
+            <div class="scanner-card">
+
+                <div class="scanner-icon">📷</div>
+
+                <h3>
+                    Scan Admit Card
+                </h3>
+
+                <p>
+                    Scan the student's RTSE Hall Ticket QR code.
+                </p>
+
+            </div>
+
+            <div class="scanner-card">
+
+                <div class="scanner-icon">🟢</div>
+
+                <h3>
+                    Today's Attendance
+                </h3>
+
+                <p>
+                    View students who have been marked present.
+                </p>
+
+            </div>
+
+            <div class="scanner-card">
+
+                <div class="scanner-icon">🔍</div>
+
+                <h3>
+                    Verify Student
+                </h3>
+
+                <p>
+                    Verify an RTSE candidate before examination entry.
+                </p>
+
+            </div>
+
+            <div class="scanner-card">
+
+                <div class="scanner-icon">📋</div>
+
+                <h3>
+                    Scan History
+                </h3>
+
+                <p>
+                    Review previous examination scans.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

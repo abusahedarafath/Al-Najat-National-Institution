@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title><%= title %></title>
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f3f4f6;
+    color:#111827;
+}
+
+.scanner-page{
+    min-height:100vh;
+}
+
+/* =====================================
+   HEADER
+===================================== */
+
+.scanner-header{
+    background:#111827;
+    color:#fff;
+    padding:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+.scanner-header h1{
+    margin:0;
+    font-size:21px;
+}
+
+.scanner-user{
+    margin-top:4px;
+    font-size:13px;
+    opacity:.85;
+}
+
+.logout-btn{
+    color:#fff;
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.35);
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+}
+
+/* =====================================
+   MAIN
+===================================== */
+
+.scanner-container{
+    width:100%;
+    max-width:700px;
+    margin:auto;
+    padding:18px 14px 30px;
+}
+
+/* =====================================
+   SCANNER CARD
+===================================== */
+
+.scanner-card{
+    background:#fff;
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+.scanner-title{
+    text-align:center;
+    margin-bottom:14px;
+}
+
+.scanner-title h2{
+    margin:0;
+    font-size:20px;
+}
+
+.scanner-title p{
+    margin:6px 0 0;
+    color:#6b7280;
+    font-size:13px;
+}
+
+/* =====================================
+   CAMERA
+===================================== */
+
+#qr-reader{
+    width:100%;
+    overflow:hidden;
+    border-radius:14px;
+    background:#111;
+}
+
+#qr-reader video{
+    border-radius:14px !important;
+}
+
+.camera-status{
+    text-align:center;
+    margin-top:12px;
+    font-size:14px;
+    color:#6b7280;
+}
+
+/* =====================================
+   MANUAL TOKEN
+===================================== */
+
+.manual-box{
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid #e5e7eb;
+}
+
+.manual-box label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.manual-row{
+    display:flex;
+    gap:8px;
+}
+
+.manual-row input{
+    flex:1;
+    min-width:0;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:14px;
+}
+
+.manual-row button{
+    border:0;
+    background:#111827;
+    color:#fff;
+    padding:0 16px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+/* =====================================
+   MESSAGE
+===================================== */
+
+.message{
+    display:none;
+    margin-top:14px;
+    padding:12px;
+    border-radius:9px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.message.info{
+    display:block;
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+/* =====================================
+   STUDENT CARD
+===================================== */
+
+.student-card{
+    display:none;
+    margin-top:18px;
+    background:#fff;
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+.student-header{
+    text-align:center;
+    border-bottom:1px solid #e5e7eb;
+    padding-bottom:14px;
+    margin-bottom:14px;
+}
+
+.student-header h2{
+    margin:0;
+    font-size:21px;
+}
+
+.student-header p{
+    margin:5px 0 0;
+    color:#6b7280;
+    font-size:13px;
+}
+
+.student-details{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.detail{
+    background:#f9fafb;
+    border-radius:8px;
+    padding:10px;
+}
+
+.detail-label{
+    display:block;
+    color:#6b7280;
+    font-size:11px;
+    margin-bottom:3px;
+}
+
+.detail-value{
+    display:block;
+    font-weight:bold;
+    font-size:14px;
+    word-break:break-word;
+}
+
+/* =====================================
+   ATTENDANCE STATUS
+===================================== */
+
+.attendance-status{
+    margin-top:16px;
+    text-align:center;
+    padding:13px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.attendance-status.absent{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.attendance-status.present{
+    background:#dcfce7;
+    color:#166534;
+}
+
+/* =====================================
+   ACTION BUTTON
+===================================== */
+
+.mark-btn{
+    width:100%;
+    margin-top:14px;
+    padding:15px;
+    border:0;
+    border-radius:10px;
+    background:#15803d;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.mark-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.scan-again{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#fff;
+    color:#111827;
+    font-weight:bold;
+}
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media(max-width:520px){
+
+    .scanner-header{
+        align-items:flex-start;
+    }
+
+    .scanner-header h1{
+        font-size:18px;
+    }
+
+    .scanner-container{
+        padding:12px 10px 25px;
+    }
+
+    .scanner-card{
+        padding:12px;
+    }
+
+    .student-details{
+        grid-template-columns:1fr;
+    }
+
+    .manual-row{
+        flex-direction:column;
+    }
+
+    .manual-row button{
+        padding:12px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="scanner-page">
+
+<header class="scanner-header">
+
+    <div>
+
+        <h1>
+            RTSE Super Scanner
+        </h1>
+
+        <div class="scanner-user">
+
+            Logged in as:
+            <strong>
+                <%= user.username %>
+            </strong>
+
+        </div>
+
+    </div>
+
+    <a
+        href="/admin/logout"
+        class="logout-btn">
+
+        Logout
+
+    </a>
+
+</header>
+
+
+<main class="scanner-container">
+
+
+<!-- =====================================
+     QR SCANNER
+===================================== -->
+
+<section class="scanner-card">
+
+    <div class="scanner-title">
+
+        <h2>
+            Scan RTSE Admit Card
+        </h2>
+
+        <p>
+            Point the camera at the Examination Entry QR code.
+        </p>
+
+    </div>
+
+
+    <div id="qr-reader"></div>
+
+
+    <div
+        id="cameraStatus"
+        class="camera-status">
+
+        Starting camera...
+
+    </div>
+
+
+    <!-- Manual token fallback -->
+
+    <div class="manual-box">
+
+        <label for="manualToken">
+            Manual QR Token
+        </label>
+
+        <div class="manual-row">
+
+            <input
+                type="text"
+                id="manualToken"
+                placeholder="RTSE-xxxxxxxx...">
+
+            <button
+                type="button"
+                onclick="lookupManualToken()">
+
+                Verify
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+</section>
+
+
+<!-- =====================================
+     STUDENT INFORMATION
+===================================== -->
+
+<section
+    id="studentCard"
+    class="student-card">
+
+    <div class="student-header">
+
+        <h2 id="studentName">
+            Student
+        </h2>
+
+        <p>
+            RTSE Examination Candidate
+        </p>
+
+    </div>
+
+
+    <div class="student-details">
+
+        <div class="detail">
+
+            <span class="detail-label">
+                Registration No.
+            </span>
+
+            <span
+                id="registrationNo"
+                class="detail-value">
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <span class="detail-label">
+                Roll No.
+            </span>
+
+            <span
+                id="rollNo"
+                class="detail-value">
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <span class="detail-label">
+                Father's Name
+            </span>
+
+            <span
+                id="fatherName"
+                class="detail-value">
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <span class="detail-label">
+                School
+            </span>
+
+            <span
+                id="schoolName"
+                class="detail-value">
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <span class="detail-label">
+                Class
+            </span>
+
+            <span
+                id="studentClass"
+                class="detail-value">
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <span class="detail-label">
+                Section
+            </span>
+
+            <span
+                id="section"
+                class="detail-value">
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="attendanceStatus"
+        class="attendance-status">
+
+    </div>
+
+
+    <button
+        id="markPresentButton"
+        class="mark-btn"
+        onclick="markPresent()">
+
+        ✓ MARK PRESENT
+
+    </button>
+
+
+    <button
+        type="button"
+        class="scan-again"
+        onclick="resetScanner()">
+
+        Scan Another Candidate
+
+    </button>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+let currentToken = null;
+let currentStudent = null;
+let scanner = null;
+let scannerRunning = false;
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const messageBox =
+    document.getElementById("message");
+
+const studentCard =
+    document.getElementById("studentCard");
+
+const cameraStatus =
+    document.getElementById("cameraStatus");
+
+const markButton =
+    document.getElementById("markPresentButton");
+
+
+/* =====================================
+   MESSAGE
+===================================== */
+
+function showMessage(text, type){
+
+    messageBox.textContent = text;
+
+    messageBox.className =
+        "message " + type;
+
+}
+
+
+/* =====================================
+   START CAMERA
+===================================== */
+
+function startScanner(){
+
+    if(typeof Html5Qrcode === "undefined"){
+
+        cameraStatus.textContent =
+            "QR scanner library could not be loaded.";
+
+        return;
+
+    }
+
+    scanner =
+        new Html5Qrcode("qr-reader");
+
+
+    const config = {
+
+        fps: 10,
+
+        qrbox: function(width, height){
+
+            const size =
+                Math.min(width, height) * 0.70;
+
+            return {
+                width: size,
+                height: size
+            };
+
+        }
+
+    };
+
+
+    scanner.start(
+
+        {
+            facingMode: "environment"
+        },
+
+        config,
+
+        function(decodedText){
+
+            handleScannedToken(decodedText);
+
+        },
+
+        function(){
+
+            // Ignore normal scanning frames.
+
+        }
+
+    ).then(function(){
+
+        scannerRunning = true;
+
+        cameraStatus.textContent =
+            "Camera ready — scan the RTSE QR code.";
+
+    }).catch(function(error){
+
+        console.error(
+            "Camera start error:",
+            error
+        );
+
+        cameraStatus.textContent =
+            "Unable to access camera. Please allow camera permission.";
+
+    });
+
+}
+
+
+/* =====================================
+   SCAN TOKEN
+===================================== */
+
+async function handleScannedToken(token){
+
+    token =
+        String(token || "").trim();
+
+    if(!token){
+
+        return;
+
+    }
+
+    if(currentToken){
+
+        return;
+
+    }
+
+    currentToken = token;
+
+    showMessage(
+        "Verifying RTSE candidate...",
+        "info"
+    );
+
+    await stopScanner();
+
+    await lookupToken(token);
+
+}
+
+
+/* =====================================
+   LOOKUP
+===================================== */
+
+async function lookupToken(token){
+
+    try{
+
+        const response =
+            await fetch(
+                "/super-scanner/lookup",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+                        qr_token:token
+                    })
+
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(!response.ok || !data.success){
+
+            currentToken = null;
+
+            showMessage(
+                data.message ||
+                "Unable to verify QR code.",
+                "error"
+            );
+
+            startScanner();
+
+            return;
+
+        }
+
+        currentStudent =
+            data.student;
+
+        // ---------------------------------
+        // Display scanned student
+        // ---------------------------------
+
+        displayStudent(
+            data.student,
+            data.alreadyPresent
+        );
+
+        // ---------------------------------
+        // Automatic attendance result
+        // ---------------------------------
+
+        if(data.autoMarked){
+
+            showMessage(
+                "✓ " +
+                data.student.full_name +
+                " (" +
+                data.student.roll_no +
+                ") — ATTENDANCE MARKED PRESENT",
+                "success"
+            );
+
+        }
+        else if(data.alreadyPresent){
+
+            showMessage(
+                "✓ " +
+                data.student.full_name +
+                " (" +
+                data.student.roll_no +
+                ") — ALREADY PRESENT",
+                "info"
+            );
+
+        }
+
+        // ---------------------------------
+        // Automatically prepare for next scan
+        // ---------------------------------
+
+        setTimeout(function(){
+
+            currentToken = null;
+            currentStudent = null;
+
+            if(studentCard){
+
+                studentCard.style.display =
+                    "none";
+
+            }
+
+            startScanner();
+
+        }, 1800);
+
+    }
+    catch(error){
+
+        console.error(
+            "Automatic attendance error:",
+            error
+        );
+
+        currentToken = null;
+
+        showMessage(
+            "Unable to connect to the attendance server.",
+            "error"
+        );
+
+        startScanner();
+
+    }
+
+}
+
+
+/* =====================================
+   DISPLAY STUDENT
+===================================== */
+
+function displayStudent(student, alreadyPresent){
+
+    studentCard.style.display =
+        "block";
+
+
+    document.getElementById(
+        "studentName"
+    ).textContent =
+        student.full_name || "-";
+
+
+    document.getElementById(
+        "registrationNo"
+    ).textContent =
+        student.registration_no || "-";
+
+
+    document.getElementById(
+        "rollNo"
+    ).textContent =
+        student.roll_no || "-";
+
+
+    document.getElementById(
+        "fatherName"
+    ).textContent =
+        student.father_name || "-";
+
+
+    document.getElementById(
+        "schoolName"
+    ).textContent =
+        student.school_name || "-";
+
+
+    document.getElementById(
+        "studentClass"
+    ).textContent =
+        student.class || "-";
+
+
+    document.getElementById(
+        "section"
+    ).textContent =
+        student.section || "-";
+
+
+    const status =
+        document.getElementById(
+            "attendanceStatus"
+        );
+
+
+    if(alreadyPresent){
+
+        status.textContent =
+            "✓ ATTENDANCE ALREADY MARKED PRESENT";
+
+        status.className =
+            "attendance-status present";
+
+        markButton.disabled =
+            true;
+
+        markButton.textContent =
+            "✓ ALREADY PRESENT";
+
+    }else{
+
+        status.textContent =
+            "CURRENT STATUS: ABSENT";
+
+        status.className =
+            "attendance-status absent";
+
+        markButton.disabled =
+            false;
+
+        markButton.textContent =
+            "✓ MARK PRESENT";
+
+    }
+
+}
+
+
+/* =====================================
+   MARK PRESENT
+===================================== */
+
+async function markPresent(){
+
+    if(!currentToken){
+
+        showMessage(
+            "No candidate is currently selected.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    markButton.disabled =
+        true;
+
+    markButton.textContent =
+        "Marking Attendance...";
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/super-scanner/mark-present",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+                        qr_token:currentToken
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
+
+            markButton.disabled =
+                false;
+
+            markButton.textContent =
+                "✓ MARK PRESENT";
+
+
+            showMessage(
+                data.message ||
+                "Unable to mark attendance.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            data.message ||
+            "Attendance marked PRESENT successfully.",
+            "success"
+        );
+
+
+        const status =
+            document.getElementById(
+                "attendanceStatus"
+            );
+
+
+        status.textContent =
+            "✓ ATTENDANCE MARKED PRESENT";
+
+
+        status.className =
+            "attendance-status present";
+
+
+        markButton.disabled =
+            true;
+
+
+        markButton.textContent =
+            "✓ PRESENT";
+
+    }catch(error){
+
+        console.error(error);
+
+        markButton.disabled =
+            false;
+
+        markButton.textContent =
+            "✓ MARK PRESENT";
+
+
+        showMessage(
+            "Unable to connect to the attendance server.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   MANUAL TOKEN
+===================================== */
+
+function lookupManualToken(){
+
+    const input =
+        document.getElementById(
+            "manualToken"
+        );
+
+
+    const token =
+        String(input.value || "").trim();
+
+
+    if(!token){
+
+        showMessage(
+            "Enter an RTSE QR token.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    currentToken =
+        token;
+
+
+    stopScanner();
+
+
+    lookupToken(token);
+
+}
+
+
+/* =====================================
+   STOP CAMERA
+===================================== */
+
+async function stopScanner(){
+
+    if(
+        scanner &&
+        scannerRunning
+    ){
+
+        try{
+
+            await scanner.stop();
+
+        }catch(error){
+
+            console.warn(
+                "Scanner stop:",
+                error
+            );
+
+        }
+
+        scannerRunning =
+            false;
+
+    }
+
+}
+
+
+/* =====================================
+   RESET
+===================================== */
+
+async function resetScanner(){
+
+    currentToken =
+        null;
+
+    currentStudent =
+        null;
+
+
+    studentCard.style.display =
+        "none";
+
+
+    document.getElementById(
+        "manualToken"
+    ).value =
+        "";
+
+
+    showMessage(
+        "Ready to scan another candidate.",
+        "info"
+    );
+
+
+    await stopScanner();
+
+    startScanner();
+
+}
+
+
+/* =====================================
+   START
+===================================== */
+
+window.addEventListener(
+    "load",
+    function(){
+
+        startScanner();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
