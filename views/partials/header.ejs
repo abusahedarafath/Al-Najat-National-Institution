@@ -63,6 +63,12 @@
 }
 </script>
 
+<% if (typeof seoSchema !== "undefined" && seoSchema) { %>
+<script type="application/ld+json">
+<%- JSON.stringify(seoSchema) %>
+</script>
+<% } %>
+
 
 
 <link rel="stylesheet" href="/css/honour-heart.css">

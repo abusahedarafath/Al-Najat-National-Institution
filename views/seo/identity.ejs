@@ -1,0 +1,198 @@
+<%- include("../partials/header") %>
+
+<main class="seo-landing">
+
+    <section class="seo-hero">
+        <div class="seo-container">
+
+            <span class="seo-kicker">
+                <%= eyebrow || "Official Website" %>
+            </span>
+
+            <h1><%= heading %></h1>
+
+            <p class="seo-lead">
+                <%= intro %>
+            </p>
+
+            <% if (primaryUrl && primaryLabel) { %>
+                <a href="<%= primaryUrl %>" class="seo-primary-btn">
+                    <%= primaryLabel %>
+                </a>
+            <% } %>
+
+        </div>
+    </section>
+
+
+    <section class="seo-content">
+        <div class="seo-container">
+
+            <% if (sections && sections.length) { %>
+
+                <% sections.forEach(function(section) { %>
+
+                    <article class="seo-section">
+
+                        <h2><%= section.heading %></h2>
+
+                        <% if (section.paragraphs) { %>
+                            <% section.paragraphs.forEach(function(paragraph) { %>
+                                <p><%= paragraph %></p>
+                            <% }); %>
+                        <% } %>
+
+                        <% if (section.links) { %>
+                            <div class="seo-links">
+
+                                <% section.links.forEach(function(link) { %>
+
+                                    <a href="<%= link.url %>" class="seo-link-card">
+
+                                        <strong><%= link.title %></strong>
+
+                                        <% if (link.description) { %>
+                                            <span><%= link.description %></span>
+                                        <% } %>
+
+                                    </a>
+
+                                <% }); %>
+
+                            </div>
+                        <% } %>
+
+                    </article>
+
+                <% }); %>
+
+            <% } %>
+
+        </div>
+    </section>
+
+</main>
+
+
+<style>
+.seo-landing {
+    min-height: 70vh;
+    background: #f8fafc;
+}
+
+.seo-hero {
+    padding: 70px 20px;
+    background:
+        linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #fff;
+}
+
+.seo-container {
+    width: min(1100px, calc(100% - 32px));
+    margin: 0 auto;
+}
+
+.seo-kicker {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+.seo-hero h1 {
+    max-width: 900px;
+    margin: 0 0 20px;
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1.08;
+}
+
+.seo-lead {
+    max-width: 850px;
+    margin: 0 0 28px;
+    font-size: 1.12rem;
+    line-height: 1.8;
+    color: rgba(255,255,255,.9);
+}
+
+.seo-primary-btn {
+    display: inline-block;
+    padding: 13px 22px;
+    border-radius: 10px;
+    background: #fff;
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.seo-content {
+    padding: 50px 0 80px;
+}
+
+.seo-section {
+    margin-bottom: 42px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(15,23,42,.06);
+}
+
+.seo-section h2 {
+    margin-top: 0;
+    color: #0f172a;
+}
+
+.seo-section p {
+    color: #475569;
+    line-height: 1.8;
+}
+
+.seo-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.seo-link-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    color: #0f172a;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.seo-link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15,23,42,.08);
+}
+
+.seo-link-card span {
+    color: #64748b;
+    font-size: .92rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+    .seo-hero {
+        padding: 50px 15px;
+    }
+
+    .seo-content {
+        padding: 30px 0 50px;
+    }
+
+    .seo-section {
+        padding: 22px;
+    }
+}
+</style>
+
+<%- include("../partials/footer") %>
