@@ -24,14 +24,65 @@
 
             <div class="profile-card">
 
-                <div
-                    style="text-align:center;margin-bottom:30px;">
+                <div style="text-align:center;margin-bottom:30px;">
 
-                    <img
+                    <% if (application.photo) { %>
 
-                        src="/uploads/rtse/<%= application.photo %>"
+                        <img
+                            src="/uploads/rtse/<%= application.photo %>"
+                            alt="Student Photo"
+                            style="
+                                width:170px;
+                                height:170px;
+                                border-radius:50%;
+                                object-fit:cover;
+                                border:5px solid #ddd;
+                                display:block;
+                                margin:0 auto 15px;
+                            ">
 
-                        style="width:170px;height:170px;border-radius:50%;object-fit:cover;border:5px solid #ddd;">
+                        <div style="
+                            display:flex;
+                            justify-content:center;
+                            gap:10px;
+                            flex-wrap:wrap;
+                        ">
+
+                            <a
+                                href="/uploads/rtse/<%= application.photo %>"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-view">
+                                View Photo
+                            </a>
+
+                            <a
+                                href="/uploads/rtse/<%= application.photo %>"
+                                download="<%= application.photo %>"
+                                class="btn-save">
+                                Download Photo
+                            </a>
+
+                        </div>
+
+                    <% } else { %>
+
+                        <div style="
+                            width:170px;
+                            height:170px;
+                            border-radius:50%;
+                            margin:0 auto 15px;
+                            border:5px solid #ddd;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            background:#f5f5f5;
+                            color:#777;
+                        ">
+                            No Photo
+                        </div>
+
+                    <% } %>
 
                 </div>
 
@@ -327,21 +378,35 @@
 
                                 <% if(application.identity_document){ %>
 
-                                    <a
+                                    <div style="
+                                        display:flex;
+                                        gap:10px;
+                                        flex-wrap:wrap;
+                                        align-items:center;
+                                    ">
 
-                                        href="/uploads/rtse/<%= application.identity_document %>"
+                                        <a
+                                            href="/uploads/rtse/<%= application.identity_document %>"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="btn-view">
+                                            View Document
+                                        </a>
 
-                                        target="_blank"
+                                        <a
+                                            href="/uploads/rtse/<%= application.identity_document %>"
+                                            download="<%= application.identity_document %>"
+                                            class="btn-save">
+                                            Download Document
+                                        </a>
 
-                                        class="btn-view">
-
-                                        View Document
-
-                                    </a>
+                                    </div>
 
                                 <% } else { %>
 
-                                    Not Uploaded
+                                    <span style="color:#777;">
+                                        Not Uploaded
+                                    </span>
 
                                 <% } %>
 
