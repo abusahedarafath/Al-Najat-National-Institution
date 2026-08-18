@@ -281,7 +281,6 @@
 
 <script>
 function changeRtsePerPage(value) {
-
     const searchInput =
         document.getElementById("rtseApplicationSearch");
 
@@ -291,12 +290,24 @@ function changeRtsePerPage(value) {
             : "";
 
     const params =
-        new URLSearchParams();
+        new URLSearchParams(window.location.search);
 
     params.set("perPage", value);
+    params.set("page", "1");
 
     if (search) {
         params.set("search", search);
+    } else {
+        params.delete("search");
+    }
+
+    const status =
+        "<%= typeof status !== 'undefined' ? status : '' %>";
+
+    if (status) {
+        params.set("status", status);
+    } else {
+        params.delete("status");
     }
 
     window.location.href =
