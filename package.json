@@ -24,6 +24,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@img/sharp-wasm32": "^0.35.3",
     "archiver": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "compression": "^1.8.1",
@@ -40,6 +41,7 @@
     "mysql2": "^3.23.0",
     "pdfkit": "^0.19.1",
     "qrcode": "^1.5.4",
+    "sharp": "^0.35.3",
     "svg-to-pdfkit": "^0.1.8"
   },
   "devDependencies": {

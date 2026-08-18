@@ -526,21 +526,120 @@ Passport Size Photograph
 
 </label>
 
+
 <input
-type="file"
-name="photo"
-id="photo"
-accept="image/*"
-required>
+    type="file"
+    name="photo"
+    id="photo"
+    accept="image/*"
+    required>
+
+<div
+    id="photoCropArea"
+    style="
+        display:none;
+        margin-top:18px;
+        padding:15px;
+        background:#F8F9FA;
+        border:1px solid #DDD;
+        border-radius:10px;
+    "
+>
+    <div
+        style="
+            width:100%;
+            max-width:400px;
+            margin:0 auto;
+            aspect-ratio:4 / 5;
+            overflow:hidden;
+            background:#222;
+            border-radius:8px;
+        "
+    >
+        <img
+            id="photoCropImage"
+            alt="Photo crop preview"
+            style="
+                display:block;
+                max-width:100%;
+            "
+        >
+    </div>
+
+    <div
+        style="
+            margin-top:12px;
+            text-align:center;
+            color:#555;
+            font-size:14px;
+            line-height:1.6;
+        "
+    >
+        <strong>Position your face inside the frame.</strong><br>
+        You can move and zoom the photograph.
+    </div>
+
+    <div
+        style="
+            display:flex;
+            gap:10px;
+            justify-content:center;
+            flex-wrap:wrap;
+            margin-top:15px;
+        "
+    >
+        <button
+            type="button"
+            id="photoZoomOut"
+            class="btn-submit"
+            style="background:#6c757d;padding:8px 14px;"
+        >
+            − Zoom
+        </button>
+
+        <button
+            type="button"
+            id="photoZoomIn"
+            class="btn-submit"
+            style="padding:8px 14px;"
+        >
+            + Zoom
+        </button>
+
+        <button
+            type="button"
+            id="photoCropReset"
+            class="btn-submit"
+            style="background:#6c757d;padding:8px 14px;"
+        >
+            Reset
+        </button>
+
+        <button
+            type="button"
+            id="photoCropApply"
+            class="btn-submit"
+            style="padding:8px 14px;"
+        >
+            Use This Photo
+        </button>
+    </div>
+</div>
 
 <img
-id="photoPreview"
-style="
-display:none;
-margin-top:15px;
-max-height:180px;
-border-radius:8px;
-border:1px solid #DDD;">
+    id="photoPreview"
+    alt="Prepared passport-size photograph"
+    style="
+        display:none;
+        margin-top:15px;
+        width:120px;
+        height:150px;
+        object-fit:cover;
+        border-radius:8px;
+        border:1px solid #DDD;
+    "
+>
+
 
 </div>
 
@@ -628,37 +727,62 @@ Submit Membership Registration
 
 </div>
 
+
+
+
+
+
+
+
+
+
+
+</div>
+
+</div>
+
 <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-const photo=document.getElementById("photo");
+    const registrationForm =
+        document.getElementById("registrationForm");
 
-const preview=document.getElementById("photoPreview");
+    const photoInput =
+        document.getElementById("photo");
 
-photo.addEventListener("change",function(){
+    if (!registrationForm || !photoInput) {
+        return;
+    }
 
-const file=this.files[0];
+    registrationForm.addEventListener("submit", function (event) {
 
-if(!file)return;
+        const file =
+            photoInput.files && photoInput.files[0];
 
-preview.src=URL.createObjectURL(file);
+        if (!file) {
+            event.preventDefault();
 
-preview.style.display="block";
+            alert(
+                "Please select and prepare your passport-size photograph."
+            );
+
+            return;
+        }
+
+        if (
+            !file.type ||
+            !file.type.startsWith("image/")
+        ) {
+            event.preventDefault();
+
+            alert(
+                "Please use the photograph prepared by the crop tool."
+            );
+        }
+    });
 
 });
-
 </script>
-
-
-
-
-
-
-
-
-
-</div>
-
-</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -685,6 +809,201 @@ document.addEventListener("DOMContentLoaded", function () {
         field.value = oldData[name] || "";
     });
 
+});
+</script>
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js">
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const photoInput = document.getElementById("photo");
+    const cropArea = document.getElementById("photoCropArea");
+    const cropImage = document.getElementById("photoCropImage");
+    const preview = document.getElementById("photoPreview");
+
+    const zoomIn = document.getElementById("photoZoomIn");
+    const zoomOut = document.getElementById("photoZoomOut");
+    const resetButton = document.getElementById("photoCropReset");
+    const applyButton = document.getElementById("photoCropApply");
+    const registrationForm = document.getElementById("registrationForm");
+
+    if (
+        !photoInput ||
+        !cropArea ||
+        !cropImage ||
+        !preview ||
+        typeof Cropper === "undefined"
+    ) {
+        return;
+    }
+
+    let cropper = null;
+    let selectedObjectUrl = null;
+    let preparedPhoto = false;
+
+    photoInput.addEventListener("change", function () {
+        const file = this.files && this.files[0];
+
+        preparedPhoto = false;
+
+        if (!file) {
+            return;
+        }
+
+        if (!file.type || !file.type.startsWith("image/")) {
+            alert("Please select a valid image.");
+            this.value = "";
+            return;
+        }
+
+        if (selectedObjectUrl) {
+            URL.revokeObjectURL(selectedObjectUrl);
+            selectedObjectUrl = null;
+        }
+
+        selectedObjectUrl = URL.createObjectURL(file);
+
+        cropImage.onload = function () {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            cropper = new Cropper(cropImage, {
+                aspectRatio: 4 / 5,
+                viewMode: 1,
+                dragMode: "move",
+                autoCropArea: 0.85,
+                responsive: true,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                background: false,
+                movable: true,
+                zoomable: true,
+                rotatable: false,
+                scalable: false
+            });
+
+            cropArea.style.display = "block";
+            preview.style.display = "none";
+        };
+
+        cropImage.src = selectedObjectUrl;
+    });
+
+    zoomIn.addEventListener("click", function () {
+        if (cropper) {
+            cropper.zoom(0.1);
+        }
+    });
+
+    zoomOut.addEventListener("click", function () {
+        if (cropper) {
+            cropper.zoom(-0.1);
+        }
+    });
+
+    resetButton.addEventListener("click", function () {
+        if (cropper) {
+            cropper.reset();
+        }
+    });
+
+    applyButton.addEventListener("click", function () {
+        if (!cropper) {
+            alert("Please select a photograph first.");
+            return;
+        }
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 500,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: "high"
+        });
+
+        if (!canvas) {
+            alert("Unable to prepare the photograph.");
+            return;
+        }
+
+        canvas.toBlob(
+            function (blob) {
+                if (!blob) {
+                    alert("Unable to prepare the photograph.");
+                    return;
+                }
+
+                /*
+                 * The browser prepares a standardized 400 x 500 JPEG.
+                 * The server independently enforces the final <= 1 MB
+                 * requirement.
+                 */
+                const croppedFile = new File(
+                    [blob],
+                    "member-photo.jpg",
+                    {
+                        type: "image/jpeg",
+                        lastModified: Date.now()
+                    }
+                );
+
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(croppedFile);
+                photoInput.files = dataTransfer.files;
+
+                const previewUrl = URL.createObjectURL(blob);
+
+                preview.onload = function () {
+                    URL.revokeObjectURL(previewUrl);
+                };
+
+                preview.src = previewUrl;
+                preview.style.display = "block";
+
+                cropArea.style.display = "none";
+
+                preparedPhoto = true;
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                if (selectedObjectUrl) {
+                    URL.revokeObjectURL(selectedObjectUrl);
+                    selectedObjectUrl = null;
+                }
+            },
+            "image/jpeg",
+            0.88
+        );
+    });
+
+    registrationForm.addEventListener("submit", function (event) {
+        const file = photoInput.files && photoInput.files[0];
+
+        if (!file) {
+            event.preventDefault();
+            alert("Please select and prepare your passport-size photograph.");
+            return;
+        }
+
+        if (!preparedPhoto) {
+            event.preventDefault();
+            alert("Please position your photograph and click \"Use This Photo\" before submitting.");
+            return;
+        }
+    });
 });
 </script>
 
