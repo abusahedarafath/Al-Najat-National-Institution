@@ -90,6 +90,24 @@ if (existing) {
             state: data.state,
 
             pincode: data.pincode,
+
+
+            emergency_contact_name:
+
+
+                data.emergency_contact_name || "",
+
+
+            emergency_contact_relation:
+
+
+                data.emergency_contact_relation || "",
+
+
+            emergency_contact_mobile:
+
+
+                data.emergency_contact_mobile || "",
 photo:
                 req.files?.photo?.[0]?.filename || "",
 

@@ -224,12 +224,21 @@ const [result] = await db.query(sql, [
                 gender=?,
                 dob=?,
                 blood_group=?,
+                occupation=?,
+                nationality=?,
+                identity_type=?,
+                identity_number=?,
+                identity_front=?,
+                identity_back=?,
                 mobile=?,
                 email=?,
                 address=?,
                 district=?,
                 state=?,
                 pincode=?,
+                emergency_contact_name=?,
+                emergency_contact_relation=?,
+                emergency_contact_mobile=?,
                 photo=?,
                 joining_date=?,
                 status=?
@@ -244,29 +253,40 @@ const [result] = await db.query(sql, [
             data.gender,
             data.dob,
             data.blood_group,
+
+            data.occupation,
+            data.nationality,
+
+            data.identity_type,
+            data.identity_number,
+            data.identity_front,
+            data.identity_back,
+
             data.mobile,
             data.email,
+
             data.address,
             data.district,
             data.state,
             data.pincode,
+
+            data.emergency_contact_name,
+            data.emergency_contact_relation,
+            data.emergency_contact_mobile,
+
             data.photo,
+
             data.joining_date,
             data.status,
+
             id
 
         ]);
 
         return result;
-
     }
- 
 
-
-    // ==========================
-    // Member Self Profile Update
-    // ==========================
-    static async updateOwnProfile(id, data) {
+static async updateOwnProfile(id, data) {
 
         const sql = `
             UPDATE arsp_members

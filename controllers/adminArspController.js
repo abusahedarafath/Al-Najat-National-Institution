@@ -116,7 +116,7 @@ exports.registerMember = async (req, res) => {
                     ...req.body,
 
                     registration_source:
-                        "Registered by Admin",
+                        "Admin",
 
                     approval_status:
                         "Approved"
@@ -805,72 +805,143 @@ exports.updateMember = async (req, res) => {
 
         if (!member) {
 
-            req.flash("error", "Member not found.");
+            req.flash(
+                "error",
+                "Member not found."
+            );
 
-            return res.redirect("/admin/arsp/members");
-
+            return res.redirect(
+                "/admin/arsp/members"
+            );
         }
 
-        const photo = req.file
-            ? req.file.filename
-            : member.photo;
+        /*
+         * Existing uploaded files are preserved.
+         *
+         * We NEVER delete the old physical files here.
+         */
+
+        const photo =
+            req.files?.photo?.[0]?.filename ||
+            member.photo ||
+            "";
+
+        const identityFront =
+            req.files?.identity_front?.[0]?.filename ||
+            member.identity_front ||
+            "";
+
+        const identityBack =
+            req.files?.identity_back?.[0]?.filename ||
+            member.identity_back ||
+            "";
 
         await ArspMember.update(
-
             req.params.id,
-
             {
 
-                full_name: req.body.full_name,
-                father_name: req.body.father_name,
-                mother_name: req.body.mother_name,
-                gender: req.body.gender,
-                dob: req.body.dob,
-                blood_group: req.body.blood_group,
-                mobile: req.body.mobile,
-                email: req.body.email,
-                address: req.body.address,
-                district: req.body.district,
-                state: req.body.state,
-                pincode: req.body.pincode,
-                photo: photo,
-                joining_date: req.body.joining_date,
-                status: req.body.status
+                full_name:
+                    req.body.full_name,
 
+                father_name:
+                    req.body.father_name,
+
+                mother_name:
+                    req.body.mother_name,
+
+                gender:
+                    req.body.gender,
+
+                dob:
+                    req.body.dob || null,
+
+                blood_group:
+                    req.body.blood_group,
+
+                occupation:
+                    req.body.occupation,
+
+                nationality:
+                    req.body.nationality,
+
+                identity_type:
+                    req.body.identity_type || null,
+
+                identity_number:
+                    req.body.identity_number,
+
+                identity_front:
+                    identityFront,
+
+                identity_back:
+                    identityBack,
+
+                mobile:
+                    req.body.mobile,
+
+                email:
+                    req.body.email,
+
+                address:
+                    req.body.address,
+
+                district:
+                    req.body.district,
+
+                state:
+                    req.body.state,
+
+                pincode:
+                    req.body.pincode,
+
+                emergency_contact_name:
+                    req.body.emergency_contact_name,
+
+                emergency_contact_relation:
+                    req.body.emergency_contact_relation,
+
+                emergency_contact_mobile:
+                    req.body.emergency_contact_mobile,
+
+                photo:
+                    photo,
+
+                joining_date:
+                    req.body.joining_date || null,
+
+                status:
+                    req.body.status === "Inactive"
+                        ? "Inactive"
+                        : "Active"
             }
-
         );
 
         req.flash(
-
             "success",
-
             "Member updated successfully."
-
         );
 
-        res.redirect("/admin/arsp/members");
+        return res.redirect(
+            "/admin/arsp/members"
+        );
 
     } catch (err) {
 
-        console.error(err);
-
-        req.flash(
-
-            "error",
-
-            "Failed to update member."
-
+        console.error(
+            "ARSP Admin Update Member Error:",
+            err
         );
 
-        res.redirect("/admin/arsp/members");
+        req.flash(
+            "error",
+            "Failed to update member."
+        );
 
+        return res.redirect(
+            "/admin/arsp/members"
+        );
     }
-
 };
-
-
-
 
 // =====================================
 // Account Slip

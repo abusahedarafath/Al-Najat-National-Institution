@@ -6,6 +6,7 @@ const multer = require("multer");
 
 const path = require("path");
 
+const processArspMemberPhoto = require("../middleware/processArspMemberPhoto");
 const arspPublicController =
 require("../controllers/arspPublicController");
 
@@ -88,7 +89,8 @@ upload.fields([
     }
 
 ]),
-arspPublicController.review
+processArspMemberPhoto,
+    arspPublicController.review
 
 );
 

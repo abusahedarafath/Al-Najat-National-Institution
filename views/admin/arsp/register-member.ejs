@@ -112,6 +112,40 @@
 
 
 <h3 style="margin-top:30px;margin-bottom:15px;">
+    Contact Information
+</h3>
+
+<div class="form-group">
+    <label>Mobile Number</label>
+    <input
+        type="tel"
+        name="mobile"
+        value="<%= isEdit ? (member.mobile || '') : '' %>"
+        inputmode="numeric"
+        autocomplete="tel"
+        maxlength="20"
+        required>
+</div>
+
+<div class="form-group">
+    <label>Email Address</label>
+    <input
+        type="email"
+        name="email"
+        value="<%= isEdit ? (member.email || '') : '' %>"
+        autocomplete="email">
+</div>
+
+<div class="form-group">
+    <label>Address</label>
+    <textarea
+        name="address"
+        rows="3"
+        autocomplete="street-address"><%= isEdit ? (member.address || '') : '' %></textarea>
+</div>
+
+
+<h3 style="margin-top:30px;margin-bottom:15px;">
     Professional Information
 </h3>
 
@@ -150,20 +184,48 @@
     <label>Identity Proof</label>
 
     <select name="identity_type">
+    <option
+        value=""
+        <%= !isEdit || !member.identity_type ? "selected" : "" %>>
+        Select Identity Proof
+    </option>
 
-        <option value="">Select Identity Proof</option>
+    <option
+        value="Aadhaar"
+        <%= isEdit && member.identity_type === "Aadhaar" ? "selected" : "" %>>
+        Aadhaar Card
+    </option>
 
-        <option value="Aadhaar">Aadhaar Card</option>
+    <option
+        value="PAN"
+        <%= isEdit && member.identity_type === "PAN" ? "selected" : "" %>>
+        PAN Card
+    </option>
 
-        <option value="PAN">PAN Card</option>
+    <option
+        value="Voter ID"
+        <%= isEdit && member.identity_type === "Voter ID" ? "selected" : "" %>>
+        Voter ID
+    </option>
 
-        <option value="Voter ID">Voter ID</option>
+    <option
+        value="Passport"
+        <%= isEdit && member.identity_type === "Passport" ? "selected" : "" %>>
+        Passport
+    </option>
 
-        <option value="Passport">Passport</option>
+    <option
+        value="Driving Licence"
+        <%= isEdit && member.identity_type === "Driving Licence" ? "selected" : "" %>>
+        Driving Licence
+    </option>
 
-        <option value="Driving Licence">Driving Licence</option>
-
-    </select>
+    <option
+        value="Bank Passbook"
+        <%= isEdit && member.identity_type === "Bank Passbook" ? "selected" : "" %>>
+        Bank Passbook
+    </option>
+</select>
 
 </div>
 
@@ -182,6 +244,17 @@
 
     <label>Identity Front</label>
 
+    <% if (isEdit && member.identity_front) { %>
+        <div style="margin-bottom:10px;">
+            <a
+                href="/uploads/arsp-members/<%= member.identity_front %>"
+                target="_blank"
+                rel="noopener">
+                View Existing Identity Front
+            </a>
+        </div>
+    <% } %>
+
     <input
         type="file"
         name="identity_front"
@@ -192,6 +265,17 @@
 <div class="form-group">
 
     <label>Identity Back</label>
+
+    <% if (isEdit && member.identity_back) { %>
+        <div style="margin-bottom:10px;">
+            <a
+                href="/uploads/arsp-members/<%= member.identity_back %>"
+                target="_blank"
+                rel="noopener">
+                View Existing Identity Back
+            </a>
+        </div>
+    <% } %>
 
     <input
         type="file"
@@ -292,15 +376,44 @@
 
 <div class="form-group">
 
-    <label>Photo</label>
+    <label>
+        Passport Size Photograph
+        <span style="color:#dc3545;">*</span>
+    </label>
 
     <% if (isEdit && member.photo) { %>
 
-        <div style="margin-bottom:10px;">
+        <div
+            style="
+                margin-bottom:12px;
+                padding:12px;
+                background:#f8f9fa;
+                border:1px solid #ddd;
+                border-radius:10px;
+            "
+        >
+
+            <div
+                style="
+                    font-size:13px;
+                    color:#666;
+                    margin-bottom:8px;
+                "
+            >
+                Current Photograph
+            </div>
 
             <img
                 src="/uploads/arsp-members/<%= member.photo %>"
-                style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
+                alt="Current member photograph"
+                style="
+                    width:120px;
+                    height:150px;
+                    object-fit:cover;
+                    border-radius:8px;
+                    border:1px solid #ddd;
+                "
+            >
 
         </div>
 
@@ -309,7 +422,133 @@
     <input
         type="file"
         name="photo"
-        accept=".jpg,.jpeg,.png,.webp">
+        id="adminMemberPhoto"
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+        <%= !isEdit ? "required" : "" %>
+    >
+
+    <div
+        id="adminMemberPhotoCropArea"
+        style="
+            display:none;
+            margin-top:18px;
+            padding:15px;
+            background:#f8f9fa;
+            border:1px solid #ddd;
+            border-radius:10px;
+        "
+    >
+
+        <div
+            style="
+                width:100%;
+                max-width:400px;
+                margin:0 auto;
+                aspect-ratio:4 / 5;
+                overflow:hidden;
+                background:#222;
+                border-radius:8px;
+            "
+        >
+
+            <img
+                id="adminMemberPhotoCropImage"
+                alt="Photo crop preview"
+                style="
+                    display:block;
+                    max-width:100%;
+                "
+            >
+
+        </div>
+
+        <div
+            style="
+                margin-top:12px;
+                text-align:center;
+                color:#555;
+                font-size:14px;
+                line-height:1.6;
+            "
+        >
+            <strong>Position the face inside the frame.</strong>
+            <br>
+            Move and zoom the photograph as required.
+        </div>
+
+        <div
+            style="
+                display:flex;
+                gap:10px;
+                justify-content:center;
+                flex-wrap:wrap;
+                margin-top:15px;
+            "
+        >
+
+            <button
+                type="button"
+                id="adminMemberPhotoZoomOut"
+                class="btn-submit"
+            >
+                − Zoom
+            </button>
+
+            <button
+                type="button"
+                id="adminMemberPhotoZoomIn"
+                class="btn-submit"
+            >
+                + Zoom
+            </button>
+
+            <button
+                type="button"
+                id="adminMemberPhotoReset"
+                class="btn-submit"
+            >
+                Reset
+            </button>
+
+            <button
+                type="button"
+                id="adminMemberPhotoApply"
+                class="btn-submit"
+            >
+                Use This Photo
+            </button>
+
+        </div>
+
+    </div>
+
+    <img
+        id="adminMemberPhotoPreview"
+        alt="Prepared passport-size photograph"
+        style="
+            display:none;
+            margin-top:15px;
+            width:120px;
+            height:150px;
+            object-fit:cover;
+            border-radius:8px;
+            border:1px solid #ddd;
+        "
+    >
+
+    <% if (isEdit) { %>
+
+        <div
+            style="
+                margin-top:8px;
+                font-size:13px;
+                color:#777;
+            "
+        >
+            Leave this field empty to keep the current photograph.
+        </div>
+
+    <% } %>
 
 </div>
 
@@ -363,5 +602,284 @@
 </main>
 
 </div>
+
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+>
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js">
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const photoInput =
+        document.getElementById("adminMemberPhoto");
+
+    const cropArea =
+        document.getElementById("adminMemberPhotoCropArea");
+
+    const cropImage =
+        document.getElementById("adminMemberPhotoCropImage");
+
+    const preview =
+        document.getElementById("adminMemberPhotoPreview");
+
+    const zoomIn =
+        document.getElementById("adminMemberPhotoZoomIn");
+
+    const zoomOut =
+        document.getElementById("adminMemberPhotoZoomOut");
+
+    const resetButton =
+        document.getElementById("adminMemberPhotoReset");
+
+    const applyButton =
+        document.getElementById("adminMemberPhotoApply");
+
+    const form =
+        photoInput?.closest("form");
+
+    if (
+        !photoInput ||
+        !cropArea ||
+        !cropImage ||
+        !preview ||
+        !form ||
+        typeof Cropper === "undefined"
+    ) {
+        return;
+    }
+
+    let cropper = null;
+    let selectedObjectUrl = null;
+    let preparedPhoto = false;
+
+    photoInput.addEventListener("change", function () {
+
+        const file =
+            this.files && this.files[0];
+
+        preparedPhoto = false;
+
+        if (!file) {
+            return;
+        }
+
+        if (
+            !file.type ||
+            !file.type.startsWith("image/")
+        ) {
+
+            alert("Please select a valid image.");
+
+            this.value = "";
+
+            return;
+        }
+
+        if (selectedObjectUrl) {
+            URL.revokeObjectURL(selectedObjectUrl);
+        }
+
+        selectedObjectUrl =
+            URL.createObjectURL(file);
+
+        cropImage.onload = function () {
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(
+                cropImage,
+                {
+                    aspectRatio: 4 / 5,
+                    viewMode: 1,
+                    dragMode: "move",
+                    autoCropArea: 0.85,
+                    responsive: true,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    background: false,
+                    movable: true,
+                    zoomable: true,
+                    rotatable: false,
+                    scalable: false
+                }
+            );
+
+            cropArea.style.display = "block";
+            preview.style.display = "none";
+        };
+
+        cropImage.src = selectedObjectUrl;
+    });
+
+    zoomIn.addEventListener("click", function () {
+
+        if (cropper) {
+            cropper.zoom(0.1);
+        }
+
+    });
+
+    zoomOut.addEventListener("click", function () {
+
+        if (cropper) {
+            cropper.zoom(-0.1);
+        }
+
+    });
+
+    resetButton.addEventListener("click", function () {
+
+        if (cropper) {
+            cropper.reset();
+        }
+
+    });
+
+    applyButton.addEventListener("click", function () {
+
+        if (!cropper) {
+
+            alert(
+                "Please select a photograph first."
+            );
+
+            return;
+        }
+
+        const canvas =
+            cropper.getCroppedCanvas({
+                width: 400,
+                height: 500,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: "high"
+            });
+
+        if (!canvas) {
+
+            alert(
+                "Unable to prepare the photograph."
+            );
+
+            return;
+        }
+
+        canvas.toBlob(
+            function (blob) {
+
+                if (!blob) {
+
+                    alert(
+                        "Unable to prepare the photograph."
+                    );
+
+                    return;
+                }
+
+                const croppedFile =
+                    new File(
+                        [blob],
+                        "member-photo.jpg",
+                        {
+                            type: "image/jpeg",
+                            lastModified: Date.now()
+                        }
+                    );
+
+                const dataTransfer =
+                    new DataTransfer();
+
+                dataTransfer.items.add(
+                    croppedFile
+                );
+
+                photoInput.files =
+                    dataTransfer.files;
+
+                const previewUrl =
+                    URL.createObjectURL(blob);
+
+                preview.src = previewUrl;
+                preview.style.display = "block";
+
+                preview.onload = function () {
+                    URL.revokeObjectURL(previewUrl);
+                };
+
+                cropArea.style.display = "none";
+
+                preparedPhoto = true;
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                if (selectedObjectUrl) {
+                    URL.revokeObjectURL(
+                        selectedObjectUrl
+                    );
+                    selectedObjectUrl = null;
+                }
+
+            },
+            "image/jpeg",
+            0.88
+        );
+
+    });
+
+    form.addEventListener("submit", function (event) {
+
+        const file =
+            photoInput.files &&
+            photoInput.files[0];
+
+        <% if (!isEdit) { %>
+
+        if (!file || !preparedPhoto) {
+
+            event.preventDefault();
+
+            alert(
+                "Please select, position and prepare the passport-size photograph before submitting."
+            );
+
+            return;
+        }
+
+        <% } %>
+
+        <% if (isEdit) { %>
+
+        if (file && !preparedPhoto) {
+
+            event.preventDefault();
+
+            alert(
+                "Please position the new photograph and click \"Use This Photo\" before updating."
+            );
+
+            return;
+        }
+
+        <% } %>
+
+    });
+
+});
+
+</script>
+
 
 <%- include("../partials/footer") %>

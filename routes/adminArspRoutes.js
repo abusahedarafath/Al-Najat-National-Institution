@@ -10,6 +10,7 @@ const createUploader = require("../middleware/uploadFactory");
 
 const upload = createUploader("arsp-members");
 
+const processArspMemberPhoto = require("../middleware/processArspMemberPhoto");
 const adminArspController = require("../controllers/adminArspController");
 const arspIdCardController = require("../controllers/arspIdCardController");
 
@@ -67,6 +68,7 @@ router.post(
     }
 
 ]),
+    processArspMemberPhoto,
     adminArspController.registerMember
 );
 
@@ -176,7 +178,21 @@ router.get(
 router.post(
     "/admin/arsp/member/:id/edit",
     authMiddleware.isLoggedIn,
-    upload.single("photo"),
+    upload.fields([
+        {
+            name: "photo",
+            maxCount: 1
+        },
+        {
+            name: "identity_front",
+            maxCount: 1
+        },
+        {
+            name: "identity_back",
+            maxCount: 1
+        }
+    ]),
+    processArspMemberPhoto,
     adminArspController.updateMember
 );
 
