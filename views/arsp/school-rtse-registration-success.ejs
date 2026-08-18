@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            max-width: 600px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        }
+
+        .success {
+            color: #166534;
+        }
+
+        .info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        a {
+            display: inline-block;
+            margin: 5px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            background: #2563eb;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1 class="success">✓ Student Registered Successfully</h1>
+
+    <p>
+        The RTSE application has been registered under:
+    </p>
+
+    <strong>
+        <%= school.school_name %>
+    </strong>
+
+    <div class="info">
+        <p>
+            <strong>Student:</strong>
+            <%= application.full_name %>
+        </p>
+
+        <p>
+            <strong>Registration No.:</strong>
+            <%= application.registration_no %>
+        </p>
+
+        <p>
+            <strong>Section:</strong>
+            <%= application.section %>
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            Pending
+        </p>
+    </div>
+
+    <a href="/arsp/school/rtse-register">
+        Register Another Student
+    </a>
+
+    <a href="/arsp/school/rtse-students">
+        Student Registry
+    </a>
+
+    <a href="/arsp/school/dashboard">
+        Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

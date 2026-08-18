@@ -9,6 +9,7 @@ const path = require("path");
 const processArspMemberPhoto = require("../middleware/processArspMemberPhoto");
 const arspPublicController =
 require("../controllers/arspPublicController");
+const arspSchoolPublicController = require("../controllers/arspSchoolPublicController");
 
 // Upload Storage
 
@@ -103,5 +104,26 @@ router.post(
     "/arsp/register/confirm",
     arspPublicController.confirm
 );
+
+
+// =====================================
+// Public School Registration
+// =====================================
+
+router.get(
+    "/arsp/school/register",
+    arspSchoolPublicController.registerPage
+);
+
+router.post(
+    "/arsp/school/register/review",
+    arspSchoolPublicController.review
+);
+
+router.post(
+    "/arsp/school/register/confirm",
+    arspSchoolPublicController.confirm
+);
+
 
 module.exports = router;

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+            color: #0f172a;
+        }
+
+        .topbar {
+            background: #1e3a8a;
+            color: #fff;
+            padding: 18px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 25px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        }
+
+        h1 {
+            margin: 0 0 5px;
+        }
+
+        .school {
+            color: #64748b;
+            margin-bottom: 22px;
+        }
+
+        .notice {
+            padding: 13px;
+            background: #eff6ff;
+            color: #1e40af;
+            border-radius: 9px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            padding: 13px;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 9px;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .school-fixed {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button,
+        a {
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 0;
+            cursor: pointer;
+        }
+
+        button {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        a {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        @media (max-width: 650px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <strong>ARSP School Portal</strong>
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Register RTSE Student</h1>
+
+        <div class="school">
+            School: <strong><%= school.school_name %></strong>
+        </div>
+
+        <div class="notice">
+            The school is automatically identified from your logged-in
+            School Portal account. You cannot change the school name here.
+        </div>
+
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+
+        <form
+            method="POST"
+            action="/arsp/school/rtse-register"
+            enctype="multipart/form-data"
+        >
+
+            <div class="grid">
+
+                <div class="field full">
+                    <label>School</label>
+                    <div class="school-fixed">
+                        <%= school.school_name %>
+                        (<%= school.school_code %>)
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Student Full Name *</label>
+                    <input name="full_name" required>
+                </div>
+
+                <div class="field">
+                    <label>Father's Name *</label>
+                    <input name="father_name" required>
+                </div>
+
+                <div class="field">
+                    <label>Mother's Name *</label>
+                    <input name="mother_name" required>
+                </div>
+
+                <div class="field">
+                    <label>Gender *</label>
+                    <select name="gender" required>
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Date of Birth *</label>
+                    <input type="date" name="dob" required>
+                </div>
+
+                <div class="field">
+                    <label>Mobile *</label>
+                    <input name="mobile" required>
+                </div>
+
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email">
+                </div>
+
+                <div class="field">
+                    <label>Class *</label>
+                    <select name="class" required>
+                        <option value="">Select Class</option>
+                        <option value="4">Class 4</option>
+                        <option value="5">Class 5</option>
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                    </select>
+                </div>
+
+<div class="field">
+    <label>RTSE Section</label>
+    <input
+        type="text"
+        id="rtseSection"
+        value=""
+        readonly
+        placeholder="Auto"
+        style="background:#f8fafc;font-weight:700;"
+    >
+    <small style="display:block;margin-top:5px;color:#64748b;">
+        Automatically selected from Class
+    </small>
+</div>
+
+                <div class="field">
+                    <label>District</label>
+                    <input
+                        name="district"
+                        value="<%= school.district || '' %>"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>State</label>
+                    <input
+                        name="state"
+                        value="<%= school.state || 'Assam' %>"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Pincode</label>
+                    <input
+                        name="pincode"
+                        value="<%= school.pincode || '' %>"
+                    >
+                </div>
+
+                <div class="field full">
+                    <label>Student Address *</label>
+                    <textarea name="address" required></textarea>
+                </div>
+
+                <div class="field">
+                    <label>Student Photo *</label>
+                    <input
+                        type="file"
+                        name="photo"
+                        accept="image/*"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Identity Document</label>
+                    <input
+                        type="file"
+                        name="identity_document"
+                        accept="image/*,.pdf"
+
+                    >
+                </div>
+
+            </div>
+
+            <div class="actions">
+                <button type="submit">
+                    Register Student
+                </button>
+
+                <a href="/arsp/school/rtse-students">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+(function () {
+    const classInput = document.querySelector('select[name="class"]');
+    const sectionInput = document.getElementById("rtseSection");
+
+    if (!classInput || !sectionInput) return;
+
+    function updateRtseSection() {
+        const selectedClass = Number(classInput.value);
+        let section = "";
+
+        if (selectedClass === 4 || selectedClass === 5) {
+            section = "A";
+        } else if (selectedClass === 6 || selectedClass === 7) {
+            section = "B";
+        } else if (selectedClass === 8) {
+            section = "C";
+        } else if (selectedClass === 9) {
+            section = "D";
+        } else if (selectedClass === 10) {
+            section = "E";
+        }
+
+        sectionInput.value = section;
+    }
+
+    classInput.addEventListener("change", updateRtseSection);
+    updateRtseSection();
+})();
+</script>
+
+</body>
+</html>

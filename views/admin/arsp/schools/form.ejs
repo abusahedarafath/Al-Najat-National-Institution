@@ -1,0 +1,241 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+<div class="container-fluid" style="padding:24px;max-width:1000px;">
+
+    <div style="margin-bottom:20px;">
+        <h1 style="margin:0;">
+            <%= isEdit ? "Edit ARSP School" : "Add ARSP School" %>
+        </h1>
+
+        <p style="color:#666;margin-top:6px;">
+            <%= isEdit
+                ? "Update school registration information."
+                : "Register a school or educational institution with ARSP." %>
+        </p>
+    </div>
+
+    <form
+        method="POST"
+        action="<%= isEdit
+            ? '/admin/arsp/school/' + school.id + '/edit'
+            : '/admin/arsp/schools/add' %>"
+        style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:22px;">
+
+        <% if (isEdit) { %>
+
+            <div style="margin-bottom:18px;">
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    School Code
+                </label>
+
+                <input
+                    type="text"
+                    value="<%= school.school_code %>"
+                    readonly
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;background:#f3f4f6;"
+                >
+            </div>
+
+        <% } %>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    School Name *
+                </label>
+
+                <input
+                    type="text"
+                    name="school_name"
+                    value="<%= school.school_name || '' %>"
+                    required
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    School Type
+                </label>
+
+                <select
+                    name="school_type"
+                    style="width:100%;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+                    <% const types = [
+                        "School",
+                        "Madrasa",
+                        "School & Madrasa",
+                        "College",
+                        "Other"
+                    ]; %>
+
+                    <% types.forEach(type => { %>
+                        <option
+                            value="<%= type %>"
+                            <%= (school.school_type || "School") === type ? "selected" : "" %>>
+                            <%= type %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    Head / Principal
+                </label>
+
+                <input
+                    type="text"
+                    name="head_name"
+                    value="<%= school.head_name || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    Mobile
+                </label>
+
+                <input
+                    type="text"
+                    name="mobile"
+                    value="<%= school.mobile || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="<%= school.email || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    Village
+                </label>
+
+                <input
+                    type="text"
+                    name="village"
+                    value="<%= school.village || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    Post Office
+                </label>
+
+                <input
+                    type="text"
+                    name="post_office"
+                    value="<%= school.post_office || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    District
+                </label>
+
+                <input
+                    type="text"
+                    name="district"
+                    value="<%= school.district || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    State
+                </label>
+
+                <input
+                    type="text"
+                    name="state"
+                    value="<%= school.state || 'Assam' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:6px;">
+                    Pincode
+                </label>
+
+                <input
+                    type="text"
+                    name="pincode"
+                    value="<%= school.pincode || '' %>"
+                    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+                >
+            </div>
+
+        </div>
+
+        <div style="margin-top:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;">
+                Address
+            </label>
+
+            <textarea
+                name="address"
+                rows="4"
+                style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+            ><%= school.address || '' %></textarea>
+        </div>
+
+        <div style="margin-top:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;">
+                Remarks
+            </label>
+
+            <textarea
+                name="remarks"
+                rows="3"
+                style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:8px;"
+            ><%= school.remarks || '' %></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;">
+
+            <button
+                type="submit"
+                style="background:#2563eb;color:#fff;border:0;padding:12px 20px;border-radius:8px;font-weight:600;">
+                <%= isEdit ? "Update School" : "Register School" %>
+            </button>
+
+            <a
+                href="/admin/arsp/schools"
+                style="padding:12px 20px;border:1px solid #d1d5db;border-radius:8px;text-decoration:none;color:#374151;">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+    </main>
+</div>
+
+<%- include("../../partials/footer") %>

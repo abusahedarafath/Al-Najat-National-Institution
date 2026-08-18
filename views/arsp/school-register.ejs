@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %></title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 15px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 5px 25px rgba(0,0,0,.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 5px 0;
+            font-size: 27px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .section-title {
+            margin: 28px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd2da;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        .notice {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            padding: 13px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            margin-top: 28px;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            border: 0;
+            border-radius: 8px;
+            padding: 13px 28px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            background: #2563eb;
+            color: #fff;
+        }
+
+        button:hover {
+            opacity: .92;
+        }
+
+        @media (max-width: 650px) {
+            .page {
+                margin: 10px auto;
+                padding: 10px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="card">
+
+        <div class="header">
+
+            <% if (setting && setting.logo) { %>
+                <img
+                    src="/uploads/arsp-settings/<%= setting.logo %>"
+                    alt="ARSP Logo"
+                >
+            <% } %>
+
+            <h1>School Registration</h1>
+
+            <div class="subtitle">
+                <%= setting && setting.organization_name
+                    ? setting.organization_name
+                    : "Active Rural Social Progress" %>
+            </div>
+
+        </div>
+
+
+        <div class="notice">
+            <strong>Important:</strong>
+            This form is for schools and educational institutions
+            seeking registration with ARSP. Your application will be
+            reviewed by the ARSP administration and will remain
+            <strong>Pending</strong> until approved.
+        </div>
+
+
+        <% if (typeof error !== "undefined" && error) { %>
+            <div class="error">
+                <%= error %>
+            </div>
+        <% } %>
+
+
+        <form
+            method="POST"
+            action="/arsp/school/register/review"
+        >
+
+            <div class="section-title">
+                Institution Information
+            </div>
+
+            <div class="grid">
+
+                <div class="full">
+                    <label>
+                        School / Institution Name
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="school_name"
+                        value="<%= old.school_name || '' %>"
+                        maxlength="200"
+                        required
+                    >
+                </div>
+
+
+                <div>
+                    <label>
+                        Institution Type
+                        <span class="required">*</span>
+                    </label>
+
+                    <select name="school_type" required>
+                        <option value="School"
+                            <%= old.school_type === "School" || !old.school_type ? "selected" : "" %>>
+                            School
+                        </option>
+
+                        <option value="Madrasa"
+                            <%= old.school_type === "Madrasa" ? "selected" : "" %>>
+                            Madrasa
+                        </option>
+
+                        <option value="School & Madrasa"
+                            <%= old.school_type === "School & Madrasa" ? "selected" : "" %>>
+                            School & Madrasa
+                        </option>
+
+                        <option value="College"
+                            <%= old.school_type === "College" ? "selected" : "" %>>
+                            College
+                        </option>
+
+                        <option value="Other"
+                            <%= old.school_type === "Other" ? "selected" : "" %>>
+                            Other
+                        </option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label>Head / Principal / Director</label>
+
+                    <input
+                        type="text"
+                        name="head_name"
+                        value="<%= old.head_name || '' %>"
+                        maxlength="150"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="section-title">
+                Contact Information
+            </div>
+
+            <div class="grid">
+
+                <div>
+                    <label>Mobile Number</label>
+
+                    <input
+                        type="tel"
+                        name="mobile"
+                        value="<%= old.mobile || '' %>"
+                        maxlength="20"
+                    >
+                </div>
+
+
+                <div>
+                    <label>Email Address</label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="<%= old.email || '' %>"
+                        maxlength="120"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="section-title">
+                Institution Address
+            </div>
+
+            <div class="grid">
+
+                <div class="full">
+                    <label>Full Address</label>
+
+                    <textarea
+                        name="address"
+                        maxlength="2000"
+                    ><%= old.address || '' %></textarea>
+                </div>
+
+
+                <div>
+                    <label>Village / Town</label>
+
+                    <input
+                        type="text"
+                        name="village"
+                        value="<%= old.village || '' %>"
+                        maxlength="150"
+                    >
+                </div>
+
+
+                <div>
+                    <label>Post Office</label>
+
+                    <input
+                        type="text"
+                        name="post_office"
+                        value="<%= old.post_office || '' %>"
+                        maxlength="150"
+                    >
+                </div>
+
+
+                <div>
+                    <label>
+                        District
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="district"
+                        value="<%= old.district || '' %>"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+
+                <div>
+                    <label>State</label>
+
+                    <input
+                        type="text"
+                        name="state"
+                        value="<%= old.state || 'Assam' %>"
+                        maxlength="100"
+                    >
+                </div>
+
+
+                <div>
+                    <label>Pincode</label>
+
+                    <input
+                        type="text"
+                        name="pincode"
+                        value="<%= old.pincode || '' %>"
+                        maxlength="20"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+                <button type="submit">
+                    Review Application
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

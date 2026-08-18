@@ -12,6 +12,11 @@ const upload = createUploader("arsp-members");
 
 const processArspMemberPhoto = require("../middleware/processArspMemberPhoto");
 const adminArspController = require("../controllers/adminArspController");
+
+const adminArspSchoolController = require("../controllers/adminArspSchoolController");
+
+
+
 const arspIdCardController = require("../controllers/arspIdCardController");
 
 
@@ -283,5 +288,75 @@ router.get(
     "/admin/arsp/document-verifications",
 adminArspController.documentVerifications
 );
+
+
+
+
+// ======================================
+// ARSP SCHOOL REGISTRY
+// ======================================
+
+router.get(
+    "/admin/arsp/schools",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.index
+);
+
+router.get(
+    "/admin/arsp/schools/add",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.addPage
+);
+
+router.post(
+    "/admin/arsp/schools/add",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.create
+);
+
+router.get(
+    "/admin/arsp/school/:id",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.view
+);
+
+router.get(
+    "/admin/arsp/school/:id/edit",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.editPage
+);
+
+router.post(
+    "/admin/arsp/school/:id/edit",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.update
+);
+
+router.post(
+    "/admin/arsp/school/:id/approve",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.approve
+);
+
+router.post(
+    "/admin/arsp/school/:id/reject",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.reject
+);
+
+router.post(
+    "/admin/arsp/school/:id/deactivate",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.deactivate
+);
+
+router.post(
+    "/admin/arsp/school/:id/activate",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.activate
+);
+
+
+
 
 module.exports = router;

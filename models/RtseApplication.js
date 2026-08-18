@@ -1306,7 +1306,125 @@ static async update(id, data) {
 
 
 
+    // =====================================
+    // School Portal - RTSE Student Registry
+    // =====================================
+
+    // =====================================
+    // School RTSE Dashboard Statistics
+    // =====================================
+    static async getSchoolRtseStats(schoolName) {
+        const [rows] = await db.query(
+            `
+            SELECT
+                COUNT(*) AS all_students,
+                SUM(status='Pending') AS pending,
+                SUM(status='Approved') AS approved,
+                SUM(status='Rejected') AS rejected,
+                SUM(section='A') AS section_a,
+                SUM(section='B') AS section_b,
+                SUM(section='C') AS section_c,
+                SUM(section='D') AS section_d,
+                SUM(section='E') AS section_e
+            FROM rtse_applications
+            WHERE archive=0
+              AND school_name=?
+            `,
+            [schoolName]
+        );
+
+        return rows[0] || {
+            all_students: 0,
+            pending: 0,
+            approved: 0,
+            rejected: 0,
+            section_a: 0,
+            section_b: 0,
+            section_c: 0,
+            section_d: 0,
+            section_e: 0
+        };
+    }
+
+    static async getSchoolStudents(
+        schoolName,
+        search = "",
+        status = "",
+        section = ""
+    ) {
+        const keyword = String(search || "").trim();
+        const selectedStatus = String(status || "").trim();
+        const selectedSection = String(section || "").trim().toUpperCase();
+
+        const params = [schoolName];
+
+        let sql = `
+            SELECT
+                id,
+                registration_no,
+                full_name,
+                father_name,
+                mobile,
+                email,
+                school_name,
+                class,
+                section,
+                district,
+                status,
+                roll_no,
+                roll_number,
+                admit_generated,
+                application_year
+            FROM rtse_applications
+            WHERE archive=0
+              AND school_name=?
+        `;
+
+        if (["Pending", "Approved", "Rejected"].includes(selectedStatus)) {
+            sql += ` AND status=?`;
+            params.push(selectedStatus);
+        }
+
+        if (["A", "B", "C", "D", "E"].includes(selectedSection)) {
+            sql += ` AND UPPER(section)=?`;
+            params.push(selectedSection);
+        }
+
+        if (keyword) {
+            const like = `%${keyword}%`;
+
+            sql += `
+                AND (
+                    registration_no LIKE ?
+                    OR full_name LIKE ?
+                    OR mobile LIKE ?
+                    OR CAST(class AS CHAR) LIKE ?
+                    OR section LIKE ?
+                    OR status LIKE ?
+                    OR roll_no LIKE ?
+                    OR CAST(roll_number AS CHAR) LIKE ?
+                )
+            `;
+
+            params.push(
+                like, like, like, like,
+                like, like, like, like
+            );
+        }
+
+        sql += `
+            ORDER BY
+                class ASC,
+                full_name ASC,
+                registration_no ASC
+        `;
+
+        const [rows] = await db.query(sql, params);
+        return rows;
+    }
+
 }
+
 
 
 module.exports = RtseApplication;

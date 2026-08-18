@@ -28,6 +28,7 @@ const arspMemberRoutes = require("./routes/arspMemberRoutes");
 const adminCommitteeRoutes = require("./routes/adminCommitteeRoutes");
 const arspSettingRoutes = require("./routes/arspSettingRoutes");
 const arspPublicRoutes = require("./routes/arspPublicRoutes");
+const arspSchoolRoutes = require("./routes/arspSchoolRoutes");
 
 const personalityRoutes = require("./routes/personalityRoutes");
 const honourHeartRoutes = require("./routes/honourHeartRoutes");
@@ -159,6 +160,7 @@ app.use("/", adminRoutes);
 app.use("/", personalityRoutes);
 app.use("/", menuRoutes);
 
+app.use("/", arspSchoolRoutes);
 app.use("/", adminArspRoutes);
 app.use("/", arspRoutes);
 app.use("/", arspMemberRoutes);

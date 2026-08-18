@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title %></title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 620px;
+            width: 100%;
+            background: #fff;
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0,0,0,.08);
+        }
+
+        .success {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 8px 0 12px;
+        }
+
+        .message {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .code {
+            margin: 25px 0;
+            padding: 18px;
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        .code strong {
+            display: block;
+            font-size: 22px;
+            margin-top: 7px;
+        }
+
+        .pending {
+            color: #b45309;
+            font-weight: 700;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="card">
+
+        <div class="success">✓</div>
+
+        <h1>Registration Submitted</h1>
+
+        <div class="message">
+            Your school registration application has been successfully
+            submitted to ARSP.
+        </div>
+
+        <div class="code">
+            Application / School Code
+            <strong><%= school.school_code %></strong>
+        </div>
+
+        <p>
+            Current Status:
+            <span class="pending">Pending Approval</span>
+        </p>
+
+        <p class="message">
+            Please keep your school code for future reference.
+            The ARSP administration will review your application.
+        </p>
+
+        <a href="/arsp/school/register">
+            Register Another Institution
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

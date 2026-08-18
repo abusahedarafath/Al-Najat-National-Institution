@@ -1,0 +1,191 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+<div class="container-fluid" style="padding:24px;max-width:1000px;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+
+        <div>
+            <h1 style="margin:0;">School Profile</h1>
+            <p style="margin:6px 0;color:#666;">
+                <%= school.school_code %>
+            </p>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+            <a
+                href="/admin/arsp/school/<%= school.id %>/edit"
+                style="background:#2563eb;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;">
+                Edit
+            </a>
+
+            <a
+                href="/admin/arsp/schools"
+                style="border:1px solid #d1d5db;padding:10px 16px;border-radius:8px;text-decoration:none;color:#374151;">
+                Back
+            </a>
+
+        </div>
+
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:22px;">
+
+        <h2 style="margin-top:0;">
+            <%= school.school_name %>
+        </h2>
+
+        <table style="width:100%;border-collapse:collapse;">
+
+            <tr>
+                <th style="padding:12px;text-align:left;width:220px;border-bottom:1px solid #eee;">School Code</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.school_code %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">School Type</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.school_type %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Head / Principal</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.head_name || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Mobile</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.mobile || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Email</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.email || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Address</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.address || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Village</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.village || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Post Office</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.post_office || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">District</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.district || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">State</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.state || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Pincode</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><%= school.pincode || "-" %></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;border-bottom:1px solid #eee;">Status</th>
+                <td style="padding:12px;border-bottom:1px solid #eee;"><strong><%= school.status %></strong></td>
+            </tr>
+
+            <tr>
+                <th style="padding:12px;text-align:left;">Remarks</th>
+                <td style="padding:12px;"><%= school.remarks || "-" %></td>
+            </tr>
+
+        </table>
+
+        <!-- Workflow -->
+        <div style="margin-top:25px;padding-top:20px;border-top:1px solid #eee;">
+
+            <h3>School Status Management</h3>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+                <% if (school.status !== "Approved") { %>
+
+                    <form method="POST" action="/admin/arsp/school/<%= school.id %>/approve">
+                        <button
+                            type="submit"
+                            style="background:#16a34a;color:white;border:0;padding:10px 16px;border-radius:8px;">
+                            Approve
+                        </button>
+                    </form>
+
+                <% } %>
+
+                <% if (school.status !== "Rejected") { %>
+
+                    <form method="POST" action="/admin/arsp/school/<%= school.id %>/reject"
+                          onsubmit="return confirm('Reject this school?');">
+
+                        <input
+                            type="hidden"
+                            name="remarks"
+                            value="Rejected by administrator."
+                        >
+
+                        <button
+                            type="submit"
+                            style="background:#dc2626;color:white;border:0;padding:10px 16px;border-radius:8px;">
+                            Reject
+                        </button>
+
+                    </form>
+
+                <% } %>
+
+                <% if (school.status === "Approved") { %>
+
+                    <form method="POST" action="/admin/arsp/school/<%= school.id %>/deactivate"
+                          onsubmit="return confirm('Set this school as inactive?');">
+
+                        <button
+                            type="submit"
+                            style="background:#64748b;color:white;border:0;padding:10px 16px;border-radius:8px;">
+                            Set Inactive
+                        </button>
+
+                    </form>
+
+                <% } %>
+
+                <% if (school.status === "Inactive") { %>
+
+                    <form method="POST" action="/admin/arsp/school/<%= school.id %>/activate">
+
+                        <button
+                            type="submit"
+                            style="background:#16a34a;color:white;border:0;padding:10px 16px;border-radius:8px;">
+                            Activate
+                        </button>
+
+                    </form>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    </main>
+</div>
+
+<%- include("../../partials/footer") %>
