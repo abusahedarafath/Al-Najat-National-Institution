@@ -125,10 +125,71 @@
         font-size: 14px;
     }
 
+
+    .rtse-student-services {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 25px rgba(0,0,0,.07);
+    }
+
+    .rtse-student-services h2 {
+        margin: 0 0 16px;
+        font-size: 19px;
+    }
+
+    .rtse-services-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .rtse-service-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 16px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        color: inherit;
+        text-decoration: none;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .rtse-service-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    }
+
+    .rtse-service-icon {
+        font-size: 25px;
+    }
+
+    .rtse-service-title {
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .rtse-service-description {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
     @media (max-width: 600px) {
 
         .rtse-info-grid {
             grid-template-columns: 1fr;
+        }
+
+        .rtse-services-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .rtse-student-services {
+            padding: 17px;
         }
 
         .rtse-dashboard-header h1 {
@@ -292,7 +353,86 @@
 
             <% } %>
 
-<div class="rtse-dashboard-actions">
+<div class="rtse-student-services">
+
+                <h2>RTSE Student Services</h2>
+
+                <div class="rtse-services-grid">
+
+                    <a
+                        href="/rtse/student/registration-slip"
+                        class="rtse-service-card"
+                    >
+                        <span class="rtse-service-icon">📄</span>
+                        <span class="rtse-service-title">
+                            Registration Slip
+                        </span>
+                        <span class="rtse-service-description">
+                            View your RTSE registration slip
+                        </span>
+                    </a>
+
+                    <a
+                        href="/rtse/student/result"
+                        class="rtse-service-card"
+                    >
+                        <span class="rtse-service-icon">📊</span>
+                        <span class="rtse-service-title">
+                            Examination Result
+                        </span>
+                        <span class="rtse-service-description">
+                            View your RTSE result and marks
+                        </span>
+                    </a>
+
+                    <a
+                        href="/rtse/student/certificate"
+                        class="rtse-service-card"
+                    >
+                        <span class="rtse-service-icon">🏆</span>
+                        <span class="rtse-service-title">
+                            Certificate
+                        </span>
+                        <span class="rtse-service-description">
+                            View your RTSE certificate
+                        </span>
+                    </a>
+
+                    <a
+                        href="/rtse/student/admit-card"
+                        class="rtse-service-card"
+                    >
+                        <span class="rtse-service-icon">🎫</span>
+                        <span class="rtse-service-title">
+                            Admit Card
+                        </span>
+                        <span class="rtse-service-description">
+                            View and print your RTSE admit card
+                        </span>
+                    </a>
+
+                    <% if (String(application.status || "").toLowerCase() === "approved") { %>
+
+                        <a
+                            href="/rtse/student/approved-slip"
+                            class="rtse-service-card"
+                        >
+                            <span class="rtse-service-icon">🎫</span>
+                            <span class="rtse-service-title">
+                                Approved Examination Slip
+                            </span>
+                            <span class="rtse-service-description">
+                                View your approved examination slip
+                            </span>
+                        </a>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+            <div class="rtse-dashboard-actions">
 
                 <a
                     href="/rtse/student/logout"

@@ -390,9 +390,6 @@ router.get("/all-ratabari-student-power", (req, res) =>
 
 
 // RTSE
-router.get("/rtse", (req, res) =>
-    renderSeoPage("rtse", req, res)
-);
 
 router.get("/rtse-2026", (req, res) =>
     renderSeoPage("rtse-2026", req, res)

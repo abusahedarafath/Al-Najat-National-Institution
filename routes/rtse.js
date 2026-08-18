@@ -142,21 +142,6 @@ router.post(
 );
 
 // =====================================
-// PERMANENT REGISTRATION SLIP
-// =====================================
-
-router.get(
-    "/registration-slip",
-    rtseController.registrationSlipPage
-);
-
-router.post(
-    "/registration-slip",
-    rtseController.registrationSlipSearch
-);
-
-
-// =====================================
 // AUTHENTICATED RTSE STUDENT APPROVED SLIP
 // =====================================
 
@@ -168,57 +153,41 @@ router.get(
 
 
 // =====================================
+// PRIVATE RTSE STUDENT SERVICES
+// =====================================
+
+router.get(
+    "/student/registration-slip",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.registrationSlip
+);
+
+router.get(
+    "/student/result",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.result
+);
+
+router.get(
+    "/student/certificate",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.certificate
+);
+
+router.get(
+    "/student/admit-card",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.admitCard
+);
+
+
+// =====================================
 // PUBLIC RTSE REGISTRATION VERIFICATION
 // =====================================
 
 router.get(
     "/verify/:registrationNo",
     rtseController.verifyRegistration
-);
-
-
-// =====================================
-// PUBLIC RESULT PORTAL
-// =====================================
-
-router.get(
-    "/result",
-    rtseController.resultPortal
-);
-
-router.post(
-    "/result",
-    rtseController.searchResult
-);
-
-router.get(
-    "/result/:id",
-    rtseController.viewResult
-);
-
-
-// =====================================
-// PUBLIC CERTIFICATE PORTAL
-// =====================================
-
-router.get(
-    "/certificate",
-    rtseController.certificatePortal
-);
-
-router.post(
-    "/certificate",
-    rtseController.searchCertificate
-);
-
-
-// =====================================
-// PUBLIC CERTIFICATE VERIFICATION
-// =====================================
-
-router.get(
-    "/verify/certificate/:number",
-    rtseController.verifyCertificate
 );
 
 

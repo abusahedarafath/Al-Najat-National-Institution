@@ -12,7 +12,10 @@ exports.isLoggedIn = async (req, res, next) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
 
+    console.log("SUPER SCANNER SESSION:", req.session.user);
+
     if (!req.session.user) {
+        console.log("SUPER SCANNER: NO SESSION");
         return res.redirect("/admin/login");
     }
 
