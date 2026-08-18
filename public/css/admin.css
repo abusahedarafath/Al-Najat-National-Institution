@@ -2180,3 +2180,56 @@ body{
 .sidebar-parent.open + .sidebar-children {
     display: block;
 }
+
+
+/* ARSP MEMBER REGISTRY SCOPED FIX */
+
+.admin-content .arsp-member-registry-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.arsp-member-registry-page .profile-card {
+    width: 100%;
+    max-width: none;
+}
+
+.arsp-member-registry-page .admin-table {
+    width: 100%;
+    max-width: 100%;
+}
+
+.arsp-member-registry-page .member-registry-actions-header,
+.arsp-member-registry-page .member-registry-actions {
+    width: 110px;
+    min-width: 110px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.arsp-member-registry-page .member-registry-actions .btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 991px) {
+    .admin-content .arsp-member-registry-page {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .arsp-member-registry-page {
+        overflow-x: auto;
+    }
+
+    .arsp-member-registry-page .admin-table {
+        min-width: 850px;
+    }
+}

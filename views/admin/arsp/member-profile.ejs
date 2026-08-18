@@ -443,77 +443,84 @@
 
                 <div style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
 
-                    <a
-                        href="/admin/arsp/member/<%= member.id %>/edit"
-                        class="btn-save">
+    <a
+        href="/admin/arsp/member/<%= member.id %>/edit"
+        class="btn-save">
+        Edit Member
+    </a>
 
-                        Edit Member
+    <% if(member.designation){ %>
 
-                    </a>
+        <a
+            href="/admin/arsp/member/<%= member.id %>/assign"
+            class="btn-view">
+            Change Position
+        </a>
 
-                    <% if(member.designation){ %>
+        <form
+            action="/admin/arsp/member/<%= member.id %>/remove-position"
+            method="POST"
+            style="display:inline;">
+            <button
+                type="submit"
+                class="btn-danger"
+                onclick="return confirm('Remove this member from the current position?')">
+                Remove Position
+            </button>
+        </form>
 
-                        <a
-                            href="/admin/arsp/member/<%= member.id %>/assign"
-                            class="btn-view">
+        <a
+            href="/admin/arsp/member/<%= member.id %>/appointment-letter"
+            class="btn-view">
+            Appointment Letter
+        </a>
 
-                            Change Position
+    <% } else { %>
 
-                        </a>
+        <a
+            href="/admin/arsp/member/<%= member.id %>/assign"
+            class="btn-view">
+            Assign Position
+        </a>
 
-                        <form
-                            action="/admin/arsp/member/<%= member.id %>/remove-position"
-                            method="POST"
-                            style="display:inline;">
+    <% } %>
 
-                            <button
-                                type="submit"
-                                class="btn-danger"
-                                onclick="return confirm('Remove this member from the current position?')">
+    <a
+        href="/admin/arsp/member/<%= member.id %>/id-card"
+        class="btn-view">
+        View ID Card
+    </a>
 
-                                Remove Position
+    <a
+        href="/admin/arsp/member/<%= member.id %>/reset-password"
+        class="btn-warning">
+        <i class="fas fa-key"></i>
+        Reset Password
+    </a>
 
-                            </button>
+    <a
+        href="/admin/arsp/member/<%= member.id %>/toggle-status"
+        class="<%= member.status === 'Active' ? 'btn-warning' : 'btn-save' %>"
+        onclick="return confirm('Are you sure you want to change this member status?')">
+        <%= member.status === "Active" ? "Deactivate" : "Activate" %>
+    </a>
 
-                        </form>
+    <form
+        action="/admin/arsp/member/<%= member.id %>/delete"
+        method="POST"
+        style="display:inline;"
+        onsubmit="return confirm('WARNING: This will permanently delete this member, all registration data, and their uploaded files. This action cannot be undone. Continue?')">
+        <button
+            type="submit"
+            class="btn-danger">
+            <i class="fas fa-trash"></i>
+            Delete Member
+        </button>
+    </form>
 
-                    <% } else { %>
-
-                        <a
-                            href="/admin/arsp/member/<%= member.id %>/assign"
-                            class="btn-view">
-
-                            Assign Position
-
-                        </a>
-
-                    <% } %>
-
-                    <a
-                        href="/admin/arsp/member/<%= member.id %>/id-card"
-                        class="btn-view">
-
-                        View ID Card
-
-                    </a>
-
-                    <% if(member.designation){ %>
-
-                        <a
-                            href="/admin/arsp/member/<%= member.id %>/appointment-letter"
-                            class="btn-view">
-
-                            Appointment Letter
-
-                        </a>
-
-                    <% } %>
-
-                </div>
-
-            </div>
-
-        </div>
+</div>
+</div>
+</div>
 
     </main>
 

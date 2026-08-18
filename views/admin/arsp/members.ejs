@@ -6,7 +6,7 @@
 
     <main class="admin-content">
 
-        <div class="container">
+        <div class="container arsp-member-registry-page">
 
             <div class="page-header">
 
@@ -73,7 +73,7 @@
 
                         <th>Position</th>
 
-                        <th width="420">Actions</th>
+                        <th class="member-registry-actions-header">Actions</th>
 
                     </tr>
 
@@ -169,109 +169,13 @@
 
                         </td>
 
-                        <td>
-
-                            <a
-                                href="/admin/arsp/member/<%= member.id %>/reset-password"
-                                class="btn-warning">
-
-                                <i class="fas fa-key"></i>
-
-                                Reset Password
-
-                            </a>
-
+                        <td class="member-registry-actions">
                             <a
                                 href="/admin/arsp/member/<%= member.id %>"
                                 class="btn-view">
-
+                                <i class="fas fa-eye"></i>
                                 View
-
                             </a>
-
-                            <a
-                                href="/admin/arsp/member/<%= member.id %>/edit"
-                                class="btn-save">
-
-                                Edit
-
-                            </a>
-
-                           
-<% if(member.designation){ %>
-
-<a
-    href="/admin/arsp/member/<%= member.id %>/assign"
-    class="btn-view">
-
-    Change Position
-
-</a>
-
-<form
-    action="/admin/arsp/member/<%= member.id %>/remove-position"
-    method="POST"
-    style="display:inline;">
-
-    <button
-        type="submit"
-        class="btn-danger"
-        onclick="return confirm('Remove this member from the current position?')">
-
-        Remove Position
-
-    </button>
-
-</form>
-
-<% } else { %>
-
-<a
-    href="/admin/arsp/member/<%= member.id %>/assign"
-    class="btn-view">
-
-    Assign
-
-</a>
-
-<% } %>
-
-
-                            <a
-                                href="/admin/arsp/member/<%= member.id %>/id-card"
-                                class="btn-view">
-
-                                ID Card
-
-                            </a>
-
-                            <a
-                                href="/admin/arsp/member/<%= member.id %>/toggle-status"
-                                class="<%= member.status === 'Active' ? 'btn-warning' : 'btn-save' %>"
-                                onclick="return confirm('Are you sure you want to change this member status?')">
-
-                                <%= member.status === "Active"
-                                    ? "Deactivate"
-                                    : "Activate" %>
-
-                            </a>
-
-                            <form
-                                action="/admin/arsp/member/<%= member.id %>/delete"
-                                method="POST"
-                                style="display:inline;">
-
-                                <button
-                                    type="submit"
-                                    class="btn-danger"
-                                    onclick="return confirm('Delete this member permanently?')">
-
-                                    Delete
-
-                                </button>
-
-                            </form>
-
                         </td>
 
                     </tr>

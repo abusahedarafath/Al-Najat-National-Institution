@@ -320,56 +320,43 @@ const [result] = await db.query(sql, [
     // ==========================
 
 static async getAll(search = "") {
-
     let sql = `
-
         SELECT
             m.*,
             p.section,
             p.designation,
             c.committee_name AS committee
-
         FROM arsp_members m
-
         LEFT JOIN arsp_management_positions p
             ON m.id = p.member_id
             AND p.status='Active'
-
         LEFT JOIN arsp_committees c
             ON p.committee_id=c.id
-
     `;
 
     const params = [];
 
-    if (search) {
+    if (search && search.trim() !== "") {
+        const keyword = `%${search.trim().toLowerCase()}%`;
 
         sql += `
-
             WHERE
-
-                m.full_name LIKE ?
-
-                OR m.member_id LIKE ?
-
-                OR m.mobile LIKE ?
-
-                OR p.designation LIKE ?
-
-                OR c.committee_name LIKE ?
-
+                LOWER(COALESCE(m.full_name, '')) LIKE ?
+                OR LOWER(COALESCE(m.member_id, '')) LIKE ?
+                OR LOWER(COALESCE(m.registration_no, '')) LIKE ?
+                OR LOWER(COALESCE(m.mobile, '')) LIKE ?
+                OR LOWER(COALESCE(p.designation, '')) LIKE ?
+                OR LOWER(COALESCE(c.committee_name, '')) LIKE ?
         `;
-
-        const keyword = `%${search}%`;
 
         params.push(
             keyword,
             keyword,
             keyword,
             keyword,
+            keyword,
             keyword
         );
-
     }
 
     sql += ` ORDER BY m.id DESC`;
@@ -377,10 +364,7 @@ static async getAll(search = "") {
     const [rows] = await db.query(sql, params);
 
     return rows;
-
 }
-
-
 
 // ==========================
 // Update QR Code
@@ -447,37 +431,49 @@ static async toggleStatus(id){
 // Delete Member
 // ==========================
 
-static async remove(id){
+static async remove(id) {
+    const [members] = await db.query(
+        `SELECT
+            member_id,
+            photo,
+            identity_front,
+            identity_back,
+            qr_code
+         FROM arsp_members
+         WHERE id=?
+         LIMIT 1`,
+        [id]
+    );
+
+    if (!members.length) {
+        throw new Error("Member not found.");
+    }
+
+    const member = members[0];
 
     await db.query(
-
         "DELETE FROM arsp_accounts WHERE member_id=?",
-
         [id]
-
     );
 
     await db.query(
-
         "DELETE FROM arsp_management_positions WHERE member_id=?",
-
         [id]
-
     );
 
     await db.query(
-
         "DELETE FROM arsp_members WHERE id=?",
-
         [id]
-
     );
 
+    return {
+        member_id: member.member_id || null,
+        photo: member.photo || null,
+        identity_front: member.identity_front || null,
+        identity_back: member.identity_back || null,
+        qr_code: member.qr_code || null
+    };
 }
-
-
-
-
 
 }
 

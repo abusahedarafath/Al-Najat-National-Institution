@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const ArspMember = require("../models/ArspMember");
 const ArspAccount = require("../models/ArspAccount");
 
@@ -988,32 +990,121 @@ exports.toggleStatus = async(req,res)=>{
 // Delete Member
 // =====================================
 
-exports.deleteMember = async(req,res)=>{
+exports.deleteMember = async (req, res) => {
+    try {
+        const deletedFiles = await ArspMember.remove(req.params.id);
 
-    try{
+        /*
+         * Member registration uploads:
+         *   public/uploads/arsp-members/
+         *
+         * Member QR:
+         *   uploads/arsp-qr/<member_id>.png
+         *
+         * Appointment-letter QRs also use uploads/arsp-qr,
+         * but their filenames are document numbers. Therefore
+         * we delete ONLY the QR whose filename exactly matches
+         * this member's member_id.
+         */
 
-        await ArspMember.remove(
-            req.params.id
+        const memberUploadDir = path.resolve(
+            __dirname,
+            "../public/uploads/arsp-members"
         );
+
+        const memberQrDir = path.resolve(
+            __dirname,
+            "../uploads/arsp-qr"
+        );
+
+        const registrationFiles = [
+            "photo",
+            "identity_front",
+            "identity_back"
+        ];
+
+        for (const field of registrationFiles) {
+            const filename = deletedFiles && deletedFiles[field];
+
+            if (!filename || typeof filename !== "string") {
+                continue;
+            }
+
+            const safeName = path.basename(filename);
+            const filePath = path.resolve(
+                memberUploadDir,
+                safeName
+            );
+
+            if (
+                filePath.startsWith(memberUploadDir + path.sep) &&
+                fs.existsSync(filePath)
+            ) {
+                try {
+                    fs.unlinkSync(filePath);
+                } catch (fileErr) {
+                    console.error(
+                        `Unable to delete member ${field} file:`,
+                        fileErr
+                    );
+                }
+            }
+        }
+
+        /*
+         * Delete the member QR only when the stored QR filename
+         * corresponds exactly to this member's member_id.
+         * This prevents appointment-letter QR files from being
+         * accidentally deleted.
+         */
+        if (
+            deletedFiles &&
+            deletedFiles.member_id &&
+            deletedFiles.qr_code
+        ) {
+            const expectedQrName =
+                String(deletedFiles.member_id) + ".png";
+
+            const storedQrName =
+                path.basename(String(deletedFiles.qr_code));
+
+            if (storedQrName === expectedQrName) {
+                const qrPath = path.resolve(
+                    memberQrDir,
+                    expectedQrName
+                );
+
+                if (
+                    qrPath.startsWith(memberQrDir + path.sep) &&
+                    fs.existsSync(qrPath)
+                ) {
+                    try {
+                        fs.unlinkSync(qrPath);
+                    } catch (qrErr) {
+                        console.error(
+                            "Unable to delete member QR file:",
+                            qrErr
+                        );
+                    }
+                }
+            }
+        }
 
         req.flash(
-
             "success",
-
-            "Member deleted successfully."
-
+            "Member and all registration files deleted permanently."
         );
 
+    } catch (err) {
+        console.error("Delete Member Error:", err);
+
+        req.flash(
+            "error",
+            "Unable to delete member."
+        );
     }
 
-    catch(err){
-
-        console.error(err);
-
-    }
-
-    res.redirect("/admin/arsp/members");
-
+    return res.redirect("/admin/arsp/members");
 };
 
 
