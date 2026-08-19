@@ -1315,7 +1315,7 @@ static async update(id, data) {
     // =====================================
     // School RTSE Dashboard Statistics
     // =====================================
-    static async getSchoolRtseStats(schoolName) {
+    static async getSchoolRtseStats(schoolId) {
         const [rows] = await db.query(
             `
             SELECT
@@ -1330,9 +1330,9 @@ static async update(id, data) {
                 SUM(section='E') AS section_e
             FROM rtse_applications
             WHERE archive=0
-              AND school_name=?
+              AND school_id=?
             `,
-            [schoolName]
+            [schoolId]
         );
 
         return rows[0] || {
@@ -1431,7 +1431,7 @@ static async update(id, data) {
     }
 
     static async getSchoolStudents(
-        schoolName,
+        schoolId,
         search = "",
         status = "",
         section = ""
@@ -1440,7 +1440,7 @@ static async update(id, data) {
         const selectedStatus = String(status || "").trim();
         const selectedSection = String(section || "").trim().toUpperCase();
 
-        const params = [schoolName];
+        const params = [schoolId];
 
         let sql = `
             SELECT
@@ -1461,7 +1461,7 @@ static async update(id, data) {
                 application_year
             FROM rtse_applications
             WHERE archive=0
-              AND school_name=?
+              AND school_id=?
         `;
 
         if (["Pending", "Approved", "Rejected"].includes(selectedStatus)) {

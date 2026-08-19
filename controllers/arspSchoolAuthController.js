@@ -619,14 +619,14 @@ exports.rtseStudents = async (req, res) => {
         const section = String(req.query.section || "").trim().toUpperCase();
 
         const students = await RtseApplication.getSchoolStudents(
-            school.school_name,
+            schoolId,
             search,
             status,
             section
         );
 
         const stats = await RtseApplication.getSchoolRtseStats(
-            school.school_name
+            schoolId
         );
 
         res.setHeader(
