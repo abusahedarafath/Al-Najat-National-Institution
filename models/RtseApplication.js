@@ -1330,9 +1330,22 @@ static async update(id, data) {
                 SUM(section='E') AS section_e
             FROM rtse_applications
             WHERE archive=0
-              AND school_id=?
+              AND (
+                    school_id=?
+                    OR (
+                        school_id IS NULL
+                        AND LOWER(TRIM(school_name)) = LOWER(
+                            (
+                                SELECT TRIM(school_name)
+                                FROM arsp_schools
+                                WHERE id=?
+                                LIMIT 1
+                            )
+                        )
+                    )
+              )
             `,
-            [schoolId]
+            [schoolId, schoolId]
         );
 
         return rows[0] || {
@@ -1361,12 +1374,26 @@ static async update(id, data) {
             SELECT *
             FROM rtse_applications
             WHERE id=?
-              AND school_id=?
               AND archive=0
+              AND (
+                    school_id=?
+                    OR (
+                        school_id IS NULL
+                        AND LOWER(TRIM(school_name)) = LOWER(
+                            (
+                                SELECT TRIM(school_name)
+                                FROM arsp_schools
+                                WHERE id=?
+                                LIMIT 1
+                            )
+                        )
+                    )
+              )
             LIMIT 1
             `,
             [
                 studentId,
+                schoolId,
                 schoolId
             ]
         );
@@ -1405,8 +1432,21 @@ static async update(id, data) {
                 section=?,
                 address=?
             WHERE id=?
-              AND school_id=?
               AND archive=0
+              AND (
+                    school_id=?
+                    OR (
+                        school_id IS NULL
+                        AND LOWER(TRIM(school_name)) = LOWER(
+                            (
+                                SELECT TRIM(school_name)
+                                FROM arsp_schools
+                                WHERE id=?
+                                LIMIT 1
+                            )
+                        )
+                    )
+              )
             `,
             [
                 data.full_name,
@@ -1423,6 +1463,7 @@ static async update(id, data) {
                 data.section,
                 data.address,
                 studentId,
+                schoolId,
                 schoolId
             ]
         );
@@ -1440,7 +1481,7 @@ static async update(id, data) {
         const selectedStatus = String(status || "").trim();
         const selectedSection = String(section || "").trim().toUpperCase();
 
-        const params = [schoolId];
+        const params = [schoolId, schoolId];
 
         let sql = `
             SELECT
@@ -1462,7 +1503,20 @@ static async update(id, data) {
                 application_year
             FROM rtse_applications
             WHERE archive=0
-              AND school_id=?
+              AND (
+                    school_id=?
+                    OR (
+                        school_id IS NULL
+                        AND LOWER(TRIM(school_name)) = LOWER(
+                            (
+                                SELECT TRIM(school_name)
+                                FROM arsp_schools
+                                WHERE id=?
+                                LIMIT 1
+                            )
+                        )
+                    )
+              )
         `;
 
         if (["Pending", "Approved", "Rejected"].includes(selectedStatus)) {
