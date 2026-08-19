@@ -1334,9 +1334,9 @@ static async update(id, data) {
                     school_id=?
                     OR (
                         school_id IS NULL
-                        AND LOWER(TRIM(school_name)) = LOWER(
+                        AND LOWER(TRIM(school_name)) COLLATE utf8mb4_unicode_ci = LOWER(
                             (
-                                SELECT TRIM(school_name)
+                                SELECT TRIM(school_name) COLLATE utf8mb4_unicode_ci
                                 FROM arsp_schools
                                 WHERE id=?
                                 LIMIT 1
@@ -1379,9 +1379,9 @@ static async update(id, data) {
                     school_id=?
                     OR (
                         school_id IS NULL
-                        AND LOWER(TRIM(school_name)) = LOWER(
+                        AND LOWER(TRIM(school_name)) COLLATE utf8mb4_unicode_ci = LOWER(
                             (
-                                SELECT TRIM(school_name)
+                                SELECT TRIM(school_name) COLLATE utf8mb4_unicode_ci
                                 FROM arsp_schools
                                 WHERE id=?
                                 LIMIT 1
@@ -1437,9 +1437,9 @@ static async update(id, data) {
                     school_id=?
                     OR (
                         school_id IS NULL
-                        AND LOWER(TRIM(school_name)) = LOWER(
+                        AND LOWER(TRIM(school_name)) COLLATE utf8mb4_unicode_ci = LOWER(
                             (
-                                SELECT TRIM(school_name)
+                                SELECT TRIM(school_name) COLLATE utf8mb4_unicode_ci
                                 FROM arsp_schools
                                 WHERE id=?
                                 LIMIT 1
@@ -1507,9 +1507,9 @@ static async update(id, data) {
                     school_id=?
                     OR (
                         school_id IS NULL
-                        AND LOWER(TRIM(school_name)) = LOWER(
+                        AND LOWER(TRIM(school_name)) COLLATE utf8mb4_unicode_ci = LOWER(
                             (
-                                SELECT TRIM(school_name)
+                                SELECT TRIM(school_name) COLLATE utf8mb4_unicode_ci
                                 FROM arsp_schools
                                 WHERE id=?
                                 LIMIT 1
