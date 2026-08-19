@@ -123,14 +123,50 @@
                     </div>
 
                     <div class="form-group">
-                        <label>School Name</label>
+                        <label>School Name *</label>
+
+                        <select
+                            name="school_id"
+                            id="rtseSchoolSelect"
+                            required
+                        >
+                            <option value="">Select your school</option>
+
+                            <% (schools || []).forEach(function(school) { %>
+                                <option
+                                    value="<%= school.id %>"
+                                    <%= draft && String(draft.school_id || "") === String(school.id) ? "selected" : "" %>
+                                >
+                                    <%= school.school_name %>
+                                </option>
+                            <% }); %>
+
+                            <option
+                                value="other"
+                                <%= draft && !draft.school_id && draft.school_name ? "selected" : "" %>
+                            >
+                                Other / School not listed
+                            </option>
+                        </select>
+                    </div>
+
+                    <div
+                        class="form-group"
+                        id="otherSchoolGroup"
+                        style="display:none;"
+                    >
+                        <label>Enter School Name *</label>
 
                         <input
                             type="text"
-                            name="school_name"
-                            value="<%= draft && draft.school_name ? draft.school_name : '' %>"
-                            required
+                            name="other_school_name"
+                            id="otherSchoolName"
+                            value="<%= draft && !draft.school_id ? (draft.school_name || '') : '' %>"
                         >
+
+                        <small>
+                            If your school is not listed, enter its name here.
+                        </small>
                     </div>
 
                     <div class="form-group">
@@ -329,6 +365,41 @@
     </div>
 
 </div>
+
+<script>
+const schoolSelect =
+    document.getElementById("rtseSchoolSelect");
+
+const otherSchoolGroup =
+    document.getElementById("otherSchoolGroup");
+
+const otherSchoolInput =
+    document.getElementById("otherSchoolName");
+
+function updateSchoolField() {
+
+    const isOther =
+        schoolSelect.value === "other";
+
+    otherSchoolGroup.style.display =
+        isOther ? "block" : "none";
+
+    otherSchoolInput.required =
+        isOther;
+
+    if (!isOther) {
+        otherSchoolInput.value = "";
+    }
+}
+
+schoolSelect.addEventListener(
+    "change",
+    updateSchoolField
+);
+
+updateSchoolField();
+
+</script>
 
 <script>
 

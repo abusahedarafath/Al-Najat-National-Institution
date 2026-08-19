@@ -91,6 +91,7 @@ class RtseApplication {
             email,
 
             school_name,
+            school_id,
 
             district,
             state,
@@ -106,7 +107,7 @@ class RtseApplication {
         )
 
         VALUES
-        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         `;
 
         const [result] =
@@ -127,6 +128,7 @@ class RtseApplication {
             data.email,
 
             data.school_name,
+            data.school_id || null,
 
             data.district,
             data.state,

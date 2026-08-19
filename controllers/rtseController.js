@@ -13,6 +13,9 @@ require("../models/RtseExamSetting");
 const RtseApplication =
 require("../models/RtseApplication");
 
+const ArspSchool =
+require("../models/ArspSchool");
+
 
 
 // =====================================
@@ -69,11 +72,15 @@ exports.applicationPage = async (req, res) => {
 
         const draft = req.session.rtseDraft || {};
 
+        const schools =
+            await ArspSchool.getAll("", "Approved");
+
         res.render(
             "rtse/application",
             {
                 title: "RTSE Online Application",
-                draft
+                draft,
+                schools
             }
         );
     } catch (err) {
@@ -171,6 +178,66 @@ exports.submitApplication = async (req, res) => {
                 req.body.class
             );
 
+        const schoolId =
+            String(req.body.school_id || "").trim();
+
+        const otherSchoolName =
+            String(req.body.other_school_name || "").trim();
+
+        let schoolName = "";
+
+        if (schoolId && schoolId !== "other") {
+
+            const schools =
+                await ArspSchool.getAll("", "Approved");
+
+            const selectedSchool =
+                schools.find(
+                    school =>
+                        String(school.id) === schoolId
+                );
+
+            if (!selectedSchool) {
+
+                return res.status(400).render(
+                    "rtse/application",
+                    {
+                        title: "RTSE Online Application",
+                        error: "Please select a valid registered school.",
+                        draft: req.body || {},
+                        schools
+                    }
+                );
+
+            }
+
+            schoolName =
+                selectedSchool.school_name;
+
+        } else if (
+            schoolId === "other" &&
+            otherSchoolName
+        ) {
+
+            schoolName = otherSchoolName;
+
+        } else {
+
+            const schools =
+                await ArspSchool.getAll("", "Approved");
+
+            return res.status(400).render(
+                "rtse/application",
+                {
+                    title: "RTSE Online Application",
+                    error: "Please select your school or choose Other.",
+                    draft: req.body || {},
+                    schools
+                }
+            );
+
+        }
+
 
         const draft = {
 
@@ -196,7 +263,13 @@ exports.submitApplication = async (req, res) => {
                 req.body.email || "",
 
             school_name:
-                req.body.school_name || "",
+                schoolName,
+
+            school_id:
+                schoolId &&
+                schoolId !== "other"
+                    ? schoolId
+                    : null,
 
             district:
                 req.body.district || "",
@@ -381,6 +454,9 @@ exports.confirmApplication = async (
 
                 school_name:
                     draft.school_name,
+
+                school_id:
+                    draft.school_id || null,
 
                 district:
                     draft.district,
