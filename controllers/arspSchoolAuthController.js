@@ -264,6 +264,7 @@ exports.rtseRegister = async (req, res) => {
             mobile,
             email: email || "",
             school_name: school.school_name,
+            school_id: school.id,
             district: district || school.district || "",
             state: state || school.state || "Assam",
             pincode: pincode || school.pincode || "",

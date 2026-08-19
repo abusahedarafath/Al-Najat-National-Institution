@@ -217,6 +217,7 @@ exports.confirmApplication = async (req, res) => {
             mobile: draft.mobile,
             email: draft.email,
             school_name: draft.school_name,
+            school_id: draft.school_id || null,
             district: draft.district,
             state: draft.state,
             pincode: draft.pincode,
