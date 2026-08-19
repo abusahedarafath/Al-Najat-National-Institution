@@ -185,6 +185,7 @@ exports.submitApplication = async (req, res) => {
             String(req.body.other_school_name || "").trim();
 
         let schoolName = "";
+        let selectedSchoolId = null;
 
         if (schoolId && schoolId !== "other") {
 
@@ -203,7 +204,8 @@ exports.submitApplication = async (req, res) => {
                     "rtse/application",
                     {
                         title: "RTSE Online Application",
-                        error: "Please select a valid registered school.",
+                        error:
+                            "Please select a valid registered school.",
                         draft: req.body || {},
                         schools
                     }
@@ -211,15 +213,23 @@ exports.submitApplication = async (req, res) => {
 
             }
 
+            // Always use canonical values from
+            // the approved school database record.
             schoolName =
                 selectedSchool.school_name;
+
+            selectedSchoolId =
+                Number(selectedSchool.id);
 
         } else if (
             schoolId === "other" &&
             otherSchoolName
         ) {
 
-            schoolName = otherSchoolName;
+            schoolName =
+                otherSchoolName;
+
+            selectedSchoolId = null;
 
         } else {
 
@@ -230,7 +240,8 @@ exports.submitApplication = async (req, res) => {
                 "rtse/application",
                 {
                     title: "RTSE Online Application",
-                    error: "Please select your school or choose Other.",
+                    error:
+                        "Please select your school or choose Other.",
                     draft: req.body || {},
                     schools
                 }
@@ -266,10 +277,7 @@ exports.submitApplication = async (req, res) => {
                 schoolName,
 
             school_id:
-                schoolId &&
-                schoolId !== "other"
-                    ? schoolId
-                    : null,
+                selectedSchoolId,
 
             district:
                 req.body.district || "",
@@ -424,6 +432,52 @@ exports.confirmApplication = async (
 
 
         // =================================
+        // Re-validate registered school
+        // immediately before database insert.
+        // Never trust the session value blindly.
+        // =================================
+
+        let confirmedSchoolId = null;
+        let confirmedSchoolName =
+            draft.school_name;
+
+        if (draft.school_id) {
+
+            const schools =
+                await ArspSchool.getAll("", "Approved");
+
+            const selectedSchool =
+                schools.find(
+                    school =>
+                        Number(school.id) ===
+                        Number(draft.school_id)
+                );
+
+            if (!selectedSchool) {
+
+                return res.status(400).render(
+                    "rtse/review",
+                    {
+                        title:
+                            "Review RTSE Application",
+
+                        draft,
+
+                        error:
+                            "The selected school is no longer available. Please return to the application and select your school again."
+                    }
+                );
+
+            }
+
+            confirmedSchoolId =
+                Number(selectedSchool.id);
+
+            confirmedSchoolName =
+                selectedSchool.school_name;
+        }
+
+        // =================================
         // DATABASE INSERT HAPPENS HERE
         // ONLY AFTER CONFIRMATION
         // =================================
@@ -453,10 +507,10 @@ exports.confirmApplication = async (
                     draft.email,
 
                 school_name:
-                    draft.school_name,
+                    confirmedSchoolName,
 
                 school_id:
-                    draft.school_id || null,
+                    confirmedSchoolId,
 
                 district:
                     draft.district,
@@ -515,7 +569,7 @@ exports.confirmApplication = async (
                 draft.email,
 
             school_name:
-                draft.school_name,
+                confirmedSchoolName,
 
             district:
                 draft.district,
