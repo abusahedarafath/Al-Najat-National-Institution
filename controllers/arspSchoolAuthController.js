@@ -126,8 +126,9 @@ exports.dashboard = async (req, res) => {
         }
 
         const stats = await RtseApplication.getSchoolRtseStats(
-            school.school_name
+            schoolId
         );
+
 
         res.setHeader(
             "Cache-Control",
