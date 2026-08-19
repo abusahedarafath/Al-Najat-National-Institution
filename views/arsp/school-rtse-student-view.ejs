@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= title %></title>
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+
+        .student-page {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 16px;
+        }
+
+        .student-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08);
+        }
+
+        .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .student-header h1 {
+            margin: 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: 0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .section-title {
+            margin: 25px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 13px;
+            border-radius: 7px;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .school-locked {
+            border-left: 4px solid #198754;
+        }
+
+        .document-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 700px) {
+            .student-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="student-page">
+
+    <div class="student-card">
+
+        <div class="student-header">
+
+            <div>
+                <h1>Student Details</h1>
+
+                <p style="margin:6px 0 0;color:#666;">
+                    Registration No.
+                    <strong>
+                        <%= student.registration_no || "-" %>
+                    </strong>
+                </p>
+            </div>
+
+            <div class="actions">
+
+                <a
+                    class="btn btn-secondary"
+                    href="/arsp/school/rtse-students"
+                >
+                    ← Back
+                </a>
+
+                <a
+                    class="btn btn-primary"
+                    href="/arsp/school/rtse-students/<%= student.id %>/edit"
+                >
+                    Edit Student
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- School Information              -->
+        <!-- ============================== -->
+
+        <h2 class="section-title">
+            School Information
+        </h2>
+
+        <div class="info-grid">
+
+            <div class="info-item school-locked">
+
+                <span class="info-label">
+                    Registered School
+                </span>
+
+                <span class="info-value">
+                    <%= student.school_name || "-" %>
+                </span>
+
+            </div>
+
+            <div class="info-item school-locked">
+
+                <span class="info-label">
+                    School Code
+                </span>
+
+                <span class="info-value">
+                    <%= school.school_code || "-" %>
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- Personal Information             -->
+        <!-- ============================== -->
+
+        <h2 class="section-title">
+            Personal Information
+        </h2>
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <span class="info-label">Full Name</span>
+                <span class="info-value">
+                    <%= student.full_name || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Father's Name</span>
+                <span class="info-value">
+                    <%= student.father_name || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Mother's Name</span>
+                <span class="info-value">
+                    <%= student.mother_name || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Gender</span>
+                <span class="info-value">
+                    <%= student.gender || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Date of Birth</span>
+                <span class="info-value">
+                    <%= student.dob || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Mobile</span>
+                <span class="info-value">
+                    <%= student.mobile || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">
+                    <%= student.email || "-" %>
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- Academic Information             -->
+        <!-- ============================== -->
+
+        <h2 class="section-title">
+            Academic Information
+        </h2>
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <span class="info-label">Class</span>
+                <span class="info-value">
+                    <%= student.class || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Section</span>
+                <span class="info-value">
+                    <%= student.section || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Status</span>
+                <span class="info-value">
+                    <%= student.status || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Roll No.</span>
+                <span class="info-value">
+                    <%= student.roll_no || student.roll_number || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Admit Card</span>
+                <span class="info-value">
+                    <%= Number(student.admit_generated) === 1
+                        ? "Generated"
+                        : "Not Generated"
+                    %>
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- Address Information              -->
+        <!-- ============================== -->
+
+        <h2 class="section-title">
+            Address
+        </h2>
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <span class="info-label">Address</span>
+                <span class="info-value">
+                    <%= student.address || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">District</span>
+                <span class="info-value">
+                    <%= student.district || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">State</span>
+                <span class="info-value">
+                    <%= student.state || "-" %>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">PIN Code</span>
+                <span class="info-value">
+                    <%= student.pincode || "-" %>
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- Documents                       -->
+        <!-- ============================== -->
+
+        <h2 class="section-title">
+            Documents
+        </h2>
+
+        <div class="document-links">
+
+            <% if (student.photo) { %>
+
+                <a
+                    class="btn btn-secondary"
+                    href="/uploads/rtse/<%= student.photo %>"
+                    target="_blank"
+                >
+                    View Photograph
+                </a>
+
+            <% } %>
+
+            <% if (student.identity_document) { %>
+
+                <a
+                    class="btn btn-secondary"
+                    href="/uploads/rtse/<%= student.identity_document %>"
+                    target="_blank"
+                >
+                    View Identity Document
+                </a>
+
+            <% } %>
+
+            <% if (!student.photo && !student.identity_document) { %>
+
+                <span style="color:#777;">
+                    No documents available.
+                </span>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
