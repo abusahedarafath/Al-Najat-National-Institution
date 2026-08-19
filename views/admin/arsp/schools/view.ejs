@@ -177,6 +177,24 @@
 
                 <% } %>
 
+
+                <% if (school.status === "Approved") { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/school/<%= school.id %>/reset-password"
+                        onsubmit="return confirm('Reset this school portal password? The current password will stop working immediately.');"
+                    >
+                        <button
+                            type="submit"
+                            style="background:#7c3aed;color:white;border:0;padding:10px 16px;border-radius:8px;"
+                        >
+                            Reset Portal Password
+                        </button>
+                    </form>
+
+                <% } %>
+
             </div>
 
         </div>

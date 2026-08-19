@@ -318,3 +318,63 @@ exports.activate = async (req, res) => {
 
     return res.redirect(`/admin/arsp/school/${req.params.id}`);
 };
+
+
+// =====================================
+// Reset School Portal Password
+// =====================================
+exports.resetPortalPassword = async (req, res) => {
+    try {
+        const school = await ArspSchool.getById(req.params.id);
+
+        if (!school) {
+            req.flash("error", "School not found.");
+            return res.redirect("/admin/arsp/schools");
+        }
+
+        const credentials =
+            await ArspSchoolAccount.resetPassword(school.id);
+
+        if (!credentials) {
+            req.flash(
+                "error",
+                "No School Portal account exists for this school."
+            );
+
+            return res.redirect(
+                `/admin/arsp/school/${school.id}`
+            );
+        }
+
+        req.session.arspSchoolCredentialSlip = {
+            school_id: school.id,
+            username: credentials.username,
+            temporaryPassword: credentials.temporaryPassword,
+            generatedAt: new Date().toISOString()
+        };
+
+        req.flash(
+            "success",
+            "School Portal password reset successfully."
+        );
+
+        return res.redirect(
+            `/admin/arsp/school/${school.id}/credential-slip`
+        );
+
+    } catch (err) {
+        console.error(
+            "ARSP School Password Reset Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to reset School Portal password."
+        );
+
+        return res.redirect(
+            `/admin/arsp/school/${req.params.id}`
+        );
+    }
+};

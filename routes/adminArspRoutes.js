@@ -359,4 +359,15 @@ router.post(
 
 
 
+
+// ======================================
+// Reset School Portal Password
+// ======================================
+
+router.post(
+    "/admin/arsp/school/:id/reset-password",
+    authMiddleware.isLoggedIn,
+    adminArspSchoolController.resetPortalPassword
+);
+
 module.exports = router;
