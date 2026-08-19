@@ -1450,6 +1450,7 @@ static async update(id, data) {
                 father_name,
                 mobile,
                 email,
+                school_id,
                 school_name,
                 class,
                 section,
