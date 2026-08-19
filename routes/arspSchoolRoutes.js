@@ -95,6 +95,38 @@ router.post(
 );
 
 // =====================================
+// School RTSE Student View
+// =====================================
+
+router.get(
+    "/arsp/school/rtse-students/:id",
+    schoolAuth.isSchoolLoggedIn,
+    schoolAuth.requirePasswordChanged,
+    authController.rtseStudentView
+);
+
+
+// =====================================
+// School RTSE Student Edit
+// =====================================
+
+router.get(
+    "/arsp/school/rtse-students/:id/edit",
+    schoolAuth.isSchoolLoggedIn,
+    schoolAuth.requirePasswordChanged,
+    authController.rtseStudentEdit
+);
+
+
+router.post(
+    "/arsp/school/rtse-students/:id/edit",
+    schoolAuth.isSchoolLoggedIn,
+    schoolAuth.requirePasswordChanged,
+    authController.rtseStudentUpdate
+);
+
+
+// =====================================
 // School RTSE Student Registry
 // =====================================
 router.get(

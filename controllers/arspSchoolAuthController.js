@@ -292,6 +292,310 @@ exports.rtseRegister = async (req, res) => {
     }
 };
 
+
+// =====================================
+// View RTSE Student
+// =====================================
+
+exports.rtseStudentView = async (req, res) => {
+
+    try {
+
+        const schoolId =
+            req.session?.arspSchool?.school_id;
+
+        if (!schoolId) {
+            return res.redirect("/arsp/school/login");
+        }
+
+        const school =
+            await ArspSchool.getById(schoolId);
+
+        if (!school) {
+
+            req.session.arspSchool = null;
+
+            return res.redirect(
+                "/arsp/school/login"
+            );
+        }
+
+        const studentId =
+            Number(req.params.id);
+
+        if (!Number.isInteger(studentId) || studentId <= 0) {
+            return res.status(400).send(
+                "Invalid student ID."
+            );
+        }
+
+        const student =
+            await RtseApplication.getSchoolStudentById(
+                studentId,
+                schoolId
+            );
+
+        if (!student) {
+            return res.status(404).send(
+                "Student not found or does not belong to your school."
+            );
+        }
+
+        return res.render(
+            "arsp/school-rtse-student-view",
+            {
+                title: "View RTSE Student",
+                school,
+                student
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School RTSE student view error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to load student."
+        );
+    }
+};
+
+
+// =====================================
+// Edit RTSE Student
+// =====================================
+
+exports.rtseStudentEdit = async (req, res) => {
+
+    try {
+
+        const schoolId =
+            req.session?.arspSchool?.school_id;
+
+        if (!schoolId) {
+            return res.redirect("/arsp/school/login");
+        }
+
+        const school =
+            await ArspSchool.getById(schoolId);
+
+        if (!school) {
+
+            req.session.arspSchool = null;
+
+            return res.redirect(
+                "/arsp/school/login"
+            );
+        }
+
+        const studentId =
+            Number(req.params.id);
+
+        if (!Number.isInteger(studentId) || studentId <= 0) {
+            return res.status(400).send(
+                "Invalid student ID."
+            );
+        }
+
+        const student =
+            await RtseApplication.getSchoolStudentById(
+                studentId,
+                schoolId
+            );
+
+        if (!student) {
+            return res.status(404).send(
+                "Student not found or does not belong to your school."
+            );
+        }
+
+        return res.render(
+            "arsp/school-rtse-student-edit",
+            {
+                title: "Edit RTSE Student",
+                school,
+                student,
+                error: null
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School RTSE student edit page error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to load student."
+        );
+    }
+};
+
+
+// =====================================
+// Update RTSE Student
+// =====================================
+
+exports.rtseStudentUpdate = async (req, res) => {
+
+    try {
+
+        const schoolId =
+            req.session?.arspSchool?.school_id;
+
+        if (!schoolId) {
+            return res.redirect("/arsp/school/login");
+        }
+
+        const school =
+            await ArspSchool.getById(schoolId);
+
+        if (!school) {
+
+            req.session.arspSchool = null;
+
+            return res.redirect(
+                "/arsp/school/login"
+            );
+        }
+
+        const studentId =
+            Number(req.params.id);
+
+        if (!Number.isInteger(studentId) || studentId <= 0) {
+            return res.status(400).send(
+                "Invalid student ID."
+            );
+        }
+
+        /*
+         * IMPORTANT:
+         *
+         * We first verify that this student belongs
+         * to the authenticated school.
+         *
+         * school_id is taken from the session.
+         * It is NEVER taken from req.body.
+         */
+        const existingStudent =
+            await RtseApplication.getSchoolStudentById(
+                studentId,
+                schoolId
+            );
+
+        if (!existingStudent) {
+            return res.status(404).send(
+                "Student not found or does not belong to your school."
+            );
+        }
+
+        const studentClass =
+            Number(req.body.class);
+
+        if (
+            !Number.isInteger(studentClass) ||
+            studentClass < 4 ||
+            studentClass > 10
+        ) {
+            return res.status(400).send(
+                "Invalid class."
+            );
+        }
+
+        const section =
+            RtseApplication.getSection(
+                studentClass
+            );
+
+        const data = {
+
+            full_name:
+                String(req.body.full_name || "").trim(),
+
+            father_name:
+                String(req.body.father_name || "").trim(),
+
+            mother_name:
+                String(req.body.mother_name || "").trim(),
+
+            gender:
+                String(req.body.gender || "").trim(),
+
+            dob:
+                req.body.dob || null,
+
+            mobile:
+                String(req.body.mobile || "").trim(),
+
+            email:
+                String(req.body.email || "").trim(),
+
+            /*
+             * School information intentionally omitted.
+             *
+             * school_name and school_id remain exactly
+             * as stored in the database.
+             */
+
+            district:
+                String(req.body.district || "").trim(),
+
+            state:
+                String(req.body.state || "").trim(),
+
+            pincode:
+                String(req.body.pincode || "").trim(),
+
+            class:
+                studentClass,
+
+            section,
+
+            address:
+                String(req.body.address || "").trim()
+        };
+
+        if (!data.full_name) {
+            return res.status(400).send(
+                "Student name is required."
+            );
+        }
+
+        const updated =
+            await RtseApplication.updateSchoolStudent(
+                studentId,
+                schoolId,
+                data
+            );
+
+        if (!updated) {
+            return res.status(404).send(
+                "Student could not be updated."
+            );
+        }
+
+        return res.redirect(
+            `/arsp/school/rtse-students/${studentId}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School RTSE student update error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to update student."
+        );
+    }
+};
+
+
 // =====================================
 // School RTSE Student Registry
 // =====================================

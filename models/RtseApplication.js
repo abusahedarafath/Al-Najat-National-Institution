@@ -1348,6 +1348,88 @@ static async update(id, data) {
         };
     }
 
+
+    // =====================================
+    // Get School Student By ID
+    // School ownership is enforced by school_id
+    // =====================================
+
+    static async getSchoolStudentById(studentId, schoolId) {
+
+        const [rows] = await db.query(
+            `
+            SELECT *
+            FROM rtse_applications
+            WHERE id=?
+              AND school_id=?
+              AND archive=0
+            LIMIT 1
+            `,
+            [
+                studentId,
+                schoolId
+            ]
+        );
+
+        return rows[0] || null;
+    }
+
+
+    // =====================================
+    // Update School Student
+    // IMPORTANT:
+    // school_id and school_name are NEVER updated
+    // =====================================
+
+    static async updateSchoolStudent(
+        studentId,
+        schoolId,
+        data
+    ) {
+
+        const [result] = await db.query(
+            `
+            UPDATE rtse_applications
+            SET
+                full_name=?,
+                father_name=?,
+                mother_name=?,
+                gender=?,
+                dob=?,
+                mobile=?,
+                email=?,
+                district=?,
+                state=?,
+                pincode=?,
+                class=?,
+                section=?,
+                address=?
+            WHERE id=?
+              AND school_id=?
+              AND archive=0
+            `,
+            [
+                data.full_name,
+                data.father_name,
+                data.mother_name,
+                data.gender,
+                data.dob,
+                data.mobile,
+                data.email,
+                data.district,
+                data.state,
+                data.pincode,
+                data.class,
+                data.section,
+                data.address,
+                studentId,
+                schoolId
+            ]
+        );
+
+        return result.affectedRows > 0;
+    }
+
     static async getSchoolStudents(
         schoolName,
         search = "",
