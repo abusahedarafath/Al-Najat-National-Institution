@@ -279,29 +279,201 @@
 
                     </div>
 
-                    <div class="form-group">
+                                        <div class="form-group">
 
-                        <label>Candidate Photo</label>
+                        <label>
+                            Candidate Photo
+                            <span style="color:#dc3545;">*</span>
+                        </label>
 
+                        <!-- Actual file submitted to the RTSE server -->
                         <input
                             type="file"
                             name="photo"
-                            accept="image/*"
-                            <%= draft && draft.photo ? "" : "required" %>
+                            id="photo"
+                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                            style="display:none;"
                         >
+
+                        <!-- Gallery picker -->
+                        <input
+                            type="file"
+                            id="photoGallery"
+                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                            style="display:none;"
+                        >
+
+                        <!-- Camera picker -->
+                        <input
+                            type="file"
+                            id="photoCamera"
+                            accept="image/*"
+                            capture="user"
+                            style="display:none;"
+                        >
+
+                        <button
+                            type="button"
+                            id="selectPhotoButton"
+                            style="
+                                width:100%;
+                                min-height:52px;
+                                padding:12px 16px;
+                                border:1px solid #ccc;
+                                border-radius:8px;
+                                background:#fff;
+                                color:#222;
+                                font-size:16px;
+                                font-weight:600;
+                                cursor:pointer;
+                            "
+                        >
+                            📷 Select Photo
+                        </button>
+
+                        <small
+                            id="selectedPhotoName"
+                            style="
+                                display:block;
+                                margin-top:8px;
+                                color:#666;
+                            "
+                        >
+                            Select an image from your device or take a new photo.
+                        </small>
 
                         <% if (draft && draft.photo) { %>
 
-                            <small style="display:block;margin-top:6px;color:#555;">
+                            <small
+                                style="
+                                    display:block;
+                                    margin-top:6px;
+                                    color:#555;
+                                "
+                            >
                                 Existing photo is already uploaded.
                                 Upload a new photo only if you want to replace it.
                             </small>
 
                         <% } %>
 
+                        <!-- =================================================
+                             RTSE PHOTO CROPPER
+                             ================================================= -->
+
+                        <div
+                            id="rtsePhotoCropArea"
+                            style="
+                                display:none;
+                                margin-top:18px;
+                                padding:15px;
+                                background:#f8f9fa;
+                                border:1px solid #ddd;
+                                border-radius:10px;
+                            "
+                        >
+
+                            <div
+                                style="
+                                    width:100%;
+                                    max-width:400px;
+                                    margin:0 auto;
+                                    aspect-ratio:4 / 5;
+                                    overflow:hidden;
+                                    background:#222;
+                                    border-radius:8px;
+                                "
+                            >
+                                <img
+                                    id="rtsePhotoCropImage"
+                                    alt="Candidate photo crop preview"
+                                    style="
+                                        display:block;
+                                        max-width:100%;
+                                    "
+                                >
+                            </div>
+
+                            <div
+                                style="
+                                    margin-top:12px;
+                                    text-align:center;
+                                    color:#555;
+                                    font-size:14px;
+                                    line-height:1.6;
+                                "
+                            >
+                                <strong>
+                                    Position the face inside the frame.
+                                </strong>
+                                <br>
+                                Move and zoom the photograph as required.
+                            </div>
+
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:10px;
+                                    justify-content:center;
+                                    flex-wrap:wrap;
+                                    margin-top:15px;
+                                "
+                            >
+
+                                <button
+                                    type="button"
+                                    id="rtsePhotoZoomOut"
+                                    class="btn-submit"
+                                >
+                                    − Zoom
+                                </button>
+
+                                <button
+                                    type="button"
+                                    id="rtsePhotoZoomIn"
+                                    class="btn-submit"
+                                >
+                                    + Zoom
+                                </button>
+
+                                <button
+                                    type="button"
+                                    id="rtsePhotoReset"
+                                    class="btn-submit"
+                                >
+                                    Reset
+                                </button>
+
+                                <button
+                                    type="button"
+                                    id="rtsePhotoApply"
+                                    class="btn-submit"
+                                >
+                                    Use This Photo
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Prepared 400 x 500 preview -->
+                        <img
+                            id="rtsePhotoPreview"
+                            alt="Prepared candidate photograph"
+                            style="
+                                display:none;
+                                margin-top:15px;
+                                width:120px;
+                                height:150px;
+                                object-fit:cover;
+                                border-radius:8px;
+                                border:1px solid #ddd;
+                            "
+                        >
+
                     </div>
 
-                    <div class="form-group">
+<div class="form-group">
 
                         <label>Identity Document</label>
 
@@ -433,6 +605,618 @@ cls.addEventListener("change", updateSection);
 
 updateSection();
 
+</script>
+
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+>
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js">
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const photoInput =
+        document.getElementById("photo");
+
+    const galleryInput =
+        document.getElementById("photoGallery");
+
+    const cameraInput =
+        document.getElementById("photoCamera");
+
+    const selectPhotoButton =
+        document.getElementById("selectPhotoButton");
+
+    const selectedPhotoName =
+        document.getElementById("selectedPhotoName");
+
+    const cropArea =
+        document.getElementById("rtsePhotoCropArea");
+
+    const cropImage =
+        document.getElementById("rtsePhotoCropImage");
+
+    const preview =
+        document.getElementById("rtsePhotoPreview");
+
+    const zoomIn =
+        document.getElementById("rtsePhotoZoomIn");
+
+    const zoomOut =
+        document.getElementById("rtsePhotoZoomOut");
+
+    const resetButton =
+        document.getElementById("rtsePhotoReset");
+
+    const applyButton =
+        document.getElementById("rtsePhotoApply");
+
+    const form =
+        document.querySelector('form[action="/rtse/apply"]');
+
+    if (
+        !photoInput ||
+        !galleryInput ||
+        !cameraInput ||
+        !selectPhotoButton ||
+        !selectedPhotoName ||
+        !cropArea ||
+        !cropImage ||
+        !preview ||
+        !zoomIn ||
+        !zoomOut ||
+        !resetButton ||
+        !applyButton ||
+        !form ||
+        typeof Cropper === "undefined"
+    ) {
+        console.error(
+            "RTSE photo cropper could not initialize."
+        );
+        return;
+    }
+
+    let cropper = null;
+    let selectedObjectUrl = null;
+    let preparedPhoto = false;
+
+    /*
+     * Photo choice dialog
+     */
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.id = "rtsePhotoChoiceOverlay";
+
+    overlay.style.cssText = `
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.55);
+        display:none;
+        align-items:flex-end;
+        justify-content:center;
+        z-index:99999;
+        padding:16px;
+        box-sizing:border-box;
+    `;
+
+    overlay.innerHTML = `
+        <div
+            style="
+                width:100%;
+                max-width:420px;
+                background:#fff;
+                border-radius:18px 18px 12px 12px;
+                padding:20px;
+                box-sizing:border-box;
+                box-shadow:0 10px 40px rgba(0,0,0,.25);
+            "
+        >
+
+            <div
+                style="
+                    text-align:center;
+                    font-size:19px;
+                    font-weight:700;
+                    margin-bottom:6px;
+                "
+            >
+                Select Photo
+            </div>
+
+            <div
+                style="
+                    text-align:center;
+                    color:#666;
+                    font-size:14px;
+                    margin-bottom:18px;
+                "
+            >
+                Choose how you want to provide the candidate photo.
+            </div>
+
+            <button
+                type="button"
+                id="rtseGalleryChoice"
+                style="
+                    width:100%;
+                    padding:15px;
+                    margin-bottom:10px;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    background:#f8f9fa;
+                    font-size:16px;
+                    font-weight:600;
+                    text-align:left;
+                    cursor:pointer;
+                "
+            >
+                📁 &nbsp; Select Image from Storage
+            </button>
+
+            <button
+                type="button"
+                id="rtseCameraChoice"
+                style="
+                    width:100%;
+                    padding:15px;
+                    margin-bottom:10px;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    background:#f8f9fa;
+                    font-size:16px;
+                    font-weight:600;
+                    text-align:left;
+                    cursor:pointer;
+                "
+            >
+                📷 &nbsp; Take Photo
+            </button>
+
+            <button
+                type="button"
+                id="rtsePhotoCancel"
+                style="
+                    width:100%;
+                    padding:13px;
+                    border:0;
+                    border-radius:10px;
+                    background:#eee;
+                    color:#333;
+                    font-size:15px;
+                    font-weight:600;
+                    cursor:pointer;
+                "
+            >
+                Cancel
+            </button>
+
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const galleryChoice =
+        document.getElementById("rtseGalleryChoice");
+
+    const cameraChoice =
+        document.getElementById("rtseCameraChoice");
+
+    const cancelChoice =
+        document.getElementById("rtsePhotoCancel");
+
+    function closePhotoChoice() {
+        overlay.style.display = "none";
+    }
+
+    function openPhotoChoice() {
+        overlay.style.display = "flex";
+    }
+
+    /*
+     * Start Cropper
+     */
+
+    function startCropper(file) {
+
+        if (!file) {
+            return;
+        }
+
+        if (
+            !file.type ||
+            !file.type.startsWith("image/")
+        ) {
+            alert("Please select a valid image.");
+            return;
+        }
+
+        preparedPhoto = false;
+
+        if (selectedObjectUrl) {
+            URL.revokeObjectURL(selectedObjectUrl);
+        }
+
+        selectedObjectUrl =
+            URL.createObjectURL(file);
+
+        cropImage.onload = function () {
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(
+                cropImage,
+                {
+                    aspectRatio: 4 / 5,
+                    viewMode: 1,
+                    dragMode: "move",
+                    autoCropArea: 0.85,
+                    responsive: true,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    background: false,
+                    movable: true,
+                    zoomable: true,
+                    rotatable: false,
+                    scalable: false
+                }
+            );
+
+            cropArea.style.display = "block";
+            preview.style.display = "none";
+
+            selectedPhotoName.textContent =
+                "Position the face inside the frame, then tap \"Use This Photo\".";
+
+            selectedPhotoName.style.color = "#555";
+            selectedPhotoName.style.fontWeight = "600";
+        };
+
+        cropImage.src = selectedObjectUrl;
+    }
+
+    /*
+     * Source selection
+     */
+
+    selectPhotoButton.addEventListener(
+        "click",
+        openPhotoChoice
+    );
+
+    galleryChoice.addEventListener(
+        "click",
+        function () {
+
+            closePhotoChoice();
+
+            galleryInput.value = "";
+
+            galleryInput.click();
+        }
+    );
+
+    cameraChoice.addEventListener(
+        "click",
+        function () {
+
+            closePhotoChoice();
+
+            cameraInput.value = "";
+
+            cameraInput.click();
+        }
+    );
+
+    cancelChoice.addEventListener(
+        "click",
+        closePhotoChoice
+    );
+
+    overlay.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === overlay) {
+                closePhotoChoice();
+            }
+
+        }
+    );
+
+    galleryInput.addEventListener(
+        "change",
+        function () {
+
+            startCropper(
+                this.files && this.files[0]
+            );
+
+        }
+    );
+
+    cameraInput.addEventListener(
+        "change",
+        function () {
+
+            startCropper(
+                this.files && this.files[0]
+            );
+
+        }
+    );
+
+    /*
+     * Cropper controls
+     */
+
+    zoomIn.addEventListener(
+        "click",
+        function () {
+
+            if (cropper) {
+                cropper.zoom(0.1);
+            }
+
+        }
+    );
+
+    zoomOut.addEventListener(
+        "click",
+        function () {
+
+            if (cropper) {
+                cropper.zoom(-0.1);
+            }
+
+        }
+    );
+
+    resetButton.addEventListener(
+        "click",
+        function () {
+
+            if (cropper) {
+                cropper.reset();
+            }
+
+        }
+    );
+
+    /*
+     * Prepare final browser image
+     */
+
+    applyButton.addEventListener(
+        "click",
+        function () {
+
+            if (!cropper) {
+
+                alert(
+                    "Please select a photograph first."
+                );
+
+                return;
+            }
+
+            const canvas =
+                cropper.getCroppedCanvas({
+                    width: 400,
+                    height: 500,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: "high"
+                });
+
+            if (!canvas) {
+
+                alert(
+                    "Unable to prepare the photograph."
+                );
+
+                return;
+            }
+
+            canvas.toBlob(
+                function (blob) {
+
+                    if (!blob) {
+
+                        alert(
+                            "Unable to prepare the photograph."
+                        );
+
+                        return;
+                    }
+
+                    const croppedFile =
+                        new File(
+                            [blob],
+                            "rtse-candidate-photo.jpg",
+                            {
+                                type: "image/jpeg",
+                                lastModified: Date.now()
+                            }
+                        );
+
+                    const dataTransfer =
+                        new DataTransfer();
+
+                    dataTransfer.items.add(
+                        croppedFile
+                    );
+
+                    photoInput.files =
+                        dataTransfer.files;
+
+                    const previewUrl =
+                        URL.createObjectURL(blob);
+
+                    preview.src = previewUrl;
+                    preview.style.display = "block";
+
+                    preview.onload = function () {
+                        URL.revokeObjectURL(previewUrl);
+                    };
+
+                    cropArea.style.display = "none";
+
+                    selectedPhotoName.textContent =
+                        "Photo prepared successfully (400 × 500).";
+
+                    selectedPhotoName.style.color =
+                        "#198754";
+
+                    selectedPhotoName.style.fontWeight =
+                        "600";
+
+                    preparedPhoto = true;
+
+                    if (cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                    }
+
+                    if (selectedObjectUrl) {
+
+                        URL.revokeObjectURL(
+                            selectedObjectUrl
+                        );
+
+                        selectedObjectUrl = null;
+                    }
+
+                },
+                "image/jpeg",
+                0.88
+            );
+        }
+    );
+
+    /*
+     * Final validation
+     */
+
+    form.addEventListener(
+        "submit",
+        function (event) {
+
+            const file =
+                photoInput.files &&
+                photoInput.files[0];
+
+            const hasExistingPhoto =
+                <%= draft && draft.photo ? "true" : "false" %>;
+
+            if (!hasExistingPhoto) {
+
+                if (!file || !preparedPhoto) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select, position and prepare the candidate photograph before continuing."
+                    );
+
+                    selectedPhotoName.textContent =
+                        "Please select, position and prepare the candidate photograph.";
+
+                    selectedPhotoName.style.color =
+                        "#c62828";
+
+                    selectedPhotoName.style.fontWeight =
+                        "600";
+
+                    return;
+                }
+            }
+
+            if (hasExistingPhoto) {
+
+                if (file && !preparedPhoto) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please position the new photograph and click \"Use This Photo\" before continuing."
+                    );
+
+                    return;
+                }
+            }
+
+        }
+    );
+
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form =
+        document.querySelector('form[action="/rtse/apply"]');
+
+    const photoInput =
+        document.getElementById("photo");
+
+    const selectedPhotoName =
+        document.getElementById("selectedPhotoName");
+
+    if (!form || !photoInput) {
+        return;
+    }
+
+    form.addEventListener("submit", function (event) {
+
+        const hasNewPhoto =
+            photoInput.files &&
+            photoInput.files.length > 0;
+
+        const hasExistingPhoto =
+            <%= draft && draft.photo ? "true" : "false" %>;
+
+        if (!hasNewPhoto && !hasExistingPhoto) {
+
+            event.preventDefault();
+
+            if (selectedPhotoName) {
+                selectedPhotoName.textContent =
+                    "Please select a candidate photograph.";
+
+                selectedPhotoName.style.color =
+                    "#c62828";
+
+                selectedPhotoName.style.fontWeight =
+                    "600";
+            }
+
+            alert(
+                "Please select a candidate photograph before continuing."
+            );
+
+            return;
+        }
+
+        if (selectedPhotoName) {
+            selectedPhotoName.style.color = "#666";
+            selectedPhotoName.style.fontWeight = "400";
+        }
+
+    });
+
+});
 </script>
 
 <%- include("../partials/footer") %>

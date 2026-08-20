@@ -6,6 +6,9 @@ const path = require("path");
 const rtsePublicController =
     require("../controllers/rtsePublicController");
 
+const processRtsePhoto =
+    require("../middleware/processRtsePhoto");
+
 // =====================================
 // RTSE Upload Configuration
 // =====================================
@@ -73,6 +76,7 @@ router.post(
             maxCount: 1
         }
     ]),
+    processRtsePhoto,
     rtsePublicController.submitApplication
 );
 
