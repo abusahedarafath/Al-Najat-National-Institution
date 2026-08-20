@@ -29,6 +29,7 @@
                 action="/rtse/apply"
                 method="POST"
                 enctype="multipart/form-data"
+                autocomplete="off"
             >
 
                 <div class="form-grid">
@@ -538,6 +539,79 @@
 
 </div>
 
+
+<script>
+/*
+ * RTSE fresh-form browser restoration protection.
+ *
+ * The server removes req.session.rtseDraft after successful
+ * submission. This guard prevents the browser's back-forward
+ * cache from restoring the old form controls.
+ */
+window.addEventListener("pageshow", function (event) {
+
+    if (!event.persisted) {
+        return;
+    }
+
+    const form = document.querySelector(
+        'form[action="/rtse/apply"]'
+    );
+
+    if (!form) {
+        return;
+    }
+
+    form.reset();
+
+    const photoInput =
+        document.getElementById("photo");
+
+    const galleryInput =
+        document.getElementById("photoGallery");
+
+    const cameraInput =
+        document.getElementById("photoCamera");
+
+    if (photoInput) {
+        photoInput.value = "";
+    }
+
+    if (galleryInput) {
+        galleryInput.value = "";
+    }
+
+    if (cameraInput) {
+        cameraInput.value = "";
+    }
+
+    const selectedPhotoName =
+        document.getElementById("selectedPhotoName");
+
+    if (selectedPhotoName) {
+        selectedPhotoName.textContent =
+            "Select an image from your device or take a new photo.";
+
+        selectedPhotoName.style.color = "#666";
+        selectedPhotoName.style.fontWeight = "400";
+    }
+
+    const preview =
+        document.getElementById("rtsePhotoPreview");
+
+    const cropArea =
+        document.getElementById("rtsePhotoCropArea");
+
+    if (preview) {
+        preview.removeAttribute("src");
+        preview.style.display = "none";
+    }
+
+    if (cropArea) {
+        cropArea.style.display = "none";
+    }
+});
+</script>
 <script>
 const schoolSelect =
     document.getElementById("rtseSchoolSelect");
