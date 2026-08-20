@@ -125,8 +125,41 @@
 
                     <div class="form-group">
                         <label>School Name *</label>
+<div class="rtse-school-picker">
 
-                        <select
+    <button
+        type="button"
+        class="rtse-school-picker-trigger"
+        id="rtseSchoolPickerTrigger"
+        aria-expanded="false"
+        aria-controls="rtseSchoolPickerPanel"
+    >
+        <span id="rtseSchoolPickerText">Select your school</span>
+        <span class="rtse-school-picker-arrow">▾</span>
+    </button>
+
+    <div
+        class="rtse-school-picker-panel"
+        id="rtseSchoolPickerPanel"
+        hidden
+    >
+        <input
+            type="search"
+            id="rtseSchoolSearch"
+            class="rtse-school-search"
+            placeholder="Search school name..."
+            autocomplete="off"
+            aria-label="Search school name"
+        >
+
+        <div
+            class="rtse-school-options"
+            id="rtseSchoolOptions"
+        ></div>
+    </div>
+
+    <div class="rtse-school-native-wrapper">
+<select
                             name="school_id"
                             id="rtseSchoolSelect"
                             required
@@ -149,6 +182,9 @@
                                 Other / School not listed
                             </option>
                         </select>
+    </div>
+
+</div>
                     </div>
 
                     <div
@@ -616,6 +652,127 @@ window.addEventListener("pageshow", function (event) {
 const schoolSelect =
     document.getElementById("rtseSchoolSelect");
 
+const schoolPickerTrigger =
+    document.getElementById("rtseSchoolPickerTrigger");
+
+const schoolPickerPanel =
+    document.getElementById("rtseSchoolPickerPanel");
+
+const schoolPickerText =
+    document.getElementById("rtseSchoolPickerText");
+
+const schoolSearch =
+    document.getElementById("rtseSchoolSearch");
+
+const schoolOptionsContainer =
+    document.getElementById("rtseSchoolOptions");
+
+const schoolOptions = Array.from(
+    schoolSelect.options
+).map(option => ({
+    value: option.value,
+    text: option.textContent.trim()
+}));
+
+function renderSchoolOptions(query = "") {
+    const normalizedQuery =
+        query.trim().toLowerCase();
+
+    schoolOptionsContainer.innerHTML = "";
+
+    const filteredOptions = schoolOptions.filter(option =>
+        option.value === "other" ||
+        option.text.toLowerCase().includes(normalizedQuery)
+    );
+
+    if (!filteredOptions.length) {
+        const empty = document.createElement("div");
+        empty.className = "rtse-school-empty";
+        empty.textContent = "No school found.";
+        schoolOptionsContainer.appendChild(empty);
+        return;
+    }
+
+    filteredOptions.forEach(option => {
+        const item = document.createElement("button");
+
+        item.type = "button";
+        item.className = "rtse-school-option";
+        item.textContent = option.text;
+
+        if (option.value === schoolSelect.value) {
+            item.classList.add("selected");
+        }
+
+        item.addEventListener("click", () => {
+            schoolSelect.value = option.value;
+
+            schoolPickerText.textContent =
+                option.text;
+
+            schoolPickerPanel.hidden = true;
+
+            schoolPickerTrigger.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            schoolSearch.value = "";
+
+            updateSchoolField();
+        });
+
+        schoolOptionsContainer.appendChild(item);
+    });
+}
+
+schoolPickerTrigger.addEventListener(
+    "click",
+    () => {
+        const opening =
+            schoolPickerPanel.hidden;
+
+        schoolPickerPanel.hidden = !opening;
+
+        schoolPickerTrigger.setAttribute(
+            "aria-expanded",
+            String(opening)
+        );
+
+        if (opening) {
+            renderSchoolOptions();
+            schoolSearch.focus();
+        }
+    }
+);
+
+schoolSearch.addEventListener(
+    "input",
+    () => {
+        renderSchoolOptions(
+            schoolSearch.value
+        );
+    }
+);
+
+document.addEventListener(
+    "click",
+    event => {
+        if (
+            !event.target.closest(
+                ".rtse-school-picker"
+            )
+        ) {
+            schoolPickerPanel.hidden = true;
+
+            schoolPickerTrigger.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        }
+    }
+);
+
 const otherSchoolGroup =
     document.getElementById("otherSchoolGroup");
 
@@ -623,9 +780,18 @@ const otherSchoolInput =
     document.getElementById("otherSchoolName");
 
 function updateSchoolField() {
-
     const isOther =
         schoolSelect.value === "other";
+
+    const selectedOption =
+        schoolSelect.options[
+            schoolSelect.selectedIndex
+        ];
+
+    if (selectedOption) {
+        schoolPickerText.textContent =
+            selectedOption.textContent.trim();
+    }
 
     otherSchoolGroup.style.display =
         isOther ? "block" : "none";

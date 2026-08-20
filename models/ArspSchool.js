@@ -154,7 +154,7 @@ class ArspSchool {
         }
 
         sql += `
-            ORDER BY id DESC
+            ORDER BY school_name ASC
         `;
 
         const [rows] = await db.query(sql, params);
