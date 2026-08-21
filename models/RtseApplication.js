@@ -882,7 +882,8 @@ static async generateRollNumbers(section){
 
              SET
 
-                roll_no=?
+                roll_no=?,
+                roll_number=?
 
              WHERE id=?`,
 
@@ -890,6 +891,7 @@ static async generateRollNumbers(section){
 
                 rollNo,
 
+                roll,
                 student.id
 
             ]
@@ -1256,6 +1258,7 @@ static async resetRollNumbers(section){
                     a.archive = 0
                     AND a.status = 'Approved'
                     AND a.section = ?
+                    AND ea.attendance_status = 'PRESENT'
                 `,
                 [normalizedSection]
             );
@@ -1267,10 +1270,14 @@ static async resetRollNumbers(section){
 
         // -------------------------------------------------
         // SAFETY LOCK:
-        // If ANY attendance record already exists for the
-        // section, do not reset generated examination
-        // identity. Existing attendance history is never
-        // deleted by this operation.
+        // Only PRESENT attendance blocks a roll-number reset.
+        //
+        // ABSENT attendance rows are intentionally ignored.
+        // A student who was scanned by mistake and subsequently
+        // reset to ABSENT is no longer considered an active
+        // examination attendee.
+        //
+        // Existing QR/attendance rows are never deleted here.
         // -------------------------------------------------
 
         if(attendanceCount > 0){

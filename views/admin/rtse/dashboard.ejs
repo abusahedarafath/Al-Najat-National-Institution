@@ -5,6 +5,26 @@
     <%- include("../partials/sidebar") %>
 
     <main class="admin-content">
+<%
+    // RTSE sections MUST always remain in fixed order.
+    // Never sort this list based on generated rolls/admit cards.
+    const RTSE_FIXED_SECTION_ORDER = ["A", "B", "C", "D", "E"];
+
+    const RTSE_SECTION_MAP = {};
+    (Array.isArray(sectionStats) ? sectionStats : []).forEach(function(item) {
+        RTSE_SECTION_MAP[String(item.section || "").toUpperCase()] = item;
+    });
+
+    const RTSE_SECTIONS_FIXED = RTSE_FIXED_SECTION_ORDER.map(function(section) {
+        return RTSE_SECTION_MAP[section] || {
+            section: section,
+            application_open: false,
+            roll_generated: 0,
+            admit_generated: 0
+        };
+    });
+%>
+
 
         <div class="container">
 
@@ -176,12 +196,10 @@
 
                 <div class="rtse-section-grid">
 
-                    <% ["A","B","C","D","E"].forEach(section=>{ %>
+                    <% RTSE_FIXED_SECTION_ORDER.forEach(section=>{ %>
 
                         <% const data =
-                            sectionStats.find(
-                                s => s.section === section
-                            ) || {};
+                            RTSE_SECTION_MAP[section] || {};
                         %>
 
 
@@ -295,8 +313,7 @@
                                             Generate Admit Cards
                                         </a>
 
-                                        <a
-                                            <form
+                                        <form
                                                 method="POST"
                                                 action="/admin/rtse/reset-roll/<%= section %>"
                                                 style="display:inline;"
@@ -316,8 +333,7 @@
                                             ✔ Admit Cards Generated
                                         </span>
 
-                                        <a
-                                            <form
+                                        <form
                                                 method="POST"
                                                 action="/admin/rtse/reset-roll/<%= section %>"
                                                 style="display:inline;"
@@ -373,7 +389,102 @@
 
         </div>
 
-    </main>
+
+<script>
+(function () {
+    const RTSE_DASHBOARD_SCROLL_POSITION_KEY =
+        "rtse_dashboard_scroll_position";
+
+    function saveRtseDashboardScrollPosition() {
+        try {
+            sessionStorage.setItem(
+                RTSE_DASHBOARD_SCROLL_POSITION_KEY,
+                String(window.scrollY || window.pageYOffset || 0)
+            );
+        } catch (error) {
+            console.warn(
+                "RTSE scroll position could not be saved:",
+                error
+            );
+        }
+    }
+
+    function restoreRtseDashboardScrollPosition() {
+        try {
+            const saved = sessionStorage.getItem(
+                RTSE_DASHBOARD_SCROLL_POSITION_KEY
+            );
+
+            if (saved === null) return;
+
+            sessionStorage.removeItem(
+                RTSE_DASHBOARD_SCROLL_POSITION_KEY
+            );
+
+            const scrollY = Number(saved);
+
+            if (!Number.isFinite(scrollY)) return;
+
+            requestAnimationFrame(function () {
+                window.scrollTo(0, scrollY);
+
+                requestAnimationFrame(function () {
+                    window.scrollTo(0, scrollY);
+                });
+            });
+        } catch (error) {
+            console.warn(
+                "RTSE scroll position could not be restored:",
+                error
+            );
+        }
+    }
+
+    document.addEventListener("submit", function (event) {
+        const form = event.target;
+
+        if (!form || !(form instanceof HTMLFormElement)) {
+            return;
+        }
+
+        const action =
+            String(form.getAttribute("action") || "");
+
+        if (
+            action.includes("/admin/rtse/reset-roll/")
+        ) {
+            saveRtseDashboardScrollPosition();
+        }
+    }, true);
+
+    document.addEventListener("click", function (event) {
+        const link = event.target.closest("a");
+
+        if (!link) return;
+
+        const href =
+            String(link.getAttribute("href") || "");
+
+        if (
+            href.includes("/admin/rtse/generate-roll/") ||
+            href.includes("/admin/rtse/admit-generator/")
+        ) {
+            saveRtseDashboardScrollPosition();
+        }
+    }, true);
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            restoreRtseDashboardScrollPosition
+        );
+    } else {
+        restoreRtseDashboardScrollPosition();
+    }
+})();
+</script>
+
+</main>
 
 </div>
 
