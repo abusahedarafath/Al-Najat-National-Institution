@@ -27,6 +27,31 @@ class RtseExamAttendance {
         );
 
         if (existing.length) {
+
+            // Existing attendance record is preserved.
+            // Only repair a missing QR token.
+            if (
+                !existing[0].qr_token ||
+                String(existing[0].qr_token).trim() === ""
+            ) {
+
+                const token = this.generateToken();
+
+                await db.query(
+                    `
+                    UPDATE rtse_exam_attendance
+                    SET qr_token = ?
+                    WHERE id = ?
+                    `,
+                    [
+                        token,
+                        existing[0].id
+                    ]
+                );
+
+                existing[0].qr_token = token;
+            }
+
             return existing[0];
         }
 
