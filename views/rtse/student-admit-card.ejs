@@ -913,7 +913,9 @@ body{
         "________________";
 
     const qrAvailable =
-        !!(qrData && attendance && attendance.qr_token);
+        typeof qrData === "string" &&
+        qrData.startsWith("data:image/") &&
+        qrData.length > 100;
 
     const logo =
         (setting && setting.logo)
