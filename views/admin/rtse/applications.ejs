@@ -116,7 +116,8 @@
                                 <th>School</th>
                                 <th>Class</th>
                                 <th>Section</th>
-                                <th>Status</th>
+                                                                <th>Roll No.</th>
+<th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -163,7 +164,16 @@
                                         </strong>
                                     </td>
 
-                                    <td>
+                                                                        <td>
+                                        <% if(application.roll_no){ %>
+                                            <strong>
+                                                <%= application.roll_no %>
+                                            </strong>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+<td>
 
                                         <% if(application.status === "Approved"){ %>
 
@@ -185,17 +195,7 @@
 
                                         <% } %>
 
-                                        <% if(application.roll_no){ %>
 
-                                            <br>
-
-                                            <small>
-                                                <strong>
-                                                    <%= application.roll_no %>
-                                                </strong>
-                                            </small>
-
-                                        <% } %>
 
                                     </td>
 
@@ -216,7 +216,7 @@
                             <% if(!applications.length){ %>
 
                                 <tr>
-                                    <td colspan="7" style="text-align:center;padding:30px;">
+                                    <td colspan="8" style="text-align:center;padding:30px;">
                                         No applications found.
                                     </td>
                                 </tr>
@@ -393,17 +393,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
             }
 
-            if (application.roll_no) {
 
-                statusHtml += `
-                    <br>
-                    <small>
-                        <strong>
-                            ${escapeHtml(application.roll_no)}
-                        </strong>
-                    </small>
-                `;
-            }
 
             return `
                 <tr>
@@ -436,6 +426,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         <strong>
                             ${escapeHtml(application.section)}
                         </strong>
+                    </td>
+                    <td>
+                        ${
+                            application.roll_no
+                                ? `<strong>${escapeHtml(application.roll_no)}</strong>`
+                                : "-"
+                        }
                     </td>
 
                     <td>

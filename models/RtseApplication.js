@@ -1218,6 +1218,136 @@ static async search(keyword){
 
 
 // =====================================
+// Reset Roll Numbers + Admit Cards
+// Section Wise
+// =====================================
+
+static async resetRollNumbers(section){
+
+    const normalizedSection =
+        String(section || "").trim().toUpperCase();
+
+    if(!["A","B","C","D","E"].includes(normalizedSection)){
+        throw new Error("Invalid RTSE section.");
+    }
+
+    const connection =
+        await db.getConnection();
+
+    try{
+
+        await connection.beginTransaction();
+
+        // -------------------------------------------------
+        // SAFETY LOCK:
+        // If attendance has already recorded PRESENT for
+        // any student in this section, the reset is blocked.
+        // -------------------------------------------------
+
+        const [attendanceRows] =
+            await connection.query(
+                `
+                SELECT
+                    COUNT(*) AS attendance_count
+                FROM rtse_exam_attendance ea
+                INNER JOIN rtse_applications a
+                    ON a.id = ea.application_id
+                WHERE
+                    a.archive = 0
+                    AND a.status = 'Approved'
+                    AND a.section = ?
+                `,
+                [normalizedSection]
+            );
+
+        const attendanceCount =
+            Number(
+                attendanceRows[0]?.attendance_count || 0
+            );
+
+        // -------------------------------------------------
+        // SAFETY LOCK:
+        // If ANY attendance record already exists for the
+        // section, do not reset generated examination
+        // identity. Existing attendance history is never
+        // deleted by this operation.
+        // -------------------------------------------------
+
+        if(attendanceCount > 0){
+
+            await connection.rollback();
+
+            const error =
+                new Error(
+                    "Cannot reset Roll No. because attendance records already exist for one or more students in this section."
+                );
+
+            error.code =
+                "RTSE_ATTENDANCE_ALREADY_RECORDED";
+
+            throw error;
+        }
+
+        // -------------------------------------------------
+        // IMPORTANT:
+        // Attendance / QR records are intentionally NOT
+        // deleted here.
+        // -------------------------------------------------
+
+        // -------------------------------------------------
+        // Completely reset generated examination identity
+        // for the selected section.
+        //
+        // Student application information and uploaded files
+        // are NOT touched.
+        // -------------------------------------------------
+
+        const [result] =
+            await connection.query(
+                `
+                UPDATE rtse_applications
+                SET
+                    roll_no = NULL,
+                    roll_number = NULL,
+                    admit_generated = 0
+                WHERE
+                    archive = 0
+                    AND status = 'Approved'
+                    AND section = ?
+                `,
+                [normalizedSection]
+            );
+
+        await connection.commit();
+
+        return {
+            section: normalizedSection,
+            affectedRows: result.affectedRows
+        };
+
+    } catch(error){
+
+        try{
+            await connection.rollback();
+        }catch(rollbackError){
+            console.error(
+                "RTSE reset rollback error:",
+                rollbackError
+            );
+        }
+
+        throw error;
+
+    } finally{
+
+        connection.release();
+
+    }
+}
+
+
+
+// =====================================
 // Section Statistics
 // =====================================
 
@@ -1237,9 +1367,9 @@ static async getSectionStatistics(){
 
             SUM(status='Rejected') rejected,
 
-            SUM(roll_no IS NOT NULL) roll_generated,
+            SUM(status='Approved' AND roll_no IS NOT NULL) roll_generated,
 
-            SUM(admit_generated=1) admit_generated
+            SUM(status='Approved' AND admit_generated=1) admit_generated
 
         FROM rtse_applications
 

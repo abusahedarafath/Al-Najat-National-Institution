@@ -725,6 +725,79 @@ exports.permanentlyDeleteApplication = async (req, res) => {
 
 
 // =====================================
+// Reset Roll Numbers + Admit Cards
+// Section Wise
+// =====================================
+
+exports.resetRollNumbers = async (req, res) => {
+
+    const section =
+        String(req.params.section || "")
+            .trim()
+            .toUpperCase();
+
+    try{
+
+        if(!["A","B","C","D","E"].includes(section)){
+
+            req.flash(
+                "error",
+                "Invalid RTSE section."
+            );
+
+            return res.redirect("/admin/rtse");
+        }
+
+        const result =
+            await RtseApplication.resetRollNumbers(
+                section
+            );
+
+        req.flash(
+            "success",
+            `Section ${section} has been reset successfully. Roll numbers and generated admit-card status were reset. Existing attendance records were not modified.`
+        );
+
+        console.log(
+            "RTSE_RESET_ROLL_SUCCESS:",
+            JSON.stringify(result)
+        );
+
+        return res.redirect("/admin/rtse");
+
+    } catch(error){
+
+        console.error(
+            "RTSE reset roll number error:",
+            error
+        );
+
+        if(
+            error.code ===
+            "RTSE_ATTENDANCE_ALREADY_RECORDED"
+        ){
+
+            req.flash(
+                "error",
+                "Cannot reset Roll No. because attendance records already exist for one or more students in this section. Existing examination identity must remain unchanged."
+            );
+
+        } else {
+
+            req.flash(
+                "error",
+                "Unable to reset Roll No. for this section."
+            );
+
+        }
+
+        return res.redirect("/admin/rtse");
+    }
+};
+
+
+
+// =====================================
 // Generate Roll Numbers
 // =====================================
 

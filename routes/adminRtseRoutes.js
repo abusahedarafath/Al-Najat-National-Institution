@@ -169,6 +169,18 @@ router.post(
 );
 
 // =====================================
+// Reset Roll Numbers + Admit Cards
+// Section Wise
+// =====================================
+
+router.post(
+    "/rtse/reset-roll/:section",
+    auth.isAdmin,
+    adminRtseController.resetRollNumbers
+);
+
+
+// =====================================
 // Generate Roll Numbers
 // =====================================
 

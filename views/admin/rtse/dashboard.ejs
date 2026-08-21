@@ -276,8 +276,6 @@
 
 
                                 <% } else { %>
-
-
                                     <% if(Number(data.roll_generated || 0) === 0){ %>
 
                                         <a
@@ -288,7 +286,6 @@
                                             Generate Roll Number
                                         </a>
 
-
                                     <% } else if(Number(data.admit_generated || 0) === 0){ %>
 
                                         <a
@@ -298,6 +295,20 @@
                                             Generate Admit Cards
                                         </a>
 
+                                        <a
+                                            <form
+                                                method="POST"
+                                                action="/admin/rtse/reset-roll/<%= section %>"
+                                                style="display:inline;"
+                                                onsubmit="return confirm('Reset Roll No. for Section <%= section %>?\\n\\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected. Continue?')"
+                                            >
+                                                <button
+                                                    type="submit"
+                                                    class="btn-warning"
+                                                >
+                                                    ↩ Reset Roll No.
+                                                </button>
+                                            </form>
 
                                     <% } else { %>
 
@@ -305,10 +316,23 @@
                                             ✔ Admit Cards Generated
                                         </span>
 
+                                        <a
+                                            <form
+                                                method="POST"
+                                                action="/admin/rtse/reset-roll/<%= section %>"
+                                                style="display:inline;"
+                                                onsubmit="return confirm('Reset Roll No. for Section <%= section %>?\\n\\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected. Continue?')"
+                                            >
+                                                <button
+                                                    type="submit"
+                                                    class="btn-warning"
+                                                >
+                                                    ↩ Reset Roll No.
+                                                </button>
+                                            </form>
+
                                     <% } %>
-
-
-                                <% } %>
+<% } %>
 
                             </div>
 
@@ -339,11 +363,11 @@
             </p>
         </div>
 
-        
+
 
     </div>
 
-    
+
 
             </div>
 
