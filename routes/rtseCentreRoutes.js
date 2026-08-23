@@ -171,6 +171,7 @@ router.get(
             const search = String(req.query.search || "").trim();
             const status = String(req.query.status || "").trim();
             const year = String(req.query.year || "").trim();
+            const attendance = String(req.query.attendance || "").trim().toUpperCase();
 
             const applicationYears =
                 await RtseCentre.getPortalApplicationYears(centreId);
@@ -179,7 +180,8 @@ router.get(
                 centreId,
                 search,
                 status,
-                year
+                  year,
+                  attendance
             );
 
             return res.render("rtse/centre/students", {
@@ -190,6 +192,7 @@ router.get(
                 applicationYears,
                 search,
                 status,
+                  attendance,
                 selectedYear: year
             });
         } catch (err) {

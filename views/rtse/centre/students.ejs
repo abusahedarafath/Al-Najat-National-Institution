@@ -318,6 +318,22 @@
                     </select>
                 </div>
 
+                  <div class="field">
+                      <label for="attendance">Attendance</label>
+                      <select id="attendance" name="attendance">
+                          <option value="">All Attendance</option>
+                          <option value="NOT_SCANNED" <%= attendance === "NOT_SCANNED" ? "selected" : "" %>>
+                              Not Scanned
+                          </option>
+                          <option value="PRESENT" <%= attendance === "PRESENT" ? "selected" : "" %>>
+                              Present
+                          </option>
+                          <option value="ABSENT" <%= attendance === "ABSENT" ? "selected" : "" %>>
+                              Absent
+                          </option>
+                      </select>
+                  </div>
+
                 <div class="field">
                     <label for="year">Application Year</label>
                     <select id="year" name="year">
@@ -447,6 +463,8 @@
                                     <span class="present">PRESENT</span>
                                 <% } else if (student.attendance_status === "ABSENT") { %>
                                     <span class="absent">ABSENT</span>
+                                <% } else if (student.attendance_status === "NOT_SCANNED") { %>
+                                    <span class="not-scanned">NOT SCANNED</span>
                                 <% } else { %>
                                     —
                                 <% } %>

@@ -96,8 +96,9 @@ class RtseCentre {
                 SUM(a.status = 'Rejected') AS rejected_students,
                 SUM(a.roll_no IS NOT NULL AND a.roll_no <> '') AS roll_generated,
                 SUM(ea.attendance_status = 'PRESENT') AS present_students,
-                SUM(ea.attendance_status = 'ABSENT') AS absent_students
-            FROM rtse_school_centre_assignments sca
+                SUM(ea.attendance_status = 'ABSENT') AS absent_students,
+                SUM(ea.attendance_status = 'NOT_SCANNED' OR ea.attendance_status IS NULL) AS not_scanned_students
+              FROM rtse_school_centre_assignments sca
             INNER JOIN rtse_applications a
                 ON a.school_id = sca.school_id
                 AND a.application_year = sca.application_year
@@ -116,8 +117,8 @@ class RtseCentre {
             rejected_students: 0,
             roll_generated: 0,
             present_students: 0,
-            absent_students: 0
-        };
+            absent_students: 0,
+            not_scanned_students: 0};
     }
 
     // =====================================
@@ -127,11 +128,13 @@ class RtseCentre {
         centreId,
         search = "",
         status = "",
-        applicationYear = ""
+        applicationYear = "",
+        attendance = ""
     ) {
         const keyword = String(search || "").trim();
         const selectedStatus = String(status || "").trim();
         const year = String(applicationYear || "").trim();
+        const selectedAttendance = String(attendance || "").trim().toUpperCase();
 
         const params = [centreId];
         let sql = `
@@ -177,6 +180,15 @@ class RtseCentre {
         if (/^\d{4}$/.test(year)) {
             sql += ` AND a.application_year = ?`;
             params.push(Number(year));
+        }
+
+        if (["NOT_SCANNED", "PRESENT", "ABSENT"].includes(selectedAttendance)) {
+            if (selectedAttendance === "NOT_SCANNED") {
+                sql += ` AND (ea.attendance_status = 'NOT_SCANNED' OR ea.attendance_status IS NULL)`;
+            } else {
+                sql += ` AND ea.attendance_status = ?`;
+                params.push(selectedAttendance);
+            }
         }
 
         if (keyword) {

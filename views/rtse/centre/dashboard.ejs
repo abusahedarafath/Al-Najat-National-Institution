@@ -1646,6 +1646,26 @@
                         </div>
                     </a>
 
+
+                      <a
+                          class="stat clickable"
+                          href="/rtse/centre/students?attendance=NOT_SCANNED"
+                          aria-label="Open not scanned candidates"
+                      >
+                          <div class="stat-icon">◷</div>
+
+                          <div class="stat-label">
+                              Not Scanned
+                          </div>
+
+                          <div class="stat-value">
+                              <%= Number(stats.not_scanned_students || 0) %>
+                          </div>
+
+                          <div class="stat-note">
+                              Candidates not yet scanned
+                          </div>
+                      </a>
                 </section>
 
 
@@ -1708,6 +1728,13 @@
                                 <%= Number(stats.absent_students || 0) %>
                             </strong>
                         </div>
+
+                          <div class="mobile-info-row">
+                              <span>Not Scanned</span>
+                              <strong>
+                                  <%= Number(stats.not_scanned_students || 0) %>
+                              </strong>
+                          </div>
 
                     </div>
                 </section>

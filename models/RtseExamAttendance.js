@@ -16,6 +16,39 @@ class RtseExamAttendance {
     // =====================================
     static async ensureForApplication(applicationId) {
 
+        // Attendance exists only for a valid generated admit.
+        const [applications] = await db.query(
+            `
+            SELECT
+                id,
+                status,
+                admit_generated,
+                roll_no,
+                archive
+            FROM rtse_applications
+            WHERE id = ?
+            LIMIT 1
+            `,
+            [applicationId]
+        );
+
+        const application = applications[0];
+
+        if (!application) {
+            throw new Error("RTSE application not found.");
+        }
+
+        // IMPORTANT:
+        // No admit = no attendance record.
+        if (
+            Number(application.archive) !== 0 ||
+            application.status !== "Approved" ||
+            Number(application.admit_generated) !== 1 ||
+            !application.roll_no
+        ) {
+            return null;
+        }
+
         const [existing] = await db.query(
             `
             SELECT *
@@ -65,7 +98,7 @@ class RtseExamAttendance {
                 qr_token,
                 attendance_status
             )
-            VALUES (?, ?, 'ABSENT')
+            VALUES (?, ?, 'NOT_SCANNED')
             `,
             [
                 applicationId,
@@ -151,7 +184,7 @@ class RtseExamAttendance {
                     qr_token,
                     attendance_status
                 )
-                VALUES (?, ?, 'ABSENT')
+                VALUES (?, ?, 'NOT_SCANNED')
                 `,
                 [
                     student.id,
@@ -238,7 +271,7 @@ class RtseExamAttendance {
             UPDATE rtse_exam_attendance
 
             SET
-                attendance_status = 'ABSENT',
+                attendance_status = 'NOT_SCANNED',
                 scanned_at = NULL,
                 scanned_by = NULL
 
@@ -252,6 +285,30 @@ class RtseExamAttendance {
         return result.affectedRows > 0;
     }
 
+
+    // =====================================
+    // Automatically mark unscanned students
+    // ABSENT after examination end time
+    // =====================================
+    static async markExpiredUnscannedAbsent() {
+        const [result] = await db.query(`
+            UPDATE rtse_exam_attendance ea
+            INNER JOIN rtse_applications a
+                ON a.id = ea.application_id
+            INNER JOIN rtse_exam_settings es
+                ON es.exam_year = a.application_year
+            SET
+                ea.attendance_status = 'ABSENT',
+                ea.scanned_at = NULL,
+                ea.scanned_by = NULL
+            WHERE
+                ea.attendance_status = 'NOT_SCANNED'
+                AND es.status = 'ACTIVE'
+                AND TIMESTAMP(es.exam_date, es.exam_end_time) <= NOW()
+        `);
+
+        return result.affectedRows;
+    }
 
     // =====================================
     // Mark student PRESENT

@@ -80,6 +80,9 @@ const seoRoutes = require("./routes/seoRoutes");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
 const superScannerRoutes = require("./routes/superScannerRoutes");
 
+// RTSE attendance auto-finalization
+const RtseExamAttendance = require("./models/RtseExamAttendance");
+
 
 
 const app = express();
@@ -93,6 +96,26 @@ app.use(morgan("dev"));
 
 
 const PORT = process.env.PORT || 3000;
+
+// Automatically finalize unscanned RTSE candidates after exam end time.
+// Runs once per minute.
+setInterval(async () => {
+    try {
+        const changed =
+            await RtseExamAttendance.markExpiredUnscannedAbsent();
+
+        if (changed > 0) {
+            console.log(
+                `RTSE attendance auto-finalized: ${changed} student(s) marked ABSENT.`
+            );
+        }
+    } catch (err) {
+        console.error(
+            "RTSE attendance auto-finalization error:",
+            err
+        );
+    }
+}, 60 * 1000);
 
 // Body Parser
 app.use(express.urlencoded({ extended: true }));
