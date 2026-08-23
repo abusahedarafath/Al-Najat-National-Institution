@@ -307,7 +307,7 @@ async(req,res)=>{
 
         );
 
-        res.redirect("/admin/rtse");
+        res.redirect("/admin/rtse/applications");
 
     }
 
@@ -323,7 +323,7 @@ async(req,res)=>{
 
         );
 
-        res.redirect("/admin/rtse");
+        res.redirect("/admin/rtse/applications");
 
     }
 
@@ -355,7 +355,7 @@ async(req,res)=>{
 
         );
 
-        res.redirect("/admin/rtse");
+        res.redirect("/admin/rtse/applications");
 
     }
 
@@ -371,7 +371,7 @@ async(req,res)=>{
 
         );
 
-        res.redirect("/admin/rtse");
+        res.redirect("/admin/rtse/applications");
 
     }
 
