@@ -665,25 +665,17 @@
      *    ↓
      * fresh login page
      */
-    window.addEventListener("popstate", function () {
-
-        /*
-         * Immediately move the browser back onto the dashboard
-         * while the logout request is being processed.
-         */
-        history.pushState(
-            { arspSchoolRoot: rootState },
-            "",
-            window.location.href
-        );
-
-        /*
-         * Destroy the server-side school session.
-         */
-        window.location.replace(
-            "/arsp/school/logout"
-        );
-    });
+      window.addEventListener("popstate", function () {
+          /*
+           * Back from the root dashboard means leave the
+           * authenticated school area.
+           *
+           * IMPORTANT: Do not call history.pushState() here.
+           * Adding history entries causes the Back button
+           * to walk through artificial navigation steps.
+           */
+          window.location.replace("/arsp/school/logout");
+      });
 
     /*
      * Never allow BFCache to restore an authenticated dashboard.
