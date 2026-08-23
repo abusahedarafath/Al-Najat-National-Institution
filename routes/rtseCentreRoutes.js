@@ -47,48 +47,110 @@ router.get(
         try {
             const RtseCentre = require("../models/RtseCentre");
 
-            const centreId = Number(req.session.rtseCentre.centre_db_id);
+            const centreId =
+                Number(req.session.rtseCentre.centre_db_id);
 
             if (!Number.isInteger(centreId) || centreId <= 0) {
-                return res.status(400).send("Invalid Centre account.");
+                return res.status(400).send(
+                    "Invalid Centre account."
+                );
             }
 
-            const stats = await RtseCentre.getPortalDashboardStats(centreId);
-            const assignedSchools = await RtseCentre.getAssignedSchools(centreId);
-            const applicationYears =
-                await RtseCentre.getPortalApplicationYears(centreId);
+            /*
+             * Dashboard data is read-only.
+             * No uploaded files are accessed or modified.
+             */
+            const stats =
+                await RtseCentre.getPortalDashboardStats(
+                    centreId
+                );
 
-            const selectedYear =
-                applicationYears.length > 0
-                    ? String(applicationYears[0].application_year)
-                    : "";
+            const students =
+                await RtseCentre.getPortalStudents(
+                    centreId,
+                    "",
+                    "",
+                    ""
+                );
 
-            const students = await RtseCentre.getPortalStudents(
-                centreId,
-                "",
-                "",
-                selectedYear
+            const assignedSchools =
+                await RtseCentre.getAssignedSchools(
+                    centreId
+                );
+
+            return res.render(
+                "rtse/centre/dashboard",
+                {
+                    title: "RTSE Centre Dashboard",
+                    centre: req.centre,
+                    centreAccount: req.centreAccount,
+                    stats,
+                    students,
+                    assignedSchools
+                }
+            );
+        } catch (err) {
+            console.error(
+                "RTSE Centre Dashboard Error:",
+                err
             );
 
-            return res.render("rtse/centre/dashboard", {
-                title: "RTSE Centre Dashboard",
-                centre: req.centre,
-                centreAccount: req.centreAccount,
-                stats,
-                assignedSchools,
-                applicationYears,
-                selectedYear,
-                students
-            });
-        } catch (err) {
-            console.error("RTSE Centre Dashboard Error:", err);
-            return res.status(500).send("Unable to load Centre Dashboard.");
+            return res.status(500).send(
+                "Unable to load Centre Dashboard."
+            );
         }
     }
 );
 
 // =====================================
+// Assigned Schools
+// =====================================
+router.get(
+    "/rtse/centre/schools",
+    centreAuth.isCentreLoggedIn,
+    centreAuth.requirePasswordChanged,
+    async (req, res) => {
+        try {
+            const RtseCentre =
+                require("../models/RtseCentre");
 
+            const centreId =
+                Number(req.session.rtseCentre.centre_db_id);
+
+            if (!Number.isInteger(centreId) || centreId <= 0) {
+                return res.status(400).send(
+                    "Invalid Centre account."
+                );
+            }
+
+            const assignedSchools =
+                await RtseCentre.getAssignedSchools(
+                    centreId
+                );
+
+            return res.render(
+                "rtse/centre/schools",
+                {
+                    title: "Assigned Schools - RTSE Centre",
+                    centre: req.centre,
+                    centreAccount: req.centreAccount,
+                    assignedSchools
+                }
+            );
+        } catch (err) {
+            console.error(
+                "RTSE Centre Assigned Schools Error:",
+                err
+            );
+
+            return res.status(500).send(
+                "Unable to load Assigned Schools."
+            );
+        }
+    }
+);
+
+// =====================================
 // =====================================
 // Centre Student Registry
 // =====================================

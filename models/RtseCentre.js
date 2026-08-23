@@ -84,7 +84,12 @@ class RtseCentre {
     static async getPortalDashboardStats(centreId) {
         const [rows] = await db.query(`
             SELECT
-                COUNT(DISTINCT sca.school_id) AS assigned_schools,
+                (
+                    SELECT COUNT(DISTINCT sca2.school_id)
+                    FROM rtse_school_centre_assignments sca2
+                    WHERE sca2.centre_id = sca.centre_id
+                      AND sca2.status IN ('Approved', 'Active')
+                ) AS assigned_schools,
                 COUNT(DISTINCT a.id) AS total_students,
                 SUM(a.status = 'Approved') AS approved_students,
                 SUM(a.status = 'Pending') AS pending_students,
