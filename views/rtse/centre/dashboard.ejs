@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= title %></title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        .portal {
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #0f3d91, #2563eb);
+            color: #fff;
+            padding: 18px 22px;
+        }
+
+        .topbar-inner {
+            max-width: 1250px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            font-size: 12px;
+            opacity: .86;
+        }
+
+        .logout {
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,.35);
+            padding: 9px 13px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .container {
+            width: min(1250px, calc(100% - 28px));
+            margin: 24px auto 40px;
+        }
+
+        .welcome {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            margin-top: 7px;
+            font-size: 27px;
+            font-weight: 800;
+            color: #0f3d91;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .centre-info {
+            display: grid;
+            gap: 11px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-row span {
+            color: #64748b;
+        }
+
+        .info-row strong {
+            text-align: right;
+        }
+
+        .school-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .school {
+            border: 1px solid #e2e8f0;
+            border-radius: 11px;
+            padding: 12px;
+        }
+
+        .school-name {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .school-meta {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 7px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 11px 13px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td strong {
+            color: #0f172a;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .topbar {
+                padding: 15px;
+            }
+
+            .topbar-inner {
+                align-items: flex-start;
+            }
+
+            .container {
+                width: min(100% - 20px, 1250px);
+                margin-top: 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .stat {
+                padding: 14px;
+            }
+
+            .stat-value {
+                font-size: 23px;
+            }
+
+            .brand h1 {
+                font-size: 18px;
+            }
+
+            .logout {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="portal">
+
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <h1>RTSE Centre Portal</h1>
+                <p>Examination Centre Management System</p>
+            </div>
+
+            <a class="logout" href="/rtse/centre/logout">
+                Logout
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h2>Welcome, <%= centre.centre_name %></h2>
+            <p>
+                Centre ID:
+                <strong><%= centre.centre_id %></strong>
+                &nbsp;•&nbsp;
+                Centre Code:
+                <strong><%= centre.centre_code %></strong>
+            </p>
+        </section>
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-label">Assigned Schools</div>
+                <div class="stat-value"><%= Number(stats.assigned_schools || 0) %></div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Total Candidates</div>
+                <div class="stat-value"><%= Number(stats.total_students || 0) %></div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Approved Candidates</div>
+                <div class="stat-value"><%= Number(stats.approved_students || 0) %></div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Roll Numbers Generated</div>
+                <div class="stat-value"><%= Number(stats.roll_generated || 0) %></div>
+            </div>
+
+        </section>
+
+        <div class="grid">
+
+            <section class="card">
+                <div class="card-header">
+                    <h3>Centre Information</h3>
+                </div>
+
+                <div class="card-body centre-info">
+
+                    <div class="info-row">
+                        <span>Centre ID</span>
+                        <strong><%= centre.centre_id %></strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Centre Code</span>
+                        <strong><%= centre.centre_code %></strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Centre Type</span>
+                        <strong><%= centre.centre_type || "—" %></strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Account Username</span>
+                        <strong><%= centreAccount.username %></strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Present</span>
+                        <strong><%= Number(stats.present_students || 0) %></strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Absent</span>
+                        <strong><%= Number(stats.absent_students || 0) %></strong>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h3>Assigned Schools</h3>
+                </div>
+
+                <div class="card-body">
+
+                    <% if (assignedSchools && assignedSchools.length) { %>
+
+                        <div class="school-list">
+
+                            <% assignedSchools.forEach(function(school) { %>
+
+                                <div class="school">
+
+                                    <div class="school-name">
+                                        <%= school.school_name %>
+                                    </div>
+
+                                    <div class="school-meta">
+                                        School Code:
+                                        <strong><%= school.school_code || "—" %></strong>
+                                        &nbsp;•&nbsp;
+                                        Application Year:
+                                        <strong><%= school.application_year %></strong>
+                                    </div>
+
+                                    <span class="badge">
+                                        <%= school.assignment_status %>
+                                    </span>
+
+                                    <% if (school.assignment_status === "Pending") { %>
+                                        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+
+                                            <form
+                                                method="POST"
+                                                action="/rtse/centre/assignment/<%= school.assignment_id %>/approve"
+                                                onsubmit="return confirm('Approve this school examination-centre assignment?');"
+                                            >
+                                                <button
+                                                    type="submit"
+                                                    style="border:0;border-radius:7px;padding:7px 11px;background:#16a34a;color:#fff;font-size:11px;font-weight:700;cursor:pointer;"
+                                                >
+                                                    Approve Assignment
+                                                </button>
+                                            </form>
+
+                                            <form
+                                                method="POST"
+                                                action="/rtse/centre/assignment/<%= school.assignment_id %>/reject"
+                                                onsubmit="return confirm('Reject this school examination-centre assignment?');"
+                                            >
+                                                <input
+                                                    type="hidden"
+                                                    name="remarks"
+                                                    value="School examination centre assignment rejected by Centre."
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    style="border:0;border-radius:7px;padding:7px 11px;background:#dc2626;color:#fff;font-size:11px;font-weight:700;cursor:pointer;"
+                                                >
+                                                    Reject Assignment
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    <% } %>
+
+                                </div>
+
+                            <% }) %>
+
+                        </div>
+
+                    <% } else { %>
+
+                        <div class="empty">
+                            No schools are currently assigned to this centre.
+                        </div>
+
+                    <% } %>
+
+                </div>
+            </section>
+
+        </div>
+
+        <section class="card">
+
+            <div class="card-header">
+                <h3>Candidate Registry</h3>
+            </div>
+
+            <div class="table-wrap">
+
+                <% if (students && students.length) { %>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Registration No.</th>
+                                <th>Candidate</th>
+                                <th>School</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Roll No.</th>
+                                <th>Status</th>
+                                <th>Attendance</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <% students.forEach(function(student) { %>
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            <%= student.registration_no || "—" %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            <%= student.full_name %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <%= student.registered_school_name ||
+                                            student.school_name ||
+                                            "—" %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.class || "—" %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.section || "—" %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.roll_no ||
+                                            student.roll_number ||
+                                            "—" %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.status %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.attendance_status || "NOT SCANNED" %>
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                <% } else { %>
+
+                    <div class="empty">
+                        No candidates are currently available for this centre.
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </section>
+
+
+<a href="/rtse/centre/students"
+   style="display:inline-flex;align-items:center;justify-content:center;
+   margin:12px 8px 12px 0;padding:12px 18px;border-radius:10px;
+   background:#2563eb;color:#fff;text-decoration:none;font-weight:700;">
+   Student Registry
+</a>
+
+</main>
+</div>
+</body>
+</html>
