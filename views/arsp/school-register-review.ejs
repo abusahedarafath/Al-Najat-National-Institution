@@ -225,7 +225,34 @@
         </div>
 
 
-        <div class="actions">
+        <div class="section">
+                <h2>RTSE Examination Centre</h2>
+
+                <table>
+                    <tr>
+                        <td>Selected Centre</td>
+                        <td>
+                            <% if (centre) { %>
+                                <strong><%= centre.centre_name %></strong>
+                            <% } else { %>
+                                —
+                            <% } %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Centre Code</td>
+                        <td><%= centre ? centre.centre_code : "—" %></td>
+                    </tr>
+
+                    <tr>
+                        <td>District</td>
+                        <td><%= centre ? (centre.district || "—") : "—" %></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="actions">
 
             <a
                 href="/arsp/school/register"

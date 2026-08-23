@@ -75,6 +75,7 @@ const chairmanMessageRoutes = require("./routes/chairmanMessageRoutes");
 const siteSettingRoutes = require("./routes/siteSettingRoutes");
 const footerRoutes = require("./routes/footerRoutes");
 const rtseRoutes = require("./routes/rtse");
+const rtseCentreRoutes = require("./routes/rtseCentreRoutes");
 const seoRoutes = require("./routes/seoRoutes");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
 const superScannerRoutes = require("./routes/superScannerRoutes");
@@ -139,6 +140,40 @@ app.set("views", path.join(__dirname, "views"));
 
 
 
+
+// TEMPORARY CENTRE SESSION DIAGNOSTIC
+app.get("/__centre-session-test", (req, res) => {
+    req.session.centreDiagnostic = "CENTRE_SESSION_OK";
+
+    req.session.save((err) => {
+        if (err) {
+            console.error("CENTRE SESSION TEST SAVE ERROR:", err);
+            return res.status(500).json({
+                success: false,
+                error: err.message
+            });
+        }
+
+        console.log("CENTRE SESSION TEST CREATED:", req.sessionID);
+
+        return res.json({
+            success: true,
+            sessionID: req.sessionID,
+            diagnostic: req.session.centreDiagnostic
+        });
+    });
+});
+
+app.get("/__centre-session-check", (req, res) => {
+    console.log("CENTRE SESSION TEST CHECK:", req.sessionID);
+    console.log("CENTRE SESSION VALUE:", req.session.centreDiagnostic);
+
+    return res.json({
+        sessionID: req.sessionID,
+        diagnostic: req.session.centreDiagnostic || null
+    });
+});
+
 // ===============================
 // Public Routes
 // ===============================
@@ -155,6 +190,7 @@ app.use(tirangaCertificateRoutes);
 app.use("/", adminRecoveryRoutes);
 // RTSE public routes MUST be registered before admin routes
 app.use("/rtse", rtseRoutes);
+app.use("/", rtseCentreRoutes);
 
 app.use("/", adminRoutes);
 app.use("/", personalityRoutes);

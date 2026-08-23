@@ -1,5 +1,7 @@
 const ArspSchool = require("../models/ArspSchool");
 const ArspSchoolAccount = require("../models/ArspSchoolAccount");
+const RtseCentre = require("../models/RtseCentre");
+const RtseExamSetting = require("../models/RtseExamSetting");
 
 // =====================================
 // School Registry Dashboard
@@ -117,62 +119,201 @@ exports.view = async (req, res) => {
 // Edit School Page
 // =====================================
 exports.editPage = async (req, res) => {
+
     try {
-        const school = await ArspSchool.getById(req.params.id);
+
+        const school =
+            await ArspSchool.getById(req.params.id);
 
         if (!school) {
-            req.flash("error", "School not found.");
-            return res.redirect("/admin/arsp/schools");
+
+            req.flash(
+                "error",
+                "School not found."
+            );
+
+            return res.redirect(
+                "/admin/arsp/schools"
+            );
+
         }
 
-        res.render("admin/arsp/schools/form", {
-            title: "Edit ARSP School",
-            school,
-            isEdit: true
-        });
-    } catch (err) {
-        console.error("ARSP School Edit Page Error:", err);
+        // -------------------------------------
+        // Active RTSE examination
+        // -------------------------------------
+        const activeExam =
+            await RtseExamSetting.getActive();
 
-        req.flash("error", "Unable to load school.");
-        res.redirect("/admin/arsp/schools");
+        let centres = [];
+        let currentAssignment = null;
+
+        if (activeExam) {
+
+            centres =
+                await RtseCentre.getApproved();
+
+            currentAssignment =
+                await RtseCentre.getSchoolAssignment(
+                    school.id,
+                    activeExam.exam_year
+                );
+
+        }
+
+        res.render(
+            "admin/arsp/schools/form",
+            {
+                title: "Edit ARSP School",
+                school,
+                isEdit: true,
+                centres,
+                activeExam,
+                currentAssignment
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "ARSP School Edit Page Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load school."
+        );
+
+        res.redirect(
+            "/admin/arsp/schools"
+        );
+
     }
+
 };
 
 // =====================================
 // Update School
 // =====================================
+
 exports.update = async (req, res) => {
+
     try {
-        const school = await ArspSchool.getById(req.params.id);
+
+        const school =
+            await ArspSchool.getById(req.params.id);
 
         if (!school) {
-            req.flash("error", "School not found.");
-            return res.redirect("/admin/arsp/schools");
+
+            req.flash(
+                "error",
+                "School not found."
+            );
+
+            return res.redirect(
+                "/admin/arsp/schools"
+            );
         }
 
-        await ArspSchool.update(req.params.id, {
-            school_name: req.body.school_name,
-            school_type: req.body.school_type,
-            head_name: req.body.head_name,
-            mobile: req.body.mobile,
-            email: req.body.email,
-            address: req.body.address,
-            village: req.body.village,
-            post_office: req.body.post_office,
-            district: req.body.district,
-            state: req.body.state,
-            pincode: req.body.pincode,
-            remarks: req.body.remarks
+        // -------------------------------------
+        // Determine requested RTSE centre
+        // -------------------------------------
+
+        const requestedCentreId =
+            Number(req.body.rtse_centre_id || 0);
+
+        const activeExam =
+            await RtseExamSetting.getActive();
+
+        console.log("[ARSP SCHOOL CENTRE DEBUG]", {
+            schoolId: req.params.id,
+            rawCentreId: req.body.rtse_centre_id,
+            requestedCentreId,
+            activeExamYear: activeExam ? activeExam.exam_year : null,
+            activeExamStatus: activeExam ? activeExam.status : null,
+            bodyKeys: Object.keys(req.body || {})
         });
 
-        req.flash("success", "School information updated successfully.");
+        let centreId = null;
+        let applicationYear = null;
 
-        return res.redirect(`/admin/arsp/school/${req.params.id}`);
+        if (
+            requestedCentreId > 0 &&
+            activeExam
+        ) {
+
+            centreId = requestedCentreId;
+            applicationYear = activeExam.exam_year;
+        }
+
+        // -------------------------------------
+        // Perform BOTH operations atomically
+        // -------------------------------------
+
+        const result =
+            await ArspSchool.updateWithCentre(
+                req.params.id,
+                {
+                    school_name: req.body.school_name,
+                    school_type: req.body.school_type,
+                    head_name: req.body.head_name,
+                    mobile: req.body.mobile,
+                    email: req.body.email,
+                    address: req.body.address,
+                    village: req.body.village,
+                    post_office: req.body.post_office,
+                    district: req.body.district,
+                    state: req.body.state,
+                    pincode: req.body.pincode,
+                    remarks: req.body.remarks
+                },
+                centreId,
+                applicationYear,
+                req.session.user.id
+            );
+
+        // -------------------------------------
+        // Success message
+        // -------------------------------------
+
+        if (
+            result.centreChanged &&
+            result.centreName
+        ) {
+
+            req.flash(
+                "success",
+                `School information updated and examination centre changed to ${result.centreName} for RTSE ${result.applicationYear}.`
+            );
+
+        } else {
+
+            req.flash(
+                "success",
+                "School information updated successfully."
+            );
+        }
+
+        return res.redirect(
+            `/admin/arsp/school/${req.params.id}`
+        );
+
     } catch (err) {
-        console.error("ARSP School Update Error:", err);
 
-        req.flash("error", "Unable to update school.");
-        return res.redirect(`/admin/arsp/school/${req.params.id}/edit`);
+        console.error(
+            "ARSP School Update Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to update school."
+        );
+
+        return res.redirect(
+            `/admin/arsp/school/${req.params.id}/edit`
+        );
     }
 };
 

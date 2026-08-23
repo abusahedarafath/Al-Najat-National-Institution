@@ -697,6 +697,39 @@ body{
 }
 
 /* =========================================================
+   CENTRE PORTAL NAVIGATION
+========================================================= */
+
+.centre-portal-controls{
+    width:210mm;
+    margin:10px auto 0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.centre-portal-controls a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:40px;
+    padding:0 18px;
+    border-radius:6px;
+    background:#fff;
+    color:#174a86;
+    border:1px solid #174a86;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.centre-portal-controls a:hover{
+    background:#eef6ff;
+}
+
+/* =========================================================
    PRINT BUTTON
 ========================================================= */
 
@@ -805,6 +838,10 @@ body{
     }
 
     .print-controls{
+        display:none !important;
+    }
+
+    .centre-portal-controls{
         display:none !important;
     }
 }
@@ -1297,6 +1334,14 @@ body{
 
 </div>
 
+
+<% if (typeof centrePortal !== "undefined" && centrePortal && backUrl) { %>
+<div class="centre-portal-controls">
+    <a href="<%= backUrl %>">
+        ← Back to Candidate
+    </a>
+</div>
+<% } %>
 
 <div class="print-controls">
 

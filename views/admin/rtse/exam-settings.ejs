@@ -10,228 +10,374 @@
 
             <div class="page-header">
 
-                <h1>
+                <div>
+                    <h1>RTSE Examination Control Centre</h1>
 
-                    RTSE Examination Control Centre
+                    <p style="margin:6px 0 0;color:#6b7280;">
+                        Create, manage and control RTSE examinations.
+                    </p>
+                </div>
 
-                </h1>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
 
-                <a
-                    href="/admin/rtse"
-                    class="btn-cancel">
+                    <a
+                        href="/admin/rtse/exam-settings/new"
+                        class="btn-save"
+                        style="text-decoration:none;"
+                    >
+                        + Create Examination
+                    </a>
 
-                    ← Back to Dashboard
+                    <a
+                        href="/admin/rtse"
+                        class="btn-cancel"
+                        style="text-decoration:none;"
+                    >
+                        ← Dashboard
+                    </a>
 
-                </a>
+                </div>
 
             </div>
 
+
+            <% if (typeof success !== "undefined" && success) { %>
+
+                <div class="alert alert-success">
+                    <%= success %>
+                </div>
+
+            <% } %>
+
+
+            <% if (typeof error !== "undefined" && error) { %>
+
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+
+            <% } %>
+
+
             <div class="profile-card">
 
-                <form
-                    action="/admin/rtse/exam-settings"
-                    method="POST">
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Examination Name
-
-                            </label>
-
-                            <input
-                                type="text"
-                                name="exam_name"
-                                value="<%= setting.exam_name || '' %>"
-                                required>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Examination Year
-
-                            </label>
-
-                            <input
-                                type="number"
-                                name="exam_year"
-                                value="<%= setting.exam_year || '' %>"
-                                required>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Application Start Date
-
-                            </label>
-
-                            <input
-                                type="date"
-                                name="application_start_date"
-                                value="<%= setting.application_start_date || '' %>">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Application End Date
-
-                            </label>
-
-                            <input
-                                type="date"
-                                name="application_end_date"
-                                value="<%= setting.application_end_date || '' %>">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Examination Date
-
-                            </label>
-
-                            <input
-                                type="date"
-                                name="exam_date"
-                                value="<%= setting.exam_date || '' %>"
-                                required>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Reporting Time
-
-                            </label>
-
-                            <input
-                                type="time"
-                                name="reporting_time"
-                                value="<%= setting.reporting_time || '' %>">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Examination Start Time
-
-                            </label>
-
-                            <input
-                                type="time"
-                                name="exam_start_time"
-                                value="<%= setting.exam_start_time || '' %>">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Examination End Time
-
-                            </label>
-
-                            <input
-                                type="time"
-                                name="exam_end_time"
-                                value="<%= setting.exam_end_time || '' %>">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Result Publish Date
-
-                            </label>
-
-                            <input
-                                type="date"
-                                name="result_publish_date"
-                                value="<%= setting.result_publish_date || '' %>">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Certificate Publish Date
-
-                            </label>
-
-                            <input
-                                type="date"
-                                name="certificate_publish_date"
-                                value="<%= setting.certificate_publish_date || '' %>">
-
-                        </div>
-
-                        <div
-                            class="form-group"
-                            style="grid-column:1/-1;">
-
-                            <label>
-
-                                Default Examination Centre
-
-                            </label>
-
-                            <textarea
-                                name="exam_centre"
-                                rows="3"><%= setting.exam_centre || '' %></textarea>
-
-                        </div>
-
-                        <div
-                            class="form-group"
-                            style="grid-column:1/-1;">
-
-                            <label>
-
-                                Controller of Examination
-
-                            </label>
-
-                            <input
-                                type="text"
-                                name="controller_name"
-                                value="<%= setting.controller_name || '' %>">
-
-                        </div>
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    flex-wrap:wrap;
+                    margin-bottom:20px;
+                ">
+
+                    <div>
+
+                        <h2 style="margin:0;">
+                            All RTSE Examinations
+                        </h2>
+
+                        <p style="margin:6px 0 0;color:#6b7280;">
+                            The active examination controls the current RTSE cycle.
+                        </p>
 
                     </div>
 
-                    <button
-                        type="submit"
-                        class="btn-save"
-                        style="margin-top:25px;">
+                    <div style="
+                        padding:8px 13px;
+                        border-radius:20px;
+                        background:#eef2ff;
+                        color:#3730a3;
+                        font-weight:600;
+                    ">
+                        <%= examinations ? examinations.length : 0 %>
+                        Examination(s)
+                    </div>
 
-                        Save Examination Settings
+                </div>
 
-                    </button>
 
-                </form>
+                <% if (!examinations || !examinations.length) { %>
+
+                    <div style="
+                        padding:40px 20px;
+                        text-align:center;
+                        border:1px dashed #d1d5db;
+                        border-radius:12px;
+                    ">
+
+                        <h3 style="margin-top:0;">
+                            No examinations found
+                        </h3>
+
+                        <p style="color:#6b7280;">
+                            Create your first RTSE examination to begin.
+                        </p>
+
+                        <a
+                            href="/admin/rtse/exam-settings/new"
+                            class="btn-save"
+                            style="display:inline-block;text-decoration:none;"
+                        >
+                            + Create Examination
+                        </a>
+
+                    </div>
+
+                <% } else { %>
+
+
+                    <div style="overflow-x:auto;">
+
+                        <table style="
+                            width:100%;
+                            border-collapse:collapse;
+                            min-width:900px;
+                        ">
+
+                            <thead>
+
+                                <tr style="
+                                    border-bottom:2px solid #e5e7eb;
+                                    text-align:left;
+                                ">
+
+                                    <th style="padding:13px 10px;">
+                                        Examination
+                                    </th>
+
+                                    <th style="padding:13px 10px;">
+                                        Year
+                                    </th>
+
+                                    <th style="padding:13px 10px;">
+                                        Exam Date
+                                    </th>
+
+                                    <th style="padding:13px 10px;">
+                                        Application Period
+                                    </th>
+
+                                    <th style="padding:13px 10px;">
+                                        Status
+                                    </th>
+
+                                    <th style="
+                                        padding:13px 10px;
+                                        text-align:right;
+                                    ">
+                                        Actions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <% examinations.forEach(function(exam) { %>
+
+                                    <tr style="
+                                        border-bottom:1px solid #e5e7eb;
+                                    ">
+
+                                        <td style="padding:15px 10px;">
+
+                                            <div style="font-weight:700;">
+                                                <%= exam.exam_name || "Unnamed Examination" %>
+                                            </div>
+
+                                            <% if (exam.controller_name) { %>
+
+                                                <div style="
+                                                    font-size:13px;
+                                                    color:#6b7280;
+                                                    margin-top:4px;
+                                                ">
+                                                    Controller:
+                                                    <%= exam.controller_name %>
+                                                </div>
+
+                                            <% } %>
+
+                                        </td>
+
+
+                                        <td style="padding:15px 10px;">
+
+                                            <strong>
+                                                <%= exam.exam_year || "—" %>
+                                            </strong>
+
+                                        </td>
+
+
+                                        <td style="padding:15px 10px;">
+
+                                            <%= exam.exam_date || "—" %>
+
+                                        </td>
+
+
+                                        <td style="padding:15px 10px;">
+
+                                            <% if (exam.application_start_date || exam.application_end_date) { %>
+
+                                                <%= exam.application_start_date || "—" %>
+                                                <br>
+                                                <span style="color:#6b7280;">
+                                                    to
+                                                </span>
+                                                <br>
+                                                <%= exam.application_end_date || "—" %>
+
+                                            <% } else { %>
+
+                                                —
+
+                                            <% } %>
+
+                                        </td>
+
+
+                                        <td style="padding:15px 10px;">
+
+                                            <% if (exam.status === "ACTIVE") { %>
+
+                                                <span style="
+                                                    display:inline-block;
+                                                    padding:6px 11px;
+                                                    border-radius:20px;
+                                                    background:#dcfce7;
+                                                    color:#166534;
+                                                    font-weight:700;
+                                                    font-size:13px;
+                                                ">
+                                                    ● ACTIVE
+                                                </span>
+
+                                            <% } else { %>
+
+                                                <span style="
+                                                    display:inline-block;
+                                                    padding:6px 11px;
+                                                    border-radius:20px;
+                                                    background:#f3f4f6;
+                                                    color:#4b5563;
+                                                    font-weight:700;
+                                                    font-size:13px;
+                                                ">
+                                                    ● INACTIVE
+                                                </span>
+
+                                            <% } %>
+
+                                        </td>
+
+
+                                        <td style="
+                                            padding:15px 10px;
+                                            text-align:right;
+                                        ">
+
+                                            <div style="
+                                                display:flex;
+                                                justify-content:flex-end;
+                                                gap:7px;
+                                                flex-wrap:wrap;
+                                            ">
+
+
+                                                <a
+                                                    href="/admin/rtse/exam-settings/<%= exam.id %>"
+                                                    class="btn-cancel"
+                                                    style="text-decoration:none;"
+                                                >
+                                                    View
+                                                </a>
+
+
+                                                <a
+                                                    href="/admin/rtse/exam-settings/<%= exam.id %>/edit"
+                                                    class="btn-cancel"
+                                                    style="text-decoration:none;"
+                                                >
+                                                    Edit
+                                                </a>
+
+
+                                                <% if (exam.status === "ACTIVE") { %>
+
+                                                    <form
+                                                        action="/admin/rtse/exam-settings/<%= exam.id %>/deactivate"
+                                                        method="POST"
+                                                        style="display:inline;"
+                                                    >
+
+                                                        <button
+                                                            type="submit"
+                                                            class="btn-cancel"
+                                                            onclick="return confirm('Deactivate this examination?');"
+                                                        >
+                                                            Deactivate
+                                                        </button>
+
+                                                    </form>
+
+                                                <% } else { %>
+
+                                                    <form
+                                                        action="/admin/rtse/exam-settings/<%= exam.id %>/activate"
+                                                        method="POST"
+                                                        style="display:inline;"
+                                                    >
+
+                                                        <button
+                                                            type="submit"
+                                                            class="btn-save"
+                                                            onclick="return confirm('Make this examination the active RTSE examination?');"
+                                                        >
+                                                            Activate
+                                                        </button>
+
+                                                    </form>
+
+
+                                                    <form
+                                                        action="/admin/rtse/exam-settings/<%= exam.id %>/delete"
+                                                        method="POST"
+                                                        style="display:inline;"
+                                                    >
+
+                                                        <button
+                                                            type="submit"
+                                                            class="btn-cancel"
+                                                            style="color:#b91c1c;"
+                                                            onclick="return confirm('Delete this examination permanently? This action cannot be undone.');"
+                                                        >
+                                                            Delete
+                                                        </button>
+
+                                                    </form>
+
+                                                <% } %>
+
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                <% }); %>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                <% } %>
 
             </div>
 

@@ -203,6 +203,93 @@
             ><%= school.address || '' %></textarea>
         </div>
 
+
+        <% if (isEdit && activeExam) { %>
+
+        <div style="margin-top:22px;padding:18px;border:1px solid #dbeafe;border-radius:10px;background:#eff6ff;">
+
+            <div style="margin-bottom:14px;">
+
+                <h3 style="margin:0 0 6px 0;">
+                    RTSE Examination Centre
+                </h3>
+
+                <p style="margin:0;color:#475569;font-size:14px;">
+                    Examination Year:
+                    <strong><%= activeExam.exam_year %></strong>
+                </p>
+
+            </div>
+
+            <label style="display:block;font-weight:600;margin-bottom:6px;">
+                Examination Centre
+            </label>
+
+            <select
+                name="rtse_centre_id"
+                style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;"
+            >
+
+                <option value="">
+                    -- Select Examination Centre --
+                </option>
+
+                <% centres.forEach(centre => { %>
+
+                    <option
+                        value="<%= centre.id %>"
+                        <%= currentAssignment && Number(currentAssignment.centre_id) === Number(centre.id) ? "selected" : "" %>
+                    >
+                        <%= centre.centre_name %>
+                        <% if (centre.centre_code) { %>
+                            — <%= centre.centre_code %>
+                        <% } %>
+                    </option>
+
+                <% }) %>
+
+            </select>
+
+            <% if (currentAssignment) { %>
+
+                <div style="margin-top:10px;padding:10px 12px;background:#fff;border:1px solid #dbeafe;border-radius:8px;font-size:13px;color:#334155;">
+
+                    <strong>Current Centre:</strong>
+                    <%= currentAssignment.centre_name %>
+
+                    <% if (currentAssignment.centre_code) { %>
+                        (<%= currentAssignment.centre_code %>)
+                    <% } %>
+
+                </div>
+
+            <% } else { %>
+
+                <div style="margin-top:10px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;font-size:13px;color:#9a3412;">
+
+                    This school does not currently have an examination-centre assignment for
+                    <strong><%= activeExam.exam_year %></strong>.
+
+                    Selecting a centre will create the assignment.
+
+                </div>
+
+            <% } %>
+
+            <div style="margin-top:12px;padding:11px 13px;background:#fff;border-left:4px solid #2563eb;border-radius:6px;color:#334155;font-size:13px;line-height:1.6;">
+
+                <strong>Important:</strong>
+                Changing this centre moves the school's RTSE examination-centre
+                assignment for <%= activeExam.exam_year %>.
+                Student application records, roll numbers, school information,
+                and uploaded documents will remain unchanged.
+
+            </div>
+
+        </div>
+
+        <% } %>
+
         <div style="margin-top:16px;">
             <label style="display:block;font-weight:600;margin-bottom:6px;">
                 Remarks

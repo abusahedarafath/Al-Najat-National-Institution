@@ -97,7 +97,7 @@ exports.applicationPage = async (req, res) => {
 
 exports.submitApplication = async (req, res) => {
 
-    try { 
+    try {
         const setting = await RtseSetting.get();
 
         if (!setting || Number(setting.application_open) !== 1) {
@@ -1158,10 +1158,20 @@ exports.searchCertificate = async (req, res) => {
 
         }
 
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
         const certificate =
             await RtseCertificate.search(
 
-                req.body.keyword
+                req.body.keyword,
+                applicationYear
 
             );
 

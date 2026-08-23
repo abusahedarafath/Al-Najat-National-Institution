@@ -14,6 +14,7 @@ const processArspMemberPhoto = require("../middleware/processArspMemberPhoto");
 const adminArspController = require("../controllers/adminArspController");
 
 const adminArspSchoolController = require("../controllers/adminArspSchoolController");
+const adminRtseCentreController = require("../controllers/adminRtseCentreController");
 
 
 
@@ -290,6 +291,149 @@ adminArspController.documentVerifications
 );
 
 
+
+
+
+// ======================================
+// RTSE CENTRE REGISTRY
+// ======================================
+
+router.get(
+    "/admin/arsp/centres",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.index
+);
+
+router.get(
+    "/admin/arsp/centres/add",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.addPage
+);
+
+router.post(
+    "/admin/arsp/centres/add",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.create
+);
+
+router.get(
+    "/admin/arsp/centre/:id",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.view
+);
+
+// ======================================
+// RTSE CENTRE SCHOOL ASSIGNMENTS
+// ======================================
+
+router.get(
+    "/admin/arsp/centre/:id/school-assignment/:assignmentId/view",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.viewSchoolAssignment
+);
+
+router.post(
+    "/admin/arsp/centre/:id/school-assignment/:assignmentId/approve",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.approveSchoolAssignment
+);
+
+router.post(
+    "/admin/arsp/centre/:id/school-assignment/:assignmentId/reject",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.rejectSchoolAssignment
+);
+
+router.get(
+    "/admin/arsp/centre/:id/edit",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.editPage
+);
+
+router.post(
+    "/admin/arsp/centre/:id/edit",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.update
+);
+
+router.post(
+    "/admin/arsp/centre/:id/approve",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.approve
+);
+
+router.post(
+    "/admin/arsp/centre/:id/reject",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.reject
+);
+
+router.post(
+    "/admin/arsp/centre/:id/deactivate",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.deactivate
+);
+
+router.post(
+    "/admin/arsp/centre/:id/activate",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.activate
+);
+
+router.post(
+    "/admin/arsp/centre/:id/suspend",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.suspend
+);
+
+// ======================================
+// RTSE CENTRE PORTAL ACCOUNT MANAGEMENT
+// ======================================
+router.post(
+    "/admin/arsp/centre/:id/account/create",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.createAccount
+);
+
+router.post(
+    "/admin/arsp/centre/:id/account/reset-password",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.resetAccountPassword
+);
+
+// ======================================
+// Centre Portal Credential Slip
+// ======================================
+router.get(
+    "/admin/arsp/centre/:id/credential-slip",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.credentialSlip
+);
+
+router.post(
+    "/admin/arsp/centre/:id/credential-slip/close",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.closeCredentialSlip
+);
+
+
+router.post(
+    "/admin/arsp/centre/:id/account/activate",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.activateAccount
+);
+
+router.post(
+    "/admin/arsp/centre/:id/account/deactivate",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.deactivateAccount
+);
+
+router.post(
+    "/admin/arsp/centre/:id/account/suspend",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.suspendAccount
+);
 
 
 // ======================================

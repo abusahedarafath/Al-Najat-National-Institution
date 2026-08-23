@@ -44,8 +44,17 @@ class RtseCertificateService {
 
         }
 
+        const applicationYear =
+            Number(student.application_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "RTSE application year is missing for this result."
+            );
+        }
+
         const year =
-            String(new Date().getFullYear()).slice(-2);
+            String(applicationYear).slice(-2);
 
         const serial =
             String(applicationId).padStart(6,"0");

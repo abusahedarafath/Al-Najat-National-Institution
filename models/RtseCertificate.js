@@ -127,26 +127,39 @@ static async exists(applicationId){
     // Get All Certificates
     // =====================================
 
-    static async getAll(){
+    static async getAll(applicationYear = null){
 
-        const [rows]=await db.query(
+    let sql = `
+        SELECT
+            c.*,
+            a.registration_no,
+            a.roll_no,
+            a.full_name,
+            a.father_name,
+            a.school_name,
+            a.section,
+            a.photo
+        FROM rtse_certificates c
+        INNER JOIN rtse_applications a
+            ON a.id=c.application_id
+    `;
 
-            `SELECT *
+    const params = [];
 
-             FROM rtse_certificates
-
-             ORDER BY id DESC`
-
-        );
-
-        return rows;
-
+    if(applicationYear){
+        sql += " WHERE a.application_year=?";
+        params.push(applicationYear);
     }
 
+    sql += " ORDER BY c.id DESC";
 
+    const [rows]=await db.query(
+        sql,
+        params
+    );
 
-
-
+    return rows;
+}
 
 
 // =====================================
@@ -207,55 +220,52 @@ static async getByCertificateNumber(certificateNo){
 // Search Certificate
 // =====================================
 
-static async search(keyword){
+static async search(keyword, applicationYear = null){
 
-    const [rows] = await db.query(
-
-        `SELECT
-
+    let sql = `
+        SELECT
             c.*,
-
             a.registration_no,
             a.roll_no,
             a.full_name,
             a.photo
-
-         FROM rtse_certificates c
-
-         INNER JOIN rtse_applications a
-
+        FROM rtse_certificates c
+        INNER JOIN rtse_applications a
             ON a.id=c.application_id
+        WHERE
+            (
+                a.registration_no=?
+                OR
+                a.roll_no=?
+            )
+    `;
 
-         WHERE
+    const params = [
+        keyword,
+        keyword
+    ];
 
-            a.registration_no=?
+    if(applicationYear){
+        sql += " AND a.application_year=?";
+        params.push(applicationYear);
+    }
 
-         OR
+    sql += " ORDER BY c.id DESC LIMIT 1";
 
-            a.roll_no=?`,
-
-        [
-
-            keyword,
-
-            keyword
-
-        ]
-
+    const [rows] = await db.query(
+        sql,
+        params
     );
 
     return rows[0];
-
 }
-
-
 
 
 // =====================================
 // Students Without Certificate
 // =====================================
 
-static async getPendingStudents(section = null){
+static async getPendingStudents(section = null, applicationYear = null){
 
     let sql = `
 
@@ -275,7 +285,9 @@ static async getPendingStudents(section = null){
 
         WHERE
 
-            r.id IS NOT NULL
+              a.application_year=?
+
+            AND r.id IS NOT NULL
 
         AND
 
@@ -283,7 +295,7 @@ static async getPendingStudents(section = null){
 
     `;
 
-    const params = [];
+    const params = [applicationYear];
 
     if(section){
 
@@ -309,7 +321,7 @@ static async getPendingStudents(section = null){
 // Get Certificates by Section
 // =====================================
 
-static async getBySection(section){
+static async getBySection(section, applicationYear){
 
     const [rows] = await db.query(
 
@@ -345,6 +357,8 @@ static async getBySection(section){
 
             a.section=?
 
+          AND a.application_year=?
+
         ORDER BY
 
             a.roll_no ASC`,
@@ -353,7 +367,9 @@ static async getBySection(section){
 
             section
 
-        ]
+        ,
+              applicationYear
+          ]
 
     );
 

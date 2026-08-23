@@ -803,67 +803,39 @@ static async getSectionCounts(){
 // Generate Roll Numbers
 // =====================================
 
-static async generateRollNumbers(section){
+static async generateRollNumbers(section, applicationYear){
 
-    const year =
-        new Date().getFullYear().toString().slice(-2);
+    const year = String(
+        applicationYear || new Date().getFullYear()
+    ).slice(-2);
 
     let start = 1000;
 
     switch(section){
-
-        case "A":
-            start = 1000;
-            break;
-
-        case "B":
-            start = 2000;
-            break;
-
-        case "C":
-            start = 3000;
-            break;
-
-        case "D":
-            start = 4000;
-            break;
-
-        case "E":
-            start = 5000;
-            break;
-
+        case "A": start = 1000; break;
+        case "B": start = 2000; break;
+        case "C": start = 3000; break;
+        case "D": start = 4000; break;
+        case "E": start = 5000; break;
     }
 
     const [students] = await db.query(
-
-        `SELECT *
-
-         FROM rtse_applications
-
-         WHERE
-
-            archive=0
-
-         AND
-
-            status='Approved'
-
-         AND
-
-            section=?
-
-         ORDER BY
-
+        `
+        SELECT *
+        FROM rtse_applications
+        WHERE
+            archive = 0
+            AND status = 'Approved'
+            AND application_year = ?
+            AND section = ?
+        ORDER BY
             full_name ASC,
-
-            registration_no ASC`,
-
+            registration_no ASC
+        `,
         [
-
+            applicationYear,
             section
-
         ]
-
     );
 
     let roll = start;
@@ -872,39 +844,29 @@ static async generateRollNumbers(section){
 
         roll++;
 
-        const rollNo =
-
-            `RTSE${year}-${roll}`;
+        const rollNo = `RTSE${year}-${roll}`;
 
         await db.query(
-
-            `UPDATE rtse_applications
-
-             SET
-
-                roll_no=?,
-                roll_number=?
-
-             WHERE id=?`,
-
+            `
+            UPDATE rtse_applications
+            SET
+                roll_no = ?,
+                roll_number = ?
+            WHERE
+                id = ?
+                AND application_year = ?
+            `,
             [
-
                 rollNo,
-
                 roll,
-                student.id
-
+                student.id,
+                applicationYear
             ]
-
         );
-
     }
 
     return students.length;
-
 }
-
-
 
 // =====================================
 // Check Roll Generated
@@ -983,47 +945,48 @@ static async getSectionStudents(section){
 // Get Approved Students - Section Wise
 // =====================================
 
-static async getApprovedSectionStudents(section){
+static async getApprovedSectionStudents(section, applicationYear){
+
+    const normalizedSection =
+        String(section || "").trim().toUpperCase();
+
+    const normalizedYear =
+        Number(applicationYear);
+
+    if(!["A","B","C","D","E"].includes(normalizedSection)){
+        throw new Error("Invalid RTSE section.");
+    }
+
+    if(!normalizedYear){
+        throw new Error("Invalid RTSE application year.");
+    }
 
     const [rows] = await db.query(
-
         `SELECT *
-
          FROM rtse_applications
-
          WHERE
-
             archive=0
-
          AND
-
             status='Approved'
-
          AND
-
+            application_year=?
+         AND
             section=?
-
          ORDER BY
-
             CASE
                 WHEN roll_number IS NULL THEN 1
                 ELSE 0
             END,
 
             roll_number ASC,
-
             full_name ASC`,
-
         [
-
-            section
-
+            normalizedYear,
+            normalizedSection
         ]
-
     );
 
     return rows;
-
 }
 
 
@@ -1031,82 +994,54 @@ static async getApprovedSectionStudents(section){
 // Generate Admit Cards
 // =====================================
 
-static async generateAdmitCards(section){
+static async generateAdmitCards(section, applicationYear){
 
     await db.query(
-
-        `UPDATE rtse_applications
-
-         SET
-
-            admit_generated=1
-
-         WHERE
-
-            archive=0
-
-         AND
-
-            status='Approved'
-
-         AND
-
-            section=?
-
-         AND
-
-            roll_no IS NOT NULL`,
-
+        `
+        UPDATE rtse_applications
+        SET
+            admit_generated = 1
+        WHERE
+            archive = 0
+            AND status = 'Approved'
+            AND application_year = ?
+            AND section = ?
+            AND roll_no IS NOT NULL
+        `,
         [
-
+            applicationYear,
             section
-
         ]
-
     );
-
 }
-
-
 
 // =====================================
 // Get Admit Card Students
 // =====================================
 
-static async getAdmitCardStudents(section){
+static async getAdmitCardStudents(section, applicationYear){
 
     const [rows] = await db.query(
-
-        `SELECT *
-
-         FROM rtse_applications
-
-       WHERE
-    archive=0
-AND
-    status='Approved'
-AND
-    roll_no IS NOT NULL
-AND
-    section=?
-
-         ORDER BY
-
-            roll_no ASC`,
-
+        `
+        SELECT *
+        FROM rtse_applications
+        WHERE
+            archive = 0
+            AND status = 'Approved'
+            AND application_year = ?
+            AND roll_no IS NOT NULL
+            AND section = ?
+        ORDER BY
+            roll_no ASC
+        `,
         [
-
+            applicationYear,
             section
-
         ]
-
     );
 
     return rows;
-
 }
-
-
 
 // =====================================
 // Search Applications
@@ -1115,9 +1050,28 @@ AND
 // =====================================
 // Search Approved Students - Section Wise
 // =====================================
-static async searchApprovedSectionStudents(section, keyword = "") {
+static async searchApprovedSectionStudents(
+    section,
+    applicationYear,
+    keyword = ""
+){
 
-    const search = `%${String(keyword || "").trim()}%`;
+    const normalizedSection =
+        String(section || "").trim().toUpperCase();
+
+    const normalizedYear =
+        Number(applicationYear);
+
+    if(!["A","B","C","D","E"].includes(normalizedSection)){
+        throw new Error("Invalid RTSE section.");
+    }
+
+    if(!normalizedYear){
+        throw new Error("Invalid RTSE application year.");
+    }
+
+    const search =
+        `%${String(keyword || "").trim()}%`;
 
     const [rows] = await db.query(
         `SELECT *
@@ -1125,6 +1079,7 @@ static async searchApprovedSectionStudents(section, keyword = "") {
          WHERE
             archive=0
             AND status='Approved'
+            AND application_year=?
             AND section=?
             AND (
                 ? = '%%'
@@ -1145,7 +1100,8 @@ static async searchApprovedSectionStudents(section, keyword = "") {
             roll_no ASC,
             registration_no ASC`,
         [
-            section,
+            normalizedYear,
+            normalizedSection,
             search,
             search,
             search,
@@ -1224,13 +1180,20 @@ static async search(keyword){
 // Section Wise
 // =====================================
 
-static async resetRollNumbers(section){
+static async resetRollNumbers(section, applicationYear){
 
     const normalizedSection =
         String(section || "").trim().toUpperCase();
 
+    const normalizedYear =
+        Number(applicationYear);
+
     if(!["A","B","C","D","E"].includes(normalizedSection)){
         throw new Error("Invalid RTSE section.");
+    }
+
+    if(!normalizedYear){
+        throw new Error("Invalid RTSE application year.");
     }
 
     const connection =
@@ -1241,9 +1204,8 @@ static async resetRollNumbers(section){
         await connection.beginTransaction();
 
         // -------------------------------------------------
-        // SAFETY LOCK:
-        // If attendance has already recorded PRESENT for
-        // any student in this section, the reset is blocked.
+        // SAFETY LOCK
+        // Only PRESENT attendance blocks reset.
         // -------------------------------------------------
 
         const [attendanceRows] =
@@ -1257,10 +1219,14 @@ static async resetRollNumbers(section){
                 WHERE
                     a.archive = 0
                     AND a.status = 'Approved'
+                    AND a.application_year = ?
                     AND a.section = ?
                     AND ea.attendance_status = 'PRESENT'
                 `,
-                [normalizedSection]
+                [
+                    normalizedYear,
+                    normalizedSection
+                ]
             );
 
         const attendanceCount =
@@ -1268,25 +1234,13 @@ static async resetRollNumbers(section){
                 attendanceRows[0]?.attendance_count || 0
             );
 
-        // -------------------------------------------------
-        // SAFETY LOCK:
-        // Only PRESENT attendance blocks a roll-number reset.
-        //
-        // ABSENT attendance rows are intentionally ignored.
-        // A student who was scanned by mistake and subsequently
-        // reset to ABSENT is no longer considered an active
-        // examination attendee.
-        //
-        // Existing QR/attendance rows are never deleted here.
-        // -------------------------------------------------
-
         if(attendanceCount > 0){
 
             await connection.rollback();
 
             const error =
                 new Error(
-                    "Cannot reset Roll No. because attendance records already exist for one or more students in this section."
+                    "Cannot reset Roll No. because attendance records already exist for one or more students in this section and year."
                 );
 
             error.code =
@@ -1297,16 +1251,8 @@ static async resetRollNumbers(section){
 
         // -------------------------------------------------
         // IMPORTANT:
-        // Attendance / QR records are intentionally NOT
-        // deleted here.
-        // -------------------------------------------------
-
-        // -------------------------------------------------
-        // Completely reset generated examination identity
-        // for the selected section.
-        //
-        // Student application information and uploaded files
-        // are NOT touched.
+        // Attendance / QR records are NOT deleted.
+        // Uploaded student files are NOT touched.
         // -------------------------------------------------
 
         const [result] =
@@ -1320,15 +1266,20 @@ static async resetRollNumbers(section){
                 WHERE
                     archive = 0
                     AND status = 'Approved'
+                    AND application_year = ?
                     AND section = ?
                 `,
-                [normalizedSection]
+                [
+                    normalizedYear,
+                    normalizedSection
+                ]
             );
 
         await connection.commit();
 
         return {
             section: normalizedSection,
+            applicationYear: normalizedYear,
             affectedRows: result.affectedRows
         };
 
@@ -1351,13 +1302,6 @@ static async resetRollNumbers(section){
 
     }
 }
-
-
-
-// =====================================
-// Section Statistics
-// =====================================
-
 static async getSectionStatistics(){
 
     const [rows]=await db.query(
@@ -1397,51 +1341,74 @@ static async getSectionStatistics(){
 // =====================================
 // Update Application
 // =====================================
-static async update(id, data) {
-    // Recalculate section automatically from the updated class.
-    // Student-uploaded photo and identity_document are intentionally
-    // NOT included here and therefore cannot be changed by this edit.
-    const section = this.getSection(data.class);
+    static async update(id, data) {
+        // Recalculate section automatically from the updated class.
+        // Student-uploaded photo and identity_document are intentionally
+        // NOT included here and therefore cannot be changed by this edit.
+        const section = this.getSection(data.class);
+        const schoolId = Number(data.school_id);
 
-    await db.query(
-        `UPDATE rtse_applications
-         SET
-            full_name=?,
-            father_name=?,
-            mother_name=?,
-            gender=?,
-            dob=?,
-            mobile=?,
-            email=?,
-            school_name=?,
-            district=?,
-            state=?,
-            pincode=?,
-            class=?,
-            section=?,
-            address=?,
-            status=?
-         WHERE id=?`,
-        [
-            data.full_name,
-            data.father_name,
-            data.mother_name,
-            data.gender,
-            data.dob,
-            data.mobile,
-            data.email,
-            data.school_name,
-            data.district,
-            data.state,
-            data.pincode,
-            data.class,
-            section,
-            data.address,
-            data.status,
-            id
-        ]
-    );
-}
+        if (!Number.isInteger(schoolId) || schoolId <= 0) {
+            throw new Error("Invalid registered school selected.");
+        }
+
+        const [schoolRows] = await db.query(
+            `SELECT id, school_name
+             FROM arsp_schools
+             WHERE id=?
+               AND status="Approved"
+             LIMIT 1`,
+            [schoolId]
+        );
+
+        if (!schoolRows.length) {
+            throw new Error("Selected registered school is not approved or does not exist.");
+        }
+
+        const school = schoolRows[0];
+
+        await db.query(
+            `UPDATE rtse_applications
+             SET
+                full_name=?,
+                father_name=?,
+                mother_name=?,
+                gender=?,
+                dob=?,
+                mobile=?,
+                email=?,
+                school_id=?,
+                school_name=?,
+                district=?,
+                state=?,
+                pincode=?,
+                class=?,
+                section=?,
+                address=?,
+                status=?
+             WHERE id=?`,
+            [
+                data.full_name,
+                data.father_name,
+                data.mother_name,
+                data.gender,
+                data.dob,
+                data.mobile,
+                data.email,
+                school.id,
+                school.school_name,
+                data.district,
+                data.state,
+                data.pincode,
+                data.class,
+                section,
+                data.address,
+                data.status,
+                id
+            ]
+        );
+    }
+
 
 
 

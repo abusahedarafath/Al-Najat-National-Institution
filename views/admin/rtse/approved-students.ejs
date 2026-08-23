@@ -246,7 +246,7 @@
                                     <td>
 
                                         <strong>
-                                            <%= student.roll_number || "-" %>
+                                            <%= student.roll_number || (student.roll_no ? student.roll_no.split("-").pop() : "-") %>
                                         </strong>
 
                                     </td>
@@ -437,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <td>
                             <strong>
                                 ${escapeHtml(
-                                    student.roll_number || "-"
+                                    student.roll_number || (student.roll_no ? String(student.roll_no).split("-").pop() : "-")
                                 )}
                             </strong>
                         </td>

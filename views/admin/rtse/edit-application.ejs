@@ -86,12 +86,22 @@
                         </div>
 
                         <div class="form-group">
-                            <label>School Name</label>
-                            <input
-                                type="text"
-                                name="school_name"
-                                value="<%= application.school_name %>">
-                        </div>
+                              <label>Registered School</label>
+                              <select name="school_id" required>
+                                  <option value="">Select Registered School</option>
+
+                                  <% (schools || []).forEach(school => { %>
+                                      <option
+                                          value="<%= school.id %>"
+                                          <%= Number(application.school_id) === Number(school.id) ? "selected" : "" %>>
+                                          <%= school.school_name %>
+                                          <% if (school.school_code) { %>
+                                              — <%= school.school_code %>
+                                          <% } %>
+                                      </option>
+                                  <% }) %>
+                              </select>
+                          </div>
 
                         <div class="form-group">
                             <label>District</label>

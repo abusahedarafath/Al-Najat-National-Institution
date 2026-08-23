@@ -408,6 +408,11 @@ router.get(
 // Examination Settings
 // =====================================
 
+// =====================================
+// RTSE Examination Control Centre
+// =====================================
+
+// Examination List
 router.get(
 
     "/rtse/exam-settings",
@@ -418,13 +423,99 @@ router.get(
 
 );
 
-router.post(
 
-    "/rtse/exam-settings",
+// Create Examination Page
+router.get(
+
+    "/rtse/exam-settings/new",
 
     auth.isAdmin,
 
-    adminRtseController.saveExamSettings
+    adminRtseController.newExamSettingPage
+
+);
+
+
+// Create Examination
+router.post(
+
+    "/rtse/exam-settings/new",
+
+    auth.isAdmin,
+
+    adminRtseController.createExamSetting
+
+);
+
+
+// View Examination
+router.get(
+
+    "/rtse/exam-settings/:id",
+
+    auth.isAdmin,
+
+    adminRtseController.viewExamSetting
+
+);
+
+
+// Edit Examination
+router.get(
+
+    "/rtse/exam-settings/:id/edit",
+
+    auth.isAdmin,
+
+    adminRtseController.editExamSettingPage
+
+);
+
+
+// Update Examination
+router.post(
+
+    "/rtse/exam-settings/:id/edit",
+
+    auth.isAdmin,
+
+    adminRtseController.updateExamSetting
+
+);
+
+
+// Activate Examination
+router.post(
+
+    "/rtse/exam-settings/:id/activate",
+
+    auth.isAdmin,
+
+    adminRtseController.activateExamSetting
+
+);
+
+
+// Deactivate Examination
+router.post(
+
+    "/rtse/exam-settings/:id/deactivate",
+
+    auth.isAdmin,
+
+    adminRtseController.deactivateExamSetting
+
+);
+
+
+// Delete Examination
+router.post(
+
+    "/rtse/exam-settings/:id/delete",
+
+    auth.isAdmin,
+
+    adminRtseController.deleteExamSetting
 
 );
 

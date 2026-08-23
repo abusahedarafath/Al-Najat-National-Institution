@@ -1,5 +1,6 @@
 const ArspSetting = require("../models/ArspSetting");
 const ArspSchool = require("../models/ArspSchool");
+const RtseCentre = require("../models/RtseCentre");
 
 // =====================================
 // Public School Registration Page
@@ -8,6 +9,7 @@ const ArspSchool = require("../models/ArspSchool");
 exports.registerPage = async (req, res) => {
     try {
         const setting = await ArspSetting.get();
+        const centres = await RtseCentre.getApproved();
 
         const old =
             req.session.arspSchoolRegistrationReview?.data || {};
@@ -15,7 +17,8 @@ exports.registerPage = async (req, res) => {
         return res.render("arsp/school-register", {
             title: "School Registration | Active Rural Social Progress",
             setting,
-            old
+            old,
+            centres
         });
 
     } catch (err) {
@@ -23,11 +26,13 @@ exports.registerPage = async (req, res) => {
 
         try {
             const setting = await ArspSetting.get();
+            const centres = await RtseCentre.getApproved();
 
             return res.render("arsp/school-register", {
                 title: "School Registration | Active Rural Social Progress",
                 setting,
                 old: {},
+                centres,
                 error: err.message
             });
 
@@ -65,7 +70,8 @@ exports.review = async (req, res) => {
 
             district: req.body.district || "",
             state: req.body.state || "Assam",
-            pincode: req.body.pincode || ""
+            pincode: req.body.pincode || "",
+            centre_id: Number(req.body.centre_id) || 0
         };
 
         // Basic server-side validation
@@ -79,30 +85,43 @@ exports.review = async (req, res) => {
             return res.redirect("/arsp/school/register");
         }
 
+        if (!Number.isInteger(data.centre_id) || data.centre_id <= 0) {
+            req.flash(
+                "error",
+                "Please select an RTSE examination centre."
+            );
+            return res.redirect("/arsp/school/register");
+        }
+
+        const centre = await RtseCentre.getById(data.centre_id);
+
+        if (!centre || centre.status !== "Approved") {
+            req.flash(
+                "error",
+                "The selected RTSE examination centre is not available."
+            );
+            return res.redirect("/arsp/school/register");
+        }
+
         req.session.arspSchoolRegistrationReview = {
             data
         };
 
-        req.session.save((sessionError) => {
-            if (sessionError) {
-                console.error(
-                    "ARSP School Review Session Error:",
-                    sessionError
-                );
+        await new Promise((resolve, reject) => {
+            req.session.save((sessionError) => {
+                if (sessionError) {
+                    return reject(sessionError);
+                }
 
-                req.flash(
-                    "error",
-                    "Unable to prepare your school application for review."
-                );
-
-                return res.redirect("/arsp/school/register");
-            }
-
-            return res.render("arsp/school-register-review", {
-                title: "Review School Registration",
-                setting,
-                data
+                resolve();
             });
+        });
+
+        return res.render("arsp/school-register-review", {
+            title: "Review School Registration",
+            setting,
+            data,
+            centre
         });
 
     } catch (err) {
@@ -141,15 +160,51 @@ exports.confirm = async (req, res) => {
 
         const data = review.data;
 
-        // Create as Pending ONLY.
+        const centreId = Number(data.centre_id);
+
+        if (!Number.isInteger(centreId) || centreId <= 0) {
+            req.flash(
+                "error",
+                "No valid RTSE examination centre was selected."
+            );
+            return res.redirect("/arsp/school/register");
+        }
+
+        // Re-check the centre at final submission time.
+        const centre = await RtseCentre.getById(centreId);
+
+        if (!centre || centre.status !== "Approved") {
+            req.flash(
+                "error",
+                "The selected RTSE examination centre is no longer available."
+            );
+            return res.redirect("/arsp/school/register");
+        }
+
+        // Create the school as Pending.
+        // centre_id is deliberately NOT passed to ArspSchool.create()
+        // because the centre relationship belongs to the assignment table.
+        const schoolData = { ...data };
+        delete schoolData.centre_id;
+
         const result = await ArspSchool.create({
-            ...data,
+            ...schoolData,
             status: "Pending",
             created_by: null
         });
 
         const school =
             await ArspSchool.getById(result.id);
+
+        // Automatically send this school application to the
+        // centre selected during public registration.
+        await RtseCentre.assignSchool({
+            school_id: school.id,
+            centre_id: centre.id,
+            application_year: new Date().getFullYear(),
+            assigned_by: null,
+            remarks: "School selected this centre during registration."
+        });
 
         delete req.session.arspSchoolRegistrationReview;
 

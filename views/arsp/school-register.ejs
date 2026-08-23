@@ -407,7 +407,46 @@
             </div>
 
 
-            <div class="actions">
+            <div class="section-title">
+                                    RTSE Examination Centre
+                                    </div>
+
+                                    <div class="grid">
+                                        <div class="full">
+                                            <label>
+                                                Select RTSE Examination Centre
+                                                <span class="required">*</span>
+                                            </label>
+
+                                            <select name="centre_id" required>
+                                                <option value="">
+                                                    Select an approved RTSE examination centre
+                                                </option>
+
+                                                <% if (centres && centres.length) { %>
+                                                    <% centres.forEach(centre => { %>
+                                                        <option
+                                                            value="<%= centre.id %>"
+                                                            <%= String(old.centre_id || "") === String(centre.id) ? "selected" : "" %>
+                                                        >
+                                                            <%= centre.centre_code %> — <%= centre.centre_name %>
+                                                            <% if (centre.district) { %>
+                                                                — <%= centre.district %>
+                                                            <% } %>
+                                                        </option>
+                                                    <% }) %>
+                                                <% } %>
+                                            </select>
+
+                                            <% if (!centres || !centres.length) { %>
+                                                <div style="margin-top:7px;color:#b45309;font-size:13px;">
+                                                    No approved RTSE examination centre is currently available.
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <div class="actions">
                 <button type="submit">
                     Review Application
                 </button>

@@ -117,7 +117,8 @@ class RtseResult {
                 a.full_name,
                 a.school_name,
                 a.section,
-                a.class
+                a.class,
+                a.application_year
 
              FROM rtse_results r
 
@@ -186,7 +187,8 @@ class RtseResult {
 static async getDashboardResults(
     search = "",
     section = "",
-    resultFilter = ""
+    resultFilter = "",
+    applicationYear = null
 ){
 
     search = String(search || "").trim();
@@ -227,9 +229,10 @@ static async getDashboardResults(
             a.archive = 0
             AND a.status = 'Approved'
             AND a.admit_generated = 1
+              AND a.application_year = ?
     `;
 
-    const params = [];
+    const params = [applicationYear];
 
     if (search) {
 
@@ -299,7 +302,7 @@ static async getDashboardResults(
 // Generate Section-wise Rank
 // =====================================
 
-static async generateSectionRanks(section){
+static async generateSectionRanks(section, applicationYear){
 
     const [students] = await db.query(
 
@@ -317,6 +320,7 @@ static async generateSectionRanks(section){
         WHERE
 
             a.section=?
+          AND a.application_year=?
 
         AND r.id IS NOT NULL
 
@@ -327,10 +331,9 @@ static async generateSectionRanks(section){
             a.full_name ASC`,
 
         [
-
-            section
-
-        ]
+              section,
+              applicationYear
+          ]
 
     );
 
@@ -368,7 +371,7 @@ static async generateSectionRanks(section){
 // Generate Overall Rank
 // =====================================
 
-static async generateOverallRank(){
+static async generateOverallRank(applicationYear){
 
     const [students] = await db.query(
 
@@ -383,7 +386,8 @@ static async generateOverallRank(){
 
             ON a.id=r.application_id
 
-        WHERE r.id IS NOT NULL
+        WHERE a.application_year=?
+          AND r.id IS NOT NULL
 
         ORDER BY
 
@@ -391,7 +395,9 @@ static async generateOverallRank(){
 
             a.full_name ASC`
 
-    );
+    ,
+          [applicationYear]
+      );
 
     let rank=1;
 
@@ -425,7 +431,7 @@ static async generateOverallRank(){
 // Overall Merit List
 // =====================================
 
-static async getOverallMeritList(){
+static async getOverallMeritList(applicationYear){
 
     const [rows] = await db.query(
 
@@ -447,13 +453,16 @@ static async getOverallMeritList(){
 
             ON a.id=r.application_id
 
-        WHERE r.id IS NOT NULL
+        WHERE a.application_year=?
+          AND r.id IS NOT NULL
 
         ORDER BY
 
             r.overall_rank ASC`
 
-    );
+    ,
+          [applicationYear]
+      );
 
     return rows;
 
@@ -465,7 +474,7 @@ static async getOverallMeritList(){
 // Section Merit List
 // =====================================
 
-static async getSectionMeritList(section){
+static async getSectionMeritList(section, applicationYear){
 
     const [rows] = await db.query(
 
@@ -490,6 +499,7 @@ static async getSectionMeritList(section){
         WHERE
 
             a.section=?
+          AND a.application_year=?
 
         AND r.id IS NOT NULL
 
@@ -498,10 +508,9 @@ static async getSectionMeritList(section){
             r.section_rank ASC`,
 
         [
-
-            section
-
-        ]
+              section,
+              applicationYear
+          ]
 
     );
 

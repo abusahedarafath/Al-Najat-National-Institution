@@ -1,6 +1,7 @@
 const RtseApplication =
 require("../models/RtseApplication");
 
+const ArspSchool = require("../models/ArspSchool");
 const RtseSetting =
 require("../models/RtseSetting");
 
@@ -27,6 +28,7 @@ const RtseExcel = require("../utils/rtseExcel");
 const QRCode = require("qrcode");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 
+const RtseExamSetting = require("../models/RtseExamSetting");
 // =====================================
 // RTSE Dashboard
 // =====================================
@@ -72,9 +74,9 @@ console.log("setting:", setting);
                 approved: stats.approved || 0,
 
                 rejected: stats.rejected || 0,
-              
+
                 admitGenerated,
-                
+
                 sectionStats,
 
                 setting
@@ -470,7 +472,9 @@ exports.editApplicationPage = async (req, res) => {
 
         }
 
-        res.render(
+        const schools = await ArspSchool.getAll("", "Approved");
+
+res.render(
 
             "admin/rtse/edit-application",
 
@@ -478,7 +482,8 @@ exports.editApplicationPage = async (req, res) => {
 
                 title: "Edit Application",
 
-                application
+                application,
+                schools
 
             }
 
@@ -748,14 +753,27 @@ exports.resetRollNumbers = async (req, res) => {
             return res.redirect("/admin/rtse");
         }
 
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
         const result =
             await RtseApplication.resetRollNumbers(
-                section
+                section,
+                applicationYear
             );
 
         req.flash(
             "success",
-            `Section ${section} has been reset successfully. Roll numbers and generated admit-card status were reset. Existing attendance records were not modified.`
+            `Section ${section} (${applicationYear}) has been reset successfully. Roll numbers and generated admit-card status were reset. Existing attendance records were not modified.`
         );
 
         console.log(
@@ -809,19 +827,31 @@ exports.generateRollNumbers = async (req, res) => {
 
     try {
 
-        const section = req.params.section;
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
 
         const totalGenerated =
             await RtseApplication.generateRollNumbers(
-                section
+                section,
+                applicationYear
             );
 
         req.flash(
-
             "success",
-
-            `${totalGenerated} Roll Numbers generated successfully for Section ${section}.`
-
+            `${totalGenerated} Roll Numbers generated successfully for Section ${section} (${applicationYear}).`
         );
 
         return res.redirect("/admin/rtse");
@@ -831,37 +861,51 @@ exports.generateRollNumbers = async (req, res) => {
         console.error(err);
 
         req.flash(
-
             "error",
-
             "Failed to generate Roll Numbers."
-
         );
 
         return res.redirect("/admin/rtse");
-
     }
-
 };
-
-
 // =====================================
 // Generate Admit Cards
 // =====================================
 
 exports.generateAdmitCards = async (req, res) => {
 
-    console.log(">>> Generate Admit Cards POST received for section:", req.params.section);
+    console.log(
+        ">>> Generate Admit Cards POST received for section:",
+        req.params.section
+    );
 
     try {
 
-        await RtseApplication.generateAdmitCards(req.params.section);
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
 
-        // Create secure attendance/QR records for generated admits.
-        // This does not modify student-uploaded files.
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseApplication.generateAdmitCards(
+            section,
+            applicationYear
+        );
+
         const qrCreated =
             await RtseExamAttendance.ensureForSection(
-                req.params.section
+                section,
+                applicationYear
             );
 
         console.log(
@@ -871,7 +915,7 @@ exports.generateAdmitCards = async (req, res) => {
 
         req.flash(
             "success",
-            "Admit Cards generated successfully."
+            `Admit Cards generated successfully for Section ${section} (${applicationYear}).`
         );
 
         return res.redirect("/admin/rtse");
@@ -886,9 +930,7 @@ exports.generateAdmitCards = async (req, res) => {
         );
 
         return res.redirect("/admin/rtse");
-
     }
-
 };
 // =====================================
 // Approved Students - Section Wise
@@ -912,9 +954,22 @@ exports.approvedStudents = async (req, res) => {
 
         }
 
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
         const students =
             await RtseApplication.getApprovedSectionStudents(
-                section
+                section,
+                applicationYear
             );
 
         res.render(
@@ -924,6 +979,8 @@ exports.approvedStudents = async (req, res) => {
                     `Approved Students - Section ${section}`,
 
                 section,
+
+                applicationYear,
 
                 students
             }
@@ -969,12 +1026,27 @@ exports.liveApprovedSectionSearch = async (req, res) => {
 
         }
 
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Active RTSE exam year is not configured."
+            });
+        }
+
         const search =
             String(req.query.search || "").trim();
 
         const students =
             await RtseApplication.searchApprovedSectionStudents(
                 section,
+                applicationYear,
                 search
             );
 
@@ -1155,41 +1227,46 @@ exports.admitGenerationPage = async (req, res) => {
 
     try {
 
-        const section = req.params.section;
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
 
         const students =
             await RtseApplication.getAdmitCardStudents(
-                section
+                section,
+                applicationYear
             );
 
-        if (!students.length) {
+        if(!students.length){
 
             req.flash(
-
                 "error",
-
-                "No students found for admit card generation."
-
+                `No students found for admit card generation in Section ${section} for ${applicationYear}.`
             );
 
             return res.redirect("/admin/rtse");
-
         }
 
         res.render(
-
             "admin/rtse/admit-generation",
-
             {
-
                 title: "Generate Admit Cards",
-
                 section,
-
+                applicationYear,
                 students
-
             }
-
         );
 
     } catch (err) {
@@ -1197,23 +1274,13 @@ exports.admitGenerationPage = async (req, res) => {
         console.error(err);
 
         req.flash(
-
             "error",
-
             "Unable to load admit card generator."
-
         );
 
         res.redirect("/admin/rtse");
-
     }
-
 };
-
-
-
-
-
 // =====================================
 // //View Admit Card
 // =====================================
@@ -1244,6 +1311,9 @@ exports.viewAdmitCard = async (req, res) => {
         const setting =
             await ArspSetting.get();
 
+        const examSetting =
+            await RtseExamSetting.get();
+
         // Guarantee an attendance QR record for a generated admit.
         let attendance = null;
 
@@ -1273,7 +1343,7 @@ exports.viewAdmitCard = async (req, res) => {
 
         res.render(
 
-            "admin/rtse/admit-card",
+            "rtse/student-admit-card",
 
             {
 
@@ -1287,7 +1357,10 @@ exports.viewAdmitCard = async (req, res) => {
 
                 qrData,
 
+                                examSetting,
                 examYear:
+                    examSetting?.exam_year ||
+                    setting?.exam_year ||
                     new Date().getFullYear()
 
             }
@@ -1477,97 +1550,470 @@ exports.hideAdmitCards = async (req, res) => {
 
 
 
-const RtseExamSetting =
-require("../models/RtseExamSetting");
 
 
 // =====================================
-// Examination Control Centre
+// RTSE Examination Control Centre
 // =====================================
+
+// -------------------------------------
+// Examination List
+// -------------------------------------
 
 exports.examSettingPage = async (req, res) => {
 
     try {
 
-        const setting =
-            await RtseExamSetting.get();
+        const examinations =
+            await RtseExamSetting.getAll();
 
         res.render(
-
             "admin/rtse/exam-settings",
-
             {
-
-                title:
-                    "RTSE Examination Settings",
-
-                setting
-
+                title: "RTSE Examination Control Centre",
+                examinations
             }
-
         );
 
-    }
-
-    catch(err){
+    } catch (err) {
 
         console.error(err);
 
         req.flash(
-
             "error",
-
-            "Unable to load examination settings."
-
+            "Unable to load examinations."
         );
 
         res.redirect("/admin/rtse");
-
     }
+};
+
+
+// -------------------------------------
+// New Examination Page
+// -------------------------------------
+
+exports.newExamSettingPage = async (req, res) => {
+
+    res.render(
+        "admin/rtse/exam-setting-form",
+        {
+            title: "Create RTSE Examination",
+            examination: null,
+            mode: "create"
+        }
+    );
 
 };
 
 
-// =====================================
-// Save Examination Settings
-// =====================================
+// -------------------------------------
+// Create Examination
+// -------------------------------------
 
-exports.saveExamSettings = async (req, res) => {
+exports.createExamSetting = async (req, res) => {
 
-    try{
+    try {
 
-        await RtseExamSetting.save(req.body);
+        const examYear =
+            Number(req.body.exam_year);
+
+        if (
+            !Number.isInteger(examYear) ||
+            examYear < 2000 ||
+            examYear > 2100
+        ) {
+
+            throw new Error(
+                "Please enter a valid examination year."
+            );
+
+        }
+
+        if (
+            !String(req.body.exam_name || "").trim()
+        ) {
+
+            throw new Error(
+                "Examination name is required."
+            );
+
+        }
+
+        const examination =
+            await RtseExamSetting.create({
+                ...req.body,
+                status: "INACTIVE"
+            });
 
         req.flash(
-
             "success",
-
-            "Examination settings updated successfully."
-
+            `Examination "${examination.exam_name}" (${examination.exam_year}) created successfully.`
         );
 
-        res.redirect("/admin/rtse/exam-settings");
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
 
-    }
-
-    catch(err){
+    } catch (err) {
 
         console.error(err);
 
         req.flash(
-
             "error",
-
-            "Unable to save examination settings."
-
+            err.message ||
+            "Unable to create examination."
         );
 
-        res.redirect("/admin/rtse/exam-settings");
-
+        res.redirect(
+            "/admin/rtse/exam-settings/new"
+        );
     }
 
 };
 
+
+// -------------------------------------
+// View Examination
+// -------------------------------------
+
+exports.viewExamSetting = async (req, res) => {
+
+    try {
+
+        const examination =
+            await RtseExamSetting.getById(
+                req.params.id
+            );
+
+        if (!examination) {
+
+            req.flash(
+                "error",
+                "Examination not found."
+            );
+
+            return res.redirect(
+                "/admin/rtse/exam-settings"
+            );
+        }
+
+        res.render(
+            "admin/rtse/exam-setting-view",
+            {
+                title: "RTSE Examination Details",
+                examination
+            }
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load examination."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+    }
+
+};
+
+
+// -------------------------------------
+// Edit Examination Page
+// -------------------------------------
+
+exports.editExamSettingPage = async (req, res) => {
+
+    try {
+
+        const examination =
+            await RtseExamSetting.getById(
+                req.params.id
+            );
+
+        if (!examination) {
+
+            req.flash(
+                "error",
+                "Examination not found."
+            );
+
+            return res.redirect(
+                "/admin/rtse/exam-settings"
+            );
+        }
+
+        res.render(
+            "admin/rtse/exam-setting-form",
+            {
+                title: "Edit RTSE Examination",
+                examination,
+                mode: "edit"
+            }
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load examination."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+    }
+
+};
+
+
+// -------------------------------------
+// Update Examination
+// -------------------------------------
+
+exports.updateExamSetting = async (req, res) => {
+
+    try {
+
+        const id =
+            Number(req.params.id);
+
+        const examination =
+            await RtseExamSetting.getById(id);
+
+        if (!examination) {
+
+            throw new Error(
+                "Examination not found."
+            );
+
+        }
+
+        const examYear =
+            Number(req.body.exam_year);
+
+        if (
+            !Number.isInteger(examYear) ||
+            examYear < 2000 ||
+            examYear > 2100
+        ) {
+
+            throw new Error(
+                "Please enter a valid examination year."
+            );
+
+        }
+
+        if (
+            !String(req.body.exam_name || "").trim()
+        ) {
+
+            throw new Error(
+                "Examination name is required."
+            );
+
+        }
+
+        await RtseExamSetting.update(
+            id,
+            req.body
+        );
+
+        req.flash(
+            "success",
+            "Examination updated successfully."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to update examination."
+        );
+
+        res.redirect(
+            `/admin/rtse/exam-settings/${req.params.id}/edit`
+        );
+    }
+
+};
+
+
+// -------------------------------------
+// Activate Examination
+// -------------------------------------
+
+exports.activateExamSetting = async (req, res) => {
+
+    try {
+
+        const id =
+            Number(req.params.id);
+
+        const examination =
+            await RtseExamSetting.getById(id);
+
+        if (!examination) {
+
+            throw new Error(
+                "Examination not found."
+            );
+
+        }
+
+        await RtseExamSetting.activate(id);
+
+        req.flash(
+            "success",
+            `${examination.exam_name} (${examination.exam_year}) is now the active RTSE examination.`
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to activate examination."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+    }
+
+};
+
+
+// -------------------------------------
+// Deactivate Examination
+// -------------------------------------
+
+exports.deactivateExamSetting = async (req, res) => {
+
+    try {
+
+        const id =
+            Number(req.params.id);
+
+        const examination =
+            await RtseExamSetting.getById(id);
+
+        if (!examination) {
+
+            throw new Error(
+                "Examination not found."
+            );
+
+        }
+
+        await RtseExamSetting.deactivate(id);
+
+        req.flash(
+            "success",
+            `${examination.exam_name} (${examination.exam_year}) has been deactivated.`
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to deactivate examination."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+    }
+
+};
+
+
+// -------------------------------------
+// Delete Examination
+// -------------------------------------
+
+exports.deleteExamSetting = async (req, res) => {
+
+    try {
+
+        const id =
+            Number(req.params.id);
+
+        const examination =
+            await RtseExamSetting.getById(id);
+
+        if (!examination) {
+
+            throw new Error(
+                "Examination not found."
+            );
+
+        }
+
+        if (
+            examination.status === "ACTIVE"
+        ) {
+
+            throw new Error(
+                "The active examination cannot be deleted. Deactivate it first."
+            );
+
+        }
+
+        await RtseExamSetting.delete(id);
+
+        req.flash(
+            "success",
+            "Examination deleted successfully."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to delete examination."
+        );
+
+        res.redirect(
+            "/admin/rtse/exam-settings"
+        );
+    }
+
+};
 
 // =====================================
 // Seat Plan Page
@@ -1616,102 +2062,108 @@ exports.generateSeatPlan = async (req, res) => {
 
     try {
 
+        const section =
+            String(req.body.section || "")
+                .trim()
+                .toUpperCase();
+
+        const roomCapacity =
+            parseInt(req.body.room_capacity, 10);
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if(!Number.isInteger(roomCapacity) || roomCapacity < 1){
+            throw new Error(
+                "Invalid room capacity."
+            );
+        }
+
         await RtseSeatPlan.generate(
-
-            req.body.section,
-
-            parseInt(req.body.room_capacity)
-
+            section,
+            roomCapacity,
+            applicationYear
         );
 
         req.flash(
-
             "success",
-
-            "Seat Plan generated successfully."
-
+            `Seat Plan generated successfully for Section ${section} (${applicationYear}).`
         );
 
         res.redirect("/admin/rtse/seat-plan");
 
-    }
-
-    catch(err){
+    } catch(err){
 
         console.error(err);
 
         req.flash(
-
             "error",
-
             "Unable to generate Seat Plan."
-
         );
 
         res.redirect("/admin/rtse/seat-plan");
-
     }
-
 };
-
-
-
-
 // =====================================
 // Room Wise Seat Plan
 // =====================================
 
-exports.roomWiseSeatPlan = async (req,res)=>{
+exports.roomWiseSeatPlan = async (req, res) => {
 
-    try{
+    try {
 
-        const rooms=
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
 
-        await RtseSeatPlan.getRoomWise(
+        const setting = await RtseSetting.get();
 
-            req.params.section
+        const applicationYear =
+            Number(setting?.exam_year);
 
-        );
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const rooms =
+            await RtseSeatPlan.getRoomWise(
+                section,
+                applicationYear
+            );
 
         res.render(
-
             "admin/rtse/room-seat-plan",
-
             {
-
-                title:"Room Wise Seat Plan",
-
-                section:req.params.section,
-
+                title: "Room Wise Seat Plan",
+                section,
+                applicationYear,
                 rooms
-
             }
-
         );
 
-    }
-
-    catch(err){
+    } catch(err){
 
         console.error(err);
 
         req.flash(
-
             "error",
-
             "Unable to load Seat Plan."
-
         );
 
         res.redirect("/admin/rtse");
-
     }
-
 };
-
-
-
-
 // =====================================
 // Invigilator Attendance Sheet
 // =====================================
@@ -1720,9 +2172,26 @@ exports.attendanceSheet = async (req, res) => {
 
     try {
 
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
         const rooms =
             await RtseSeatPlan.getRoomWise(
-                req.params.section
+                section,
+                applicationYear
             );
 
         const examSetting =
@@ -1737,6 +2206,7 @@ exports.attendanceSheet = async (req, res) => {
                 title: "Invigilator Attendance Sheet",
 
                 section: req.params.section,
+                applicationYear,
 
                 rooms,
 
@@ -1844,15 +2314,26 @@ exports.resultDashboard = async (req, res) => {
         const section =
             String(req.query.section || "").trim();
 
-        const students =
-            await RtseResult.getDashboardResults(
-                search,
-                section
-            );
 
         const setting =
             await RtseSetting.get();
 
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+const students =
+            await RtseResult.getDashboardResults(
+                search,
+                section,
+                "",
+                applicationYear
+            );
         const total =
             students.length;
 
@@ -2119,7 +2600,20 @@ exports.generateRankings = async (req, res) => {
 
     try {
 
-        const sections = [
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+const sections = [
 
             "A",
 
@@ -2136,14 +2630,15 @@ exports.generateRankings = async (req, res) => {
         for (const section of sections) {
 
             await RtseResult.generateSectionRanks(
-
-                section
-
+                section,
+                applicationYear
             );
 
         }
 
-        await RtseResult.generateOverallRank();
+        await RtseResult.generateOverallRank(
+            applicationYear
+        );
 
         req.flash(
 
@@ -2194,9 +2689,24 @@ exports.overallMeritList = async (req,res)=>{
 
     try{
 
-        const students=
 
-        await RtseResult.getOverallMeritList();
+          const setting =
+              await RtseSetting.get();
+
+          const applicationYear =
+              Number(setting?.exam_year);
+
+          if(!applicationYear){
+              throw new Error(
+                  "Active RTSE exam year is not configured."
+              );
+          }
+
+const students=
+
+        await RtseResult.getOverallMeritList(
+              applicationYear
+          );
 
         res.render(
 
@@ -2242,13 +2752,25 @@ exports.sectionMeritList = async (req,res)=>{
 
     try{
 
-        const students=
+
+          const setting =
+              await RtseSetting.get();
+
+          const applicationYear =
+              Number(setting?.exam_year);
+
+          if(!applicationYear){
+              throw new Error(
+                  "Active RTSE exam year is not configured."
+              );
+          }
+
+const students=
 
         await RtseResult.getSectionMeritList(
-
-            req.params.section
-
-        );
+              req.params.section,
+              applicationYear
+          );
 
         res.render(
 
@@ -2580,13 +3102,24 @@ exports.generateCertificates = async (req,res)=>{
 
     try{
 
-        const students =
+                const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+const students =
 
         await RtseCertificate.getPendingStudents(
-
-            req.params.section || null
-
-        );
+              req.params.section || null,
+              applicationYear
+          );
 
         let total = 0;
 
@@ -2644,13 +3177,24 @@ exports.sectionCertificates = async (req,res)=>{
 
     try{
 
-        const certificates=
+                const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+const certificates=
 
         await RtseCertificate.getBySection(
-
-            req.params.section
-
-        );
+              req.params.section,
+              applicationYear
+          );
 
         const setting=
 
@@ -2708,8 +3252,22 @@ exports.allCertificates = async (req,res)=>{
 
     try{
 
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
         const certificates =
-            await RtseCertificate.getAll();
+            await RtseCertificate.getAll(
+                applicationYear
+            );
 
         const setting =
             await RtseExamSetting.get();

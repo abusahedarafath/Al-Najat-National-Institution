@@ -531,6 +531,9 @@ exports.admitCard = async (req, res) => {
         const arspSetting =
             await ArspSetting.get();
 
+        const examSetting =
+            await RtseExamSetting.get();
+
         // Admit card must be generated for this student.
         if (
             Number(application.admit_generated) !== 1 ||
@@ -544,7 +547,11 @@ exports.admitCard = async (req, res) => {
                     student: application,
                     attendance: null,
                     qrData: null,
-                    examYear: new Date().getFullYear(),
+                    examSetting,
+                                              examYear:
+                                                  examSetting?.exam_year ||
+                                                  arspSetting?.exam_year ||
+                                                  new Date().getFullYear(),
                     error: "Your admit card has not been generated yet."
                 }
             );
@@ -564,7 +571,11 @@ exports.admitCard = async (req, res) => {
                     student: application,
                     attendance: null,
                     qrData: null,
-                    examYear: new Date().getFullYear(),
+                    examSetting,
+                                              examYear:
+                                                  examSetting?.exam_year ||
+                                                  arspSetting?.exam_year ||
+                                                  new Date().getFullYear(),
                     error: "Admit cards have not been published yet."
                 }
             );
@@ -606,7 +617,11 @@ exports.admitCard = async (req, res) => {
                 student: application,
                 attendance,
                 qrData,
-                examYear: new Date().getFullYear(),
+                examSetting,
+                                                    examYear:
+                                                        examSetting?.exam_year ||
+                                                        arspSetting?.exam_year ||
+                                                        new Date().getFullYear(),
                 error: null
             }
         );

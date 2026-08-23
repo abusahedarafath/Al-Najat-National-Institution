@@ -90,7 +90,21 @@ class RtseExamAttendance {
     // =====================================
     // Create QR records for generated admits
     // =====================================
-    static async ensureForSection(section) {
+    static async ensureForSection(section, applicationYear) {
+
+        const normalizedSection =
+            String(section || "").trim().toUpperCase();
+
+        const normalizedYear =
+            Number(applicationYear);
+
+        if(!["A","B","C","D","E"].includes(normalizedSection)){
+            throw new Error("Invalid RTSE section.");
+        }
+
+        if(!normalizedYear){
+            throw new Error("Invalid RTSE application year.");
+        }
 
         const [students] = await db.query(
             `
@@ -98,11 +112,15 @@ class RtseExamAttendance {
             FROM rtse_applications
             WHERE archive = 0
               AND status = 'Approved'
+              AND application_year = ?
               AND roll_no IS NOT NULL
               AND admit_generated = 1
               AND section = ?
             `,
-            [section]
+            [
+                normalizedYear,
+                normalizedSection
+            ]
         );
 
         let created = 0;
@@ -146,8 +164,6 @@ class RtseExamAttendance {
 
         return created;
     }
-
-
     // =====================================
     // Get attendance by application
     // =====================================
