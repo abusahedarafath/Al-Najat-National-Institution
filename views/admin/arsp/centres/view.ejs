@@ -1,0 +1,773 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+
+<style>
+    .centre-view-page {
+        padding:20px;
+        max-width:1200px;
+        margin:auto;
+    }
+
+    .page-header {
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:15px;
+        flex-wrap:wrap;
+        margin-bottom:20px;
+    }
+
+    .page-header h1 {
+        margin:0;
+        font-size:24px;
+    }
+
+    .page-header p {
+        margin:5px 0 0;
+        color:#64748b;
+        font-size:13px;
+    }
+
+    .actions {
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+    }
+
+    .btn {
+        display:inline-block;
+        padding:10px 14px;
+        border-radius:8px;
+        text-decoration:none;
+        border:0;
+        cursor:pointer;
+        font-size:13px;
+        font-weight:700;
+    }
+
+    .btn-primary {
+        background:#2563eb;
+        color:#fff;
+    }
+
+    .btn-secondary {
+        background:#e2e8f0;
+        color:#334155;
+    }
+
+    .btn-success {
+        background:#16a34a;
+        color:#fff;
+    }
+
+    .btn-danger {
+        background:#dc2626;
+        color:#fff;
+    }
+
+    .btn-warning {
+        background:#d97706;
+        color:#fff;
+    }
+
+    .grid {
+        display:grid;
+        grid-template-columns:2fr 1fr;
+        gap:18px;
+    }
+
+    .card {
+        background:#fff;
+        border:1px solid #e2e8f0;
+        border-radius:13px;
+        padding:20px;
+        margin-bottom:18px;
+    }
+
+    .card h2 {
+        margin:0 0 16px;
+        font-size:17px;
+    }
+
+    .info-grid {
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .info-item {
+        padding:12px 5px;
+        border-bottom:1px solid #f1f5f9;
+    }
+
+    .info-item label {
+        display:block;
+        color:#64748b;
+        font-size:11px;
+        margin-bottom:5px;
+        text-transform:uppercase;
+    }
+
+    .info-item strong {
+        font-size:14px;
+    }
+
+    .status {
+        display:inline-block;
+        padding:6px 10px;
+        border-radius:999px;
+        font-size:11px;
+        font-weight:700;
+    }
+
+    .status-Pending {
+        background:#fef3c7;
+        color:#92400e;
+    }
+
+    .status-Approved {
+        background:#dcfce7;
+        color:#166534;
+    }
+
+    .status-Rejected {
+        background:#fee2e2;
+        color:#991b1b;
+    }
+
+    .status-Inactive {
+        background:#e2e8f0;
+        color:#475569;
+    }
+
+    .status-Suspended {
+        background:#fce7f3;
+        color:#9d174d;
+    }
+
+    .stat-box {
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:10px;
+        padding:15px;
+        margin-bottom:10px;
+    }
+
+    .stat-box span {
+        display:block;
+        color:#64748b;
+        font-size:12px;
+    }
+
+    .stat-box strong {
+        display:block;
+        font-size:25px;
+        margin-top:5px;
+    }
+
+    .remarks {
+        color:#475569;
+        line-height:1.6;
+        white-space:pre-wrap;
+    }
+
+    .action-form {
+        margin:0 0 8px;
+    }
+
+    .full-width {
+        grid-column:1 / -1;
+    }
+
+    @media(max-width:800px) {
+        .grid {
+            grid-template-columns:1fr;
+        }
+
+        .info-grid {
+            grid-template-columns:1fr;
+        }
+
+        .centre-view-page {
+            padding:14px;
+        }
+    }
+</style>
+
+<div class="centre-view-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>
+                <%= centre.centre_name %>
+            </h1>
+
+            <p>
+                Centre Code:
+                <strong><%= centre.centre_code %></strong>
+            </p>
+        </div>
+
+        <div class="actions">
+
+            <a
+                href="/admin/arsp/centres"
+                class="btn btn-secondary"
+            >
+                ← Centre Registry
+            </a>
+
+            <a
+                href="/admin/arsp/centre/<%= centre.id %>/edit"
+                class="btn btn-primary"
+            >
+                Edit Centre
+            </a>
+
+
+        </div>
+
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+    <h2>Centre Portal Account</h2>
+
+    <% if (!centreAccount) { %>
+
+        <% if (centre.status === "Approved") { %>
+
+            <p style="color:#64748b;font-size:13px;line-height:1.6;">
+                No Centre Portal account has been created for this approved centre.
+            </p>
+
+            <form
+                method="POST"
+                action="/admin/arsp/centre/<%= centre.id %>/account/create"
+                onsubmit="return confirm('Create a Centre Portal account for this centre?');"
+            >
+                <button type="submit" class="btn btn-success">
+                    Create Centre Portal Account
+                </button>
+            </form>
+
+        <% } else { %>
+
+            <p style="color:#64748b;font-size:13px;line-height:1.6;">
+                Portal account creation is available only after the centre is approved.
+            </p>
+
+        <% } %>
+
+    <% } else { %>
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <label>Username</label>
+                <strong><%= centreAccount.username %></strong>
+            </div>
+
+            <div class="info-item">
+                <label>Account Status</label>
+                <strong><%= centreAccount.account_status %></strong>
+            </div>
+
+            <div class="info-item">
+                <label>Last Login</label>
+                <strong><%= centreAccount.last_login || "Never" %></strong>
+            </div>
+
+            <div class="info-item">
+                <label>Password State</label>
+                <strong>
+                    <%= Number(centreAccount.force_password_change) === 1
+                        ? "Temporary password — change required"
+                        : "Password changed" %>
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="actions" style="margin-top:16px;">
+
+            <form
+                method="POST"
+                action="/admin/arsp/centre/<%= centre.id %>/account/reset-password"
+                class="action-form"
+                onsubmit="return confirm('Reset this Centre Portal password? A new temporary password will be generated.');"
+            >
+                <button type="submit" class="btn btn-warning">
+                    Reset Password
+                </button>
+            </form>
+
+            <% if (centreAccount.account_status === "Active") { %>
+
+                <form
+                    method="POST"
+                    action="/admin/arsp/centre/<%= centre.id %>/account/deactivate"
+                    class="action-form"
+                    onsubmit="return confirm('Deactivate this Centre Portal account?');"
+                >
+                    <button type="submit" class="btn btn-secondary">
+                        Deactivate Account
+                    </button>
+                </form>
+
+                <form
+                    method="POST"
+                    action="/admin/arsp/centre/<%= centre.id %>/account/suspend"
+                    class="action-form"
+                    onsubmit="return confirm('Suspend this Centre Portal account?');"
+                >
+                    <button type="submit" class="btn btn-danger">
+                        Suspend Account
+                    </button>
+                </form>
+
+            <% } else { %>
+
+                <form
+                    method="POST"
+                    action="/admin/arsp/centre/<%= centre.id %>/account/activate"
+                    class="action-form"
+                    onsubmit="return confirm('Activate this Centre Portal account?');"
+                >
+                    <button type="submit" class="btn btn-success">
+                        Activate Account
+                    </button>
+                </form>
+
+            <% } %>
+
+        </div>
+
+    <% } %>
+</div>
+
+<div class="grid">
+
+        <div>
+
+            <div class="card">
+
+                <h2>Centre Information</h2>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Centre Code</label>
+                        <strong><%= centre.centre_code %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Centre Type</label>
+                        <strong><%= centre.centre_type %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Centre Name</label>
+                        <strong><%= centre.centre_name %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Capacity</label>
+                        <strong><%= centre.capacity || 0 %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Head / In-Charge</label>
+                        <strong><%= centre.head_name || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Mobile</label>
+                        <strong><%= centre.mobile || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Email</label>
+                        <strong><%= centre.email || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Status</label>
+
+                        <span class="status status-<%= centre.status %>">
+                            <%= centre.status %>
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Address</h2>
+
+                <div class="info-grid">
+
+                    <div class="info-item full-width">
+                        <label>Address</label>
+                        <strong><%= centre.address || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Village / Town</label>
+                        <strong><%= centre.village || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Post Office</label>
+                        <strong><%= centre.post_office || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>District</label>
+                        <strong><%= centre.district || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>State</label>
+                        <strong><%= centre.state || "—" %></strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>PIN Code</label>
+                        <strong><%= centre.pincode || "—" %></strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Administrative Information</h2>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Created At</label>
+                        <strong>
+                            <%= centre.created_at
+                                ? new Date(centre.created_at).toLocaleString()
+                                : "—" %>
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Updated At</label>
+                        <strong>
+                            <%= centre.updated_at
+                                ? new Date(centre.updated_at).toLocaleString()
+                                : "—" %>
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Approved At</label>
+                        <strong>
+                            <%= centre.approved_at
+                                ? new Date(centre.approved_at).toLocaleString()
+                                : "—" %>
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Approved By</label>
+                        <strong>
+                            <%= centre.approved_by || "—" %>
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Remarks</h2>
+
+                <div class="remarks">
+                    <%= centre.remarks || "No administrative remarks." %>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="card">
+    <h2>Schools Registered Under This Centre</h2>
+
+    <% if (!assignedSchools || assignedSchools.length === 0) { %>
+
+        <div style="padding:20px;text-align:center;color:#64748b;">
+            No schools are currently registered under this centre.
+        </div>
+
+    <% } else { %>
+
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+
+                <thead>
+                    <tr style="background:#f8fafc;">
+                        <th style="padding:10px;text-align:left;border-bottom:1px solid #e2e8f0;">
+                            School
+                        </th>
+
+                        <th style="padding:10px;text-align:left;border-bottom:1px solid #e2e8f0;">
+                            Code
+                        </th>
+
+                        <th style="padding:10px;text-align:left;border-bottom:1px solid #e2e8f0;">
+                            Year
+                        </th>
+
+                        <th style="padding:10px;text-align:left;border-bottom:1px solid #e2e8f0;">
+                            School Status
+                        </th>
+
+                        <th style="padding:10px;text-align:left;border-bottom:1px solid #e2e8f0;">
+                            Centre Assignment
+                        </th>
+
+                        <th style="padding:10px;text-align:left;border-bottom:1px solid #e2e8f0;">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <% assignedSchools.forEach(school => { %>
+
+                        <tr>
+
+                            <td style="padding:10px;border-bottom:1px solid #f1f5f9;">
+                                <strong>
+                                    <%= school.school_name %>
+                                </strong>
+
+                                <div style="font-size:11px;color:#64748b;margin-top:3px;">
+                                    <%= school.school_type || "—" %>
+                                </div>
+                            </td>
+
+                            <td style="padding:10px;border-bottom:1px solid #f1f5f9;">
+                                <%= school.school_code || "—" %>
+                            </td>
+
+                            <td style="padding:10px;border-bottom:1px solid #f1f5f9;">
+                                <%= school.application_year || "—" %>
+                            </td>
+
+                            <td style="padding:10px;border-bottom:1px solid #f1f5f9;">
+                                <span class="status status-<%= school.school_status %>">
+                                    <%= school.school_status || "Unknown" %>
+                                </span>
+                            </td>
+
+                            <td style="padding:10px;border-bottom:1px solid #f1f5f9;">
+                                <span class="status status-<%= school.assignment_status %>">
+                                    <%= school.assignment_status || "Pending" %>
+                                </span>
+                            </td>
+
+                            <td style="padding:10px;border-bottom:1px solid #f1f5f9;">
+
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+
+                                    <a
+                                        href="/admin/arsp/centre/<%= centre.id %>/school-assignment/<%= school.assignment_id %>/view"
+                                        style="display:inline-block;padding:7px 10px;border-radius:6px;background:#2563eb;color:white;text-decoration:none;"
+                                    >
+                                        View
+                                    </a>
+
+                                    <% if (school.assignment_status === "Pending") { %>
+
+                                        <form
+                                            method="POST"
+                                            action="/admin/arsp/centre/<%= centre.id %>/school-assignment/<%= school.assignment_id %>/approve"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Approve <%= school.school_name %> for this examination centre?');"
+                                        >
+                                            <button
+                                                type="submit"
+                                                style="padding:7px 10px;border:0;border-radius:6px;background:#16a34a;color:white;cursor:pointer;"
+                                            >
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                        <form
+                                            method="POST"
+                                            action="/admin/arsp/centre/<%= centre.id %>/school-assignment/<%= school.assignment_id %>/reject"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Reject <%= school.school_name %> for this examination centre?');"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="remarks"
+                                                value="School-centre assignment rejected by administrator."
+                                            >
+
+                                            <button
+                                                type="submit"
+                                                style="padding:7px 10px;border:0;border-radius:6px;background:#dc2626;color:white;cursor:pointer;"
+                                            >
+                                                Reject
+                                            </button>
+                                        </form>
+
+                                    <% } else if (school.assignment_status === "Approved" || school.assignment_status === "Active") { %>
+
+                                        <span
+                                            style="display:inline-block;padding:7px 10px;border-radius:6px;background:#ecfdf5;color:#166534;font-weight:600;"
+                                        >
+                                            Approved
+                                        </span>
+
+                                    <% } else if (school.assignment_status === "Rejected") { %>
+
+                                        <span
+                                            style="display:inline-block;padding:7px 10px;border-radius:6px;background:#fef2f2;color:#991b1b;font-weight:600;"
+                                        >
+                                            Rejected
+                                        </span>
+
+                                    <% } %>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                </tbody>
+
+            </table>
+        </div>
+
+    <% } %>
+</div>
+
+<div class="card">
+
+                <h2>Centre Statistics</h2>
+
+                <div class="stat-box">
+                    <span>Capacity</span>
+                    <strong><%= centre.capacity || 0 %></strong>
+                </div>
+
+                <div class="stat-box">
+                    <span>Assigned Schools</span>
+                    <strong><%= centre.school_count || 0 %></strong>
+                </div>
+
+                <div class="stat-box">
+                    <span>Registered Students</span>
+                    <strong><%= centre.student_count || 0 %></strong>
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Centre Status</h2>
+
+                <% if (centre.status !== "Approved") { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/centre/<%= centre.id %>/approve"
+                        class="action-form"
+                    >
+                        <button class="btn btn-success" type="submit">
+                            Approve Centre
+                        </button>
+                    </form>
+
+                <% } %>
+
+                <% if (centre.status !== "Rejected") { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/centre/<%= centre.id %>/reject"
+                        class="action-form"
+                    >
+                        <button class="btn btn-danger" type="submit">
+                            Reject Centre
+                        </button>
+                    </form>
+
+                <% } %>
+
+                <% if (centre.status !== "Inactive") { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/centre/<%= centre.id %>/deactivate"
+                        class="action-form"
+                    >
+                        <button class="btn btn-warning" type="submit">
+                            Deactivate Centre
+                        </button>
+                    </form>
+
+                <% } %>
+
+                <% if (centre.status === "Inactive") { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/centre/<%= centre.id %>/activate"
+                        class="action-form"
+                    >
+                        <button class="btn btn-success" type="submit">
+                            Activate Centre
+                        </button>
+                    </form>
+
+                <% } %>
+
+                <% if (centre.status !== "Suspended") { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/centre/<%= centre.id %>/suspend"
+                        class="action-form"
+                    >
+                        <button class="btn btn-warning" type="submit">
+                            Suspend Centre
+                        </button>
+                    </form>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    </main>
+</div>
+
+<%- include("../../partials/footer") %>

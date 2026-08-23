@@ -1,0 +1,343 @@
+<%- include("../../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+
+<style>
+    .centre-page {
+        padding: 20px;
+    }
+
+    .centre-header {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:15px;
+        margin-bottom:20px;
+        flex-wrap:wrap;
+    }
+
+    .centre-header h1 {
+        margin:0;
+        font-size:24px;
+    }
+
+    .centre-header p {
+        margin:5px 0 0;
+        color:#64748b;
+        font-size:13px;
+    }
+
+    .centre-btn {
+        display:inline-block;
+        padding:10px 15px;
+        border-radius:8px;
+        background:#2563eb;
+        color:#fff;
+        text-decoration:none;
+        font-weight:600;
+        font-size:13px;
+    }
+
+    .centre-stats {
+        display:grid;
+        grid-template-columns:repeat(6,1fr);
+        gap:12px;
+        margin-bottom:20px;
+    }
+
+    .centre-stat {
+        background:#fff;
+        border:1px solid #e2e8f0;
+        border-radius:12px;
+        padding:15px;
+    }
+
+    .centre-stat-label {
+        color:#64748b;
+        font-size:12px;
+        margin-bottom:7px;
+    }
+
+    .centre-stat-value {
+        font-size:24px;
+        font-weight:700;
+    }
+
+    .centre-card {
+        background:#fff;
+        border:1px solid #e2e8f0;
+        border-radius:12px;
+        overflow:hidden;
+    }
+
+    .centre-table-wrap {
+        overflow-x:auto;
+    }
+
+    table {
+        width:100%;
+        border-collapse:collapse;
+        min-width:950px;
+    }
+
+    th, td {
+        padding:13px 14px;
+        border-bottom:1px solid #f1f5f9;
+        text-align:left;
+        font-size:13px;
+        white-space:nowrap;
+    }
+
+    th {
+        background:#f8fafc;
+        color:#475569;
+        font-size:11px;
+        text-transform:uppercase;
+        letter-spacing:.04em;
+    }
+
+    tr:hover td {
+        background:#f8fafc;
+    }
+
+    .centre-code {
+        font-weight:700;
+        color:#1d4ed8;
+    }
+
+    .status {
+        display:inline-block;
+        padding:5px 9px;
+        border-radius:999px;
+        font-size:11px;
+        font-weight:700;
+    }
+
+    .status-Pending {
+        background:#fef3c7;
+        color:#92400e;
+    }
+
+    .status-Approved {
+        background:#dcfce7;
+        color:#166534;
+    }
+
+    .status-Rejected {
+        background:#fee2e2;
+        color:#991b1b;
+    }
+
+    .status-Inactive {
+        background:#e2e8f0;
+        color:#475569;
+    }
+
+    .status-Suspended {
+        background:#fce7f3;
+        color:#9d174d;
+    }
+
+    .action-link {
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:600;
+        margin-right:10px;
+    }
+
+    .empty {
+        padding:45px 20px;
+        text-align:center;
+        color:#64748b;
+    }
+
+    @media(max-width:1100px) {
+        .centre-stats {
+            grid-template-columns:repeat(3,1fr);
+        }
+    }
+
+    @media(max-width:650px) {
+        .centre-page {
+            padding:14px;
+        }
+
+        .centre-header {
+            display:flex;
+            flex-direction:column;
+            align-items:stretch;
+            gap:12px;
+        }
+
+        .centre-header h1 {
+            font-size:20px;
+        }
+
+        .centre-btn {
+            display:block;
+            width:100%;
+            box-sizing:border-box;
+            text-align:center;
+            padding:12px 16px;
+            font-size:14px;
+        }
+
+        .centre-stats {
+            grid-template-columns:repeat(2,1fr);
+        }
+    }
+</style>
+
+<div class="centre-page">
+
+    <div class="centre-header">
+        <div>
+            <h1>RTSE Centre Registry</h1>
+            <p>Manage examination centres, approval and centre capacity.</p>
+        </div>
+
+        <a href="/admin/arsp/centres/add" class="centre-btn">
+            + Add Centre
+        </a>
+    </div>
+
+    <div class="centre-stats">
+
+        <div class="centre-stat">
+            <div class="centre-stat-label">Total Centres</div>
+            <div class="centre-stat-value"><%= stats.total || 0 %></div>
+        </div>
+
+        <div class="centre-stat">
+            <div class="centre-stat-label">Pending</div>
+            <div class="centre-stat-value"><%= stats.pending || 0 %></div>
+        </div>
+
+        <div class="centre-stat">
+            <div class="centre-stat-label">Approved</div>
+            <div class="centre-stat-value"><%= stats.approved || 0 %></div>
+        </div>
+
+        <div class="centre-stat">
+            <div class="centre-stat-label">Rejected</div>
+            <div class="centre-stat-value"><%= stats.rejected || 0 %></div>
+        </div>
+
+        <div class="centre-stat">
+            <div class="centre-stat-label">Inactive</div>
+            <div class="centre-stat-value"><%= stats.inactive || 0 %></div>
+        </div>
+
+        <div class="centre-stat">
+            <div class="centre-stat-label">Suspended</div>
+            <div class="centre-stat-value"><%= stats.suspended || 0 %></div>
+        </div>
+
+    </div>
+
+    <div class="centre-card">
+        <% if (!centres || centres.length === 0) { %>
+
+            <div class="empty">
+                <strong>No examination centres registered yet.</strong>
+                <br>
+                Add the first RTSE examination centre.
+            </div>
+
+        <% } else { %>
+
+            <div class="centre-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Centre ID</th>
+                            <th>Centre</th>
+                            <th>Type</th>
+                            <th>District</th>
+                            <th>Capacity</th>
+                            <th>Schools</th>
+                            <th>Students</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% centres.forEach(centre => { %>
+                            <tr>
+
+                                <td>
+                                    <div class="centre-code">
+                                        <%= centre.centre_id || '—' %>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="centre-code">
+                                        <%= centre.centre_code %>
+                                    </div>
+                                    <div>
+                                        <%= centre.centre_name %>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <%= centre.centre_type %>
+                                </td>
+
+                                <td>
+                                    <%= centre.district || "—" %>
+                                </td>
+
+                                <td>
+                                    <%= centre.capacity || 0 %>
+                                </td>
+
+                                <td>
+                                    <%= centre.school_count || 0 %>
+                                </td>
+
+                                <td>
+                                    <%= centre.student_count || 0 %>
+                                </td>
+
+                                <td>
+                                    <span class="status status-<%= centre.status %>">
+                                        <%= centre.status %>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="/admin/arsp/centre/<%= centre.id %>"
+                                        class="action-link"
+                                    >
+                                        View
+                                    </a>
+
+                                    <a
+                                        href="/admin/arsp/centre/<%= centre.id %>/edit"
+                                        class="action-link"
+                                    >
+                                        Edit
+                                    </a>
+                                </td>
+
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+    </div>
+
+</div>
+
+    </main>
+</div>
+
+<%- include("../../partials/footer") %>
