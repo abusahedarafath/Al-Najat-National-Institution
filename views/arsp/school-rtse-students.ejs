@@ -259,6 +259,7 @@ th{
 
 <section class="card">
 
+<div id="schoolRtseStudentsResults">
 <div class="muted" style="margin-bottom:12px">
     <strong><%= students.length %></strong> student(s) found
 </div>
@@ -365,11 +366,116 @@ const status =
 </table>
 
 </div>
+</div>
 </section>
 
 </main>
 
 
+
+
+<script>
+(function () {
+    "use strict";
+
+    const form = document.querySelector(
+        'form.search-form[action="/arsp/school/rtse-students"]'
+    );
+
+    const input = form
+        ? form.querySelector('input[name="search"]')
+        : null;
+
+    const results = document.getElementById(
+        "schoolRtseStudentsResults"
+    );
+
+    if (!form || !input || !results) return;
+
+    let timer = null;
+    let controller = null;
+
+    input.addEventListener("input", function () {
+        const value = input.value.trim();
+
+        clearTimeout(timer);
+
+        timer = setTimeout(async function () {
+            if (controller) controller.abort();
+
+            controller = new AbortController();
+
+            const url = new URL(
+                form.getAttribute("action"),
+                window.location.origin
+            );
+
+            if (value) {
+                url.searchParams.set("search", value);
+            }
+
+            try {
+                results.style.opacity = "0.55";
+
+                const response = await fetch(url.toString(), {
+                    method: "GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Accept": "text/html"
+                    },
+                    signal: controller.signal
+                });
+
+                if (!response.ok) {
+                    throw new Error("Search request failed.");
+                }
+
+                const html = await response.text();
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(
+                    html,
+                    "text/html"
+                );
+
+                const newResults = doc.getElementById(
+                    "schoolRtseStudentsResults"
+                );
+
+                if (!newResults) {
+                    throw new Error(
+                        "Search results container not found."
+                    );
+                }
+
+                results.innerHTML = newResults.innerHTML;
+
+                const newUrl = value
+                    ? form.action + "?search=" +
+                      encodeURIComponent(value)
+                    : form.action;
+
+                window.history.replaceState(
+                    {},
+                    "",
+                    newUrl
+                );
+
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error(
+                        "School RTSE live search error:",
+                        error
+                    );
+                }
+            } finally {
+                results.style.opacity = "1";
+            }
+        }, 350);
+    });
+})();
+</script>
 
 </body>
 </html>
