@@ -1,50 +1,73 @@
 <header class="main-header">
 
-    <div class="header-top">
+    <!-- =====================================================
+         HEADER MAIN
+    ===================================================== -->
 
-        <div class="brand">
+    <div class="arsp-header-main">
 
-            <img
-                src="<%= siteSettings && siteSettings.logo ? '/uploads/site-settings/' + siteSettings.logo : '/images/logo.png' %>"
-                alt="Logo"
-                class="logo">
+        <!-- =================================================
+             LEFT: LOGO CONTAINER
+        ================================================== -->
 
-            <div class="brand-text">
+        <div class="arsp-logo-section">
 
-                <h1>
-                    <%= siteSettings
+            <div class="arsp-logo-box">
+
+                <img
+                    src="<%= siteSettings && siteSettings.logo
+                        ? '/uploads/site-settings/' + siteSettings.logo
+                        : '/images/logo.png' %>"
+                    alt="<%= siteSettings && siteSettings.institution_name
                         ? siteSettings.institution_name
-                        : "Al-Najat National Institution" %>
-                </h1>
+                        : 'Active Rural Social Progress' %>"
+                    class="arsp-main-logo"
+                >
 
-                <p>
-                    <%= siteSettings
-                        ? siteSettings.tagline
-                        : "An Islamic Madrasa Integrated School" %>
-                </p>
-
-            </div>
-
-        </div>
-
-                <div class="header-buttons">
-
-            <div class="arsp-header-scanner-row">
+                <!-- MOBILE MENU BUTTON -->
 
                 <button
                     type="button"
-                    id="openArspScanner"
-                    class="login-btn header-button arsp-header-scanner"
-                    aria-label="Scan ARSP QR Code">
+                    id="mobileNavToggle"
+                    class="arsp-mobile-menu"
+                    aria-label="Open navigation"
+                    aria-expanded="false">
 
-                    <i class="fa-solid fa-qrcode"></i>
-                    Scan QR Code
+                    <i class="fa-solid fa-bars"></i>
 
                 </button>
 
             </div>
 
-            <div class="header-login-buttons">
+
+            <!-- =================================================
+                 DYNAMIC ACTION BUTTONS
+                 DIRECTLY UNDER LOGO
+            ================================================== -->
+
+
+        
+
+            
+
+        
+
+            <div class="arsp-action-buttons">
+
+                <!-- QR SCANNER -->
+
+                <button
+                    type="button"
+                    id="openArspScanner"
+                    class="arsp-action-btn arsp-qr-btn">
+
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Scan QR Code</span>
+
+                </button>
+
+
+                <!-- DYNAMIC DATABASE BUTTONS -->
 
                 <% if (headerButtons && headerButtons.length) { %>
 
@@ -52,17 +75,22 @@
 
                         <a
                             href="<%= button.url %>"
-                            class="login-btn header-button"
+                            class="arsp-action-btn"
+
                             <% if (button.button_color) { %>
                                 style="background:<%= button.button_color %>;"
                             <% } %>
                         >
 
                             <% if (button.icon) { %>
+
                                 <i class="fa-solid fa-<%= button.icon %>"></i>
+
                             <% } %>
 
-                            <%= button.title %>
+                            <span>
+                                <%= button.title %>
+                            </span>
 
                         </a>
 
@@ -74,9 +102,44 @@
 
         </div>
 
-    <!-- =====================================
-         SCROLLING NOTICE TICKER
-    ====================================== -->
+
+        <!-- =================================================
+             RIGHT: BRANDING CONTAINER
+        ================================================== -->
+
+        <div class="arsp-branding-section">
+
+            <div class="arsp-branding-content">
+
+                <h1>
+
+                    <%= siteSettings
+                        ? siteSettings.institution_name
+                        : "Active Rural Social Progress" %>
+
+                </h1>
+
+                <p>
+
+                    <%= siteSettings
+                        ? siteSettings.tagline
+                        : "Empowering Rural, Inspiring Future" %>
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+            
+
+    </div>
+
+
+    <!-- =====================================================
+         MOVING NOTICE
+    ===================================================== -->
 
     <% if (scrollingMessages && scrollingMessages.length) { %>
 
@@ -89,13 +152,20 @@
                     <a
                         href="<%= message.url || '#' %>"
                         class="scrolling-message"
-                        style="color:<%= message.text_color %>;"
+
+                        style="color:<%= message.text_color || '#071d68' %>;"
+
                         <% if (!message.url) { %>
                             onclick="return false;"
                         <% } %>
                     >
+
                         <i class="fa-solid fa-bullhorn"></i>
-                        <span><%= message.message %></span>
+
+                        <span>
+                            <%= message.message %>
+                        </span>
+
                     </a>
 
                 <% }) %>
@@ -107,29 +177,47 @@
     <% } %>
 
 
-    <nav class="navbar">
+    <!-- =====================================================
+         NAVIGATION
+    ===================================================== -->
+
+    <nav
+        class="navbar"
+        id="mainNavbar"
+        aria-label="Main navigation">
 
         <%
             const parentMenus = [];
             const childMenus = {};
 
             if (menus && menus.length) {
+
                 menus.forEach(menu => {
+
                     if (!menu.parent_id) {
+
                         parentMenus.push(menu);
+
                     } else {
+
                         if (!childMenus[menu.parent_id]) {
                             childMenus[menu.parent_id] = [];
                         }
+
                         childMenus[menu.parent_id].push(menu);
+
                     }
+
                 });
+
             }
         %>
+
 
         <% parentMenus.forEach(parent => { %>
 
             <% const children = childMenus[parent.id] || []; %>
+
 
             <% if (children.length > 0) { %>
 
@@ -137,7 +225,8 @@
 
                     <a
                         href="<%= parent.menu_url %>"
-                        target="<%= parent.target %>">
+                        target="<%= parent.target %>"
+                        class="dropdown-toggle">
 
                         <%= parent.menu_title %>
 
@@ -161,6 +250,7 @@
 
                 </div>
 
+
             <% } else { %>
 
                 <a
@@ -177,7 +267,165 @@
 
     </nav>
 
-    <!-- ARSP QR SCANNER MODAL -->
+
+    <!-- =====================================================
+         ARSP SCANNER
+    ===================================================== -->
+
     <%- include("../home/arsp-scanner") %>
 
 </header>
+
+
+<!-- =========================================================
+     MOBILE MENU SCRIPT
+========================================================= -->
+
+<script>
+(function () {
+
+    const toggle = document.getElementById("mobileNavToggle");
+    const navbar = document.getElementById("mainNavbar");
+
+    if (!toggle || !navbar) return;
+
+    /* =========================================
+       MOBILE MAIN MENU
+    ========================================= */
+
+    toggle.addEventListener("click", function () {
+
+        const opened = navbar.classList.toggle("mobile-open");
+
+        toggle.setAttribute(
+            "aria-expanded",
+            opened ? "true" : "false"
+        );
+
+        toggle.setAttribute(
+            "aria-label",
+            opened
+                ? "Close navigation"
+                : "Open navigation"
+        );
+
+        const icon = toggle.querySelector("i");
+
+        if (icon) {
+            icon.className = opened
+                ? "fa-solid fa-xmark"
+                : "fa-solid fa-bars";
+        }
+
+    });
+
+
+    /* =========================================
+       MOBILE DROPDOWNS
+    ========================================= */
+
+    document
+        .querySelectorAll(".dropdown > .dropdown-toggle")
+        .forEach(function (link) {
+
+            link.addEventListener("click", function (event) {
+
+                if (window.innerWidth <= 768) {
+
+                    event.preventDefault();
+
+                    const dropdown =
+                        this.parentElement;
+
+                    dropdown.classList.toggle("open");
+
+                }
+
+            });
+
+        });
+
+
+    /* =========================================
+       CLOSE MENU WHEN NORMAL LINK IS CLICKED
+    ========================================= */
+
+    navbar.querySelectorAll("a").forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            if (
+                window.innerWidth <= 768 &&
+                !this.classList.contains("dropdown-toggle")
+            ) {
+
+                navbar.classList.remove("mobile-open");
+
+                toggle.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                toggle.setAttribute(
+                    "aria-label",
+                    "Open navigation"
+                );
+
+                const icon =
+                    toggle.querySelector("i");
+
+                if (icon) {
+                    icon.className =
+                        "fa-solid fa-bars";
+                }
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================
+       RESET WHEN RETURNING TO DESKTOP
+    ========================================= */
+
+    window.addEventListener("resize", function () {
+
+        if (window.innerWidth > 768) {
+
+            navbar.classList.remove("mobile-open");
+
+            document
+                .querySelectorAll(".dropdown.open")
+                .forEach(function (item) {
+
+                    item.classList.remove("open");
+
+                });
+
+            toggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            toggle.setAttribute(
+                "aria-label",
+                "Open navigation"
+            );
+
+            const icon =
+                toggle.querySelector("i");
+
+            if (icon) {
+                icon.className =
+                    "fa-solid fa-bars";
+            }
+
+        }
+
+    });
+
+})();
+</script>
+
