@@ -1250,10 +1250,35 @@ static async resetRollNumbers(section, applicationYear){
         }
 
         // -------------------------------------------------
-        // IMPORTANT:
-        // Attendance / QR records are NOT deleted.
+        // RESET ATTENDANCE FOR UNRECORDED EXAM ATTEMPTS
+        //
+        // NOT_SCANNED / ABSENT attendance belongs to the
+        // generated admit and must not survive an admit reset.
+        //
+        // PRESENT was already blocked above and therefore
+        // cannot be deleted by this reset operation.
+        //
         // Uploaded student files are NOT touched.
         // -------------------------------------------------
+
+        await connection.query(
+            `
+            DELETE ea
+            FROM rtse_exam_attendance ea
+            INNER JOIN rtse_applications a
+                ON a.id = ea.application_id
+            WHERE
+                a.archive = 0
+                AND a.status = 'Approved'
+                AND a.application_year = ?
+                AND a.section = ?
+                AND ea.attendance_status IN ('NOT_SCANNED', 'ABSENT')
+            `,
+            [
+                normalizedYear,
+                normalizedSection
+            ]
+        );
 
         const [result] =
             await connection.query(
