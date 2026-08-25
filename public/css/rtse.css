@@ -1,297 +1,118 @@
-/* RTSE Public Application */
+/* =========================================================
+   RTSE PUBLIC APPLICATION
+   Responsive desktop / tablet / mobile layout
+   ========================================================= */
 
-.rtse-page{
-    padding:120px 15px 60px;
-    background:#f5f7fb;
-    min-height:100vh;
+.rtse-page {
+    padding: 120px 20px 60px;
+    background: #f5f7fb;
+    min-height: 100vh;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
-.profile-card{
-    background:#fff;
-    border-radius:16px;
-    padding:30px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+.rtse-page > .container {
+    width: 100%;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box;
 }
 
-.profile-card h1{
-    text-align:center;
-    color:#0b6b3a;
-    margin-bottom:25px;
+.profile-card {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 36px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    box-sizing: border-box;
 }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:20px;
+.profile-card h1 {
+    text-align: center;
+    color: #0b6b3a;
+    margin: 0 0 10px;
+    font-size: 32px;
+    line-height: 1.25;
 }
 
-.form-group{
-    margin-bottom:20px;
+.profile-card > p {
+    margin: 0 0 30px;
 }
 
-.form-group label{
-    display:block;
-    margin-bottom:8px;
-    font-weight:600;
-    color:#444;
+/* ---------------------------------------------------------
+   FORM GRID
+   --------------------------------------------------------- */
+
+.profile-card form {
+    width: 100%;
+    min-width: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 24px;
+    width: 100%;
+    min-width: 0;
+}
+
+.form-group {
+    min-width: 0;
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    line-height: 1.35;
 }
 
 .form-group input,
 .form-group select,
-.form-group textarea{
-    width:100%;
-    min-height:46px;
-    padding:12px 14px;
-    border:1px solid #d6d6d6;
-    border-radius:10px;
-    font-size:15px;
-    box-sizing:border-box;
+.form-group textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 12px 14px;
+    border: 1px solid #d6d6d6;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    background: #fff;
 }
 
-.form-group textarea{
-    min-height:140px;
-    resize:vertical;
+.form-group textarea {
+    min-height: 140px;
+    resize: vertical;
 }
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus{
-    border-color:#0b6b3a;
-    outline:none;
-    box-shadow:0 0 0 4px rgba(11,107,58,.12);
+.form-group textarea:focus {
+    border-color: #0b6b3a;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(11,107,58,.12);
 }
 
-@media(max-width:768px){
-    .rtse-page{
-        padding-top:95px;
-    }
-
-    .profile-card{
-        padding:20px;
-    }
+/* Full-width fields */
+.form-grid > .form-group[style*="grid-column"] {
+    grid-column: 1 / -1 !important;
 }
 
-/* RTSE Application Submit Button */
-.btn-save {
-    display: inline-block;
-    width: 100%;
-    padding: 14px 24px;
-    margin-top: 20px;
-    border: none;
-    border-radius: 8px;
-    background: #198754;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.4;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.btn-save:hover {
-    background: #157347;
-}
-
-.btn-save:active {
-    transform: translateY(1px);
-}
-
-.btn-save:focus {
-    outline: 3px solid rgba(25, 135, 84, 0.25);
-    outline-offset: 2px;
-}
-
-/* =========================================================
-   RTSE STUDENT PAGES - MOBILE LAYOUT FIX
-   Scoped only to pages using the RTSE student header
-   ========================================================= */
-
-body:has(.rtse-student-header-only) {
-    min-height: 100vh;
-}
-
-body:has(.rtse-student-header-only) main {
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) img {
-    max-width: 100%;
-}
-
-@media (max-width: 768px) {
-
-    body:has(.rtse-student-header-only) {
-        overflow-x: hidden;
-    }
-
-    body:has(.rtse-student-header-only) main {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Prevent dashboard/slip containers from touching screen edges */
-    body:has(.rtse-student-header-only) .rtse-container,
-    body:has(.rtse-student-header-only) .dashboard-container,
-    body:has(.rtse-student-header-only) .student-dashboard,
-    body:has(.rtse-student-header-only) .approved-slip-container {
-        width: calc(100% - 24px);
-        max-width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-        box-sizing: border-box;
-    }
-
-    /* Keep cards inside the viewport */
-    body:has(.rtse-student-header-only) .card,
-    body:has(.rtse-student-header-only) .dashboard-card {
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Approved slip must never create horizontal scrolling */
-    body:has(.rtse-student-header-only) table {
-        max-width: 100%;
-    }
-
-    body:has(.rtse-student-header-only) .approved-slip,
-    body:has(.rtse-student-header-only) .slip-container {
-        max-width: 100%;
-        box-sizing: border-box;
-        overflow-x: auto;
-    }
-
-    /* Buttons remain inside mobile viewport */
-    body:has(.rtse-student-header-only) button,
-    body:has(.rtse-student-header-only) .btn {
-        max-width: 100%;
-    }
-
-    /* Short RTSE pages use the viewport naturally */
-    body:has(.rtse-student-header-only) .rtse-page,
-    body:has(.rtse-student-header-only) .student-page {
-        min-height: calc(100vh - 150px);
-        box-sizing: border-box;
-    }
-}
-
-@media (max-width: 420px) {
-
-    body:has(.rtse-student-header-only) .rtse-container,
-    body:has(.rtse-student-header-only) .dashboard-container,
-    body:has(.rtse-student-header-only) .student-dashboard,
-    body:has(.rtse-student-header-only) .approved-slip-container {
-        width: calc(100% - 16px);
-    }
-}
-
-/* ============================================================
-   RTSE STUDENT PAGES
-   Layout fix for the existing 851px viewport
-   ============================================================ */
-
-body:has(.rtse-student-header-only) {
-    overflow-x: hidden;
-}
-
-body:has(.rtse-student-header-only) .rtse-student-dashboard {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .rtse-dashboard-container {
-    width: 100%;
-    max-width: 850px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .rtse-student-card,
-body:has(.rtse-student-header-only) .rtse-dashboard-header,
-body:has(.rtse-student-header-only) .rtse-status-card {
-    box-sizing: border-box;
-    max-width: 100%;
-}
-
-body:has(.rtse-student-header-only) .rtse-info-grid {
-    min-width: 0;
-}
-
-body:has(.rtse-student-header-only) .rtse-info-item {
-    min-width: 0;
-    overflow-wrap: anywhere;
-}
-
-/* Approved examination slip */
-body:has(.rtse-student-header-only) .rtse-approved-page {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .approved-slip {
-    width: 100%;
-    max-width: 850px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .approved-header,
-body:has(.rtse-student-header-only) .approved-registration-box,
-body:has(.rtse-student-header-only) .approved-candidate-layout,
-body:has(.rtse-student-header-only) .approved-grid,
-body:has(.rtse-student-header-only) .approved-footer {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .approved-details,
-body:has(.rtse-student-header-only) .approved-grid,
-body:has(.rtse-student-header-only) .approved-registration-box {
-    min-width: 0;
-}
-
-body:has(.rtse-student-header-only) .approved-details > div,
-body:has(.rtse-student-header-only) .approved-grid > div,
-body:has(.rtse-student-header-only) .approved-registration-box > div {
-    min-width: 0;
-    overflow-wrap: anywhere;
-}
-
-/* RTSE footer stays within the existing 851px layout */
-body:has(.rtse-student-header-only) .footer {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .footer-container {
-    width: 100%;
-    max-width: 1200px;
-    box-sizing: border-box;
-}
-
-body:has(.rtse-student-header-only) .footer-column {
-    min-width: 0;
-}
-
-body:has(.rtse-student-header-only) .footer-column p,
-body:has(.rtse-student-header-only) .footer-column a,
-body:has(.rtse-student-header-only) .footer-column li {
-    overflow-wrap: anywhere;
-}
-
-
-
-/* RTSE Searchable School Picker */
+/* ---------------------------------------------------------
+   SCHOOL PICKER
+   --------------------------------------------------------- */
 
 .rtse-school-picker {
     position: relative;
     width: 100%;
+    min-width: 0;
 }
 
 .rtse-school-picker-trigger {
@@ -303,6 +124,7 @@ body:has(.rtse-student-header-only) .footer-column li {
     background: #fff;
     color: #333;
     font-size: 15px;
+    line-height: 1.4;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -321,6 +143,8 @@ body:has(.rtse-student-header-only) .footer-column li {
 }
 
 .rtse-school-picker-arrow {
+    flex: 0 0 auto;
+    margin-left: 10px;
     font-size: 18px;
 }
 
@@ -335,6 +159,7 @@ body:has(.rtse-student-header-only) .footer-column li {
     border-radius: 10px;
     box-shadow: 0 12px 30px rgba(0,0,0,.12);
     padding: 10px;
+    box-sizing: border-box;
 }
 
 .rtse-school-search {
@@ -388,3 +213,1003 @@ body:has(.rtse-student-header-only) .footer-column li {
 .rtse-school-native-wrapper {
     display: none;
 }
+
+/* ---------------------------------------------------------
+   ACTION BUTTONS
+   --------------------------------------------------------- */
+
+.btn-save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(420px, 100%);
+    min-height: 50px;
+    padding: 13px 24px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    background: #198754;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color .2s ease, transform .1s ease;
+    box-sizing: border-box;
+}
+
+.btn-save:hover {
+    background: #157347;
+}
+
+.btn-save:active {
+    transform: translateY(1px);
+}
+
+.btn-save:focus {
+    outline: 3px solid rgba(25,135,84,.25);
+    outline-offset: 2px;
+}
+
+/* Photo crop buttons */
+#rtsePhotoCropArea .btn-submit {
+    width: auto !important;
+    min-width: 120px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------
+   TABLET
+   --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .rtse-page {
+        padding: 105px 16px 50px;
+    }
+
+    .profile-card {
+        padding: 28px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 18px;
+    }
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .rtse-page {
+        padding: 95px 12px 40px;
+    }
+
+    .profile-card {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .profile-card h1 {
+        font-size: 25px;
+    }
+
+    .profile-card > p {
+        font-size: 13px;
+        margin-bottom: 24px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-grid > .form-group[style*="grid-column"] {
+        grid-column: auto !important;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .rtse-school-picker-trigger {
+        min-height: 46px;
+        font-size: 16px;
+    }
+
+    .btn-save {
+        width: 100%;
+    }
+
+    #rtsePhotoCropArea {
+        padding: 12px !important;
+    }
+
+    #rtsePhotoCropArea > div:first-child {
+        max-width: 100% !important;
+    }
+
+    #rtsePhotoCropArea button.btn-submit {
+        flex: 1 1 140px;
+        min-width: 120px;
+    }
+}
+
+/* ---------------------------------------------------------
+   SMALL PHONES
+   --------------------------------------------------------- */
+
+@media (max-width: 420px) {
+
+    .rtse-page {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .profile-card {
+        padding: 16px 12px;
+        border-radius: 10px;
+    }
+
+    .profile-card h1 {
+        font-size: 22px;
+    }
+
+    .profile-card > p {
+        font-size: 12px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    #rtsePhotoCropArea button.btn-submit {
+        flex-basis: 100%;
+        width: 100% !important;
+    }
+}
+
+/* =========================================================
+   RTSE STUDENT PAGES
+   Existing layout protection
+   ========================================================= */
+
+body:has(.rtse-student-header-only) {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body:has(.rtse-student-header-only) main,
+body:has(.rtse-student-header-only) .rtse-student-dashboard,
+body:has(.rtse-student-header-only) .rtse-approved-page {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+body:has(.rtse-student-header-only) img {
+    max-width: 100%;
+}
+
+body:has(.rtse-student-header-only) .rtse-container,
+body:has(.rtse-student-header-only) .dashboard-container,
+body:has(.rtse-student-header-only) .student-dashboard,
+body:has(.rtse-student-header-only) .approved-slip-container {
+    box-sizing: border-box;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body:has(.rtse-student-header-only) .rtse-dashboard-container {
+    width: 100%;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+body:has(.rtse-student-header-only) .rtse-student-card,
+body:has(.rtse-student-header-only) .rtse-dashboard-header,
+body:has(.rtse-student-header-only) .rtse-status-card,
+body:has(.rtse-student-header-only) .card,
+body:has(.rtse-student-header-only) .dashboard-card {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+body:has(.rtse-student-header-only) .rtse-info-grid,
+body:has(.rtse-student-header-only) .rtse-info-item,
+body:has(.rtse-student-header-only) .approved-details,
+body:has(.rtse-student-header-only) .approved-grid,
+body:has(.rtse-student-header-only) .rtse-approved-page,
+body:has(.rtse-student-header-only) .approved-slip {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+body:has(.rtse-student-header-only) .rtse-info-item,
+body:has(.rtse-student-header-only) .approved-details > div,
+body:has(.rtse-student-header-only) .approved-grid > div,
+body:has(.rtse-student-header-only) .approved-registration-box > div {
+    overflow-wrap: anywhere;
+}
+
+body:has(.rtse-student-header-only) .approved-slip {
+    width: 100%;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body:has(.rtse-student-header-only) table {
+    max-width: 100%;
+}
+
+body:has(.rtse-student-header-only) .approved-slip,
+body:has(.rtse-student-header-only) .slip-container {
+    overflow-x: auto;
+}
+
+body:has(.rtse-student-header-only) button,
+body:has(.rtse-student-header-only) .btn {
+    max-width: 100%;
+}
+
+body:has(.rtse-student-header-only) .footer,
+body:has(.rtse-student-header-only) .footer-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+body:has(.rtse-student-header-only) .footer-column {
+    min-width: 0;
+}
+
+body:has(.rtse-student-header-only) .footer-column p,
+body:has(.rtse-student-header-only) .footer-column a,
+body:has(.rtse-student-header-only) .footer-column li {
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   RTSE — ARSP MEMBERSHIP STYLE HEADER + RESPONSIVE FORM
+   ========================================================= */
+
+.rtse-page{
+    width:100%;
+    min-height:100vh;
+    box-sizing:border-box;
+    padding:35px 16px 60px;
+    background:#f7f9fd;
+}
+
+.rtse-page .container{
+    width:min(900px,100%);
+    max-width:900px !important;
+    margin:0 auto !important;
+    box-sizing:border-box;
+}
+
+.rtse-page .profile-card{
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    box-sizing:border-box;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(18,38,84,.12);
+}
+
+/* =========================================================
+   ARSP HEADER
+   ========================================================= */
+
+.rtse-register-header{
+    width:100%;
+    box-sizing:border-box;
+    padding:28px 24px 30px;
+    text-align:center;
+    color:#fff;
+
+    background:linear-gradient(
+        135deg,
+        #071d68 0%,
+        #0b2b83 52%,
+        #07883f 100%
+    );
+}
+
+/* Small rounded ARSP logo */
+.rtse-register-header .rtse-logo{
+    display:block;
+
+    width:92px !important;
+    height:92px !important;
+    max-width:92px !important;
+    max-height:92px !important;
+
+    margin:0 auto 14px !important;
+    padding:6px !important;
+
+    box-sizing:border-box;
+
+    object-fit:contain;
+
+    background:#fff;
+
+    border:3px solid rgba(255,255,255,.95);
+    border-radius:50% !important;
+
+    box-shadow:0 5px 16px rgba(0,0,0,.20);
+}
+
+/* Organization name */
+.rtse-register-header h1{
+    margin:0;
+    color:#fff;
+
+    font-size:clamp(20px,3vw,32px);
+    line-height:1.2;
+    font-weight:800;
+
+    overflow-wrap:anywhere;
+}
+
+/* Tagline */
+.rtse-register-header p{
+    margin:8px 0 0;
+    color:rgba(255,255,255,.94);
+
+    font-size:14px;
+    line-height:1.45;
+}
+
+/* RTSE title */
+.rtse-register-header h2{
+    margin:15px 0 0;
+    color:#fff;
+
+    font-size:clamp(16px,2.2vw,22px);
+    line-height:1.25;
+    font-weight:800;
+    letter-spacing:.8px;
+}
+
+/* =========================================================
+   FORM CONTENT
+   ========================================================= */
+
+.rtse-form-content{
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+    padding:30px;
+}
+
+.rtse-intro{
+    margin:0 0 25px;
+    color:#687089;
+    text-align:center;
+    line-height:1.55;
+}
+
+/* Strong, visible input borders */
+.rtse-form-content .form-group input,
+.rtse-form-content .form-group select,
+.rtse-form-content .form-group textarea{
+    border:1.5px solid #aeb8c8 !important;
+    background:#fff;
+    box-shadow:none;
+}
+
+.rtse-form-content .form-group input:hover,
+.rtse-form-content .form-group select:hover,
+.rtse-form-content .form-group textarea:hover{
+    border-color:#7f8da3 !important;
+}
+
+.rtse-form-content .form-group input:focus,
+.rtse-form-content .form-group select:focus,
+.rtse-form-content .form-group textarea:focus{
+    border-color:#07883f !important;
+    outline:none;
+
+    box-shadow:
+        0 0 0 3px rgba(7,136,63,.12) !important;
+}
+
+/* =========================================================
+   SCHOOL PICKER
+   ========================================================= */
+
+.rtse-school-picker-trigger{
+    border:1.5px solid #aeb8c8 !important;
+}
+
+.rtse-school-picker-trigger:hover,
+.rtse-school-picker-trigger[aria-expanded="true"]{
+    border-color:#07883f !important;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET / ZOOMED-IN
+   ========================================================= */
+
+@media (max-width:900px){
+
+    .rtse-page{
+        padding:18px 10px 35px;
+    }
+
+    .rtse-page .container{
+        width:100%;
+        max-width:100% !important;
+    }
+
+    .rtse-page .profile-card{
+        border-radius:12px;
+    }
+
+    .rtse-register-header{
+        padding:22px 15px 25px;
+    }
+
+    .rtse-register-header .rtse-logo{
+        width:78px !important;
+        height:78px !important;
+        max-width:78px !important;
+        max-height:78px !important;
+        padding:5px !important;
+        border-width:2px;
+        margin-bottom:11px !important;
+    }
+
+    .rtse-form-content{
+        padding:24px 18px 30px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE — PHONE
+   ========================================================= */
+
+@media (max-width:600px){
+
+    .rtse-page{
+        padding:6px 4px 20px;
+    }
+
+    .rtse-page .profile-card{
+        border-radius:9px;
+    }
+
+    .rtse-register-header{
+        padding:18px 10px 21px;
+    }
+
+    .rtse-register-header .rtse-logo{
+        width:68px !important;
+        height:68px !important;
+        max-width:68px !important;
+        max-height:68px !important;
+        padding:5px !important;
+        margin-bottom:9px !important;
+    }
+
+    .rtse-register-header h1{
+        font-size:20px;
+    }
+
+    .rtse-register-header p{
+        font-size:11px;
+    }
+
+    .rtse-register-header h2{
+        margin-top:11px;
+        font-size:15px;
+    }
+
+    .rtse-form-content{
+        padding:20px 11px 25px;
+    }
+
+    .rtse-form-content .form-grid{
+        grid-template-columns:1fr !important;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONE
+   ========================================================= */
+
+@media (max-width:400px){
+
+    .rtse-register-header{
+        padding:15px 8px 18px;
+    }
+
+    .rtse-register-header .rtse-logo{
+        width:58px !important;
+        height:58px !important;
+        max-width:58px !important;
+        max-height:58px !important;
+    }
+
+    .rtse-register-header h1{
+        font-size:18px;
+    }
+
+    .rtse-register-header p{
+        font-size:10px;
+    }
+
+    .rtse-register-header h2{
+        font-size:14px;
+    }
+
+    .rtse-form-content{
+        padding:17px 8px 22px;
+    }
+}
+
+/* =========================================================
+   ZOOM / NARROW VIEWPORT PROTECTION
+   ========================================================= */
+
+.rtse-page,
+.rtse-page *,
+.rtse-page *::before,
+.rtse-page *::after{
+    box-sizing:border-box;
+}
+
+.rtse-page{
+    overflow-x:hidden;
+}
+
+.rtse-page img{
+    max-width:100%;
+}
+
+.rtse-page input,
+.rtse-page select,
+.rtse-page textarea,
+.rtse-page button{
+    max-width:100%;
+}
+
+
+/* =========================================================
+   RTSE — ARSP MEMBERSHIP STYLE HEADER + RESPONSIVE FORM
+   ========================================================= */
+
+.rtse-page{
+    width:100%;
+    min-height:100vh;
+    box-sizing:border-box;
+    padding:35px 16px 60px;
+    background:#f7f9fd;
+}
+
+.rtse-page .container{
+    width:min(900px,100%);
+    max-width:900px !important;
+    margin:0 auto !important;
+    box-sizing:border-box;
+}
+
+.rtse-page .profile-card{
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    box-sizing:border-box;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(18,38,84,.12);
+}
+
+/* =========================================================
+   ARSP HEADER
+   ========================================================= */
+
+.rtse-register-header{
+    width:100%;
+    box-sizing:border-box;
+    padding:28px 24px 30px;
+    text-align:center;
+    color:#fff;
+
+    background:linear-gradient(
+        135deg,
+        #071d68 0%,
+        #0b2b83 52%,
+        #07883f 100%
+    );
+}
+
+/* Small rounded ARSP logo */
+.rtse-register-header .rtse-logo{
+    display:block;
+
+    width:92px !important;
+    height:92px !important;
+    max-width:92px !important;
+    max-height:92px !important;
+
+    margin:0 auto 14px !important;
+    padding:6px !important;
+
+    box-sizing:border-box;
+
+    object-fit:contain;
+
+    background:#fff;
+
+    border:3px solid rgba(255,255,255,.95);
+    border-radius:50% !important;
+
+    box-shadow:0 5px 16px rgba(0,0,0,.20);
+}
+
+/* Organization name */
+.rtse-register-header h1{
+    margin:0;
+    color:#fff;
+
+    font-size:clamp(20px,3vw,32px);
+    line-height:1.2;
+    font-weight:800;
+
+    overflow-wrap:anywhere;
+}
+
+/* Tagline */
+.rtse-register-header p{
+    margin:8px 0 0;
+    color:rgba(255,255,255,.94);
+
+    font-size:14px;
+    line-height:1.45;
+}
+
+/* RTSE title */
+.rtse-register-header h2{
+    margin:15px 0 0;
+    color:#fff;
+
+    font-size:clamp(16px,2.2vw,22px);
+    line-height:1.25;
+    font-weight:800;
+    letter-spacing:.8px;
+}
+
+/* =========================================================
+   FORM CONTENT
+   ========================================================= */
+
+.rtse-form-content{
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+    padding:30px;
+}
+
+.rtse-intro{
+    margin:0 0 25px;
+    color:#687089;
+    text-align:center;
+    line-height:1.55;
+}
+
+/* Strong, visible input borders */
+.rtse-form-content .form-group input,
+.rtse-form-content .form-group select,
+.rtse-form-content .form-group textarea{
+    border:1.5px solid #aeb8c8 !important;
+    background:#fff;
+    box-shadow:none;
+}
+
+.rtse-form-content .form-group input:hover,
+.rtse-form-content .form-group select:hover,
+.rtse-form-content .form-group textarea:hover{
+    border-color:#7f8da3 !important;
+}
+
+.rtse-form-content .form-group input:focus,
+.rtse-form-content .form-group select:focus,
+.rtse-form-content .form-group textarea:focus{
+    border-color:#07883f !important;
+    outline:none;
+
+    box-shadow:
+        0 0 0 3px rgba(7,136,63,.12) !important;
+}
+
+/* =========================================================
+   SCHOOL PICKER
+   ========================================================= */
+
+.rtse-school-picker-trigger{
+    border:1.5px solid #aeb8c8 !important;
+}
+
+.rtse-school-picker-trigger:hover,
+.rtse-school-picker-trigger[aria-expanded="true"]{
+    border-color:#07883f !important;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET / ZOOMED-IN
+   ========================================================= */
+
+@media (max-width:900px){
+
+    .rtse-page{
+        padding:18px 10px 35px;
+    }
+
+    .rtse-page .container{
+        width:100%;
+        max-width:100% !important;
+    }
+
+    .rtse-page .profile-card{
+        border-radius:12px;
+    }
+
+    .rtse-register-header{
+        padding:22px 15px 25px;
+    }
+
+    .rtse-register-header .rtse-logo{
+        width:78px !important;
+        height:78px !important;
+        max-width:78px !important;
+        max-height:78px !important;
+        padding:5px !important;
+        border-width:2px;
+        margin-bottom:11px !important;
+    }
+
+    .rtse-form-content{
+        padding:24px 18px 30px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE — PHONE
+   ========================================================= */
+
+@media (max-width:600px){
+
+    .rtse-page{
+        padding:6px 4px 20px;
+    }
+
+    .rtse-page .profile-card{
+        border-radius:9px;
+    }
+
+    .rtse-register-header{
+        padding:18px 10px 21px;
+    }
+
+    .rtse-register-header .rtse-logo{
+        width:68px !important;
+        height:68px !important;
+        max-width:68px !important;
+        max-height:68px !important;
+        padding:5px !important;
+        margin-bottom:9px !important;
+    }
+
+    .rtse-register-header h1{
+        font-size:20px;
+    }
+
+    .rtse-register-header p{
+        font-size:11px;
+    }
+
+    .rtse-register-header h2{
+        margin-top:11px;
+        font-size:15px;
+    }
+
+    .rtse-form-content{
+        padding:20px 11px 25px;
+    }
+
+    .rtse-form-content .form-grid{
+        grid-template-columns:1fr !important;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONE
+   ========================================================= */
+
+@media (max-width:400px){
+
+    .rtse-register-header{
+        padding:15px 8px 18px;
+    }
+
+    .rtse-register-header .rtse-logo{
+        width:58px !important;
+        height:58px !important;
+        max-width:58px !important;
+        max-height:58px !important;
+    }
+
+    .rtse-register-header h1{
+        font-size:18px;
+    }
+
+    .rtse-register-header p{
+        font-size:10px;
+    }
+
+    .rtse-register-header h2{
+        font-size:14px;
+    }
+
+    .rtse-form-content{
+        padding:17px 8px 22px;
+    }
+}
+
+/* =========================================================
+   ZOOM / NARROW VIEWPORT PROTECTION
+   ========================================================= */
+
+.rtse-page,
+.rtse-page *,
+.rtse-page *::before,
+.rtse-page *::after{
+    box-sizing:border-box;
+}
+
+.rtse-page{
+    overflow-x:hidden;
+}
+
+.rtse-page img{
+    max-width:100%;
+}
+
+.rtse-page input,
+.rtse-page select,
+.rtse-page textarea,
+.rtse-page button{
+    max-width:100%;
+}
+
+
+/* =========================================================
+   RTSE RESPONSIVE FULL-WIDTH LAYOUT
+   ========================================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.rtse-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 20px 16px 40px;
+}
+
+.rtse-page > .container {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+}
+
+.rtse-page .profile-card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.rtse-form-content {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Every RTSE row must be allowed to shrink */
+.rtse-page .form-row,
+.rtse-page .form-group,
+.rtse-page input,
+.rtse-page select,
+.rtse-page textarea,
+.rtse-page button {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.rtse-page input,
+.rtse-page select,
+.rtse-page textarea {
+    width: 100%;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+
+    .rtse-page {
+        padding: 14px 10px 30px;
+    }
+
+    .rtse-page .profile-card {
+        border-radius: 12px;
+    }
+
+    .rtse-form-content {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    .rtse-page {
+        padding: 6px 5px 20px;
+    }
+
+    .rtse-page .profile-card {
+        border-radius: 8px;
+    }
+
+    .rtse-form-content {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+
+    .rtse-page {
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .rtse-form-content {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
+

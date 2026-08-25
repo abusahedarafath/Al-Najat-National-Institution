@@ -1,4 +1,5 @@
 const RtseApplication = require("../models/RtseApplication");
+const ArspSetting = require("../models/ArspSetting");
 const fs = require("fs");
 const path = require("path");
 
@@ -56,10 +57,12 @@ exports.requireApplicationOpen = async (req, res, next) => {
 
 exports.applicationPage = async (req, res) => {
     const draft = req.session.rtseDraft || {};
+    const setting = await ArspSetting.get();
 
     res.render("rtse/application", {
         title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
-        draft
+        draft,
+        setting
     });
 };
 

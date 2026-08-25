@@ -7,15 +7,35 @@
 
 <div class="rtse-page">
 
-    <div class="container" style="max-width:900px;margin:auto;">
+    <div class="container rtse-application-container">
 
         <div class="profile-card">
 
-            <h1 style="text-align:center;">
-                RTSE 2026 Online Application
-            </h1>
+            <div class="rtse-register-header">
 
-            <p style="text-align:center;color:#666;">
+                <img
+                    src="/uploads/arsp-settings/<%= setting.logo %>"
+                    class="rtse-logo"
+                    alt="<%= setting && setting.organization_name ? setting.organization_name : 'ARSP Logo' %>"
+                >
+
+                <h1>
+                    <%= setting && setting.organization_name ? setting.organization_name : "Active Rural Social Progress" %>
+                </h1>
+
+                <p>
+                    <%= setting && setting.tagline ? setting.tagline : "Assam Rural Social Project" %>
+                </p>
+
+                <h2>
+                    RTSE 2026 ONLINE APPLICATION
+                </h2>
+
+            </div>
+
+            <div class="rtse-form-content">
+
+            <p class="rtse-intro">
                 Enter your details carefully before proceeding to review.
             </p>
 
@@ -568,6 +588,8 @@
                 </div>
 
             </form>
+
+            </div>
 
         </div>
 

@@ -1,5 +1,6 @@
 const RtseResult =
 require("../models/RtseResult");
+const ArspSetting = require("../models/ArspSetting");
 
 const RtseSetting =
 require("../models/RtseSetting");
@@ -59,34 +60,31 @@ function deleteRtseFile(filename) {
 
 exports.applicationPage = async (req, res) => {
     try {
-        const setting = await RtseSetting.get();
+        const draft = req.session.rtseDraft || {};
+        const setting = await ArspSetting.get();
 
-        if (!setting || Number(setting.application_open) !== 1) {
-            return res.status(403).render(
-                "rtse/application-closed",
-                {
-                    title: "RTSE Application Closed"
-                }
+        let schools = [];
+
+        try {
+            schools = await ArspSchool.getAll();
+        } catch (schoolErr) {
+            console.error(
+                "Unable to load RTSE schools:",
+                schoolErr.message
             );
         }
 
-        const draft = req.session.rtseDraft || {};
-
-        const schools =
-            await ArspSchool.getAll("", "Approved");
-
-        res.render(
-            "rtse/application",
-            {
-                title: "RTSE Online Application",
-                draft,
-                schools
-            }
-        );
+        return res.render("rtse/application", {
+            title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
+            draft,
+            setting,
+            schools
+        });
     } catch (err) {
-        console.error("RTSE application status error:", err);
+        console.error("RTSE application page error:", err);
+
         return res.status(500).send(
-            "Unable to check RTSE application status."
+            "Unable to load RTSE application page."
         );
     }
 };
