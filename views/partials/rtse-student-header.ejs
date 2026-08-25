@@ -2,40 +2,187 @@
 <link rel="stylesheet" href="/css/footer.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-<header class="main-header rtse-student-header-only">
+<header class="rtse-student-header-only">
+    <div class="rtse-student-header-inner">
 
-    <div class="header-top">
-
-        <div class="brand">
-
+        <div class="rtse-student-brand">
             <img
                 src="<%= siteSettings && siteSettings.logo
                     ? '/uploads/site-settings/' + siteSettings.logo
                     : '/images/logo.png' %>"
-                alt="Logo"
-                class="logo"
+                alt="<%= siteSettings && siteSettings.institution_name
+                    ? siteSettings.institution_name
+                    : 'Al-Najat National Institution' %>"
+                class="rtse-student-logo"
             >
 
-            <div class="brand-text">
-
+            <div class="rtse-student-brand-text">
                 <h1>
-                    <%= siteSettings
+                    <%= siteSettings && siteSettings.institution_name
                         ? siteSettings.institution_name
                         : "Al-Najat National Institution" %>
                 </h1>
 
                 <p>
-                    <%= siteSettings
+                    <%= siteSettings && siteSettings.tagline
                         ? siteSettings.tagline
                         : "An Islamic Madrasa Integrated School" %>
                 </p>
-
             </div>
-
         </div>
 
-
+        <div class="rtse-student-portal-title">
+            <strong>RTSE 2026</strong>
+            <span>Student Portal</span>
+        </div>
 
     </div>
-
 </header>
+
+<style>
+/* =========================================================
+   RTSE STUDENT PORTAL HEADER
+   Formal institutional header
+   ========================================================= */
+
+.rtse-student-header-only {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 2px solid #111111;
+    box-sizing: border-box;
+}
+
+.rtse-student-header-inner {
+    width: min(1180px, calc(100% - 36px));
+    min-height: 92px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.rtse-student-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.rtse-student-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    flex: 0 0 64px;
+}
+
+.rtse-student-brand-text {
+    min-width: 0;
+}
+
+.rtse-student-brand-text h1 {
+    margin: 0;
+    color: #111111;
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: .2px;
+    text-transform: uppercase;
+}
+
+.rtse-student-brand-text p {
+    margin: 5px 0 0;
+    color: #555555;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.rtse-student-portal-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    white-space: nowrap;
+    color: #111111;
+}
+
+.rtse-student-portal-title strong {
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.rtse-student-portal-title span {
+    margin-top: 3px;
+    color: #555555;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+@media (max-width: 700px) {
+
+    .rtse-student-header-inner {
+        min-height: 76px;
+        width: calc(100% - 22px);
+        gap: 12px;
+    }
+
+    .rtse-student-logo {
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
+    }
+
+    .rtse-student-brand {
+        gap: 10px;
+    }
+
+    .rtse-student-brand-text h1 {
+        font-size: 14px;
+    }
+
+    .rtse-student-brand-text p {
+        font-size: 9px;
+        margin-top: 3px;
+    }
+
+    .rtse-student-portal-title strong {
+        font-size: 12px;
+    }
+
+    .rtse-student-portal-title span {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .rtse-student-header-inner {
+        min-height: 68px;
+    }
+
+    .rtse-student-logo {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .rtse-student-brand-text h1 {
+        font-size: 11px;
+    }
+
+    .rtse-student-brand-text p {
+        display: none;
+    }
+
+    .rtse-student-portal-title strong {
+        font-size: 10px;
+    }
+
+    .rtse-student-portal-title span {
+        font-size: 7px;
+    }
+}
+</style>

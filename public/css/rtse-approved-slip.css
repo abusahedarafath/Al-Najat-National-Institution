@@ -1,0 +1,715 @@
+/* =========================================================
+   RTSE APPROVED EXAMINATION SLIP
+   Formal / Official A4 Document
+   Page-specific stylesheet ONLY
+   ========================================================= */
+
+.rtse-approved-page {
+    min-height: 100vh;
+    padding: 32px 20px;
+    background:
+        #202020;
+    box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------
+   A4 DOCUMENT
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-slip {
+    width: 210mm;
+    min-height: 297mm;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10mm;
+    box-sizing: border-box;
+
+    background: #fff;
+    color: #111;
+
+    border: 1px solid #c7c7c7;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-header {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+
+    padding-bottom: 7px;
+    border-bottom: 2px solid #111;
+}
+
+.rtse-approved-page .approved-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rtse-approved-page .approved-logo img {
+    display: block;
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+}
+
+.rtse-approved-page .approved-title {
+    text-align: center;
+}
+
+.rtse-approved-page .approved-title h1 {
+    margin: 0;
+    color: #071d68;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    line-height: 1.15;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+}
+
+.rtse-approved-page .approved-title h2 {
+    margin: 2px 0 1px;
+    color: #111;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.rtse-approved-page .approved-title p {
+    margin: 0;
+    color: #333;
+    font-size: 8.5px;
+    line-height: 1.25;
+}
+
+.rtse-approved-page .approved-document-title {
+    margin-top: 5px;
+    color: #111;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 900;
+    letter-spacing: .3px;
+}
+
+/* ---------------------------------------------------------
+   APPROVAL BANNER
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+    margin: 8px 0;
+
+    border: 1px solid #3d8c73;
+    background: #fbfffd;
+
+    text-align: center;
+}
+
+.rtse-approved-page .approved-banner strong {
+    color: #173d31;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 900;
+}
+
+.rtse-approved-page .approved-banner span {
+    margin-top: 2px;
+    color: #444;
+    font-size: 7.5px;
+    line-height: 1.2;
+}
+
+/* ---------------------------------------------------------
+   COMMON INFORMATION BOXES
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-registration-box,
+.rtse-approved-page .approved-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rtse-approved-page .approved-registration-box {
+    border: 1px solid #c9c9c9;
+}
+
+.rtse-approved-page .approved-registration-box > div,
+.rtse-approved-page .approved-grid > div {
+    min-width: 0;
+    padding: 4px 5px;
+    box-sizing: border-box;
+    border-right: 1px solid #d0d0d0;
+}
+
+.rtse-approved-page .approved-registration-box > div:last-child,
+.rtse-approved-page .approved-grid > div:last-child {
+    border-right: 0;
+}
+
+.rtse-approved-page .approved-registration-box span,
+.rtse-approved-page .approved-grid span,
+.rtse-approved-page .approved-details span,
+.rtse-approved-page .approved-address span {
+    display: block;
+    color: #555;
+    font-size: 7px;
+    line-height: 1.15;
+}
+
+.rtse-approved-page .approved-registration-box strong,
+.rtse-approved-page .approved-grid strong,
+.rtse-approved-page .approved-details strong,
+.rtse-approved-page .approved-address strong {
+    display: block;
+    margin-top: 2px;
+    color: #111;
+    font-size: 8.5px;
+    line-height: 1.2;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.rtse-approved-page .approved-registration-number {
+    color: #071d68 !important;
+    font-weight: 900 !important;
+}
+
+.rtse-approved-page .approved-status {
+    color: #176b42 !important;
+    font-weight: 900 !important;
+}
+
+/* ---------------------------------------------------------
+   SECTION BLOCKS
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-section {
+    margin-top: 7px;
+    border: 1px solid #c9c9c9;
+}
+
+.rtse-approved-page .approved-section-title {
+    min-height: 18px;
+    padding: 3px 6px;
+
+    box-sizing: border-box;
+
+    background: #fafafa;
+    border-bottom: 1px solid #c9c9c9;
+
+    color: #222;
+    font-size: 8px;
+    line-height: 1.4;
+    font-weight: 900;
+    letter-spacing: .2px;
+}
+
+/* ---------------------------------------------------------
+   CANDIDATE
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-candidate-layout {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    min-height: 92px;
+}
+
+.rtse-approved-page .approved-photo {
+    padding: 6px;
+    box-sizing: border-box;
+    border-right: 1px solid #d0d0d0;
+    text-align: center;
+}
+
+.rtse-approved-page .approved-photo img,
+.rtse-approved-page .approved-photo-placeholder {
+    display: block;
+    width: 72px;
+    height: 82px;
+    margin: 0 auto 3px;
+
+    object-fit: cover;
+
+    border: 1px solid #777;
+    background: #f3f3f3;
+}
+
+.rtse-approved-page .approved-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #777;
+    font-size: 8px;
+}
+
+.rtse-approved-page .approved-photo small {
+    display: block;
+    color: #666;
+    font-size: 6.5px;
+    line-height: 1.1;
+}
+
+.rtse-approved-page .approved-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rtse-approved-page .approved-details > div {
+    min-width: 0;
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.rtse-approved-page .approved-details > div:nth-child(2n) {
+    border-right: 0;
+}
+
+.rtse-approved-page .approved-details > div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+}
+
+/* ---------------------------------------------------------
+   ADDRESS
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-address {
+    padding: 5px 6px;
+    border-top: 1px solid #d0d0d0;
+}
+
+/* ---------------------------------------------------------
+   FEE / APPROVAL CONTACT
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-fee-box {
+    margin-top: 7px;
+    padding: 0 8px 8px;
+
+    border: 1px solid #c9c9c9;
+
+    text-align: center;
+}
+
+.rtse-approved-page .approved-fee-box p {
+    margin: 6px auto 3px;
+    max-width: 650px;
+
+    color: #444;
+    font-size: 7.5px;
+    line-height: 1.3;
+}
+
+.rtse-approved-page .approved-fee-box > strong {
+    display: block;
+    color: #222;
+    font-size: 8.5px;
+    line-height: 1.2;
+}
+
+.rtse-approved-page .approved-fee-box > span {
+    display: block;
+    margin-top: 1px;
+    color: #444;
+    font-size: 7.5px;
+}
+
+.rtse-approved-page .approved-fee-box .approved-phone {
+    margin-top: 1px;
+    color: #071d68;
+    font-weight: 900;
+}
+
+/* ---------------------------------------------------------
+   INSTRUCTIONS
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-instructions {
+    margin-top: 7px;
+    padding: 0 7px 6px;
+
+    border: 1px solid #c9c9c9;
+}
+
+.rtse-approved-page .approved-instructions h3 {
+    margin: 0 -7px 4px;
+    padding: 3px 6px;
+
+    background: #fafafa;
+    border-bottom: 1px solid #c9c9c9;
+
+    color: #222;
+    font-size: 8px;
+    line-height: 1.4;
+}
+
+.rtse-approved-page .approved-instructions ol {
+    margin: 0;
+    padding-left: 17px;
+}
+
+.rtse-approved-page .approved-instructions li {
+    margin: 1px 0;
+    color: #333;
+    font-size: 7px;
+    line-height: 1.35;
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-top: 8px;
+    padding-top: 7px;
+
+    border-top: 1px solid #999;
+
+    color: #333;
+    font-size: 6.5px;
+    line-height: 1.3;
+}
+
+.rtse-approved-page .approved-signature {
+    min-width: 120px;
+    padding-top: 14px;
+
+    text-align: center;
+    color: #333;
+    font-size: 7px;
+
+    border-top: 0;
+}
+
+/* ---------------------------------------------------------
+   ACTIONS
+   --------------------------------------------------------- */
+
+.rtse-approved-page .approved-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    margin-top: 18px;
+}
+
+.rtse-approved-page .approved-actions .btn-save,
+.rtse-approved-page .approved-actions .btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+    padding: 7px 16px;
+
+    border-radius: 5px;
+
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.rtse-approved-page .approved-actions .btn-save {
+    border: 0;
+    background: #071d68;
+    color: #fff;
+}
+
+.rtse-approved-page .approved-actions .btn-view {
+    border: 1px solid #071d68;
+    background: #fff;
+    color: #071d68;
+}
+
+/* ---------------------------------------------------------
+   TABLET
+   --------------------------------------------------------- */
+
+@media (max-width: 800px) {
+    .rtse-approved-page {
+        padding: 15px 8px;
+    }
+
+    .rtse-approved-page .approved-slip {
+        width: 100%;
+        min-height: auto;
+        padding: 14px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .18);
+    }
+
+    .rtse-approved-page .approved-title h1 {
+        font-size: 17px;
+    }
+
+    .rtse-approved-page .approved-title h2 {
+        font-size: 11px;
+    }
+
+    .rtse-approved-page .approved-registration-box strong,
+    .rtse-approved-page .approved-grid strong,
+    .rtse-approved-page .approved-details strong {
+        font-size: 8px;
+    }
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 560px) {
+    .rtse-approved-page {
+        padding: 8px 4px;
+        background: #202020;
+    }
+
+    .rtse-approved-page .approved-slip {
+        padding: 8px;
+        border: 1px solid #bbb;
+        box-shadow: none;
+        font-size: 8px;
+    }
+
+    .rtse-approved-page .approved-header {
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 7px;
+        padding-bottom: 5px;
+    }
+
+    .rtse-approved-page .approved-logo img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .rtse-approved-page .approved-title h1 {
+        font-size: 12px;
+    }
+
+    .rtse-approved-page .approved-title h2 {
+        font-size: 8px;
+    }
+
+    .rtse-approved-page .approved-title p {
+        font-size: 6px;
+    }
+
+    .rtse-approved-page .approved-document-title {
+        margin-top: 3px;
+        font-size: 8px;
+    }
+
+    .rtse-approved-page .approved-banner {
+        min-height: 30px;
+        margin: 5px 0;
+    }
+
+    .rtse-approved-page .approved-banner strong {
+        font-size: 8px;
+    }
+
+    .rtse-approved-page .approved-banner span {
+        font-size: 5.5px;
+    }
+
+    .rtse-approved-page .approved-registration-box,
+    .rtse-approved-page .approved-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rtse-approved-page .approved-registration-box > div,
+    .rtse-approved-page .approved-grid > div {
+        border-right: 1px solid #d0d0d0;
+        border-bottom: 1px solid #d0d0d0;
+    }
+
+    .rtse-approved-page .approved-registration-box > div:nth-child(2n),
+    .rtse-approved-page .approved-grid > div:nth-child(2n) {
+        border-right: 0;
+    }
+
+    .rtse-approved-page .approved-registration-box > div:nth-last-child(-n + 2),
+    .rtse-approved-page .approved-grid > div:nth-last-child(-n + 2) {
+        border-bottom: 0;
+    }
+
+    .rtse-approved-page .approved-registration-box span,
+    .rtse-approved-page .approved-grid span,
+    .rtse-approved-page .approved-details span,
+    .rtse-approved-page .approved-address span {
+        font-size: 5.5px;
+    }
+
+    .rtse-approved-page .approved-registration-box strong,
+    .rtse-approved-page .approved-grid strong,
+    .rtse-approved-page .approved-details strong,
+    .rtse-approved-page .approved-address strong {
+        font-size: 6.5px;
+    }
+
+    .rtse-approved-page .approved-section {
+        margin-top: 5px;
+    }
+
+    .rtse-approved-page .approved-section-title {
+        min-height: 14px;
+        padding: 2px 4px;
+        font-size: 6px;
+    }
+
+    .rtse-approved-page .approved-candidate-layout {
+        grid-template-columns: 72px minmax(0, 1fr);
+        min-height: 72px;
+    }
+
+    .rtse-approved-page .approved-photo {
+        padding: 4px;
+    }
+
+    .rtse-approved-page .approved-photo img,
+    .rtse-approved-page .approved-photo-placeholder {
+        width: 50px;
+        height: 58px;
+        margin-bottom: 2px;
+    }
+
+    .rtse-approved-page .approved-photo small {
+        font-size: 4.5px;
+    }
+
+    .rtse-approved-page .approved-details > div {
+        padding: 4px;
+    }
+
+    .rtse-approved-page .approved-fee-box {
+        margin-top: 5px;
+        padding: 0 5px 5px;
+    }
+
+    .rtse-approved-page .approved-fee-box p {
+        margin: 4px auto 2px;
+        font-size: 5.5px;
+    }
+
+    .rtse-approved-page .approved-fee-box > strong {
+        font-size: 6px;
+    }
+
+    .rtse-approved-page .approved-fee-box > span {
+        font-size: 5.5px;
+    }
+
+    .rtse-approved-page .approved-instructions {
+        margin-top: 5px;
+        padding: 0 5px 4px;
+    }
+
+    .rtse-approved-page .approved-instructions h3 {
+        margin: 0 -5px 3px;
+        padding: 2px 4px;
+        font-size: 6px;
+    }
+
+    .rtse-approved-page .approved-instructions ol {
+        padding-left: 13px;
+    }
+
+    .rtse-approved-page .approved-instructions li {
+        font-size: 5px;
+        line-height: 1.3;
+    }
+
+    .rtse-approved-page .approved-footer {
+        margin-top: 5px;
+        padding-top: 5px;
+        font-size: 4.5px;
+    }
+
+    .rtse-approved-page .approved-signature {
+        min-width: 80px;
+        padding-top: 10px;
+        font-size: 5px;
+    }
+
+    .rtse-approved-page .approved-actions {
+        margin-top: 12px;
+        gap: 6px;
+    }
+
+    .rtse-approved-page .approved-actions .btn-save,
+    .rtse-approved-page .approved-actions .btn-view {
+        min-height: 29px;
+        padding: 5px 10px;
+        font-size: 9px;
+    }
+}
+
+/* ---------------------------------------------------------
+   PRINT / SAVE PDF
+   --------------------------------------------------------- */
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .rtse-approved-page {
+        min-height: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    .rtse-approved-page .approved-slip {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .rtse-approved-page .approved-actions {
+        display: none !important;
+    }
+}

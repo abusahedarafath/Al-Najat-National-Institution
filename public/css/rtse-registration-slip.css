@@ -1,0 +1,516 @@
+/* =========================================================
+   RTSE OFFICIAL REGISTRATION SLIP
+   ========================================================= */
+
+.rtse-slip-page{
+    width:100%;
+    box-sizing:border-box;
+    padding:24px 15px;
+    background:#eee;
+    color:#111;
+    font-family:Georgia,"Times New Roman",serif;
+}
+
+.rtse-slip{
+    width:100%;
+    max-width:850px;
+    margin:0 auto;
+    padding:18px 22px;
+    box-sizing:border-box;
+    background:#fff;
+    border:1px solid #222;
+    color:#111;
+    font-family:Georgia,"Times New Roman",serif;
+}
+
+/* NOTICE */
+
+.rtse-fee-approval-notice{
+    width:100%;
+    max-width:850px;
+    margin:0 auto 10px;
+    padding:8px 12px;
+    box-sizing:border-box;
+    background:#fff;
+    border:1px solid #555;
+    color:#111;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:9px;
+    line-height:1.35;
+}
+
+.notice-title{
+    margin-bottom:3px;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.notice-text{font-size:9px;line-height:1.35}
+.notice-text strong{font-weight:800}
+
+/* HEADER */
+
+.slip-header{
+    display:grid;
+    grid-template-columns:78px minmax(0,1fr);
+    align-items:center;
+    padding-bottom:8px;
+    border-bottom:2px solid #111;
+}
+
+.slip-logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.slip-logo img{
+    display:block;
+    width:62px;
+    height:62px;
+    object-fit:contain;
+}
+
+.slip-title{text-align:center}
+
+.slip-title h1{
+    margin:0 0 2px;
+    color:#111;
+    font-size:19px;
+    line-height:1.1;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.slip-title h2{
+    margin:0 0 2px;
+    color:#111;
+    font-size:12px;
+    line-height:1.2;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.organized-by{
+    margin:0;
+    color:#222;
+    font-size:8px;
+    line-height:1.3;
+}
+
+.slip-subtitle{
+    margin-top:3px;
+    color:#111;
+    font-size:11px;
+    line-height:1.2;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+/* SUCCESS */
+
+.success-banner{
+    margin:8px 0;
+    padding:6px 8px;
+    border:1px solid #555;
+    background:#fff;
+    text-align:center;
+}
+
+.success-banner strong{
+    display:block;
+    color:#111;
+    font-size:11px;
+    line-height:1.2;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.success-banner span{
+    display:block;
+    margin-top:2px;
+    color:#333;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:8px;
+    line-height:1.3;
+}
+
+/* REGISTRATION */
+
+.registration-box{
+    display:grid;
+    grid-template-columns:1.15fr .8fr .8fr 1fr;
+    border-top:1px solid #777;
+    border-left:1px solid #777;
+    margin-bottom:8px;
+}
+
+.registration-box>div{
+    min-width:0;
+    padding:5px 6px;
+    border-right:1px solid #777;
+    border-bottom:1px solid #777;
+}
+
+.registration-box span{
+    display:block;
+    margin-bottom:2px;
+    color:#333;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:7px;
+    line-height:1.1;
+    font-weight:700;
+}
+
+.registration-box strong{
+    display:block;
+    color:#111;
+    font-size:9px;
+    line-height:1.2;
+    font-weight:800;
+}
+
+.registration-number{
+    font-size:10px!important;
+    letter-spacing:.2px;
+}
+
+.pending-status{text-transform:uppercase}
+
+/* SECTIONS */
+
+.slip-section{margin-top:7px}
+
+.section-title{
+    padding:4px 6px;
+    border:1px solid #777;
+    border-bottom:0;
+    background:#f5f5f5;
+    color:#111;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:8px;
+    line-height:1.2;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+/* CANDIDATE */
+
+.candidate-layout{
+    display:grid;
+    grid-template-columns:100px minmax(0,1fr);
+    border:1px solid #777;
+}
+
+.candidate-photo{
+    padding:5px;
+    border-right:1px solid #777;
+    text-align:center;
+}
+
+.candidate-photo img,
+.photo-placeholder{
+    display:block;
+    width:82px;
+    height:100px;
+    margin:0 auto 3px;
+    object-fit:cover;
+    border:1px solid #555;
+    background:#eee;
+}
+
+.photo-placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#555;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:8px;
+    font-weight:700;
+}
+
+.photo-caption{
+    color:#333;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:6px;
+    line-height:1.1;
+}
+
+.candidate-details{padding:4px 7px}
+
+.detail-row{
+    display:grid;
+    grid-template-columns:115px minmax(0,1fr);
+    min-height:18px;
+    padding:2px 0;
+    border-bottom:1px solid #ccc;
+}
+
+.detail-row:last-child{border-bottom:0}
+
+.detail-row span{
+    color:#333;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:7px;
+    line-height:1.25;
+}
+
+.detail-row strong{
+    min-width:0;
+    color:#111;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:8px;
+    line-height:1.25;
+    font-weight:700;
+    overflow-wrap:anywhere;
+}
+
+/* TABLES */
+
+.two-column{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    border-left:1px solid #777;
+    border-top:1px solid #777;
+}
+
+.two-column .detail-row{
+    grid-template-columns:95px minmax(0,1fr);
+    min-height:20px;
+    padding:3px 6px;
+    border-right:1px solid #777;
+    border-bottom:1px solid #777;
+}
+
+.two-column .full-width{
+    grid-column:1/-1;
+}
+
+/* INSTRUCTIONS */
+
+.instruction-box{
+    margin-top:8px;
+    padding:6px 8px;
+    border:1px solid #777;
+    background:#fff;
+}
+
+.instruction-box h3{
+    margin:0 0 3px;
+    color:#111;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:8px;
+    line-height:1.2;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.instruction-box ol{
+    margin:0;
+    padding-left:17px;
+}
+
+.instruction-box li{
+    margin:1px 0;
+    color:#222;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:7px;
+    line-height:1.3;
+}
+
+/* FOOTER INSIDE DOCUMENT */
+
+.slip-footer{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    margin-top:8px;
+    padding-top:7px;
+    border-top:1px solid #777;
+    color:#222;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:7px;
+    line-height:1.3;
+}
+
+.signature-box{
+    min-width:120px;
+    padding-top:15px;
+    text-align:center;
+    color:#111;
+    font-size:7px;
+}
+
+/* SCREEN BUTTONS */
+
+.slip-actions{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:18px;
+}
+
+.slip-actions .btn-save,
+.slip-actions .btn-view{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:34px;
+    padding:7px 16px;
+    border:1px solid #333;
+    border-radius:2px;
+    background:#fff;
+    color:#111!important;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:11px;
+    font-weight:700;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .rtse-slip-page{padding:10px 5px}
+
+    .rtse-slip{padding:12px}
+
+    .slip-header{
+        grid-template-columns:55px minmax(0,1fr);
+    }
+
+    .slip-logo img{
+        width:45px;
+        height:45px;
+    }
+
+    .slip-title h1{font-size:13px}
+    .slip-title h2{font-size:9px}
+    .organized-by{font-size:6px}
+    .slip-subtitle{font-size:8px}
+
+    .registration-box{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .candidate-layout{
+        grid-template-columns:82px minmax(0,1fr);
+    }
+
+    .candidate-photo img,
+    .photo-placeholder{
+        width:68px;
+        height:82px;
+    }
+
+    .candidate-details{padding:3px 5px}
+
+    .detail-row{
+        grid-template-columns:82px minmax(0,1fr);
+    }
+
+    .detail-row span,
+    .detail-row strong{
+        font-size:6.5px;
+    }
+
+    .two-column{
+        grid-template-columns:1fr;
+    }
+
+    .two-column .full-width{
+        grid-column:auto;
+    }
+}
+
+/* =========================================================
+   PRINT / SAVE AS PDF
+   No website header.
+   No website navbar.
+   No website footer.
+   Only the registration document.
+   ========================================================= */
+
+@page{
+    size:A4 portrait;
+    margin:8mm;
+}
+
+@media print{
+
+    html,
+    body{
+        width:100%!important;
+        margin:0!important;
+        padding:0!important;
+        background:#fff!important;
+    }
+
+    body{
+        color:#000!important;
+    }
+
+    /* Hide normal website chrome */
+    body > header,
+    body > nav,
+    body > footer,
+    body > .navbar,
+    body > .site-header,
+    body > .site-footer{
+        display:none!important;
+    }
+
+    /* Hide buttons */
+    .slip-actions{
+        display:none!important;
+    }
+
+    .rtse-slip-page{
+        display:block!important;
+        width:100%!important;
+        max-width:none!important;
+        margin:0!important;
+        padding:0!important;
+        background:#fff!important;
+    }
+
+    .rtse-fee-approval-notice{
+        width:100%!important;
+        max-width:none!important;
+        margin:0 0 3mm!important;
+        background:#fff!important;
+        color:#000!important;
+    }
+
+    .rtse-slip{
+        width:100%!important;
+        max-width:none!important;
+        margin:0!important;
+        padding:4mm!important;
+        border:1px solid #000!important;
+        border-radius:0!important;
+        box-shadow:none!important;
+        background:#fff!important;
+        color:#000!important;
+    }
+
+    .slip-header,
+    .registration-box,
+    .candidate-layout,
+    .two-column,
+    .section-title,
+    .instruction-box,
+    .slip-footer,
+    .success-banner{
+        break-inside:avoid!important;
+        page-break-inside:avoid!important;
+    }
+
+    a{
+        color:#000!important;
+        text-decoration:none!important;
+    }
+}

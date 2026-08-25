@@ -2,307 +2,352 @@
 
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/rtse.css">
+<link rel="stylesheet" href="/css/rtse-review.css">
 
 <%- include("../partials/navbar") %>
 
-<div class="rtse-page">
+<main class="rtse-review-page">
 
-    <div class="container" style="max-width:900px;margin:30px auto;">
+    <!-- PAGE HERO -->
+    <section class="rtse-review-hero">
+        <div class="rtse-review-hero-inner">
+            <div class="rtse-review-eyebrow">
+                RTSE ONLINE APPLICATION
+            </div>
 
-        <div class="profile-card">
+            <h1>Review Your Application</h1>
 
-            <h1 style="text-align:center;">
-                Review RTSE Application
-            </h1>
-
-            <p style="text-align:center;color:#666;">
-                Please check every detail carefully before confirming.
+            <p>
+                Please carefully verify all information before submitting your application.
             </p>
+        </div>
+    </section>
 
-            <% if (typeof error !== "undefined" && error) { %>
+    <div class="rtse-review-container">
 
-                <div class="alert alert-danger">
-                    <%= error %>
-                </div>
+        <!-- BREADCRUMB -->
+        <nav class="rtse-review-breadcrumb" aria-label="breadcrumb">
+            <a href="/rtse/apply">Application</a>
+            <span>›</span>
+            <strong>Review</strong>
+        </nav>
 
-            <% } %>
+        <% if (typeof error !== "undefined" && error) { %>
+            <div class="rtse-review-alert">
+                <strong>Unable to continue</strong>
+                <span><%= error %></span>
+            </div>
+        <% } %>
 
-            <!-- PHOTO -->
+        <!-- APPLICATION SUMMARY -->
+        <section class="rtse-review-summary">
 
-            <div style="text-align:center;margin:25px 0;">
-
+            <div class="rtse-review-photo-wrap">
                 <% if (draft.photo) { %>
-
                     <img
                         src="/uploads/rtse/<%= draft.photo %>"
                         alt="Candidate Photo"
-                        style="
-                            width:140px;
-                            height:170px;
-                            object-fit:cover;
-                            border-radius:8px;
-                            border:2px solid #ddd;
-                        "
+                        class="rtse-review-photo"
                     >
-
+                <% } else { %>
+                    <div class="rtse-review-photo-placeholder">
+                        <span>Photo</span>
+                    </div>
                 <% } %>
+            </div>
+
+            <div class="rtse-review-summary-content">
+
+                <span class="rtse-review-status">
+                    APPLICATION DRAFT
+                </span>
+
+                <h2>
+                    <%= draft.full_name || "Applicant" %>
+                </h2>
+
+                <p class="rtse-review-summary-subtitle">
+                    Ratabari Talent Search Examination
+                </p>
+
+                <div class="rtse-review-summary-grid">
+
+                    <div>
+                        <small>Father's Name</small>
+                        <strong><%= draft.father_name || "-" %></strong>
+                    </div>
+
+                    <div>
+                        <small>Class</small>
+                        <strong>Class <%= draft.class || "-" %></strong>
+                    </div>
+
+                    <div>
+                        <small>District</small>
+                        <strong><%= draft.district || "-" %></strong>
+                    </div>
+
+                    <div>
+                        <small>Mobile</small>
+                        <strong><%= draft.mobile || "-" %></strong>
+                    </div>
+
+                </div>
 
             </div>
 
-            <!-- PERSONAL DETAILS -->
+        </section>
 
-            <h3 class="review-heading">
-                Personal Details
-            </h3>
+        <!-- PERSONAL DETAILS -->
+        <section class="rtse-review-section">
 
-            <table class="admin-table">
+            <div class="rtse-review-section-heading">
+                <div class="rtse-review-section-icon">01</div>
 
-                <tbody>
+                <div>
+                    <h2>Personal Details</h2>
+                    <p>Basic information provided by the candidate.</p>
+                </div>
+            </div>
 
-                    <tr>
-                        <th>Full Name</th>
-                        <td><%= draft.full_name %></td>
-                    </tr>
+            <div class="rtse-review-details-grid">
 
-                    <tr>
-                        <th>Father's Name</th>
-                        <td><%= draft.father_name %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Full Name</span>
+                    <strong><%= draft.full_name || "-" %></strong>
+                </div>
 
-                    <tr>
-                        <th>Mother's Name</th>
-                        <td><%= draft.mother_name %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Father's Name</span>
+                    <strong><%= draft.father_name || "-" %></strong>
+                </div>
 
-                    <tr>
-                        <th>Gender</th>
-                        <td><%= draft.gender %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Mother's Name</span>
+                    <strong><%= draft.mother_name || "-" %></strong>
+                </div>
 
-                    <tr>
-                        <th>Date of Birth</th>
-                        <td><%= draft.dob %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Gender</span>
+                    <strong><%= draft.gender || "-" %></strong>
+                </div>
 
-                </tbody>
+                <div class="rtse-review-detail">
+                    <span>Date of Birth</span>
+                    <strong><%= draft.dob || "-" %></strong>
+                </div>
 
-            </table>
+            </div>
 
-            <!-- CONTACT -->
+        </section>
 
-            <h3 class="review-heading">
-                Contact Details
-            </h3>
+        <!-- CONTACT DETAILS -->
+        <section class="rtse-review-section">
 
-            <table class="admin-table">
+            <div class="rtse-review-section-heading">
+                <div class="rtse-review-section-icon">02</div>
 
-                <tbody>
+                <div>
+                    <h2>Contact & Address</h2>
+                    <p>Contact information and residential details.</p>
+                </div>
+            </div>
 
-                    <tr>
-                        <th>Mobile</th>
-                        <td><%= draft.mobile %></td>
-                    </tr>
+            <div class="rtse-review-details-grid">
 
-                    <tr>
-                        <th>Email</th>
-                        <td><%= draft.email || "Not provided" %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Mobile</span>
+                    <strong><%= draft.mobile || "-" %></strong>
+                </div>
 
-                    <tr>
-                        <th>Address</th>
-                        <td><%= draft.address || "Not provided" %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Email</span>
+                    <strong><%= draft.email || "Not provided" %></strong>
+                </div>
 
-                    <tr>
-                        <th>District</th>
-                        <td><%= draft.district %></td>
-                    </tr>
+                <div class="rtse-review-detail rtse-review-detail-wide">
+                    <span>Address</span>
+                    <strong><%= draft.address || "Not provided" %></strong>
+                </div>
 
-                    <tr>
-                        <th>State</th>
-                        <td><%= draft.state %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>District</span>
+                    <strong><%= draft.district || "-" %></strong>
+                </div>
 
-                    <tr>
-                        <th>PIN Code</th>
-                        <td><%= draft.pincode || "Not provided" %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>State</span>
+                    <strong><%= draft.state || "-" %></strong>
+                </div>
 
-                </tbody>
+                <div class="rtse-review-detail">
+                    <span>PIN Code</span>
+                    <strong><%= draft.pincode || "Not provided" %></strong>
+                </div>
 
-            </table>
+            </div>
 
-            <!-- EXAM DETAILS -->
+        </section>
 
-            <h3 class="review-heading">
-                Examination Details
-            </h3>
+        <!-- EXAMINATION DETAILS -->
+        <section class="rtse-review-section">
 
-            <table class="admin-table">
+            <div class="rtse-review-section-heading">
+                <div class="rtse-review-section-icon">03</div>
 
-                <tbody>
+                <div>
+                    <h2>Examination Details</h2>
+                    <p>School and examination information.</p>
+                </div>
+            </div>
 
-                    <tr>
-                        <th>School</th>
-                        <td><%= draft.school_name %></td>
-                    </tr>
+            <div class="rtse-review-details-grid">
 
-                    <tr>
-                        <th>Class</th>
-                        <td>Class <%= draft.class %></td>
-                    </tr>
+                <div class="rtse-review-detail rtse-review-detail-wide">
+                    <span>School</span>
+                    <strong><%= draft.school_name || "-" %></strong>
+                </div>
 
-                    <tr>
-                        <th>Section</th>
-                        <td>SECTION <%= draft.section %></td>
-                    </tr>
+                <div class="rtse-review-detail">
+                    <span>Class</span>
+                    <strong>Class <%= draft.class || "-" %></strong>
+                </div>
 
-                </tbody>
+                <div class="rtse-review-detail">
+                    <span>Section</span>
+                    <strong>SECTION <%= draft.section || "-" %></strong>
+                </div>
 
-            </table>
+            </div>
 
-            <!-- DOCUMENT -->
+        </section>
 
-            <h3 class="review-heading">
-                Uploaded Documents
-            </h3>
+        <!-- DOCUMENTS -->
+        <section class="rtse-review-section">
 
-            <table class="admin-table">
+            <div class="rtse-review-section-heading">
+                <div class="rtse-review-section-icon">04</div>
 
-                <tbody>
+                <div>
+                    <h2>Uploaded Documents</h2>
+                    <p>Documents attached to this application.</p>
+                </div>
+            </div>
 
-                    <tr>
-                        <th>Candidate Photo</th>
-                        <td>Uploaded</td>
-                    </tr>
+            <div class="rtse-review-documents">
 
-                    <tr>
-                        <th>Identity Document</th>
-                        <td>
-                            <% if (draft.identity_document) { %>
-                                Uploaded
-                            <% } else { %>
-                                Not provided
-                            <% } %>
-                        </td>
-                    </tr>
+                <div class="rtse-review-document">
+                    <div class="rtse-review-document-icon">✓</div>
 
-                </tbody>
+                    <div>
+                        <strong>Candidate Photograph</strong>
+                        <span>Photo uploaded successfully</span>
+                    </div>
 
-            </table>
+                    <b class="rtse-review-uploaded">
+                        Uploaded
+                    </b>
+                </div>
 
-            <!-- DECLARATION -->
+                <div class="rtse-review-document">
 
-            <div
-                style="
-                    margin-top:30px;
-                    padding:18px;
-                    border:1px solid #ddd;
-                    border-radius:8px;
-                    background:#f8f9fa;
-                "
+                    <div class="rtse-review-document-icon
+                        <%= draft.identity_document ? "" : "missing" %>">
+                        <%= draft.identity_document ? "✓" : "!" %>
+                    </div>
+
+                    <div>
+                        <strong>Identity Document</strong>
+
+                        <% if (draft.identity_document) { %>
+                            <span>Identity document uploaded</span>
+                        <% } else { %>
+                            <span>No identity document provided</span>
+                        <% } %>
+                    </div>
+
+                    <b class="<%= draft.identity_document
+                        ? 'rtse-review-uploaded'
+                        : 'rtse-review-missing' %>">
+                        <%= draft.identity_document ? "Uploaded" : "Not provided" %>
+                    </b>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- DECLARATION -->
+        <section class="rtse-review-declaration">
+
+            <label for="declaration">
+
+                <input
+                    type="checkbox"
+                    id="declaration"
+                >
+
+                <span class="rtse-review-checkmark"></span>
+
+                <span class="rtse-review-declaration-text">
+                    <strong>Applicant Declaration</strong>
+
+                    I hereby declare that the information provided in this
+                    application is true and correct to the best of my knowledge.
+                    I understand that providing false or misleading information
+                    may result in cancellation of my application.
+                </span>
+
+            </label>
+
+        </section>
+
+        <!-- ACTIONS -->
+        <section class="rtse-review-actions">
+
+            <a
+                href="/rtse/edit"
+                class="rtse-review-edit-btn"
+            >
+                <span>←</span>
+                Edit Application
+            </a>
+
+            <form
+                action="/rtse/confirm"
+                method="POST"
             >
 
-                <label
-                    style="
-                        display:flex;
-                        gap:10px;
-                        align-items:flex-start;
-                        cursor:pointer;
-                    "
+                <button
+                    type="submit"
+                    id="confirmButton"
+                    class="rtse-review-confirm-btn"
+                    disabled
                 >
+                    Confirm & Submit Application
+                    <span>→</span>
+                </button>
 
-                    <input
-                        type="checkbox"
-                        id="declaration"
-                        style="margin-top:4px;"
-                    >
+            </form>
 
-                    <span>
-                        I hereby declare that the information provided in this
-                        application is true and correct to the best of my knowledge.
-                        I understand that providing false or misleading information
-                        may result in cancellation of my application.
-                    </span>
+        </section>
 
-                </label>
-
-            </div>
-
-            <!-- ACTIONS -->
-
-            <div
-                style="
-                    display:flex;
-                    gap:12px;
-                    justify-content:center;
-                    flex-wrap:wrap;
-                    margin-top:30px;
-                "
-            >
-
-                <a
-                    href="/rtse/edit"
-                    class="btn-view"
-                >
-                    ← Edit Application
-                </a>
-
-                <form
-                    action="/rtse/confirm"
-                    method="POST"
-                    style="margin:0;"
-                >
-
-                    <button
-                        type="submit"
-                        id="confirmButton"
-                        class="btn-save"
-                        disabled
-                    >
-                        Confirm & Submit Application
-                    </button>
-
-                </form>
-
-            </div>
-
-        </div>
+        <p class="rtse-review-final-note">
+            Please make sure all information is correct before confirming.
+        </p>
 
     </div>
 
-</div>
+</main>
 
 <script>
+    const declaration = document.getElementById("declaration");
+    const confirmButton = document.getElementById("confirmButton");
 
-const declaration =
-    document.getElementById("declaration");
-
-const confirmButton =
-    document.getElementById("confirmButton");
-
-declaration.addEventListener("change", function () {
-
-    confirmButton.disabled = !this.checked;
-
-});
-
+    declaration.addEventListener("change", function () {
+        confirmButton.disabled = !this.checked;
+    });
 </script>
-
-<style>
-
-.review-heading {
-    margin-top:30px;
-    margin-bottom:10px;
-    padding-bottom:8px;
-    border-bottom:2px solid #ddd;
-}
-
-#confirmButton:disabled {
-    opacity:0.5;
-    cursor:not-allowed;
-}
-
-</style>
 
 <%- include("../partials/footer") %>
