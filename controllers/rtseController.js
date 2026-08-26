@@ -63,6 +63,17 @@ exports.applicationPage = async (req, res) => {
         const draft = req.session.rtseDraft || {};
         const setting = await ArspSetting.get();
 
+    const rtseSetting = await RtseSetting.get();
+
+    if (!rtseSetting || Number(rtseSetting.application_open) !== 1) {
+        return res.status(403).render(
+            "rtse/application-closed",
+            {
+                title: "RTSE Application Closed"
+            }
+        );
+    }
+
         let schools = [];
 
         try {
