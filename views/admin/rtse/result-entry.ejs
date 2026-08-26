@@ -122,6 +122,7 @@
 
                     action="/admin/rtse/result/<%= student.id %>"
 
+                      data-history-fix="off"
                     method="POST">
 
                     <div class="form-grid">
@@ -138,7 +139,8 @@
 
                                 type="number"
 
-                                id="full_marks"
+                                name="full_marks"
+                                  id="full_marks"
 
                                 value="100"
 
@@ -255,19 +257,25 @@
 
                         <% } %>
 
-                        <button
-                            type="submit"
-                            formnovalidate
-                            formaction="/admin/rtse/attendance/reset/<%= student.id %>"
-                            formmethod="POST"
-                            class="btn-warning"
-                            onclick="return confirm('Reset Attendance Status?\\n\\nThe student will become NOT SCANNED, leave the Result Dashboard, have the existing result removed, and can be scanned again using the same admit card QR.')">
-                            ↻ Attendance Status Reset
-                        </button>
 
                     </div>
 
                 </form>
+
+                  <form
+                      action="/admin/rtse/attendance/reset/<%= student.id %>"
+                      method="POST"
+                        data-history-fix="off"
+                      style="display:inline; margin-top:20px;"
+                      onsubmit="return confirm('Reset Attendance Status?\\n\\nThe student will become NOT SCANNED, leave the Result Dashboard, have the existing result removed, and can be scanned again using the same admit card QR.');">
+
+                      <button
+                          type="submit"
+                          class="btn-warning">
+                          ↻ Attendance Status Reset
+                      </button>
+
+                  </form>
 
             </div>
 

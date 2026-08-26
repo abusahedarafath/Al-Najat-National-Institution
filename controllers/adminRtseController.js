@@ -2242,6 +2242,7 @@ exports.attendanceSheet = async (req, res) => {
 // =====================================
 
 exports.resetAttendanceStatus = async (req, res) => {
+
     try {
         const applicationId = req.params.id;
 
@@ -2442,11 +2443,33 @@ exports.saveResult = async (req, res) => {
     try {
 
         const applicationId =
-            req.params.id;
+            String(req.params.id || "").trim();
+
+        if (!applicationId) {
+
+            req.flash(
+                "error",
+                "Invalid student application."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+        }
+
+        /*
+         * Express body-parser is configured globally in server.js,
+         * but normalize the body here so this controller never crashes
+         * merely because a malformed/empty request reaches the route.
+         */
+        const body =
+            req.body && typeof req.body === "object"
+                ? req.body
+                : {};
 
         const resultStatus =
             String(
-                req.body.result_status || ""
+                body.result_status || ""
             ).trim();
 
         // =====================================
@@ -2467,8 +2490,104 @@ exports.saveResult = async (req, res) => {
             return res.redirect(
                 "/admin/rtse/results"
             );
-
         }
+
+        // =====================================
+        // Validate Result Input
+        // =====================================
+
+        const fullMarks =
+            Number(body.full_marks);
+
+        const marks =
+            Number(body.marks);
+
+        if (
+            !Number.isFinite(fullMarks) ||
+            fullMarks <= 0
+        ) {
+
+            req.flash(
+                "error",
+                "Invalid full marks."
+            );
+
+            return res.redirect(
+                `/admin/rtse/result/${encodeURIComponent(applicationId)}`
+            );
+        }
+
+        if (
+            !Number.isFinite(marks) ||
+            marks < 0 ||
+            marks > fullMarks
+        ) {
+
+            req.flash(
+                "error",
+                "Invalid obtained marks."
+            );
+
+            return res.redirect(
+                `/admin/rtse/result/${encodeURIComponent(applicationId)}`
+            );
+        }
+
+        // =====================================
+        // Calculate Percentage Server-side
+        // =====================================
+
+        const percentage =
+            Number(
+                ((marks / fullMarks) * 100).toFixed(2)
+            );
+
+        // =====================================
+        // Calculate Grade Server-side
+        // =====================================
+
+        let grade;
+
+        if (percentage >= 90) {
+            grade = "A+";
+        } else if (percentage >= 80) {
+            grade = "A";
+        } else if (percentage >= 70) {
+            grade = "B+";
+        } else if (percentage >= 60) {
+            grade = "B";
+        } else if (percentage >= 50) {
+            grade = "C+";
+        } else if (percentage >= 40) {
+            grade = "C";
+        } else {
+            grade = "F";
+        }
+
+        // =====================================
+        // Preserve Rank Number
+        // =====================================
+
+        const rankValue =
+            body.rank_no === undefined ||
+            body.rank_no === null ||
+            String(body.rank_no).trim() === ""
+                ? null
+                : Number(body.rank_no);
+
+        const rankNo =
+            Number.isFinite(rankValue)
+                ? rankValue
+                : null;
+
+        const resultData = {
+            application_id: applicationId,
+            marks,
+            percentage,
+            grade,
+            rank_no: rankNo,
+            result_status: "Entered"
+        };
 
         // =====================================
         // Save / Update Result
@@ -2483,18 +2602,14 @@ exports.saveResult = async (req, res) => {
 
             await RtseResult.update(
                 applicationId,
-                req.body
+                resultData
             );
 
         } else {
 
-            req.body.application_id =
-                applicationId;
-
             await RtseResult.save(
-                req.body
+                resultData
             );
-
         }
 
         req.flash(
@@ -2508,7 +2623,10 @@ exports.saveResult = async (req, res) => {
 
     } catch (err) {
 
-        console.error(err);
+        console.error(
+            "Save Result Error:",
+            err
+        );
 
         req.flash(
             "error",
@@ -2518,12 +2636,8 @@ exports.saveResult = async (req, res) => {
         return res.redirect(
             "/admin/rtse/results"
         );
-
     }
-
 };
-
-
 
 // =====================================
 // Reset Result to Pending
