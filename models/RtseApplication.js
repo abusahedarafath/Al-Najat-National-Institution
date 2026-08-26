@@ -63,6 +63,85 @@ class RtseApplication {
     }
 
     // =====================================
+    // Duplicate Candidate Identity Check
+    // =====================================
+    static async findDuplicateByIdentity(data) {
+
+        const normalize = (value) =>
+            String(value || "")
+                .trim()
+                .replace(/\s+/g, " ")
+                .toLowerCase();
+
+        const fullName = normalize(data.full_name);
+        const fatherName = normalize(data.father_name);
+        const motherName = normalize(data.mother_name);
+        const schoolName = normalize(data.school_name);
+        const dob = String(data.dob || "").trim();
+
+        if (
+            !fullName ||
+            !fatherName ||
+            !motherName ||
+            !schoolName ||
+            !dob
+        ) {
+            return null;
+        }
+
+        /*
+         * Use DATE_FORMAT() for DOB.
+         *
+         * MariaDB returns DATE values to Node as JavaScript Date
+         * objects in this project. Comparing row.dob directly can
+         * therefore suffer from timezone conversion.
+         */
+
+        const [rows] = await db.query(
+            `
+            SELECT
+                id,
+                registration_no,
+                full_name,
+                father_name,
+                mother_name,
+                DATE_FORMAT(dob, '%Y-%m-%d') AS dob_string,
+                school_name
+            FROM rtse_applications
+            WHERE archive=0
+              AND DATE_FORMAT(dob, '%Y-%m-%d')=?
+              AND LOWER(TRIM(school_name))=?
+            ORDER BY id ASC
+            LIMIT 50
+            `,
+            [dob, schoolName]
+        );
+
+        for (const row of rows) {
+
+            if (
+                normalize(row.full_name) === fullName &&
+                normalize(row.father_name) === fatherName &&
+                normalize(row.mother_name) === motherName &&
+                normalize(row.school_name) === schoolName &&
+                String(row.dob_string || "").trim() === dob
+            ) {
+
+                return {
+                    full_name: row.full_name,
+                    father_name: row.father_name,
+                    mother_name: row.mother_name,
+                    dob: row.dob_string,
+                    school_name: row.school_name,
+                    registration_no: row.registration_no
+                };
+            }
+        }
+
+        return null;
+    }
+
+    // =====================================
     // Create Application
     // =====================================
 

@@ -248,6 +248,63 @@ exports.submitApplication = async (req, res) => {
         }
 
 
+        // =========================================
+        // RTSE PRODUCTION REVIEW DUPLICATE PROTECTION
+        // =========================================
+        //
+        // This controller is the production controller used by
+        // /rtse because server.js mounts routes/rtse.js.
+        //
+        // The check runs when "Review Application" is clicked,
+        // BEFORE the application is redirected to /rtse/review.
+        //
+        // Nothing is inserted into the database at this stage.
+        // =========================================
+
+        const duplicate =
+            await RtseApplication.findDuplicateByIdentity({
+                full_name: req.body.full_name,
+                father_name: req.body.father_name,
+                mother_name: req.body.mother_name,
+                dob: req.body.dob,
+                school_name: schoolName
+            });
+
+        if (duplicate) {
+
+            console.warn(
+                "RTSE duplicate blocked at Review Application:",
+                duplicate.registration_no
+            );
+
+            const approvedSchools =
+                await ArspSchool.getAll("", "Approved");
+
+            const setting =
+                await ArspSetting.get();
+
+            return res.status(409).render(
+                "rtse/application",
+                {
+                    title:
+                        "RTSE Application Already Registered",
+
+                    error:
+                        "This candidate is already registered.",
+
+                    duplicatePopup: true,
+
+                    duplicateCandidate: duplicate,
+
+                    draft: req.body || {},
+
+                    schools: approvedSchools,
+
+                    setting
+                }
+            );
+        }
+
         const draft = {
 
             full_name:

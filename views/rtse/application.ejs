@@ -44,6 +44,32 @@
                     <%= error %>
                 </div>
             <% } %>
+            <div
+                id="rtseDuplicateNotice"
+                class="rtse-duplicate-notice"
+                role="alert"
+                aria-live="polite"
+                hidden
+            >
+                <div class="rtse-duplicate-title">
+                    Already Registered
+                </div>
+
+                <div class="rtse-duplicate-message">
+                    This candidate is already registered.
+                </div>
+
+                <div class="rtse-duplicate-registration">
+                    Registration Number:
+                    <strong id="rtseDuplicateRegistration"></strong>
+                </div>
+
+                <div class="rtse-duplicate-help">
+                    Please contact the authority to know more about the application.
+                </div>
+            </div>
+
+
 
             <form
                 action="/rtse/apply"
@@ -126,9 +152,15 @@
                         <label>Mobile Number</label>
 
                         <input
-                            type="text"
+                            type="number"
                             name="mobile"
                             value="<%= draft && draft.mobile ? draft.mobile : '' %>"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="10"
+                            minlength="10"
+                            autocomplete="tel"
+                            oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)"
                             required
                         >
                     </div>
@@ -251,9 +283,14 @@
                         <label>PIN Code</label>
 
                         <input
-                            type="text"
+                            type="number"
                             name="pincode"
                             value="<%= draft && draft.pincode ? draft.pincode : '' %>"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="6"
+                            autocomplete="postal-code"
+                            oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)"
                         >
                     </div>
 
@@ -597,6 +634,333 @@
 
 </div>
 
+
+<script>
+/*
+ * RTSE LIVE DUPLICATE CHECK
+ *
+ * Identity match:
+ * Full Name + Father's Name + Mother's Name + DOB + School Name
+ *
+ * This is an immediate browser-side warning.
+ * The server-side duplicate check remains authoritative.
+ */
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector('form[action="/rtse/apply"]');
+
+    if (!form) {
+        return;
+    }
+
+    const fullName = form.querySelector('[name="full_name"]');
+    const fatherName = form.querySelector('[name="father_name"]');
+    const motherName = form.querySelector('[name="mother_name"]');
+    const dob = form.querySelector('[name="dob"]');
+    const schoolSelect = form.querySelector('[name="school_id"]');
+    const otherSchoolName = form.querySelector('[name="other_school_name"]');
+
+    const mobile = form.querySelector('[name="mobile"]');
+    const pincode = form.querySelector('[name="pincode"]');
+
+    const notice =
+        document.getElementById("rtseDuplicateNotice");
+
+    const registration =
+        document.getElementById("rtseDuplicateRegistration");
+
+    if (
+        !fullName ||
+        !fatherName ||
+        !motherName ||
+        !dob ||
+        (!schoolSelect && !otherSchoolName)
+    ) {
+        return;
+    }
+
+    let timer = null;
+    let controller = null;
+    let requestSequence = 0;
+    let duplicateFound = false;
+
+    function normalize(value) {
+        return String(value || "")
+            .trim()
+            .replace(/\s+/g, " ");
+    }
+
+    function submitControls() {
+        return form.querySelectorAll(
+            'button[type="submit"], input[type="submit"]'
+        );
+    }
+
+    function setSubmitDisabled(disabled) {
+
+        submitControls().forEach(function (button) {
+
+            button.disabled = disabled;
+
+            if (disabled) {
+                button.setAttribute("aria-disabled", "true");
+            } else {
+                button.removeAttribute("aria-disabled");
+            }
+
+        });
+    }
+
+    function hideDuplicate() {
+
+        duplicateFound = false;
+
+        if (notice) {
+            notice.hidden = true;
+        }
+
+        if (registration) {
+            registration.textContent = "";
+        }
+
+        setSubmitDisabled(false);
+    }
+
+    function showDuplicate(candidate) {
+
+        duplicateFound = true;
+
+        if (registration) {
+            registration.textContent =
+                candidate.registration_no ||
+                "Already registered";
+        }
+
+        if (notice) {
+            notice.hidden = false;
+        }
+
+        setSubmitDisabled(true);
+    }
+
+    function getSchoolName() {
+
+        if (schoolSelect && schoolSelect.value) {
+            const option =
+                schoolSelect.options[schoolSelect.selectedIndex];
+
+            return normalize(
+                option ? option.textContent : ""
+            );
+        }
+
+        return normalize(
+            otherSchoolName ? otherSchoolName.value : ""
+        );
+    }
+
+    function enoughInformation() {
+
+        return (
+            normalize(fullName.value) &&
+            normalize(fatherName.value) &&
+            normalize(motherName.value) &&
+            normalize(dob.value) &&
+            getSchoolName()
+        );
+    }
+
+    async function checkDuplicate() {
+
+        const sequence = ++requestSequence;
+
+        if (controller) {
+            controller.abort();
+        }
+
+        hideDuplicate();
+
+        if (!enoughInformation()) {
+            return;
+        }
+
+        controller = new AbortController();
+
+        const params = new URLSearchParams({
+            full_name: normalize(fullName.value),
+            father_name: normalize(fatherName.value),
+            mother_name: normalize(motherName.value),
+            dob: normalize(dob.value),
+            school_name: getSchoolName()
+        });
+
+        try {
+
+            const response = await fetch(
+                "/rtse/duplicate-check?" + params.toString(),
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    cache: "no-store",
+                    signal: controller.signal
+                }
+            );
+
+            if (sequence !== requestSequence) {
+                return;
+            }
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            if (
+                sequence === requestSequence &&
+                data.duplicate &&
+                data.candidate
+            ) {
+                showDuplicate(data.candidate);
+            }
+
+        } catch (error) {
+
+            if (error.name !== "AbortError") {
+                console.warn(
+                    "RTSE duplicate check unavailable:",
+                    error
+                );
+            }
+
+        }
+    }
+
+    function scheduleDuplicateCheck() {
+
+        clearTimeout(timer);
+
+        timer = setTimeout(function () {
+            checkDuplicate();
+        }, 300);
+    }
+
+    [
+        fullName,
+        fatherName,
+        motherName,
+        dob,
+        schoolSelect,
+        otherSchoolName
+    ].filter(Boolean).forEach(function (input) {
+
+        input.addEventListener(
+            "input",
+            scheduleDuplicateCheck
+        );
+
+        input.addEventListener(
+            "change",
+            scheduleDuplicateCheck
+        );
+
+        input.addEventListener(
+            "blur",
+            scheduleDuplicateCheck
+        );
+
+    });
+
+    function digitsOnly(input, maxLength) {
+
+        input.addEventListener("input", function () {
+
+            const cleaned =
+                String(input.value || "")
+                    .replace(/\D/g, "")
+                    .slice(0, maxLength);
+
+            if (input.value !== cleaned) {
+                input.value = cleaned;
+            }
+
+        });
+
+        input.addEventListener("paste", function () {
+
+            setTimeout(function () {
+
+                input.value =
+                    String(input.value || "")
+                        .replace(/\D/g, "")
+                        .slice(0, maxLength);
+
+            }, 0);
+
+        });
+    }
+
+    if (mobile) {
+        digitsOnly(mobile, 10);
+    }
+
+    if (pincode) {
+        digitsOnly(pincode, 6);
+    }
+
+    form.addEventListener("submit", function (event) {
+
+        if (duplicateFound) {
+
+            event.preventDefault();
+
+            if (notice) {
+                notice.hidden = false;
+            }
+
+            return;
+        }
+
+        if (
+            mobile &&
+            !/^\d{10}$/.test(mobile.value)
+        ) {
+
+            event.preventDefault();
+
+            mobile.focus();
+
+            alert(
+                "Please enter a valid 10-digit mobile number."
+            );
+
+            return;
+        }
+
+        if (
+            pincode &&
+            pincode.value &&
+            !/^\d{1,6}$/.test(pincode.value)
+        ) {
+
+            event.preventDefault();
+
+            pincode.focus();
+
+            alert(
+                "PIN code can contain a maximum of 6 digits."
+            );
+
+            return;
+        }
+
+    });
+
+});
+</script>
 
 <script>
 /*
@@ -1480,5 +1844,640 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
+<style>
+.rtse-duplicate-notice {
+    margin: 14px 0;
+    padding: 16px 18px;
+    border: 2px solid #b71c1c;
+    border-radius: 10px;
+    background: #fff5f5;
+    color: #5f1111;
+    box-sizing: border-box;
+}
+
+.rtse-duplicate-notice[hidden] {
+    display: none;
+}
+
+.rtse-duplicate-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.rtse-duplicate-message {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.rtse-duplicate-registration {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.rtse-duplicate-registration strong {
+    font-size: 17px;
+    letter-spacing: .4px;
+}
+
+.rtse-duplicate-help {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+
+    .rtse-duplicate-notice {
+        margin: 12px 0;
+        padding: 14px;
+    }
+
+    .rtse-duplicate-title {
+        font-size: 17px;
+    }
+
+    .rtse-duplicate-registration strong {
+        font-size: 16px;
+    }
+}
+</style>
+
+<% if (typeof duplicatePopup !== "undefined" && duplicatePopup && duplicateCandidate) { %>
+
+<style>
+/* =========================================================
+   RTSE DUPLICATE APPLICATION MODAL
+   ========================================================= */
+
+.rtse-duplicate-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
+
+    background:
+        rgba(3, 12, 35, 0.72);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    box-sizing: border-box;
+}
+
+.rtse-duplicate-modal {
+    width: min(100%, 520px);
+    max-height: min(88vh, 720px);
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.32),
+        0 8px 25px rgba(0, 0, 0, 0.18);
+
+    border: 1px solid rgba(183, 28, 28, 0.18);
+
+    animation:
+        rtseDuplicateModalIn
+        0.22s
+        ease-out;
+}
+
+@keyframes rtseDuplicateModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+
+.rtse-duplicate-modal-header {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 20px 20px 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8b1111,
+            #c62828
+        );
+
+    color: #ffffff;
+}
+
+.rtse-duplicate-modal-icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.rtse-duplicate-modal-heading {
+    min-width: 0;
+}
+
+.rtse-duplicate-modal-title {
+    margin: 0;
+
+    font-size: 20px;
+    line-height: 1.25;
+
+    font-weight: 800;
+    letter-spacing: 0.1px;
+}
+
+.rtse-duplicate-modal-subtitle {
+    margin-top: 4px;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    opacity: 0.92;
+}
+
+/* Body */
+
+.rtse-duplicate-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.rtse-duplicate-warning {
+    margin-bottom: 16px;
+
+    padding: 12px 14px;
+
+    border-left: 4px solid #c62828;
+    border-radius: 8px;
+
+    background: #fff5f5;
+
+    color: #641414;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Candidate details */
+
+.rtse-duplicate-details {
+    overflow: hidden;
+
+    border: 1px solid #e2e5ea;
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+.rtse-duplicate-detail-row {
+    display: grid;
+    grid-template-columns: 135px minmax(0, 1fr);
+
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border-bottom: 1px solid #edf0f3;
+}
+
+.rtse-duplicate-detail-row:last-child {
+    border-bottom: 0;
+}
+
+.rtse-duplicate-detail-label {
+    color: #667085;
+
+    font-size: 12px;
+    line-height: 1.45;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.35px;
+}
+
+.rtse-duplicate-detail-value {
+    min-width: 0;
+
+    color: #172033;
+
+    font-size: 14px;
+    line-height: 1.45;
+
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+}
+
+/* Registration number */
+
+.rtse-duplicate-registration-box {
+    margin-top: 16px;
+
+    padding: 14px 16px;
+
+    border: 1px solid #f0b5b5;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff8f8,
+            #fff1f1
+        );
+
+    text-align: center;
+}
+
+.rtse-duplicate-registration-label {
+    margin-bottom: 5px;
+
+    color: #8b1111;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.rtse-duplicate-registration-number {
+    color: #a31616;
+
+    font-size: 22px;
+    line-height: 1.25;
+
+    font-weight: 900;
+
+    letter-spacing: 0.8px;
+
+    overflow-wrap: anywhere;
+}
+
+/* Help text */
+
+.rtse-duplicate-modal-help {
+    margin-top: 15px;
+
+    color: #667085;
+
+    font-size: 13px;
+    line-height: 1.55;
+
+    text-align: center;
+}
+
+/* Footer */
+
+.rtse-duplicate-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    padding: 14px 20px 18px;
+
+    border-top: 1px solid #edf0f3;
+
+    background: #fafbfc;
+}
+
+.rtse-duplicate-modal-ok {
+    min-width: 110px;
+
+    padding: 11px 20px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #8b1111;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 10px rgba(139, 17, 17, 0.18);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.rtse-duplicate-modal-ok:hover {
+    background: #6f0d0d;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 14px rgba(139, 17, 17, 0.24);
+}
+
+.rtse-duplicate-modal-ok:active {
+    transform: translateY(0);
+}
+
+.rtse-duplicate-modal-ok:focus-visible {
+    outline: 3px solid rgba(198, 40, 40, 0.28);
+    outline-offset: 2px;
+}
+
+/* Small screens */
+
+@media (max-width: 600px) {
+
+    .rtse-duplicate-modal-backdrop {
+        align-items: flex-end;
+
+        padding: 10px;
+    }
+
+    .rtse-duplicate-modal {
+        width: 100%;
+        max-height: 91vh;
+
+        border-radius: 18px 18px 14px 14px;
+    }
+
+    .rtse-duplicate-modal-header {
+        padding: 17px 16px 15px;
+    }
+
+    .rtse-duplicate-modal-icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+
+        font-size: 22px;
+    }
+
+    .rtse-duplicate-modal-title {
+        font-size: 18px;
+    }
+
+    .rtse-duplicate-modal-subtitle {
+        font-size: 12px;
+    }
+
+    .rtse-duplicate-modal-body {
+        padding: 16px;
+    }
+
+    .rtse-duplicate-detail-row {
+        grid-template-columns: 1fr;
+        gap: 3px;
+
+        padding: 10px 12px;
+    }
+
+    .rtse-duplicate-detail-label {
+        font-size: 10px;
+    }
+
+    .rtse-duplicate-detail-value {
+        font-size: 14px;
+    }
+
+    .rtse-duplicate-registration-number {
+        font-size: 20px;
+    }
+
+    .rtse-duplicate-modal-footer {
+        padding: 12px 16px 16px;
+    }
+
+    .rtse-duplicate-modal-ok {
+        width: 100%;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .rtse-duplicate-modal {
+        animation: none;
+    }
+
+    .rtse-duplicate-modal-ok {
+        transition: none;
+    }
+}
+</style>
+
+<div
+    id="rtseDuplicateModal"
+    class="rtse-duplicate-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rtseDuplicateModalTitle"
+    aria-describedby="rtseDuplicateModalDescription"
+>
+    <div class="rtse-duplicate-modal">
+
+        <div class="rtse-duplicate-modal-header">
+
+            <div
+                class="rtse-duplicate-modal-icon"
+                aria-hidden="true"
+            >
+                !
+            </div>
+
+            <div class="rtse-duplicate-modal-heading">
+
+                <h2
+                    id="rtseDuplicateModalTitle"
+                    class="rtse-duplicate-modal-title"
+                >
+                    Duplicate Application Found
+                </h2>
+
+                <div class="rtse-duplicate-modal-subtitle">
+                    This candidate is already registered for RTSE 2026.
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="rtse-duplicate-modal-body">
+
+            <div
+                id="rtseDuplicateModalDescription"
+                class="rtse-duplicate-warning"
+            >
+                The information entered matches an existing
+                candidate registration. Please verify the details
+                below before proceeding.
+            </div>
+
+            <div class="rtse-duplicate-details">
+
+                <div class="rtse-duplicate-detail-row">
+                    <div class="rtse-duplicate-detail-label">
+                        Candidate
+                    </div>
+
+                    <div class="rtse-duplicate-detail-value">
+                        <%= duplicateCandidate.full_name || "" %>
+                    </div>
+                </div>
+
+                <div class="rtse-duplicate-detail-row">
+                    <div class="rtse-duplicate-detail-label">
+                        Father's Name
+                    </div>
+
+                    <div class="rtse-duplicate-detail-value">
+                        <%= duplicateCandidate.father_name || "" %>
+                    </div>
+                </div>
+
+                <div class="rtse-duplicate-detail-row">
+                    <div class="rtse-duplicate-detail-label">
+                        Mother's Name
+                    </div>
+
+                    <div class="rtse-duplicate-detail-value">
+                        <%= duplicateCandidate.mother_name || "" %>
+                    </div>
+                </div>
+
+                <div class="rtse-duplicate-detail-row">
+                    <div class="rtse-duplicate-detail-label">
+                        Date of Birth
+                    </div>
+
+                    <div class="rtse-duplicate-detail-value">
+                        <%= duplicateCandidate.dob || "" %>
+                    </div>
+                </div>
+
+                <div class="rtse-duplicate-detail-row">
+                    <div class="rtse-duplicate-detail-label">
+                        School
+                    </div>
+
+                    <div class="rtse-duplicate-detail-value">
+                        <%= duplicateCandidate.school_name || "" %>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="rtse-duplicate-registration-box">
+
+                <div class="rtse-duplicate-registration-label">
+                    Existing Registration Number
+                </div>
+
+                <div class="rtse-duplicate-registration-number">
+                    <%= duplicateCandidate.registration_no || "Already Registered" %>
+                </div>
+
+            </div>
+
+            <div class="rtse-duplicate-modal-help">
+                This application cannot be submitted as a new
+                registration. Please contact the authority if you
+                believe this information is incorrect.
+            </div>
+
+        </div>
+
+        <div class="rtse-duplicate-modal-footer">
+
+            <button
+                type="button"
+                id="rtseDuplicateModalOk"
+                class="rtse-duplicate-modal-ok"
+            >
+                OK
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modal =
+        document.getElementById("rtseDuplicateModal");
+
+    const okButton =
+        document.getElementById("rtseDuplicateModalOk");
+
+    if (!modal || !okButton) {
+        return;
+    }
+
+    document.body.style.overflow = "hidden";
+
+    function closeDuplicateModal() {
+        modal.remove();
+        document.body.style.overflow = "";
+    }
+
+    okButton.addEventListener(
+        "click",
+        closeDuplicateModal
+    );
+
+    okButton.focus();
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+                closeDuplicateModal();
+            }
+
+        },
+        { once: true }
+    );
+
+});
+</script>
+
+<% } %>
 
 <%- include("../partials/footer") %>
