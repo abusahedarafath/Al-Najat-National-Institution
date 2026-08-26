@@ -258,13 +258,11 @@
                         <button
                             type="submit"
                             formnovalidate
-                            formaction="/admin/rtse/attendance/absent/<%= student.id %>"
+                            formaction="/admin/rtse/attendance/reset/<%= student.id %>"
                             formmethod="POST"
                             class="btn-warning"
-                            onclick="return confirm('Mark this student ABSENT? The student will leave the Result Dashboard and return to the main RTSE Application Dashboard.')">
-
-                            ✕ Mark Attendance Absent
-
+                            onclick="return confirm('Reset Attendance Status?\\n\\nThe student will become NOT SCANNED, leave the Result Dashboard, have the existing result removed, and can be scanned again using the same admit card QR.')">
+                            ↻ Attendance Status Reset
                         </button>
 
                     </div>

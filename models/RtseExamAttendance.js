@@ -261,21 +261,28 @@ class RtseExamAttendance {
 
 
     // =====================================
-    // Mark student ABSENT / Return to Application Dashboard
+    // Attendance Status Reset
+    // PRESENT -> NOT_SCANNED
     // =====================================
 
-    static async markAbsent(applicationId) {
-
+    // =====================================
+    // Attendance Status Reset
+    // PRESENT -> NOT_SCANNED
+    //
+    // Only a PRESENT attendance record can be
+    // reset. The same admit-card QR can then
+    // be scanned again.
+    // =====================================
+    static async resetAttendanceStatus(applicationId) {
         const [result] = await db.query(
             `
             UPDATE rtse_exam_attendance
-
             SET
                 attendance_status = 'NOT_SCANNED',
                 scanned_at = NULL,
                 scanned_by = NULL
-
             WHERE application_id = ?
+              AND attendance_status = 'PRESENT'
             `,
             [
                 applicationId
@@ -284,7 +291,6 @@ class RtseExamAttendance {
 
         return result.affectedRows > 0;
     }
-
 
     // =====================================
     // Automatically mark unscanned students

@@ -2238,32 +2238,22 @@ exports.attendanceSheet = async (req, res) => {
 
 
 // =====================================
-// Reset Attendance to ABSENT
+// Attendance Status Reset
 // =====================================
 
-exports.markAttendanceAbsent = async (req, res) => {
-
+exports.resetAttendanceStatus = async (req, res) => {
     try {
-
-        const applicationId =
-            req.params.id;
+        const applicationId = req.params.id;
 
         const attendance =
-            await RtseExamAttendance.markAbsent(
+            await RtseExamAttendance.resetAttendanceStatus(
                 applicationId
             );
 
-        // Remove any existing result because the candidate
-        // is no longer PRESENT for the examination.
-        await RtseResult.deleteByApplication(
-            applicationId
-        );
-
         if (!attendance) {
-
             req.flash(
                 "error",
-                "Attendance could not be reset."
+                "Attendance Status Reset could not be completed. The student may already be NOT SCANNED."
             );
 
             return res.redirect(
@@ -2271,34 +2261,36 @@ exports.markAttendanceAbsent = async (req, res) => {
             );
         }
 
+        // A student must not retain a result after
+        // their PRESENT attendance has been reset.
+        await RtseResult.deleteByApplication(
+            applicationId
+        );
+
         req.flash(
             "success",
-            "Attendance reset to ABSENT. Student returned to the RTSE Application Dashboard."
+            "Attendance Status Reset successfully. Student is now NOT SCANNED and can be scanned again."
         );
 
         return res.redirect(
             "/admin/rtse/results"
         );
-
     } catch (err) {
-
         console.error(
-            "Reset Attendance Error:",
+            "Attendance Status Reset Error:",
             err
         );
 
         req.flash(
             "error",
-            "Unable to reset attendance."
+            "Unable to reset attendance status."
         );
 
         return res.redirect(
             "/admin/rtse/results"
         );
     }
-
 };
-
 
 // =====================================
 // Result Dashboard

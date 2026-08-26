@@ -581,9 +581,9 @@ router.get(
 // =====================================
 
 router.post(
-    "/rtse/attendance/absent/:id",
+    "/rtse/attendance/reset/:id",
     auth.isAdmin,
-    adminRtseController.markAttendanceAbsent
+    adminRtseController.resetAttendanceStatus
 );
 
 
