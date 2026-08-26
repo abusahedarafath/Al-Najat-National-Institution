@@ -7,6 +7,9 @@ const path = require("path");
 const rtseController =
     require("../controllers/rtseController");
 
+const rtsePublicController =
+    require("../controllers/rtsePublicController");
+
 const rtseStudentController = require("../controllers/rtseStudentController");
 const rtseStudentAuth = require("../middleware/rtseStudentAuth");
 
@@ -88,6 +91,7 @@ router.get("/", (req, res) => {
 
 router.get(
     "/apply",
+    rtsePublicController.requireApplicationOpen,
     rtseController.applicationPage
 );
 
