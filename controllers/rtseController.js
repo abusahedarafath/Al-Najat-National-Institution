@@ -135,7 +135,8 @@ exports.submitApplication = async (req, res) => {
                 {
                     title: "RTSE Online Application",
                     error: "Candidate photograph is required.",
-                    draft: req.body || {}
+                    draft: req.body || {},
+                    setting
                 }
             );
 
@@ -205,7 +206,8 @@ exports.submitApplication = async (req, res) => {
                         error:
                             "Please select a valid registered school.",
                         draft: req.body || {},
-                        schools
+                        schools,
+                        setting
                     }
                 );
 
@@ -241,7 +243,8 @@ exports.submitApplication = async (req, res) => {
                     error:
                         "Please select your school or choose Other.",
                     draft: req.body || {},
-                    schools
+                    schools,
+                    setting
                 }
             );
 
