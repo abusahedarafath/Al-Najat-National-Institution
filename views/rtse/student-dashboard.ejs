@@ -398,7 +398,8 @@
                         </span>
                     </a>
 
-                    <a
+                    <% if (rtseSetting && Number(rtseSetting.admit_publish) === 1) { %>
+<a
                         href="/rtse/student/admit-card"
                         class="rtse-service-card"
                     >
@@ -410,6 +411,7 @@
                             View and print your RTSE admit card
                         </span>
                     </a>
+<% } %>
 
                     <% if (String(application.status || "").toLowerCase() === "approved") { %>
 

@@ -187,11 +187,16 @@ exports.dashboard = async (req, res) => {
 
         }
 
+        // Admit Card visibility is controlled by the official
+        // RTSE publication setting. Generated != published.
+        const rtseSetting = await RtseSetting.get();
+
         return res.render(
             "rtse/student-dashboard",
             {
                 title: "RTSE Student Dashboard",
-                application
+                application,
+                rtseSetting
             }
         );
 
