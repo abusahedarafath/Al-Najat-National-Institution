@@ -66,7 +66,7 @@ exports.applicationPage = async (req, res) => {
         let schools = [];
 
         try {
-            schools = await ArspSchool.getAll();
+            schools = await ArspSchool.getAll("", "Approved");
         } catch (schoolErr) {
             console.error(
                 "Unable to load RTSE schools:",
