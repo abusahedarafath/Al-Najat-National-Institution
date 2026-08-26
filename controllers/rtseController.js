@@ -382,13 +382,16 @@ exports.submitApplication = async (req, res) => {
             err
         );
 
+        const setting = await ArspSetting.get();
+
         return res.render(
             "rtse/application",
             {
                 title: "RTSE Online Application",
                 error:
                     "Unable to prepare the application for review.",
-                draft: req.body || {}
+                draft: req.body || {},
+                setting
             }
         );
 
