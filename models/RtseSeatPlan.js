@@ -902,7 +902,8 @@ class RtseSeatPlan {
                         UPDATE rtse_seat_plan_seats
                         SET
                             section = ?,
-                            gender = ?
+                            gender = ?,
+                                                        is_locked = 1
                         WHERE id = ?
                           AND shift_id = ?
                           AND room_id = ?
@@ -973,7 +974,8 @@ class RtseSeatPlan {
                             UPDATE rtse_seat_plan_seats
                             SET
                                 section = NULL,
-                                gender = 'Any'
+                                gender = 'Any',
+                                       is_locked = 0
                             WHERE id = ?
                               AND shift_id = ?
                               AND room_id = ?
