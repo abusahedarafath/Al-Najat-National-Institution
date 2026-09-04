@@ -61,14 +61,29 @@ class RtseSeatPlan {
     }
 
     static async addShift(applicationYear, shiftName) {
-        const [nextRows] = await db.query(
+        const [rows] = await db.query(
             `
-            SELECT COALESCE(MAX(shift_no), 0) + 1 AS next_shift_no
+            SELECT shift_no
             FROM rtse_seat_plan_shifts
+            ORDER BY shift_no ASC
             `
         );
 
-        const shiftNo = Number(nextRows[0]?.next_shift_no || 1);
+        let shiftNo = 1;
+
+        for (const row of rows) {
+            const currentNo = Number(row.shift_no);
+
+            if (currentNo === shiftNo) {
+                shiftNo += 1;
+                continue;
+            }
+
+            if (currentNo > shiftNo) {
+                break;
+            }
+        }
+
         const name = shiftName || `Shift ${shiftNo}`;
 
         const [result] = await db.query(
@@ -109,16 +124,57 @@ class RtseSeatPlan {
         shiftId,
         applicationYear
     ) {
-        const [result] = await db.query(
-            `
-            DELETE s
-            FROM rtse_seat_plan_shifts s
-            WHERE s.id = ?
-            `,
-            [shiftId]
-        );
+        const connection = await db.getConnection();
 
-        return result.affectedRows;
+        try {
+            await connection.beginTransaction();
+
+            const [shiftRows] = await connection.query(
+                `
+                SELECT id
+                FROM rtse_seat_plan_shifts
+                WHERE id = ?
+                LIMIT 1
+                `,
+                [shiftId]
+            );
+
+            if (!shiftRows.length) {
+                await connection.rollback();
+                return 0;
+            }
+
+            await connection.query(
+                `
+                UPDATE rtse_applications
+                SET
+                    shift_id = NULL,
+                    room_id = NULL,
+                    seat_id = NULL,
+                    room_no = NULL,
+                    seat_no = NULL
+                WHERE shift_id = ?
+                `,
+                [shiftId]
+            );
+
+            const [result] = await connection.query(
+                `
+                DELETE FROM rtse_seat_plan_shifts
+                WHERE id = ?
+                `,
+                [shiftId]
+            );
+
+            await connection.commit();
+
+            return result.affectedRows;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
     }
 
     static async toggleShift(
@@ -212,21 +268,75 @@ class RtseSeatPlan {
         shiftId,
         applicationYear
     ) {
-        const [result] = await db.query(
-            `
-            DELETE FROM rtse_seat_plan_rooms
-            WHERE id = ?
-              AND shift_id = ?
-              AND application_year = ?
-            `,
-            [
-                roomId,
-                shiftId,
-                applicationYear
-            ]
-        );
+        const connection = await db.getConnection();
 
-        return result.affectedRows;
+        try {
+            await connection.beginTransaction();
+
+            const [roomRows] = await connection.query(
+                `
+                SELECT id
+                FROM rtse_seat_plan_rooms
+                WHERE id = ?
+                  AND shift_id = ?
+                  AND application_year = ?
+                LIMIT 1
+                `,
+                [
+                    roomId,
+                    shiftId,
+                    applicationYear
+                ]
+            );
+
+            if (!roomRows.length) {
+                await connection.rollback();
+                return 0;
+            }
+
+            await connection.query(
+                `
+                UPDATE rtse_applications
+                SET
+                    shift_id = NULL,
+                    room_id = NULL,
+                    seat_id = NULL,
+                    room_no = NULL,
+                    seat_no = NULL
+                WHERE shift_id = ?
+                  AND room_id = ?
+                  AND application_year = ?
+                `,
+                [
+                    shiftId,
+                    roomId,
+                    applicationYear
+                ]
+            );
+
+            const [result] = await connection.query(
+                `
+                DELETE FROM rtse_seat_plan_rooms
+                WHERE id = ?
+                  AND shift_id = ?
+                  AND application_year = ?
+                `,
+                [
+                    roomId,
+                    shiftId,
+                    applicationYear
+                ]
+            );
+
+            await connection.commit();
+
+            return result.affectedRows;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
     }
 
     static async toggleRoom(
