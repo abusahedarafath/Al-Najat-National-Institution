@@ -830,6 +830,10 @@ static async getDashboardStats(){
 
             SUM(status='Rejected') rejected,
 
+            SUM(CASE WHEN gender='Male' THEN 1 ELSE 0 END) male,
+
+            SUM(CASE WHEN gender='Female' THEN 1 ELSE 0 END) female,
+
             SUM(roll_no IS NOT NULL) roll_generated,
 
             SUM(admit_generated=1) admit_generated
@@ -1421,6 +1425,10 @@ static async getSectionStatistics(){
             SUM(status='Pending') pending,
 
             SUM(status='Rejected') rejected,
+
+            SUM(status='Approved' AND gender='Male') approved_male,
+
+            SUM(status='Approved' AND gender='Female') approved_female,
 
             SUM(status='Approved' AND roll_no IS NOT NULL) roll_generated,
 

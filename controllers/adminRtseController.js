@@ -77,6 +77,10 @@ console.log("setting:", setting);
 
                 rejected: stats.rejected || 0,
 
+                male: stats.male || 0,
+
+                female: stats.female || 0,
+
                 admitGenerated,
 
                 sectionStats,
