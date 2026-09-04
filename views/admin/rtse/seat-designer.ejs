@@ -828,6 +828,7 @@ function includeSeatForm(
         );
 
     const seatIsLocked =
+        !!seat.is_locked &&
         !!effectiveGender &&
         !!effectiveSection;
 
