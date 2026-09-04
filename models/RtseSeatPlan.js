@@ -663,6 +663,441 @@ class RtseSeatPlan {
     }
 
     // =====================================
+    // Bounded Gender + Section Allocation
+    // =====================================
+
+    static async allocateGenderSectionToSide(
+        shiftId,
+        roomId,
+        applicationYear,
+        side,
+        gender,
+        section
+    ) {
+        const normalizedShiftId = Number(shiftId);
+        const normalizedRoomId = Number(roomId);
+        const normalizedYear = Number(applicationYear);
+        const normalizedSide = String(side || "").trim().toUpperCase();
+        const normalizedGender = String(gender || "").trim();
+        const normalizedSection = String(section || "").trim().toUpperCase();
+
+        if (!Number.isInteger(normalizedShiftId) || normalizedShiftId < 1) {
+            throw new Error("Invalid RTSE shift.");
+        }
+
+        if (!Number.isInteger(normalizedRoomId) || normalizedRoomId < 1) {
+            throw new Error("Invalid RTSE room.");
+        }
+
+        if (!normalizedYear) {
+            throw new Error("Invalid RTSE application year.");
+        }
+
+        if (!["LEFT", "RIGHT"].includes(normalizedSide)) {
+            throw new Error("Invalid room side.");
+        }
+
+        if (!["Male", "Female"].includes(normalizedGender)) {
+            throw new Error("A valid gender is required.");
+        }
+
+        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+            throw new Error("A valid section is required.");
+        }
+
+        const connection = await db.getConnection();
+
+        try {
+            await connection.beginTransaction();
+
+            const [rooms] = await connection.query(
+                `
+                    SELECT
+                        id,
+                        room_no,
+                        seat_system
+                    FROM rtse_seat_plan_rooms
+                    WHERE id = ?
+                      AND shift_id = ?
+                      AND application_year = ?
+                      AND is_active = 1
+                    LIMIT 1
+                `,
+                [
+                    normalizedRoomId,
+                    normalizedShiftId,
+                    normalizedYear
+                ]
+            );
+
+            if (!rooms.length) {
+                throw new Error("Active room not found.");
+            }
+
+            const room = rooms[0];
+
+            /*
+             * Count only approved students who are still unallocated.
+             * Gender + Section is the exact lock combination.
+             */
+            const [students] = await connection.query(
+                `
+                    SELECT
+                        id,
+                        registration_no,
+                        full_name,
+                        gender,
+                        roll_no,
+                        roll_number
+                    FROM rtse_applications
+                    WHERE archive = 0
+                      AND status = 'Approved'
+                      AND application_year = ?
+                      AND section = ?
+                      AND gender = ?
+                      AND roll_no IS NOT NULL
+                      AND seat_id IS NULL
+                      AND (
+                          (shift_id IS NULL AND room_id IS NULL)
+                          OR (shift_id = ? AND room_id IS NOT NULL)
+                      )
+                    ORDER BY
+                        roll_number ASC,
+                        roll_no ASC,
+                        registration_no ASC
+                `,
+                [
+                    normalizedYear,
+                    normalizedSection,
+                    normalizedGender,
+                    normalizedShiftId
+                ]
+            );
+
+            /*
+             * Find only currently unused seats on this side.
+             *
+             * Existing configured seats are deliberately excluded so a
+             * second lock never overwrites the first lock.
+             */
+            const [seats] = await connection.query(
+                `
+                    SELECT
+                        sp.id AS seat_id,
+                        sp.row_no,
+                        sp.seat_no,
+                        sp.position,
+                        sp.section AS seat_section,
+                        sp.gender AS seat_gender,
+                        r.room_no,
+                        r.seat_system
+                    FROM rtse_seat_plan_seats sp
+                    INNER JOIN rtse_seat_plan_rooms r
+                        ON r.id = sp.room_id
+                       AND r.shift_id = sp.shift_id
+                    WHERE sp.shift_id = ?
+                      AND sp.room_id = ?
+                      AND sp.position = ?
+                      AND sp.is_active = 1
+                      AND sp.is_locked = 0
+                      AND r.application_year = ?
+                      AND r.is_active = 1
+                    ORDER BY
+                        sp.row_no ASC,
+                        sp.seat_no ASC
+                `,
+                [
+                    normalizedShiftId,
+                    normalizedRoomId,
+                    normalizedSide,
+                    normalizedYear
+                ]
+            );
+
+            const validSeats = [];
+
+            for (const seat of seats) {
+                /*
+                 * Corner-to-Corner:
+                 * only first and last physical seat of each row/side.
+                 */
+                if (room.seat_system === "CORNER_TO_CORNER") {
+                    const [rowSeats] = await connection.query(
+                        `
+                            SELECT seat_no
+                            FROM rtse_seat_plan_seats
+                            WHERE shift_id = ?
+                              AND room_id = ?
+                              AND row_no = ?
+                              AND position = ?
+                              AND is_active = 1
+                            ORDER BY seat_no ASC
+                        `,
+                        [
+                            normalizedShiftId,
+                            normalizedRoomId,
+                            seat.row_no,
+                            normalizedSide
+                        ]
+                    );
+
+                    const numbers = rowSeats.map(
+                        row => Number(row.seat_no)
+                    );
+
+                    if (
+                        numbers.length > 2 &&
+                        Number(seat.seat_no) !== numbers[0] &&
+                        Number(seat.seat_no) !== numbers[numbers.length - 1]
+                    ) {
+                        continue;
+                    }
+                }
+
+                /*
+                 * Only completely unconfigured seats are available for
+                 * a new Universal Gender + Section Lock.
+                 *
+                 * This is what allows multiple independent lock groups
+                 * to coexist on the same side.
+                 */
+                const seatGender = String(
+                    seat.seat_gender || "Any"
+                ).trim();
+
+                const seatSection = seat.seat_section
+                    ? String(seat.seat_section).trim().toUpperCase()
+                    : "";
+
+                if (seatSection || seatGender !== "Any") {
+                    continue;
+                }
+
+                validSeats.push(seat);
+            }
+
+            const eligibleStudents = students.length;
+            const availableSeats = validSeats.length;
+
+            /*
+             * The room is capacity bounded.
+             */
+            const allocationCount = Math.min(
+                eligibleStudents,
+                availableSeats
+            );
+
+            let allocated = 0;
+
+            for (let i = 0; i < allocationCount; i++) {
+                const student = students[i];
+                const seat = validSeats[i];
+
+                /*
+                 * Configure the physical seat for this exact
+                 * Gender + Section combination.
+                 */
+                const [seatUpdate] = await connection.query(
+                    `
+                        UPDATE rtse_seat_plan_seats
+                        SET
+                            section = ?,
+                            gender = ?
+                        WHERE id = ?
+                          AND shift_id = ?
+                          AND room_id = ?
+                          AND is_active = 1
+                          AND is_locked = 0
+                          AND section IS NULL
+                          AND gender = 'Any'
+                    `,
+                    [
+                        normalizedSection,
+                        normalizedGender,
+                        seat.seat_id,
+                        normalizedShiftId,
+                        normalizedRoomId
+                    ]
+                );
+
+                if (seatUpdate.affectedRows !== 1) {
+                    continue;
+                }
+
+                /*
+                 * Immediately assign the matching approved student.
+                 */
+                const [applicationUpdate] = await connection.query(
+                    `
+                        UPDATE rtse_applications
+                        SET
+                            shift_id = ?,
+                            room_id = ?,
+                            seat_id = ?,
+                            room_no = ?,
+                            seat_no = ?
+                        WHERE id = ?
+                          AND application_year = ?
+                          AND archive = 0
+                          AND status = 'Approved'
+                          AND seat_id IS NULL
+                          AND gender = ?
+                          AND section = ?
+                          AND (
+                              (shift_id IS NULL AND room_id IS NULL)
+                              OR (shift_id = ? AND room_id IS NOT NULL)
+                          )
+                    `,
+                    [
+                        normalizedShiftId,
+                        normalizedRoomId,
+                        seat.seat_id,
+                        room.room_no,
+                        seat.seat_no,
+                        student.id,
+                        normalizedYear,
+                        normalizedGender,
+                        normalizedSection,
+                        normalizedShiftId
+                    ]
+                );
+
+                if (applicationUpdate.affectedRows === 1) {
+                    allocated++;
+                } else {
+                    /*
+                     * Never leave an incorrectly configured seat behind.
+                     */
+                    await connection.query(
+                        `
+                            UPDATE rtse_seat_plan_seats
+                            SET
+                                section = NULL,
+                                gender = 'Any'
+                            WHERE id = ?
+                              AND shift_id = ?
+                              AND room_id = ?
+                        `,
+                        [
+                            seat.seat_id,
+                            normalizedShiftId,
+                            normalizedRoomId
+                        ]
+                    );
+                }
+            }
+
+            /*
+             * Recalculate both remaining student count and remaining
+             * physical/C2C seat capacity.
+             */
+            const [remainingStudentRows] = await connection.query(
+                `
+                    SELECT COUNT(*) AS total
+                    FROM rtse_applications
+                    WHERE archive = 0
+                      AND status = 'Approved'
+                      AND application_year = ?
+                      AND section = ?
+                      AND gender = ?
+                      AND roll_no IS NOT NULL
+                      AND seat_id IS NULL
+                      AND (
+                          (shift_id IS NULL AND room_id IS NULL)
+                          OR (shift_id = ? AND room_id IS NOT NULL)
+                      )
+                `,
+                [
+                    normalizedYear,
+                    normalizedSection,
+                    normalizedGender,
+                    normalizedShiftId
+                ]
+            );
+
+            const [remainingSeatRows] = await connection.query(
+                `
+                    SELECT
+                        sp.id,
+                        sp.row_no,
+                        sp.seat_no
+                    FROM rtse_seat_plan_seats sp
+                    WHERE sp.shift_id = ?
+                      AND sp.room_id = ?
+                      AND sp.position = ?
+                      AND sp.is_active = 1
+                      AND sp.is_locked = 0
+                      AND sp.section IS NULL
+                      AND sp.gender = 'Any'
+                    ORDER BY
+                        sp.row_no ASC,
+                        sp.seat_no ASC
+                `,
+                [
+                    normalizedShiftId,
+                    normalizedRoomId,
+                    normalizedSide
+                ]
+            );
+
+            let remainingSeats = remainingSeatRows;
+
+            if (room.seat_system === "CORNER_TO_CORNER") {
+                const grouped = {};
+
+                for (const seat of remainingSeatRows) {
+                    const row = Number(seat.row_no);
+
+                    if (!grouped[row]) {
+                        grouped[row] = [];
+                    }
+
+                    grouped[row].push(seat);
+                }
+
+                remainingSeats = [];
+
+                for (const rowSeats of Object.values(grouped)) {
+                    rowSeats.sort(
+                        (a, b) =>
+                            Number(a.seat_no) - Number(b.seat_no)
+                    );
+
+                    if (rowSeats.length <= 2) {
+                        remainingSeats.push(...rowSeats);
+                    } else {
+                        remainingSeats.push(rowSeats[0]);
+                        remainingSeats.push(
+                            rowSeats[rowSeats.length - 1]
+                        );
+                    }
+                }
+            }
+
+            await connection.commit();
+
+            return {
+                allocated,
+                eligibleStudents,
+                availableSeats,
+                remainingStudents: Number(
+                    remainingStudentRows[0]?.total || 0
+                ),
+                remainingSeats: remainingSeats.length,
+                side: normalizedSide,
+                gender: normalizedGender,
+                section: normalizedSection,
+                room
+            };
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+
+    // =====================================
     // Room Side Locks
     // =====================================
 

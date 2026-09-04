@@ -2340,32 +2340,117 @@ exports.updateSeatSideLocks = async (req, res) => {
             );
         }
 
-        await RtseSeatPlan.updateRoomSideLocks(
-            shiftId,
-            roomId,
-            applicationYear,
-            side,
-            genderLock,
-            sectionLock
-        );
+        /*
+         * Unlock:
+         * Preserve the existing side-lock behavior when both values
+         * are cleared. No student allocation is performed.
+         */
+        if (!genderLock && !sectionLock) {
+            await RtseSeatPlan.updateRoomSideLocks(
+                shiftId,
+                roomId,
+                applicationYear,
+                side,
+                null,
+                null
+            );
 
-        req.flash(
-            "success",
-            `${side} side lock settings updated.`
-        );
+            req.flash(
+                "success",
+                `${side} side unlocked.`
+            );
+
+            return res.redirect(
+                `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+            );
+        }
+
+        /*
+         * Universal allocation requires the complete Gender + Section
+         * combination. A partial side lock remains available only for
+         * the existing restriction workflow.
+         */
+        if (!genderLock || !sectionLock) {
+            await RtseSeatPlan.updateRoomSideLocks(
+                shiftId,
+                roomId,
+                applicationYear,
+                side,
+                genderLock,
+                sectionLock
+            );
+
+            req.flash(
+                "success",
+                `${side} side lock settings updated.`
+            );
+
+            return res.redirect(
+                `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+            );
+        }
+
+        /*
+         * Complete Gender + Section = bounded Universal Lock.
+         *
+         * The model calculates:
+         *
+         *   MIN(remaining approved students,
+         *       remaining valid seats)
+         *
+         * and immediately allocates only that many seats.
+         */
+        const result =
+            await RtseSeatPlan.allocateGenderSectionToSide(
+                shiftId,
+                roomId,
+                applicationYear,
+                side,
+                genderLock,
+                sectionLock
+            );
+
+        if (result.allocated > 0) {
+            req.flash(
+                "success",
+                `${side}: ${result.allocated} seat(s) allocated for ${genderLock} Section ${sectionLock}. ` +
+                `${result.remainingStudents} eligible student(s) remain. ` +
+                `${result.remainingSeats} seat(s) remain available on this side.`
+            );
+        } else if (
+            result.eligibleStudents === 0
+        ) {
+            req.flash(
+                "warning",
+                `No remaining approved ${genderLock} students were found for Section ${sectionLock}.`
+            );
+        } else if (
+            result.availableSeats === 0
+        ) {
+            req.flash(
+                "warning",
+                `No available seats remain on the ${side} side.`
+            );
+        } else {
+            req.flash(
+                "warning",
+                `No ${genderLock} Section ${sectionLock} students were allocated.`
+            );
+        }
     } catch (err) {
         console.error(
-            "RTSE side lock error:",
+            "RTSE side lock/allocation error:",
             err
         );
 
         req.flash(
             "error",
-            err.message || "Unable to update side lock."
+            err.message ||
+            "Unable to apply side lock."
         );
     }
 
-    res.redirect(
+    return res.redirect(
         `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
     );
 };

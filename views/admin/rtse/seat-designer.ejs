@@ -354,101 +354,197 @@
                                             </div>
                                         <% } %>
 
-                                        <form
-                                            method="POST"
-                                            action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/side-lock"
-                                            style="
-                                                display:flex;
-                                                gap:7px;
-                                                flex-wrap:wrap;
-                                                align-items:center;
-                                            "
-                                        >
+                                        <%
+  const sideSeats = (shift.seats || []).filter(seat =>
+    String(seat.position || "").toUpperCase() ===
+    String(side).toUpperCase()
+  );
 
-                                            <input
-                                                type="hidden"
-                                                name="side"
-                                                value="<%= side %>"
-                                            >
+  const sideLockGroups = {};
 
-                                            <select
-                                                name="gender_lock"
-                                                style="
-                                                    padding:7px;
-                                                    border:1px solid #ccc;
-                                                    border-radius:7px;
-                                                "
-                                            >
-                                                <option value="">
-                                                    Gender Lock
-                                                </option>
+  sideSeats.forEach(seat => {
+    const seatGender = String(seat.gender || "Any").trim();
+    const seatSection = seat.section
+      ? String(seat.section).trim().toUpperCase()
+      : "";
 
-                                                <option
-                                                    value="Male"
-                                                    <%= sideGenderLock === "Male"
-                                                        ? "selected"
-                                                        : "" %>
-                                                >
-                                                    Male
-                                                </option>
+    if (seatGender !== "Any" && seatSection) {
+      const key = `${seatGender}|${seatSection}`;
 
-                                                <option
-                                                    value="Female"
-                                                    <%= sideGenderLock === "Female"
-                                                        ? "selected"
-                                                        : "" %>
-                                                >
-                                                    Female
-                                                </option>
-                                            </select>
+      if (!sideLockGroups[key]) {
+        sideLockGroups[key] = {
+          gender: seatGender,
+          section: seatSection,
+          seats: 0
+        };
+      }
 
-                                            <select
-                                                name="section_lock"
-                                                style="
-                                                    padding:7px;
-                                                    border:1px solid #ccc;
-                                                    border-radius:7px;
-                                                "
-                                            >
-                                                <option value="">
-                                                    Section Lock
-                                                </option>
+      sideLockGroups[key].seats++;
+    }
+  });
 
-                                                <% ["A","B","C","D","E"].forEach(lockSection => { %>
+  const sideLockGroupList = Object.values(sideLockGroups);
 
-                                                    <option
-                                                        value="<%= lockSection %>"
-                                                        <%= sideSectionLock === lockSection
-                                                            ? "selected"
-                                                            : "" %>
-                                                    >
-                                                        Section <%= lockSection %>
-                                                    </option>
+  const sideAvailableSeats = sideSeats.filter(seat => {
+    if (Number(seat.is_active) !== 1) return false;
+    if (Number(seat.is_locked) === 1) return false;
 
-                                                <% }) %>
-                                            </select>
+    const seatGender = String(seat.gender || "Any").trim();
+    const seatSection = seat.section
+      ? String(seat.section).trim().toUpperCase()
+      : "";
 
-                                            <button
-                                                type="submit"
-                                                class="btn-save"
-                                                onclick="return confirm('Apply lock settings to the entire <%= side %> side?')"
-                                            >
-                                                🔒 Apply Lock
-                                            </button>
+    if (seatGender !== "Any" || seatSection) return false;
 
-                                            <button
-                                                type="submit"
-                                                class="btn-view"
-                                                onclick="
-                                                    this.form.gender_lock.value='';
-                                                    this.form.section_lock.value='';
-                                                    return confirm('Unlock the <%= side %> side?');
-                                                "
-                                            >
-                                                Unlock
-                                            </button>
+    if (
+      String(shift.seat_system || "").toUpperCase() ===
+      "CORNER_TO_CORNER"
+    ) {
+      const rowSeats = sideSeats
+        .filter(rowSeat =>
+          Number(rowSeat.row_no) === Number(seat.row_no)
+        )
+        .sort((a, b) =>
+          Number(a.seat_no) - Number(b.seat_no)
+        );
 
-                                        </form>
+      if (
+        rowSeats.length > 2 &&
+        Number(seat.seat_no) !== Number(rowSeats[0].seat_no) &&
+        Number(seat.seat_no) !== Number(rowSeats[rowSeats.length - 1].seat_no)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  const hasPreviousLockGroups =
+    sideLockGroupList.length > 0;
+%>
+
+<div style="
+  margin-bottom:10px;
+  padding:10px 12px;
+  border:1px solid #e5e7eb;
+  border-radius:9px;
+  background:#fafafa;
+">
+  <div style="
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:7px;
+  ">
+    Universal Gender + Section Lock
+  </div>
+
+  <% if (hasPreviousLockGroups) { %>
+    <div style="
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:8px;
+    ">
+      <% sideLockGroupList.forEach(group => { %>
+        <span style="
+          display:inline-block;
+          padding:5px 8px;
+          border-radius:6px;
+          background:#e8f1ff;
+          border:1px solid #c7dbff;
+          font-size:12px;
+          font-weight:600;
+        ">
+          <%= group.gender %> <%= group.section %>
+          — <%= group.seats %>
+          seat<%= group.seats === 1 ? "" : "s" %>
+        </span>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div style="
+    font-size:12px;
+    color:#555;
+    margin-bottom:8px;
+  ">
+    Available seats for another lock:
+    <strong><%= sideAvailableSeats.length %></strong>
+  </div>
+
+  <form method="POST"
+    action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/side-lock"
+    style="
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+      align-items:center;
+    "
+  >
+    <input
+      type="hidden"
+      name="side"
+      value="<%= side %>"
+    >
+
+    <select
+      name="gender_lock"
+      style="
+        padding:7px;
+        border:1px solid #ccc;
+        border-radius:7px;
+      "
+    >
+      <option value="">Gender Lock</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+
+    <select
+      name="section_lock"
+      style="
+        padding:7px;
+        border:1px solid #ccc;
+        border-radius:7px;
+      "
+    >
+      <option value="">Section Lock</option>
+
+      <% ["A","B","C","D","E"].forEach(lockSection => { %>
+        <option value="<%= lockSection %>">
+          Section <%= lockSection %>
+        </option>
+      <% }) %>
+    </select>
+
+    <button
+      type="submit"
+      class="btn-save"
+      onclick="
+        return confirm(
+          'Apply this Gender + Section lock to available <%= side %> seats according to approved student availability?'
+        );
+      "
+    >
+      🔒 <%= hasPreviousLockGroups
+        ? "Add Another Lock"
+        : "Apply Lock" %>
+    </button>
+
+    <button
+      type="submit"
+      class="btn-view"
+      onclick="
+        this.form.gender_lock.value='';
+        this.form.section_lock.value='';
+        return confirm('Unlock the <%= side %> side?');
+      "
+    >
+      Unlock
+    </button>
+  </form>
+</div>
 
                                     </div>
 
