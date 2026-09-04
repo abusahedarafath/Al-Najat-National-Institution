@@ -1,164 +1,722 @@
 <%- include("../partials/header") %>
 
 <div class="admin-layout">
-
     <%- include("../partials/sidebar") %>
 
-    <main class="admin-content">
-
+    <main class="admin-content rtse-seat-plan-page">
         <div class="container">
 
             <div class="page-header">
-
-                <h1>
-
-                    RTSE Seat Plan Generator
-
-                </h1>
-
-                <a
-                    href="/admin/rtse"
-                    class="btn-cancel">
-
-                    ← Back
-
-                </a>
-
+                <div>
+                    <h1>RTSE Seat Plan</h1>
+                    <p>
+                        Examination Year
+                        <strong><%= applicationYear %></strong>
+                    </p>
+                </div>
             </div>
 
-            <div class="profile-card">
+            <section class="profile-card">
+                <div class="rtse-section-heading">
+                    <div>
+                        <h2>Add Examination Shift</h2>
+                        <p>
+                            Create shifts first, then add examination
+                            rooms inside each shift.
+                        </p>
+                    </div>
+                </div>
 
                 <form
-                    action="/admin/rtse/seat-plan"
-                    method="POST">
+                    action="/admin/rtse/seat-plan/shifts"
+                    method="POST"
+                    class="rtse-add-shift"
+                >
+                    <div class="form-group">
+                        <label for="shift_name">
+                            Shift Name
+                        </label>
 
-                    <div class="form-grid">
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Section
-
-                            </label>
-
-                            <select
-                                name="section"
-                                required>
-
-                                <option value="A">
-
-                                    SECTION A
-
-                                </option>
-
-                                <option value="B">
-
-                                    SECTION B
-
-                                </option>
-
-                                <option value="C">
-
-                                    SECTION C
-
-                                </option>
-
-                                <option value="D">
-
-                                    SECTION D
-
-                                </option>
-
-                                <option value="E">
-
-                                    SECTION E
-
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Room Capacity
-
-                            </label>
-
-                            <input
-                                type="number"
-                                name="room_capacity"
-                                value="30"
-                                min="1"
-                                required>
-
-                        </div>
-
+                        <input
+                            id="shift_name"
+                            type="text"
+                            name="shift_name"
+                            maxlength="100"
+                            placeholder="e.g. Morning Shift"
+                        >
                     </div>
 
                     <button
                         type="submit"
-                        class="btn-save">
-
-                        Generate Seat Plan
-
+                        class="btn-save"
+                    >
+                        Add Shift
                     </button>
-
                 </form>
+            </section>
 
-            </div>
+            <% if (!shifts.length) { %>
 
-            <div class="profile-card">
+                <section class="profile-card rtse-empty-room">
+                    <h2>No shifts configured</h2>
+                    <p>
+                        Add the first examination shift above.
+                        Rooms can then be created inside that shift.
+                    </p>
+                </section>
 
-                <h2>
+            <% } else { %>
 
-                    Seat Plan Rules
+                <div class="rtse-shift-list">
 
-                </h2>
+                    <% shifts.forEach(shift => { %>
 
-                <ul>
+                        <section class="profile-card rtse-room-card">
 
-                    <li>
+                            <div class="rtse-room-header">
+                                <div class="rtse-room-title-block">
 
-                        Only approved students with generated roll numbers are included.
+                                    <div class="rtse-room-title">
+                                        <span
+                                            class="rtse-room-icon"
+                                            aria-hidden="true"
+                                        >◉</span>
 
-                    </li>
+                                        <div>
+                                            <div class="rtse-room-title-line">
+                                                <h2>
+                                                    Shift <%= shift.shift_no %>
+                                                </h2>
 
-                    <li>
+                                                <% if (shift.is_active) { %>
+                                                    <span class="rtse-shift-status active">
+                                                        Active
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="rtse-shift-status inactive">
+                                                        Inactive
+                                                    </span>
+                                                <% } %>
+                                            </div>
 
-                        Students are arranged according to Roll Number.
+                                            <p class="rtse-room-meta">
+                                                <strong>
+                                                    <%= shift.shift_name %>
+                                                </strong>
+                                                ·
+                                                <%= shift.room_count %>
+                                                room<%= Number(shift.room_count) === 1 ? "" : "s" %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    </li>
+                                <div class="rtse-room-actions">
 
-                    <li>
+                                    <form
+                                        action="/admin/rtse/seat-plan/shifts/<%= shift.id %>/toggle"
+                                        method="POST"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn-cancel"
+                                        >
+                                            <%= shift.is_active
+                                                ? "Set Inactive"
+                                                : "Set Active" %>
+                                        </button>
+                                    </form>
 
-                        Rooms are filled automatically.
+                                    <button
+                                        type="button"
+                                        class="btn-cancel"
+                                        onclick="editShift(
+                                            <%= shift.id %>,
+                                            <%= JSON.stringify(shift.shift_name) %>
+                                        )"
+                                    >
+                                        Edit
+                                    </button>
 
-                    </li>
+                                    <form
+                                        action="/admin/rtse/seat-plan/shifts/<%= shift.id %>/remove"
+                                        method="POST"
+                                        onsubmit="return confirm(
+                                            'Remove this shift and all rooms and seats inside it?'
+                                        );"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn-cancel"
+                                        >
+                                            Remove
+                                        </button>
+                                    </form>
 
-                    <li>
+                                </div>
+                            </div>
 
-                        Seat numbers restart from 1 in every room.
+                            <div class="rtse-shifts-section">
 
-                    </li>
+                                <div class="rtse-shifts-header">
+                                    <div>
+                                        <h3>Rooms</h3>
+                                        <p>
+                                            Rooms belong to this shift.
+                                            Each room has its own Seat Designer.
+                                        </p>
+                                    </div>
 
-                    <li>
+                                    <form
+                                        action="/admin/rtse/seat-plan/shifts/<%= shift.id %>/rooms"
+                                        method="POST"
+                                        class="rtse-add-room-form"
+                                    >
+                                        <input
+                                            type="number"
+                                            name="room_no"
+                                            min="1"
+                                            required
+                                            placeholder="Room No."
+                                            aria-label="Room number"
+                                        >
 
-                        Generated Room Number and Seat Number automatically appear on Admit Cards.
+                                        <button
+                                            type="submit"
+                                            class="btn-save"
+                                        >
+                                            Add Room
+                                        </button>
+                                    </form>
+                                </div>
 
-                    </li>
+                                <% if (!shift.rooms.length) { %>
 
-                </ul>
+                                    <div class="rtse-empty-shifts">
+                                        <strong>
+                                            No rooms added yet
+                                        </strong>
 
-            </div>
+                                        <span>
+                                            Add the first room to this shift.
+                                        </span>
+                                    </div>
+
+                                <% } else { %>
+
+                                    <div class="rtse-shift-list">
+
+                                        <% shift.rooms.forEach(room => { %>
+
+                                            <article class="rtse-shift-row">
+
+                                                <div class="rtse-shift-info">
+
+                                                    <div class="rtse-shift-name">
+
+                                                        <span class="rtse-shift-number">
+                                                            Room <%= room.room_no %>
+                                                        </span>
+
+                                                        <% if (room.is_active) { %>
+                                                            <span class="rtse-shift-status active">
+                                                                Active
+                                                            </span>
+                                                        <% } else { %>
+                                                            <span class="rtse-shift-status inactive">
+                                                                Inactive
+                                                            </span>
+                                                        <% } %>
+
+                                                    </div>
+
+                                                    <div class="rtse-shift-subtitle">
+                                                        Configure seats independently
+                                                        for this room.
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="rtse-shift-actions">
+
+                                                    <form
+                                                        action="/admin/rtse/seat-plan/shifts/<%= shift.id %>/rooms/<%= room.id %>/toggle"
+                                                        method="POST"
+                                                    >
+                                                        <button
+                                                            type="submit"
+                                                            class="btn-cancel"
+                                                        >
+                                                            <%= room.is_active
+                                                                ? "Set Inactive"
+                                                                : "Set Active" %>
+                                                        </button>
+                                                    </form>
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn-cancel"
+                                                        onclick="editRoom(
+                                                            <%= shift.id %>,
+                                                            <%= room.id %>,
+                                                            <%= room.room_no %>
+                                                        )"
+                                                    >
+                                                        Edit
+                                                    </button>
+
+                                                    <form
+                                                        action="/admin/rtse/seat-plan/shifts/<%= shift.id %>/rooms/<%= room.id %>/remove"
+                                                        method="POST"
+                                                        onsubmit="return confirm(
+                                                            'Remove this room and its seat configuration?'
+                                                        );"
+                                                    >
+                                                        <button
+                                                            type="submit"
+                                                            class="btn-cancel"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </form>
+
+                                                    <a
+                                                        href="/admin/rtse/seat-plan/shifts/<%= shift.id %>/rooms/<%= room.id %>/seats"
+                                                        class="btn-save rtse-configure-seats"
+                                                    >
+                                                        Seat Designer
+                                                    </a>
+
+                                                </div>
+
+                                            </article>
+
+                                        <% }) %>
+
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+                        </section>
+
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+            <section class="profile-card rtse-rules-card">
+                <h2>Seat Plan Structure</h2>
+
+                <div class="rtse-rules-list">
+                    <div>
+                        <strong>Shift</strong>
+                        contains examination rooms.
+                    </div>
+
+                    <div>
+                        <strong>Room</strong>
+                        belongs to exactly one shift.
+                    </div>
+
+                    <div>
+                        <strong>Seat Designer</strong>
+                        configures seats for the selected room.
+                    </div>
+                </div>
+            </section>
 
         </div>
 
-    </main>
+        <section class="profile-card" style="margin-top:24px;">
+            <div class="rtse-section-heading">
+                <div>
+                    <h2>Student Seat Allocation</h2>
+                    <p>
+                        Allocate approved students into the currently
+                        configured active seats. Rooms and seat capacity
+                        remain completely open-ended.
+                    </p>
+                </div>
+            </div>
 
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+                gap:16px;
+                margin-top:18px;
+            ">
+                <% shifts.forEach(shift => { %>
+                    <div style="
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        padding:18px;
+                        background:#fff;
+                    ">
+                        <h3 style="margin-top:0;">
+                            Shift <%= shift.shift_no %> —
+                            <%= shift.shift_name %>
+                        </h3>
+
+                        <p style="margin:6px 0;color:#666;">
+                            <strong><%= shift.room_count %></strong>
+                            room(s) ·
+                            <strong><%= shift.active_seat_count %></strong>
+                            active seat(s)
+                        </p>
+
+                        <% if(Number(shift.is_active) === 1) { %>
+
+                            <form
+                                method="POST"
+                                action="/admin/rtse/seat-plan/allocate"
+                                style="margin-top:14px;"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="shift_id"
+                                    value="<%= shift.id %>"
+                                >
+
+                                <div style="
+                                    display:flex;
+                                    gap:8px;
+                                    flex-wrap:wrap;
+                                    align-items:end;
+                                ">
+                                    <div style="flex:1;min-width:130px;">
+                                        <label
+                                            style="
+                                                display:block;
+                                                margin-bottom:5px;
+                                                font-weight:600;
+                                            "
+                                        >
+                                            Section
+                                        </label>
+
+                                        <select
+                                            name="section"
+                                            required
+                                            style="
+                                                width:100%;
+                                                padding:9px;
+                                                border:1px solid #ccc;
+                                                border-radius:7px;
+                                            "
+                                        >
+                                            <option value="">Select</option>
+                                            <% ["A","B","C","D","E"].forEach(section => { %>
+                                                <option value="<%= section %>">
+                                                    Section <%= section %>
+                                                </option>
+                                            <% }) %>
+                                        </select>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        class="btn-save"
+                                        onclick="return confirm('Allocate unallocated approved students into eligible seats for this section and shift?')"
+                                    >
+                                        Allocate Students
+                                    </button>
+                                </div>
+                            </form>
+
+                            <form
+                                method="POST"
+                                action="/admin/rtse/seat-plan/allocate/clear"
+                                style="margin-top:10px;"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="shift_id"
+                                    value="<%= shift.id %>"
+                                >
+
+                                <div style="
+                                    display:flex;
+                                    gap:8px;
+                                    flex-wrap:wrap;
+                                    align-items:end;
+                                ">
+                                    <select
+                                        name="section"
+                                        required
+                                        style="
+                                            padding:9px;
+                                            border:1px solid #ccc;
+                                            border-radius:7px;
+                                        "
+                                    >
+                                        <option value="">Clear Section</option>
+                                        <% ["A","B","C","D","E"].forEach(section => { %>
+                                            <option value="<%= section %>">
+                                                Section <%= section %>
+                                            </option>
+                                        <% }) %>
+                                    </select>
+
+                                    <button
+                                        type="submit"
+                                        class="btn-danger"
+                                        onclick="return confirm('Clear student seat allocations for this section and shift?')"
+                                    >
+                                        Clear Allocations
+                                    </button>
+                                </div>
+                            </form>
+
+                        <% } else { %>
+
+                            <span class="badge badge-warning">
+                                Shift inactive
+                            </span>
+
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+
+</main>
 </div>
 
-<%- include("../partials/footer") %>
+<div
+    id="shiftModal"
+    class="rtse-modal"
+    aria-hidden="true"
+>
+    <div
+        class="rtse-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="shiftModalTitle"
+    >
+        <div class="rtse-modal-header">
+            <div class="rtse-modal-heading">
+                <span class="rtse-modal-icon" aria-hidden="true">✎</span>
+
+                <div>
+                    <h2 id="shiftModalTitle">
+                        Edit Examination Shift
+                    </h2>
+
+                    <p>
+                        Update the name of this examination shift.
+                    </p>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="rtse-modal-close"
+                onclick="closeModal('shiftModal')"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+        </div>
+
+        <form
+            id="shiftEditForm"
+            method="POST"
+            class="rtse-edit-form"
+        >
+            <div class="rtse-form-field">
+                <label for="edit_shift_name">
+                    Shift Name
+                </label>
+
+                <input
+                    id="edit_shift_name"
+                    type="text"
+                    name="shift_name"
+                    maxlength="100"
+                    required
+                    autocomplete="off"
+                    placeholder="e.g. Morning Shift"
+                >
+
+                <small>
+                    Enter the name that should appear for this examination shift.
+                </small>
+            </div>
+
+            <div class="rtse-modal-actions">
+                <button
+                    type="button"
+                    class="btn-cancel"
+                    onclick="closeModal('shiftModal')"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn-save"
+                >
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div
+    id="roomModal"
+    class="rtse-modal"
+    aria-hidden="true"
+>
+    <div
+        class="rtse-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="roomModalTitle"
+    >
+        <div class="rtse-modal-header">
+            <div class="rtse-modal-heading">
+                <span class="rtse-modal-icon" aria-hidden="true">▣</span>
+
+                <div>
+                    <h2 id="roomModalTitle">
+                        Edit Examination Room
+                    </h2>
+
+                    <p>
+                        Update the room number for this examination room.
+                    </p>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="rtse-modal-close"
+                onclick="closeModal('roomModal')"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+        </div>
+
+        <form
+            id="roomEditForm"
+            method="POST"
+            class="rtse-edit-form"
+        >
+            <div class="rtse-form-field">
+                <label for="edit_room_no">
+                    Room Number
+                </label>
+
+                <input
+                    id="edit_room_no"
+                    type="number"
+                    name="room_no"
+                    min="1"
+                    step="1"
+                    required
+                    inputmode="numeric"
+                    placeholder="e.g. 101"
+                >
+
+                <small>
+                    Enter a unique room number for this examination room.
+                </small>
+            </div>
+
+            <div class="rtse-modal-actions">
+                <button
+                    type="button"
+                    class="btn-cancel"
+                    onclick="closeModal('roomModal')"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn-save"
+                >
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function editShift(shiftId, shiftName) {
+    const form = document.getElementById("shiftEditForm");
+    const input = document.getElementById("edit_shift_name");
+    const modal = document.getElementById("shiftModal");
+
+    form.action =
+        "/admin/rtse/seat-plan/shifts/" +
+        shiftId +
+        "/edit";
+
+    input.value = shiftName || "";
+
+    modal.classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
+
+    setTimeout(function () {
+        input.focus();
+        input.select();
+    }, 50);
+}
+
+function editRoom(shiftId, roomId, roomNo) {
+    const form = document.getElementById("roomEditForm");
+    const input = document.getElementById("edit_room_no");
+    const modal = document.getElementById("roomModal");
+
+    form.action =
+        "/admin/rtse/seat-plan/shifts/" +
+        shiftId +
+        "/rooms/" +
+        roomId +
+        "/edit";
+
+    input.value = roomNo || "";
+
+    modal.classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
+
+    setTimeout(function () {
+        input.focus();
+        input.select();
+    }, 50);
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
+}
+
+document.querySelectorAll(".rtse-modal").forEach(function (modal) {
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeModal(modal.id);
+        }
+    });
+});
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        document.querySelectorAll(".rtse-modal.active").forEach(function (modal) {
+            closeModal(modal.id);
+        });
+    }
+});
+</script>

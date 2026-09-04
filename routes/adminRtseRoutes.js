@@ -1,5 +1,9 @@
 const express = require("express");
+const multer = require("multer");
 const router = express.Router();
+
+const seatDesignerBody = multer().none();
+const roomFormBody = multer().none();
 
 const auth = require("../middleware/auth");
 
@@ -520,30 +524,158 @@ router.post(
 );
 
 // =====================================
+// =====================================
 // Seat Plan
 // =====================================
 
 router.get(
-
     "/rtse/seat-plan",
-
     auth.isAdmin,
-
     adminRtseController.seatPlanPage
-
 );
 
 router.post(
-
-    "/rtse/seat-plan",
-
+    "/rtse/seat-plan/shifts",
     auth.isAdmin,
-
-    adminRtseController.generateSeatPlan
-
+    express.urlencoded({ extended: true }),
+    adminRtseController.addSeatPlanShift
 );
 
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/edit",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.editSeatPlanShift
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/remove",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.removeSeatPlanShift
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/toggle",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.toggleSeatPlanShift
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    (req, res, next) => {
+        console.log("=== ADD ROOM BODY DEBUG ===");
+        console.log("content-type:", req.headers["content-type"]);
+        console.log("body:", req.body);
+        console.log("raw room_no:", req.body?.room_no);
+        next();
+    },
+    adminRtseController.addSeatPlanRoom
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/edit",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.editSeatPlanRoom
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/remove",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.removeSeatPlanRoom
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/toggle",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.toggleSeatPlanRoom
+);
+
+
 // =====================================
+// Student Seat Allocation
+// =====================================
+
+router.post(
+    "/rtse/seat-plan/allocate",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.allocateStudentsToSeats
+);
+
+router.post(
+    "/rtse/seat-plan/allocate/clear",
+    auth.isAdmin,
+    express.urlencoded({ extended: true }),
+    adminRtseController.clearStudentSeatAllocations
+);
+
+
+// =====================================
+// Seat Designer
+// =====================================
+
+router.get(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/seats",
+    auth.isAdmin,
+    adminRtseController.seatDesignerPage
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/seats/generate",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.generateSeatDesigner
+);
+
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/lock",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.lockRoomSeatsAndGenerateTokens
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/side-lock",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.updateSeatSideLocks
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/seat-system",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.updateRoomSeatSystem
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/seats/:seatId/update",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.updateSeatDesignerSeat
+);
+
+router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/seats/clear",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.clearSeatDesigner
+);
+
+router.post(
+    "/rtse/seat-plan",
+    auth.isAdmin,
+    adminRtseController.generateSeatPlan
+);
+
 // Room Wise Seat Plan
 // =====================================
 

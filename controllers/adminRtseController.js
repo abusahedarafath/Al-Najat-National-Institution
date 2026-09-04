@@ -29,6 +29,8 @@ const QRCode = require("qrcode");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 
 const RtseExamSetting = require("../models/RtseExamSetting");
+const { generateRoomTokenPdfs } =
+require("../utils/rtseSeatTokenPdf");
 // =====================================
 // RTSE Dashboard
 // =====================================
@@ -2019,72 +2021,981 @@ exports.deleteExamSetting = async (req, res) => {
 // Seat Plan Page
 // =====================================
 
-exports.seatPlanPage = async (req, res) => {
-
-    try {
-
-        res.render(
-
-            "admin/rtse/seat-plan",
-
-            {
-
-                title: "RTSE Seat Plan"
-
-            }
-
-        );
-
-    } catch (err) {
-
-        console.error(err);
-
-        req.flash(
-
-            "error",
-
-            "Unable to load Seat Plan."
-
-        );
-
-        res.redirect("/admin/rtse");
-
-    }
-
-};
-
-
 // =====================================
-// Generate Seat Plan
+// =====================================
+// Seat Designer
 // =====================================
 
-exports.generateSeatPlan = async (req, res) => {
-
+exports.seatDesignerPage = async (req, res) => {
     try {
-
-        const section =
-            String(req.body.section || "")
-                .trim()
-                .toUpperCase();
-
-        const roomCapacity =
-            parseInt(req.body.room_capacity, 10);
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
 
         const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
 
-        const applicationYear =
-            Number(setting?.exam_year);
-
-        if(!applicationYear){
+        if (!applicationYear) {
             throw new Error(
                 "Active RTSE exam year is not configured."
             );
         }
 
-        if(!Number.isInteger(roomCapacity) || roomCapacity < 1){
+        if (
+            !Number.isInteger(shiftId) ||
+            shiftId < 1 ||
+            !Number.isInteger(roomId) ||
+            roomId < 1
+        ) {
+            throw new Error("Invalid shift or room.");
+        }
+
+        const shift = await RtseSeatPlan.getSeatDesigner(
+            shiftId,
+            roomId,
+            applicationYear
+        );
+
+        if (!shift) {
+            throw new Error("Shift or room not found.");
+        }
+
+        res.render(
+            "admin/rtse/seat-designer",
+            {
+                title: "Seat Designer",
+                applicationYear,
+                shiftId,
+                roomId,
+                shift
+            }
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to load Seat Designer."
+        );
+
+        res.redirect("/admin/rtse/seat-plan");
+    }
+};
+
+
+exports.generateSeatDesigner = async (req, res) => {
+    try {
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
+
+        const layout = String(
+            req.body.layout || "TWO_SIDE"
+        ).trim().toUpperCase();
+
+        const rowCount = parseInt(
+            req.body.row_count,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
             throw new Error(
-                "Invalid room capacity."
+                "Active RTSE exam year is not configured."
             );
+        }
+
+        await RtseSeatPlan.setSeatLayout(
+            shiftId,
+            roomId,
+            applicationYear,
+            layout,
+            rowCount,
+            4
+        );
+
+        req.flash(
+            "success",
+            "Seat layout generated successfully."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to generate seat layout."
+        );
+    }
+
+    res.redirect(
+        `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+    );
+};
+
+
+exports.updateRoomSeatSystem = async (req, res) => {
+    try {
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
+
+        const seatSystem = String(
+            req.body.seat_system || "FULL"
+        ).trim().toUpperCase();
+
+        if (!["FULL", "CORNER_TO_CORNER"].includes(seatSystem)) {
+            throw new Error("Invalid seat system.");
+        }
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseSeatPlan.updateRoomSeatSystem(
+            shiftId,
+            roomId,
+            applicationYear,
+            seatSystem
+        );
+
+        req.flash(
+            "success",
+            seatSystem === "CORNER_TO_CORNER"
+                ? "Corner-to-Corner seat system enabled."
+                : "Full Seat System enabled."
+        );
+    } catch (err) {
+        console.error("RTSE room seat system error:", err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to update seat system."
+        );
+    }
+
+    res.redirect(
+        `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+    );
+};
+
+exports.updateSeatDesignerSeat = async (req, res) => {
+
+    // Reset this individual seat's Gender + Section restriction.
+    if (req.body.reset_seat === "1") {
+        req.body.section = "";
+        req.body.gender = "Any";
+    }
+
+    try {
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
+        const seatId = parseInt(req.params.seatId, 10);
+
+        const sectionValue = String(
+            req.body.section || ""
+        ).trim().toUpperCase();
+
+        const section =
+            sectionValue === "" ? null : sectionValue;
+
+        const gender = String(
+            req.body.gender || "Any"
+        ).trim();
+
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseSeatPlan.updateSeat(
+            seatId,
+            shiftId,
+            roomId,
+            applicationYear,
+            section,
+            gender
+        );
+
+        req.flash(
+            "success",
+            "Seat configuration updated."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to update seat."
+        );
+    }
+
+    res.redirect(
+        `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+    );
+};
+
+
+
+
+exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
+    try {
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const lockResult =
+            await RtseSeatPlan.lockRoomAllocatedSeats(
+                shiftId,
+                roomId,
+                applicationYear
+            );
+
+        const pdfResult =
+            await generateRoomTokenPdfs(
+                shiftId,
+                roomId,
+                applicationYear
+            );
+
+        res.render("admin/rtse/seat-token-generated", {
+            title: "RTSE Seat Plan Tokens",
+            shiftId,
+            roomId,
+            room: lockResult.room,
+            allocatedCount: lockResult.allocatedCount,
+            pdfResult
+        });
+    } catch (err) {
+        console.error(
+            "RTSE seat lock/token PDF error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to lock seats and generate token PDF."
+        );
+
+        return res.redirect(
+            `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+        );
+    }
+};
+
+
+exports.updateSeatSideLocks = async (req, res) => {
+    try {
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
+
+        const side = String(req.body.side || "")
+            .trim()
+            .toUpperCase();
+
+        const genderValue = String(req.body.gender_lock || "")
+            .trim();
+
+        const sectionValue = String(req.body.section_lock || "")
+            .trim()
+            .toUpperCase();
+
+        const genderLock =
+            ["Male", "Female"].includes(genderValue)
+                ? genderValue
+                : null;
+
+        const sectionLock =
+            ["A", "B", "C", "D", "E"].includes(sectionValue)
+                ? sectionValue
+                : null;
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseSeatPlan.updateRoomSideLocks(
+            shiftId,
+            roomId,
+            applicationYear,
+            side,
+            genderLock,
+            sectionLock
+        );
+
+        req.flash(
+            "success",
+            `${side} side lock settings updated.`
+        );
+    } catch (err) {
+        console.error(
+            "RTSE side lock error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message || "Unable to update side lock."
+        );
+    }
+
+    res.redirect(
+        `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+    );
+};
+
+exports.clearSeatDesigner = async (req, res) => {
+    try {
+        const shiftId = parseInt(req.params.shiftId, 10);
+        const roomId = parseInt(req.params.roomId, 10);
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseSeatPlan.clearSeats(
+            shiftId,
+            roomId,
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            "Seat layout cleared."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to clear seat layout."
+        );
+    }
+
+    res.redirect(
+        `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+    );
+};
+
+
+// =====================================
+
+// =====================================
+// Open-Ended Student Seat Allocation
+// =====================================
+
+exports.allocateStudentsToSeats = async (req, res) => {
+    try {
+        const section = String(req.body.section || "")
+            .trim()
+            .toUpperCase();
+
+        const shiftId = parseInt(req.body.shift_id, 10);
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const result = await RtseSeatPlan.allocateStudents(
+            section,
+            shiftId,
+            applicationYear
+        );
+
+        if (result.allocated > 0) {
+            req.flash(
+                "success",
+                `${result.allocated} student(s) allocated to seats in Section ${section}.`
+            );
+        } else {
+            req.flash(
+                "warning",
+                result.message ||
+                `No students were allocated to Section ${section}.`
+            );
+        }
+    } catch (err) {
+        console.error(
+            "RTSE seat allocation error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to allocate students to seats."
+        );
+    }
+
+    return res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.clearStudentSeatAllocations = async (req, res) => {
+    try {
+        const section = String(req.body.section || "")
+            .trim()
+            .toUpperCase();
+
+        const shiftId = parseInt(req.body.shift_id, 10);
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const count =
+            await RtseSeatPlan.clearStudentAllocations(
+                section,
+                shiftId,
+                applicationYear
+            );
+
+        req.flash(
+            "success",
+            `${count} student allocation(s) cleared for Section ${section}.`
+        );
+    } catch (err) {
+        console.error(
+            "RTSE seat allocation clear error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to clear student allocations."
+        );
+    }
+
+    return res.redirect("/admin/rtse/seat-plan");
+};
+
+
+// Seat Plan Page
+// =====================================
+
+exports.seatPlanPage = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const shifts =
+            await RtseSeatPlan.getAllocationData(
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/seat-plan",
+            {
+                title: "RTSE Seat Plan",
+                applicationYear,
+                shifts
+            }
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to load Seat Plan."
+        );
+
+        res.redirect("/admin/rtse");
+    }
+};
+
+
+exports.addSeatPlanShift = async (req, res) => {
+    try {
+        const body =
+            req.body && typeof req.body === "object"
+                ? req.body
+                : {};
+
+        const shiftName = String(
+            body.shift_name || ""
+        ).trim();
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const shiftId = await RtseSeatPlan.addShift(
+            applicationYear,
+            shiftName || null
+        );
+
+        if (!shiftId) {
+            throw new Error("Unable to create shift.");
+        }
+
+        req.flash(
+            "success",
+            "Shift added successfully."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err?.code === "ER_DUP_ENTRY"
+                ? "That shift number already exists."
+                : (
+                    err.message ||
+                    "Unable to add shift."
+                )
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.editSeatPlanShift = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const shiftName = String(
+            req.body.shift_name || ""
+        ).trim();
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if (!Number.isInteger(shiftId) || shiftId < 1) {
+            throw new Error("Invalid shift.");
+        }
+
+        if (!shiftName) {
+            throw new Error("Shift name is required.");
+        }
+
+        await RtseSeatPlan.updateShift(
+            shiftId,
+            applicationYear,
+            shiftName
+        );
+
+        req.flash(
+            "success",
+            "Shift updated successfully."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to update shift."
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.removeSeatPlanShift = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if (!Number.isInteger(shiftId) || shiftId < 1) {
+            throw new Error("Invalid shift.");
+        }
+
+        await RtseSeatPlan.removeShift(
+            shiftId,
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            "Shift removed successfully."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to remove shift."
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.toggleSeatPlanShift = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if (!Number.isInteger(shiftId) || shiftId < 1) {
+            throw new Error("Invalid shift.");
+        }
+
+        await RtseSeatPlan.toggleShift(
+            shiftId,
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            "Shift status updated."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to update shift status."
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.addSeatPlanRoom = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const body =
+            req.body && typeof req.body === "object"
+                ? req.body
+                : {};
+
+        const roomNo = parseInt(
+            body.room_no,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if (!Number.isInteger(shiftId) || shiftId < 1) {
+            throw new Error("Invalid shift.");
+        }
+
+        if (!Number.isInteger(roomNo) || roomNo < 1) {
+            throw new Error("Invalid room number.");
+        }
+
+        const roomId = await RtseSeatPlan.addRoom(
+            shiftId,
+            applicationYear,
+            roomNo
+        );
+
+        if (!roomId) {
+            throw new Error(
+                "Shift not found for the active RTSE exam."
+            );
+        }
+
+        req.flash(
+            "success",
+            `Room ${roomNo} added successfully.`
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err?.code === "ER_DUP_ENTRY"
+                ? "That room number already exists for this RTSE exam."
+                : (
+                    err.message ||
+                    "Unable to add room."
+                )
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.editSeatPlanRoom = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const roomId = parseInt(
+            req.params.roomId,
+            10
+        );
+
+        const body =
+            req.body && typeof req.body === "object"
+                ? req.body
+                : {};
+
+        const roomNo = parseInt(
+            body.room_no,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if (
+            !Number.isInteger(shiftId) ||
+            shiftId < 1
+        ) {
+            throw new Error("Invalid shift.");
+        }
+
+        if (
+            !Number.isInteger(roomId) ||
+            roomId < 1
+        ) {
+            throw new Error("Invalid room.");
+        }
+
+        if (
+            !Number.isInteger(roomNo) ||
+            roomNo < 1
+        ) {
+            throw new Error("Invalid room number.");
+        }
+
+        await RtseSeatPlan.updateRoom(
+            roomId,
+            shiftId,
+            applicationYear,
+            roomNo
+        );
+
+        req.flash(
+            "success",
+            `Room number updated to ${roomNo}.`
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err?.code === "ER_DUP_ENTRY"
+                ? "That room number already exists for this RTSE exam."
+                : (
+                    err.message ||
+                    "Unable to update room."
+                )
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.removeSeatPlanRoom = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const roomId = parseInt(
+            req.params.roomId,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseSeatPlan.removeRoom(
+            roomId,
+            shiftId,
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            "Room removed successfully."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to remove room."
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.toggleSeatPlanRoom = async (req, res) => {
+    try {
+        const shiftId = parseInt(
+            req.params.shiftId,
+            10
+        );
+
+        const roomId = parseInt(
+            req.params.roomId,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseSeatPlan.toggleRoom(
+            roomId,
+            shiftId,
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            "Room status updated."
+        );
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message || "Unable to update room status."
+        );
+    }
+
+    res.redirect("/admin/rtse/seat-plan");
+};
+
+
+exports.generateSeatPlan = async (req, res) => {
+    try {
+        const section = String(
+            req.body.section || ""
+        ).trim().toUpperCase();
+
+        const roomCapacity = parseInt(
+            req.body.room_capacity,
+            10
+        );
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        if (
+            !Number.isInteger(roomCapacity) ||
+            roomCapacity < 1
+        ) {
+            throw new Error("Invalid room capacity.");
         }
 
         await RtseSeatPlan.generate(
@@ -2097,22 +3008,18 @@ exports.generateSeatPlan = async (req, res) => {
             "success",
             `Seat Plan generated successfully for Section ${section} (${applicationYear}).`
         );
-
-        res.redirect("/admin/rtse/seat-plan");
-
-    } catch(err){
-
+    } catch (err) {
         console.error(err);
 
         req.flash(
             "error",
-            "Unable to generate Seat Plan."
+            err.message || "Unable to generate Seat Plan."
         );
-
-        res.redirect("/admin/rtse/seat-plan");
     }
+
+    res.redirect("/admin/rtse/seat-plan");
 };
-// =====================================
+
 // Room Wise Seat Plan
 // =====================================
 

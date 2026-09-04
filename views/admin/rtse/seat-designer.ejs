@@ -1,0 +1,1091 @@
+
+
+
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content rtse-seat-designer-page">
+        <div class="container">
+
+            <div class="page-header">
+                <div>
+                    <h1>RTSE Seat Designer</h1>
+
+                    <p class="rtse-designer-meta">
+                        Examination Year
+                        <strong><%= applicationYear %></strong>
+                        · Shift
+                        <strong><%= shift.shift_no %></strong>
+                        · <strong><%= shift.shift_name %></strong>
+                        · Room
+                        <strong><%= shift.room_no %></strong>
+                    </p>
+                </div>
+
+                <a
+                    href="/admin/rtse/seat-plan"
+                    class="btn-cancel"
+                >
+                    ← Back to Seat Plan
+                </a>
+            </div>
+
+            <section class="profile-card rtse-generator-card">
+
+                <div class="rtse-section-heading">
+                    <div>
+                        <h2>Generate Seat Layout</h2>
+
+                        <p>
+                            Configure the number of desks
+                            for this room.
+                        </p>
+                    </div>
+                </div>
+
+                <form
+                    action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/seats/generate"
+                    method="POST"
+                    class="rtse-generator-form"
+                    onsubmit="return confirm(
+                        'Generate this seat layout? Existing seats for this shift will be replaced.'
+                    );"
+                >
+
+                    <div class="rtse-field">
+                        <label for="layout">
+                            Layout
+                        </label>
+
+                        <select
+                            id="layout"
+                            name="layout"
+                            required
+                        >
+                            <option
+                                value="TWO_SIDE"
+                                <%= shift.layout === "TWO_SIDE"
+                                    ? "selected"
+                                    : "" %>
+                            >
+                                Two-Side
+                            </option>
+
+                            <option
+                                value="SINGLE_LINE"
+                                <%= shift.layout === "SINGLE_LINE"
+                                    ? "selected"
+                                    : "" %>
+                            >
+                                Single-Line
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="rtse-field">
+                        <label for="row_count">
+                            Desks
+                        </label>
+
+                        <input
+                            id="row_count"
+                            type="number"
+                            name="row_count"
+                            min="1"
+                            max="200"
+                            value="<%= shift.seats.length
+                                ? Math.max(
+                                    ...shift.seats.map(
+                                        s => Number(s.row_no)
+                                    )
+                                )
+                                : 1 %>"
+                            required
+                        >
+
+                        <small>
+                            Two-Side creates 8 seats per desk:
+                            4 on each side.
+                        </small>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn-save"
+                    >
+                        Generate Layout
+                    </button>
+
+                </form>
+
+            </section>
+
+            <section class="profile-card rtse-layout-card">
+
+                <div class="rtse-layout-header">
+                    <div>
+                        <h2>Seat Configuration</h2>
+
+                        <p>
+                            Layout:
+                            <strong>
+                                <%= shift.layout === "SINGLE_LINE"
+                                    ? "Single-Line"
+                                    : "Two-Side" %>
+                            </strong>
+
+                            ·
+
+                            <strong>
+                                <%= shift.seats.length %>
+                            </strong>
+                            student seats
+                        </p>
+                    </div>
+
+                    <% if (shift.seats.length) { %>
+
+                        <form
+                            action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/seats/clear"
+                            method="POST"
+                            onsubmit="return confirm(
+                                'Clear all seats for this room?'
+                            );"
+                        >
+                            <button
+                                type="submit"
+                                class="btn-cancel rtse-clear-button"
+                            >
+                                Clear Layout
+                                </form>
+
+                        <form
+                            action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/lock"
+                            method="POST"
+                            onsubmit="return confirm(
+                                'Lock all allocated seats in this room and generate the seat plan token PDF?'
+                            );"
+                        >
+                            <button
+                                type="submit"
+                                class="btn-save"
+                            >
+                                Lock Seats & Generate Tokens
+                            </button>
+                        </form>
+
+
+                            </button>
+                        </form>
+
+                    <% } %>
+                </div>
+
+                <div class="rtse-seat-system-panel">
+                    <div class="rtse-seat-system-info">
+                        <strong>Seat System</strong>
+                        <span>
+                            Full Seat System allows every seat to be configured.
+                            Corner-to-Corner keeps only the first and last seat
+                            of each desk/row configurable.
+                        </span>
+                    </div>
+
+                    <form
+                        action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/seat-system"
+                        method="POST"
+                        class="rtse-seat-system-form"
+                    >
+                        <select name="seat_system" aria-label="Seat System">
+                            <option
+                                value="FULL"
+                                <%= shift.seat_system === "FULL" ? "selected" : "" %>
+                            >
+                                Full Seat System
+                            </option>
+                            <option
+                                value="CORNER_TO_CORNER"
+                                <%= shift.seat_system === "CORNER_TO_CORNER" ? "selected" : "" %>
+                            >
+                                Corner-to-Corner System
+                            </option>
+                        </select>
+
+                        <button type="submit" class="btn-save">
+                            Apply
+                        </button>
+                    </form>
+                </div>
+
+                <% if (!shift.seats.length) { %>
+
+                    <div class="rtse-empty-state">
+                        <strong>
+                            No seats configured yet
+                        </strong>
+
+                        <span>
+                            Generate a layout above to create
+                            the examination desks.
+                        </span>
+                    </div>
+
+                <% } else if (shift.layout === "TWO_SIDE") { %>
+
+                    <%
+                        const rows = {};
+
+                        shift.seats.forEach(seat => {
+                            const key = Number(seat.row_no);
+
+                            if (!rows[key]) {
+                                rows[key] = {
+                                    LEFT: [],
+                                    RIGHT: []
+                                };
+                            }
+
+                            if (rows[key][seat.position]) {
+                                rows[key][seat.position].push(seat);
+                            }
+                        });
+
+                        const rowKeys = Object.keys(rows)
+                            .sort((a, b) => Number(a) - Number(b));
+
+                        function isCornerSeat(seat, seatList) {
+                            const ordered = [...seatList].sort(
+                                (a, b) =>
+                                    Number(a.seat_no) -
+                                    Number(b.seat_no)
+                            );
+
+                            if (ordered.length <= 2) {
+                                return true;
+                            }
+
+                            const seatNo = Number(seat.seat_no);
+                            const firstSeatNo = Number(ordered[0].seat_no);
+                            const lastSeatNo = Number(
+                                ordered[ordered.length - 1].seat_no
+                            );
+
+                            return (
+                                seatNo === firstSeatNo ||
+                                seatNo === lastSeatNo
+                            );
+                        }
+                    %>
+
+                    <div class="rtse-room-preview">
+
+                        <div class="rtse-room-front">
+                            <span>TEACHER / FRONT</span>
+                        </div>
+
+                        <div class="rtse-room-columns">
+
+                            <% ["LEFT", "RIGHT"].forEach(side => { %>
+
+                                <section class="rtse-room-side">
+
+                                    <div class="rtse-room-side-header">
+                                        <strong>
+                                            <%= side %> SIDE
+                                        </strong>
+
+                                        <span>
+                                            <%= rowKeys.length %> desks
+                                        </span>
+                                    </div>
+
+                                    <%
+                                        const sideGenderLock =
+                                            side === "LEFT"
+                                                ? shift.left_gender_lock
+                                                : shift.right_gender_lock;
+
+                                        const sideSectionLock =
+                                            side === "LEFT"
+                                                ? shift.left_section_lock
+                                                : shift.right_section_lock;
+                                    %>
+
+                                    <div class="rtse-side-lock-panel"
+                                         style="
+                                            margin:10px 0;
+                                            padding:12px;
+                                            border:1px solid #d7e3f5;
+                                            border-radius:10px;
+                                            background:#f7faff;
+                                         ">
+
+                                        <% if (sideGenderLock) { %>
+                                            <div style="
+                                                color:#1557b0;
+                                                font-weight:800;
+                                                margin-bottom:4px;
+                                            ">
+                                                🔒 LOCKED FOR
+                                                <%= sideGenderLock.toUpperCase() %>
+                                            </div>
+                                        <% } %>
+
+                                        <% if (sideSectionLock) { %>
+                                            <div style="
+                                                color:#1557b0;
+                                                font-weight:800;
+                                                margin-bottom:8px;
+                                            ">
+                                                🔒 LOCKED FOR SECTION
+                                                <%= sideSectionLock %>
+                                            </div>
+                                        <% } %>
+
+                                        <% if (!sideGenderLock && !sideSectionLock) { %>
+                                            <div style="
+                                                color:#777;
+                                                font-size:13px;
+                                                margin-bottom:8px;
+                                            ">
+                                                No side lock
+                                            </div>
+                                        <% } %>
+
+                                        <form
+                                            method="POST"
+                                            action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/side-lock"
+                                            style="
+                                                display:flex;
+                                                gap:7px;
+                                                flex-wrap:wrap;
+                                                align-items:center;
+                                            "
+                                        >
+
+                                            <input
+                                                type="hidden"
+                                                name="side"
+                                                value="<%= side %>"
+                                            >
+
+                                            <select
+                                                name="gender_lock"
+                                                style="
+                                                    padding:7px;
+                                                    border:1px solid #ccc;
+                                                    border-radius:7px;
+                                                "
+                                            >
+                                                <option value="">
+                                                    Gender Lock
+                                                </option>
+
+                                                <option
+                                                    value="Male"
+                                                    <%= sideGenderLock === "Male"
+                                                        ? "selected"
+                                                        : "" %>
+                                                >
+                                                    Male
+                                                </option>
+
+                                                <option
+                                                    value="Female"
+                                                    <%= sideGenderLock === "Female"
+                                                        ? "selected"
+                                                        : "" %>
+                                                >
+                                                    Female
+                                                </option>
+                                            </select>
+
+                                            <select
+                                                name="section_lock"
+                                                style="
+                                                    padding:7px;
+                                                    border:1px solid #ccc;
+                                                    border-radius:7px;
+                                                "
+                                            >
+                                                <option value="">
+                                                    Section Lock
+                                                </option>
+
+                                                <% ["A","B","C","D","E"].forEach(lockSection => { %>
+
+                                                    <option
+                                                        value="<%= lockSection %>"
+                                                        <%= sideSectionLock === lockSection
+                                                            ? "selected"
+                                                            : "" %>
+                                                    >
+                                                        Section <%= lockSection %>
+                                                    </option>
+
+                                                <% }) %>
+                                            </select>
+
+                                            <button
+                                                type="submit"
+                                                class="btn-save"
+                                                onclick="return confirm('Apply lock settings to the entire <%= side %> side?')"
+                                            >
+                                                🔒 Apply Lock
+                                            </button>
+
+                                            <button
+                                                type="submit"
+                                                class="btn-view"
+                                                onclick="
+                                                    this.form.gender_lock.value='';
+                                                    this.form.section_lock.value='';
+                                                    return confirm('Unlock the <%= side %> side?');
+                                                "
+                                            >
+                                                Unlock
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                    <div class="rtse-desks">
+
+                                        <% rowKeys.forEach(rowNo => { %>
+
+                                            <div class="rtse-desk">
+
+                                                <div class="rtse-desk-label">
+                                                    Desk <%= rowNo %>
+                                                </div>
+
+                                                <div class="rtse-seat-mini-grid">
+
+                                                    <% rows[rowNo][side]
+                                                        .sort(
+                                                            (a, b) =>
+                                                                Number(a.seat_no) -
+                                                                Number(b.seat_no)
+                                                        )
+                                                        .forEach(seat => { %>
+
+                                                        <%- includeSeatForm(
+                                                            seat,
+                                                            shiftId,
+                                                            roomId,
+                                                            side === "LEFT"
+                                                                ? shift.left_gender_lock
+                                                                : shift.right_gender_lock,
+                                                            side === "LEFT"
+                                                                ? shift.left_section_lock
+                                                                : shift.right_section_lock,
+                                                            shift.seat_system !== "CORNER_TO_CORNER" ||
+                                                                isCornerSeat(
+                                                                    seat,
+                                                                    rows[rowNo][side]
+                                                                )
+                                                        ,
+                                                            shift.seat_system === "CORNER_TO_CORNER" &&
+                                                            isCornerSeat(
+                                                                seat,
+                                                                rows[rowNo][side]
+                                                            )
+                                                                ? (
+                                                                    (Number(rowNo) - 1) * 4 +
+                                                                    (
+                                                                        side === "LEFT"
+                                                                            ? (
+                                                                                Number(seat.seat_no) ===
+                                                                                Number(
+                                                                                    [...rows[rowNo][side]]
+                                                                                        .sort((a, b) =>
+                                                                                            Number(a.seat_no) -
+                                                                                            Number(b.seat_no)
+                                                                                        )[0].seat_no
+                                                                                )
+                                                                                    ? 1
+                                                                                    : 2
+                                                                            )
+                                                                            : (
+                                                                                Number(seat.seat_no) ===
+                                                                                Number(
+                                                                                    [...rows[rowNo][side]]
+                                                                                        .sort((a, b) =>
+                                                                                            Number(a.seat_no) -
+                                                                                            Number(b.seat_no)
+                                                                                        )[0].seat_no
+                                                                                )
+                                                                                    ? 3
+                                                                                    : 4
+                                                                            )
+                                                                    )
+                                                                )
+                                                                : seat.seat_no) %>
+
+                                                    <% }) %>
+
+                                                </div>
+                                            </div>
+
+                                        <% }) %>
+
+                                    </div>
+
+                                </section>
+
+                            <% }) %>
+
+                        </div>
+
+                        <div class="rtse-room-back">
+                            <span>BACK</span>
+                        </div>
+
+                    </div>
+
+                <% } else { %>
+
+                    <%
+                        const singleRows = {};
+
+                        shift.seats.forEach(seat => {
+                            const key = Number(seat.row_no);
+
+                            if (!singleRows[key]) {
+                                singleRows[key] = [];
+                            }
+
+                            singleRows[key].push(seat);
+                        });
+
+                        const singleRowKeys = Object.keys(singleRows)
+                            .sort((a, b) => Number(a) - Number(b));
+
+                        function isSingleLineCornerSeat(seat, seatList) {
+                            const ordered = [...seatList].sort(
+                                (a, b) =>
+                                    Number(a.seat_no) -
+                                    Number(b.seat_no)
+                            );
+
+                            if (ordered.length <= 2) {
+                                return true;
+                            }
+
+                            return (
+                                Number(seat.seat_no) ===
+                                Number(ordered[0].seat_no) ||
+                                Number(seat.seat_no) ===
+                                Number(ordered[ordered.length - 1].seat_no)
+                            );
+                        }
+                    %>
+
+                    <div class="rtse-single-layout">
+
+                        <% singleRowKeys.forEach(rowNo => { %>
+
+                            <div class="rtse-single-desk">
+
+                                <div class="rtse-desk-label">
+                                    Desk <%= rowNo %>
+                                </div>
+
+                                <div class="rtse-seat-mini-grid">
+
+                                    <% singleRows[rowNo]
+                                        .sort(
+                                            (a, b) =>
+                                                Number(a.seat_no) -
+                                                Number(b.seat_no)
+                                        )
+                                        .forEach(seat => { %>
+
+                                        <%- includeSeatForm(
+                                            seat,
+                                            shiftId,
+                                            roomId,
+                                            null,
+                                            null,
+                                            shift.seat_system !== "CORNER_TO_CORNER" ||
+                                                isSingleLineCornerSeat(
+                                                    seat,
+                                                    singleRows[rowNo]
+                                                )
+                                        ) %>
+
+                                    <% }) %>
+
+                                </div>
+
+                            </div>
+
+                        <% }) %>
+
+                    </div>
+
+                <% } %>
+
+            </section>
+
+            <section class="profile-card rtse-rules-card">
+
+                <h2>Seat Rules</h2>
+
+                <p>
+                    Each student seat can be independently
+                    assigned a section and gender rule.
+                </p>
+
+                <div class="rtse-rules-list">
+                    <div>
+                        <strong>Any</strong>
+                        accepts either gender.
+                    </div>
+
+                    <div>
+                        <strong>Male</strong>
+                        accepts male candidates.
+                    </div>
+
+                    <div>
+                        <strong>Female</strong>
+                        accepts female candidates.
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<%
+function includeSeatForm(
+    seat,
+    shiftId,
+    roomId,
+    sideGenderLock = null,
+    sideSectionLock = null,
+    seatEditable = true,
+    displaySeatNo = null
+) {
+
+    /*
+     * Corner-to-Corner middle seats are deliberately rendered
+     * without a form or any editable controls.
+     */
+    if (!seatEditable) {
+%>
+<div class="rtse-seat-card rtse-seat-card-disabled">
+
+    <div class="rtse-seat-number">
+        <span>Seat</span>
+        <strong><%= displaySeatNo ?? seat.seat_no %></strong>
+    </div>
+
+    <div class="rtse-seat-disabled-overlay">
+        <div class="rtse-seat-disabled-icon">
+            —
+        </div>
+
+        <div class="rtse-seat-disabled-label">
+            Not Configurable
+        </div>
+
+        <small>
+            Corner-to-Corner
+        </small>
+    </div>
+
+</div>
+<%
+        return;
+    }
+
+    /*
+     * A side lock supplies one restriction factor.
+     * The individual seat supplies the other factor.
+     *
+     * The seat becomes visually locked ONLY when both
+     * Gender + Section are available.
+     */
+
+    const effectiveGender =
+        sideGenderLock ||
+        (
+            seat.gender &&
+            seat.gender !== "Any"
+                ? seat.gender
+                : null
+        );
+
+    const effectiveSection =
+        sideSectionLock ||
+        (
+            seat.section
+                ? seat.section
+                : null
+        );
+
+    const seatIsLocked =
+        !!effectiveGender &&
+        !!effectiveSection;
+
+    const restrictionLabel =
+        seatIsLocked
+            ? `${effectiveGender} ${effectiveSection}`
+            : "";
+%>
+
+<div class="rtse-seat-card<%= seatIsLocked ? " rtse-seat-card-restricted" : "" %>">
+
+    <div class="rtse-seat-number">
+        <span>Seat</span>
+        <strong><%= displaySeatNo ?? seat.seat_no %></strong>
+    </div>
+
+    <% if (seatIsLocked) { %>
+
+        <div class="rtse-seat-restriction-shutter">
+
+            <div class="rtse-seat-restriction-icon">
+                🔒
+            </div>
+
+            <div class="rtse-seat-restriction-label">
+                <%= restrictionLabel %>
+            </div>
+
+            <button
+                type="submit"
+                form="rtse-seat-form-<%= seat.id %>"
+                name="reset_seat"
+                value="1"
+                class="rtse-seat-shutter-reset"
+            >
+                Reset
+            </button>
+
+        </div>
+
+    <% } %>
+
+    <form
+        id="rtse-seat-form-<%= seat.id %>"
+        action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/seats/<%= seat.id %>/update"
+        method="POST"
+    >
+
+        <% if (!sideSectionLock) { %>
+
+            <label for="section_<%= seat.id %>">
+                Section
+            </label>
+
+            <select
+                id="section_<%= seat.id %>"
+                name="section"
+            >
+                <option
+                    value=""
+                    <%= !seat.section ? "selected" : "" %>
+                >
+                    None
+                </option>
+
+                <% ["A", "B", "C", "D", "E"].forEach(section => { %>
+
+                    <option
+                        value="<%= section %>"
+                        <%= seat.section === section
+                            ? "selected"
+                            : "" %>
+                    >
+                        <%= section %>
+                    </option>
+
+                <% }) %>
+            </select>
+
+        <% } %>
+
+        <% if (!sideGenderLock) { %>
+
+            <label for="gender_<%= seat.id %>">
+                Gender
+            </label>
+
+            <select
+                id="gender_<%= seat.id %>"
+                name="gender"
+            >
+                <option
+                    value="Any"
+                    <%= seat.gender === "Any"
+                        ? "selected"
+                        : "" %>
+                >
+                    Any
+                </option>
+
+                <option
+                    value="Male"
+                    <%= seat.gender === "Male"
+                        ? "selected"
+                        : "" %>
+                >
+                    Male
+                </option>
+
+                <option
+                    value="Female"
+                    <%= seat.gender === "Female"
+                        ? "selected"
+                        : "" %>
+                >
+                    Female
+                </option>
+            </select>
+
+        <% } %>
+
+        <div class="rtse-seat-actions">
+
+            <button
+                type="submit"
+                class="btn-save"
+            >
+                Save
+            </button>
+
+            <% if (!seatIsLocked) { %>
+
+                <button
+                    type="submit"
+                    name="reset_seat"
+                    value="1"
+                    class="rtse-seat-reset"
+                >
+                    Reset
+                </button>
+
+            <% } %>
+
+        </div>
+
+    </form>
+
+</div>
+
+<%
+}
+%>
+
+<style>
+.rtse-seat-card-locked {
+    background: #dbeafe !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+
+.rtse-seat-card-locked .rtse-seat-number {
+    color: #1557b0 !important;
+}
+
+.rtse-seat-lock-label {
+    display: inline-block;
+    margin: 6px 0 8px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+</style>
+
+
+<style>
+.rtse-seat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.rtse-seat-system-panel {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    margin:16px 0 20px;
+    padding:14px 16px;
+    border:1px solid #dbe3ee;
+    border-radius:12px;
+    background:#f8fafc;
+}
+
+.rtse-seat-system-info {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:0;
+}
+
+.rtse-seat-system-info strong {
+    font-size:15px;
+    color:#172033;
+}
+
+.rtse-seat-system-info span {
+    font-size:13px;
+    line-height:1.45;
+    color:#64748b;
+}
+
+.rtse-seat-system-form {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+}
+
+.rtse-seat-system-form select {
+    min-width:210px;
+    height:38px;
+    padding:0 10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    color:#172033;
+    font-weight:600;
+}
+
+.rtse-seat-card-disabled {
+    position:relative;
+    overflow:hidden;
+    background:#f1f5f9 !important;
+    border-color:#dbe3ee !important;
+    color:#94a3b8;
+}
+
+.rtse-seat-card-disabled .rtse-seat-number strong {
+    color:#94a3b8;
+}
+
+.rtse-seat-disabled-overlay {
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    background:rgba(241,245,249,.94);
+    color:#94a3b8;
+    text-align:center;
+    pointer-events:none;
+}
+
+.rtse-seat-disabled-icon {
+    font-size:24px;
+    line-height:1;
+    font-weight:700;
+}
+
+.rtse-seat-disabled-label {
+    font-size:13px;
+    font-weight:800;
+}
+
+.rtse-seat-disabled-overlay small {
+    font-size:11px;
+    font-weight:600;
+}
+
+.rtse-seat-card-restricted {
+    border-color: #2563eb !important;
+}
+
+.rtse-seat-restriction-shutter {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    background: rgba(37, 99, 235, 0.96);
+    color: #ffffff;
+
+    border-radius: inherit;
+    text-align: center;
+
+    cursor: default;
+}
+
+.rtse-seat-restriction-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+
+.rtse-seat-shutter-reset {
+    margin-top: 8px;
+    padding: 6px 18px;
+    border: 1px solid rgba(255,255,255,.8);
+    border-radius: 6px;
+    background: #ffffff;
+    color: #1557b0;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.rtse-seat-shutter-reset:hover {
+    background: #eff6ff;
+}
+
+.rtse-seat-restriction-label {
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: .3px;
+}
+
+</style>
+
+
+<style>
+.rtse-seat-actions {
+    display: flex;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.rtse-seat-actions button {
+    flex: 1;
+}
+
+.rtse-seat-reset {
+    padding: 7px 10px;
+    border: 1px solid #c7c7c7;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #555555;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rtse-seat-reset:hover {
+    background: #f3f4f6;
+}
+</style>
+
+<%- include("../partials/footer") %>

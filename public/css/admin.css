@@ -2233,3 +2233,1504 @@ body{
         min-width: 850px;
     }
 }
+
+/* RTSE SEAT DESIGNER POLISH */
+
+/* RTSE SEAT DESIGNER POLISH */
+
+.rtse-seat-designer-page {
+    --seat-border: #e2e8f0;
+    --seat-muted: #64748b;
+    --seat-heading: #0f172a;
+    --seat-soft: #f8fafc;
+    --seat-white: #ffffff;
+}
+
+.rtse-seat-designer-page .page-header {
+    margin-bottom: 24px;
+}
+
+.rtse-seat-designer-page .page-header h1 {
+    margin: 0;
+    color: var(--seat-heading);
+    font-size: clamp(24px, 3vw, 32px);
+    line-height: 1.2;
+}
+
+.rtse-seat-designer-page .profile-card {
+    border: 1px solid var(--seat-border);
+    border-radius: 16px;
+    background: var(--seat-white);
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    padding: 22px;
+}
+
+.rtse-seat-designer-page .profile-card h2 {
+    color: var(--seat-heading);
+    font-size: 20px;
+    line-height: 1.3;
+}
+
+.rtse-seat-designer-page .form-group label {
+    color: #334155;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.rtse-seat-designer-page .form-group input,
+.rtse-seat-designer-page .form-group select {
+    min-height: 44px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #fff;
+    color: #0f172a;
+    font-size: 14px;
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+.rtse-seat-designer-page .form-group input:focus,
+.rtse-seat-designer-page .form-group select:focus {
+    outline: none;
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, .12);
+}
+
+.rtse-seat-designer-page .btn-save,
+.rtse-seat-designer-page .btn-cancel {
+    min-height: 42px;
+    border-radius: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.rtse-seat-designer-page .btn-save {
+    cursor: pointer;
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+}
+
+.rtse-seat-designer-page .btn-save:hover {
+    transform: translateY(-1px);
+}
+
+.rtse-seat-designer-page .btn-cancel {
+    text-decoration: none;
+}
+
+.rtse-seat-designer-page .seat-row {
+    border: 1px solid var(--seat-border);
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--seat-soft);
+}
+
+.rtse-seat-designer-page .seat-row-title {
+    color: #334155;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.rtse-seat-designer-page .seat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+}
+
+.rtse-seat-designer-page .seat-card {
+    border: 1px solid var(--seat-border);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--seat-white);
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .15s ease;
+}
+
+.rtse-seat-designer-page .seat-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+}
+
+.rtse-seat-designer-page .seat-card strong {
+    color: #0f172a;
+}
+
+.rtse-seat-designer-page .seat-card label {
+    display: block;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.rtse-seat-designer-page .seat-card select {
+    width: 100%;
+    min-height: 40px;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #0f172a;
+}
+
+.rtse-seat-designer-page .seat-card select:focus {
+    outline: none;
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, .10);
+}
+
+.rtse-seat-designer-page .seat-card button {
+    min-height: 40px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.rtse-seat-designer-page .seat-position-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+
+.rtse-seat-designer-page .empty-seat-state {
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #f8fafc;
+    color: #64748b;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.rtse-seat-designer-page .empty-seat-state strong {
+    display: block;
+    color: #334155;
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+@media (max-width: 700px) {
+
+    .rtse-seat-designer-page .profile-card {
+        padding: 16px;
+        border-radius: 13px;
+    }
+
+    .rtse-seat-designer-page .page-header {
+        gap: 14px;
+    }
+
+    .rtse-seat-designer-page .page-header .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .rtse-seat-designer-page .seat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rtse-seat-designer-page .seat-card {
+        padding: 13px;
+    }
+}
+
+/* RTSE SEAT DESIGNER PHYSICAL DESK LAYOUT */
+
+/* RTSE SEAT DESIGNER PHYSICAL DESK LAYOUT */
+
+.rtse-seat-designer-page .rtse-designer-meta {
+    margin:6px 0 0;
+    color:#64748b;
+}
+
+.rtse-seat-designer-page .rtse-generator-card,
+.rtse-seat-designer-page .rtse-layout-card,
+.rtse-seat-designer-page .rtse-rules-card {
+    margin-bottom:20px;
+}
+
+.rtse-seat-designer-page .rtse-section-heading h2,
+.rtse-seat-designer-page .rtse-layout-header h2,
+.rtse-seat-designer-page .rtse-rules-card h2 {
+    margin:0;
+}
+
+.rtse-seat-designer-page .rtse-section-heading p,
+.rtse-seat-designer-page .rtse-layout-header p,
+.rtse-seat-designer-page .rtse-rules-card > p {
+    margin:6px 0 0;
+    color:#64748b;
+    line-height:1.5;
+}
+
+.rtse-seat-designer-page .rtse-generator-form {
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+.rtse-seat-designer-page .rtse-field {
+    min-width:155px;
+}
+
+.rtse-seat-designer-page .rtse-field label {
+    display:block;
+    margin-bottom:5px;
+    font-size:13px;
+    font-weight:700;
+    color:#334155;
+}
+
+.rtse-seat-designer-page .rtse-field input,
+.rtse-seat-designer-page .rtse-field select {
+    width:100%;
+    box-sizing:border-box;
+    min-height:40px;
+    padding:8px 10px;
+}
+
+.rtse-seat-designer-page .rtse-field small {
+    display:block;
+    margin-top:4px;
+    color:#64748b;
+    font-size:11px;
+}
+
+.rtse-seat-designer-page .rtse-generator-info {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:40px;
+    padding:0 8px;
+    color:#64748b;
+    font-size:11px;
+}
+
+.rtse-seat-designer-page .rtse-generator-info strong {
+    color:#334155;
+    font-size:12px;
+}
+
+.rtse-seat-designer-page .rtse-layout-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.rtse-seat-designer-page .rtse-clear-button {
+    color:#b91c1c;
+}
+
+.rtse-seat-designer-page .rtse-empty-state {
+    margin-top:20px;
+    padding:28px 18px;
+    border:1px dashed #cbd5e1;
+    border-radius:12px;
+    text-align:center;
+    color:#64748b;
+}
+
+.rtse-seat-designer-page .rtse-empty-state strong,
+.rtse-seat-designer-page .rtse-empty-state span {
+    display:block;
+}
+
+.rtse-seat-designer-page .rtse-empty-state strong {
+    margin-bottom:5px;
+    color:#334155;
+    font-size:16px;
+}
+
+
+/* Physical room */
+
+.rtse-seat-designer-page .rtse-room-preview {
+    margin-top:20px;
+    padding:14px;
+    border:2px solid #cbd5e1;
+    border-radius:16px;
+    background:#f8fafc;
+}
+
+.rtse-seat-designer-page .rtse-room-front,
+.rtse-seat-designer-page .rtse-room-back {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:30px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    color:#64748b;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.08em;
+}
+
+.rtse-seat-designer-page .rtse-room-front {
+    margin-bottom:12px;
+}
+
+.rtse-seat-designer-page .rtse-room-back {
+    margin-top:12px;
+}
+
+.rtse-seat-designer-page .rtse-room-columns {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:12px;
+}
+
+.rtse-seat-designer-page .rtse-room-side {
+    min-width:0;
+    padding:9px;
+    border:2px solid #94a3b8;
+    border-radius:12px;
+    background:#fff;
+}
+
+.rtse-seat-designer-page .rtse-room-side-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    padding:3px 3px 8px;
+    color:#334155;
+    font-size:11px;
+}
+
+.rtse-seat-designer-page .rtse-room-side-header span {
+    color:#64748b;
+    font-size:10px;
+}
+
+.rtse-seat-designer-page .rtse-desks {
+    display:grid;
+    gap:7px;
+}
+
+.rtse-seat-designer-page .rtse-desk {
+    padding:7px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    background:#f8fafc;
+}
+
+.rtse-seat-designer-page .rtse-desk-label {
+    margin-bottom:6px;
+    color:#475569;
+    font-size:9px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+
+.rtse-seat-designer-page .rtse-seat-mini-grid {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:5px;
+}
+
+.rtse-seat-designer-page .rtse-seat-card {
+    min-width:0;
+    padding:6px;
+    border:1px solid #dbe3ec;
+    border-radius:7px;
+    background:#fff;
+}
+
+.rtse-seat-designer-page .rtse-seat-number {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:3px;
+    margin-bottom:5px;
+    color:#64748b;
+    font-size:8px;
+}
+
+.rtse-seat-designer-page .rtse-seat-number strong {
+    color:#0f172a;
+    font-size:10px;
+}
+
+.rtse-seat-designer-page .rtse-seat-card label:not(.rtse-seat-active) {
+    display:block;
+    margin:3px 0 2px;
+    color:#64748b;
+    font-size:8px;
+    font-weight:700;
+}
+
+.rtse-seat-designer-page .rtse-seat-card select {
+    width:100%;
+    box-sizing:border-box;
+    min-height:25px;
+    padding:2px 3px;
+    border:1px solid #cbd5e1;
+    border-radius:5px;
+    background:#fff;
+    font-size:8px;
+}
+
+.rtse-seat-designer-page .rtse-seat-active {
+    display:flex !important;
+    align-items:center;
+    gap:3px;
+    margin:4px 0 !important;
+    color:#64748b;
+    font-size:8px !important;
+}
+
+.rtse-seat-designer-page .rtse-seat-active input {
+    width:10px;
+    height:10px;
+    margin:0;
+}
+
+.rtse-seat-designer-page .rtse-seat-save {
+    width:100%;
+    min-height:24px;
+    padding:3px 4px;
+    font-size:8px;
+}
+
+
+/* Single-line */
+
+.rtse-seat-designer-page .rtse-single-layout {
+    display:grid;
+    gap:8px;
+    margin-top:20px;
+}
+
+.rtse-seat-designer-page .rtse-single-desk {
+    padding:8px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    background:#f8fafc;
+}
+
+
+/* Rules */
+
+.rtse-seat-designer-page .rtse-rules-list {
+    display:grid;
+    gap:5px;
+    margin-top:12px;
+    color:#64748b;
+    font-size:12px;
+}
+
+.rtse-seat-designer-page .rtse-rules-list strong {
+    color:#334155;
+}
+
+
+@media (max-width:700px) {
+
+    .rtse-seat-designer-page .rtse-room-columns {
+        grid-template-columns:1fr;
+    }
+
+    .rtse-seat-designer-page .rtse-generator-form {
+        align-items:stretch;
+    }
+
+    .rtse-seat-designer-page .rtse-field,
+    .rtse-seat-designer-page .rtse-generator-info {
+        width:100%;
+        min-width:0;
+    }
+
+    .rtse-seat-designer-page .rtse-seat-card {
+        padding:5px;
+    }
+}
+
+
+@media (max-width:430px) {
+
+    .rtse-seat-designer-page .rtse-room-preview {
+        padding:8px;
+    }
+
+    .rtse-seat-designer-page .rtse-room-side {
+        padding:6px;
+    }
+
+    .rtse-seat-designer-page .rtse-desk {
+        padding:5px;
+    }
+
+    .rtse-seat-designer-page .rtse-seat-mini-grid {
+        gap:3px;
+    }
+
+    .rtse-seat-designer-page .rtse-seat-card select {
+        font-size:7px;
+    }
+
+    .rtse-seat-designer-page .rtse-seat-save {
+        font-size:7px;
+    }
+}
+
+/* =========================================================
+   RTSE SEAT PLAN
+   Clean layout for shifts, rooms and structure information
+   ========================================================= */
+
+.rtse-seat-plan-page {
+    --rtse-border: #e2e8f0;
+    --rtse-heading: #0f172a;
+    --rtse-text: #334155;
+    --rtse-muted: #64748b;
+    --rtse-soft: #f8fafc;
+    --rtse-surface: #ffffff;
+    --rtse-primary: var(--primary);
+
+    width: 100%;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page,
+.rtse-seat-plan-page *,
+.rtse-seat-plan-page *::before,
+.rtse-seat-plan-page *::after {
+    box-sizing: border-box;
+}
+
+/* Page */
+
+.rtse-seat-plan-page .container {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.rtse-seat-plan-page .page-header {
+    width: 100%;
+    margin: 0 0 20px;
+}
+
+.rtse-seat-plan-page .page-header h1 {
+    margin: 0;
+    color: var(--rtse-heading);
+    font-size: clamp(24px, 3vw, 30px);
+    line-height: 1.2;
+    letter-spacing: -.02em;
+}
+
+.rtse-seat-plan-page .page-header p {
+    margin: 7px 0 0;
+    color: var(--rtse-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Shared cards */
+
+.rtse-seat-plan-page .profile-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 0 20px;
+    padding: 22px;
+    overflow: hidden;
+    border: 1px solid var(--rtse-border);
+    border-radius: 16px;
+    background: var(--rtse-surface);
+    box-shadow: 0 3px 14px rgba(15, 23, 42, .045);
+}
+
+/* Add Examination Shift */
+
+.rtse-seat-plan-page .rtse-section-heading {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-section-heading > div {
+    min-width: 0;
+    width: 100%;
+}
+
+.rtse-seat-plan-page .rtse-section-heading h2 {
+    margin: 0 0 7px;
+    color: var(--rtse-heading);
+    font-size: 22px;
+    line-height: 1.3;
+    font-weight: 750;
+}
+
+.rtse-seat-plan-page .rtse-section-heading p {
+    max-width: 680px;
+    margin: 0;
+    color: var(--rtse-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Add Shift form */
+
+.rtse-seat-plan-page .rtse-add-shift {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 760px;
+    min-width: 0;
+    gap: 10px;
+    margin: 18px 0 0;
+}
+
+.rtse-seat-plan-page .rtse-add-shift .form-group {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.rtse-seat-plan-page .rtse-add-shift label {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--rtse-text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.rtse-seat-plan-page .rtse-add-shift input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 9px 11px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.rtse-seat-plan-page .rtse-add-shift button {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 9px 16px;
+    white-space: nowrap;
+}
+
+/* Shift cards */
+
+.rtse-seat-plan-page .rtse-room-card {
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.rtse-seat-plan-page .rtse-room-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    padding: 20px 22px;
+}
+
+.rtse-seat-plan-page .rtse-room-title-block {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-room-title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-room-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 17px;
+}
+
+.rtse-seat-plan-page .rtse-room-title-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.rtse-seat-plan-page .rtse-room-title h2 {
+    margin: 0;
+    color: var(--rtse-heading);
+    font-size: 19px;
+    line-height: 1.3;
+}
+
+.rtse-seat-plan-page .rtse-room-meta {
+    margin: 5px 0 0;
+    color: var(--rtse-muted);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.rtse-seat-plan-page .rtse-shift-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.rtse-seat-plan-page .rtse-shift-status.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.rtse-seat-plan-page .rtse-shift-status.inactive {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* Shift header buttons */
+
+.rtse-seat-plan-page .rtse-room-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    flex: 0 0 auto;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.rtse-seat-plan-page .rtse-room-actions form {
+    margin: 0;
+}
+
+.rtse-seat-plan-page .rtse-room-actions button,
+.rtse-seat-plan-page .rtse-room-actions a {
+    min-height: 36px;
+    padding: 7px 11px;
+    border-radius: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* Rooms section */
+
+.rtse-seat-plan-page .rtse-shifts-section {
+    width: 100%;
+    min-width: 0;
+    padding: 18px 22px 22px;
+    border-top: 1px solid var(--rtse-border);
+}
+
+.rtse-seat-plan-page .rtse-shifts-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 14px;
+}
+
+.rtse-seat-plan-page .rtse-shifts-header > div {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-shifts-header h3 {
+    margin: 0;
+    color: var(--rtse-heading);
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.rtse-seat-plan-page .rtse-shifts-header p {
+    max-width: 620px;
+    margin: 5px 0 0;
+    color: var(--rtse-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Add Room form */
+
+.rtse-seat-plan-page .rtse-add-room-form {
+    display: flex;
+    align-items: flex-end;
+    flex: 0 0 auto;
+    gap: 8px;
+    min-width: 0;
+    margin: 0;
+}
+
+.rtse-seat-plan-page .rtse-room-number-group {
+    min-width: 180px;
+    margin: 0;
+}
+
+.rtse-seat-plan-page .rtse-room-number-group label {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--rtse-text);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.rtse-seat-plan-page .rtse-room-number-group input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.rtse-seat-plan-page .rtse-add-room-form button {
+    min-height: 38px;
+    padding: 8px 12px;
+    white-space: nowrap;
+}
+
+/* Empty states */
+
+.rtse-seat-plan-page .rtse-empty-room {
+    text-align: center;
+}
+
+.rtse-seat-plan-page .rtse-empty-room h2 {
+    margin: 0 0 7px;
+    color: var(--rtse-heading);
+    font-size: 18px;
+}
+
+.rtse-seat-plan-page .rtse-empty-room p {
+    margin: 0;
+    color: var(--rtse-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.rtse-seat-plan-page .rtse-empty-shifts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px 18px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 11px;
+    background: #f8fafc;
+    text-align: center;
+}
+
+.rtse-seat-plan-page .rtse-empty-shifts strong {
+    color: #334155;
+    font-size: 13px;
+}
+
+.rtse-seat-plan-page .rtse-empty-shifts span {
+    color: var(--rtse-muted);
+    font-size: 11px;
+}
+
+/* Room list */
+
+.rtse-seat-plan-page .rtse-shift-list {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: 9px;
+}
+
+.rtse-seat-plan-page .rtse-shift-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--rtse-border);
+    border-radius: 10px;
+    background: var(--rtse-soft);
+}
+
+.rtse-seat-plan-page .rtse-shift-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-shift-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+    color: var(--rtse-heading);
+}
+
+.rtse-seat-plan-page .rtse-shift-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 26px;
+    padding: 4px 8px;
+    border-radius: 7px;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.rtse-seat-plan-page .rtse-shift-subtitle {
+    margin: 4px 0 0;
+    color: var(--rtse-muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.rtse-seat-plan-page .rtse-shift-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex: 0 0 auto;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.rtse-seat-plan-page .rtse-shift-actions form {
+    margin: 0;
+}
+
+.rtse-seat-plan-page .rtse-shift-actions button,
+.rtse-seat-plan-page .rtse-shift-actions a {
+    min-height: 34px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.rtse-seat-plan-page .rtse-configure-seats {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 800;
+}
+
+/* Seat Plan Structure */
+
+.rtse-seat-plan-page .rtse-rules-card {
+    margin-top: 0;
+    padding: 20px 22px;
+}
+
+.rtse-seat-plan-page .rtse-rules-card h2 {
+    margin: 0;
+    color: var(--rtse-heading);
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+.rtse-seat-plan-page .rtse-rules-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.rtse-seat-plan-page .rtse-rules-list > div {
+    padding: 10px 12px;
+    border: 1px solid #edf2f7;
+    border-radius: 9px;
+    background: #f8fafc;
+    color: var(--rtse-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.rtse-seat-plan-page .rtse-rules-list strong {
+    color: var(--rtse-text);
+}
+
+/* RTSE EDIT MODALS — SINGLE CLEAN IMPLEMENTATION */
+
+.rtse-seat-plan-page .rtse-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, .58);
+    overflow-y: auto;
+}
+
+.rtse-seat-plan-page .rtse-modal.active {
+    display: flex;
+}
+
+.rtse-seat-plan-page .rtse-modal-content {
+    position: relative;
+    width: min(100%, 460px);
+    max-height: calc(100vh - 40px);
+    margin: auto;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, .22),
+        0 5px 20px rgba(15, 23, 42, .08);
+    animation: rtseModalIn .16s ease-out;
+}
+
+.rtse-seat-plan-page .rtse-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.rtse-seat-plan-page .rtse-modal-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-modal-heading > div {
+    min-width: 0;
+}
+
+.rtse-seat-plan-page .rtse-modal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.rtse-seat-plan-page .rtse-modal-heading h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.rtse-seat-plan-page .rtse-modal-heading p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.rtse-seat-plan-page .rtse-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    margin: -2px -2px 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.rtse-seat-plan-page .rtse-modal-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.rtse-seat-plan-page .rtse-edit-form {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.rtse-seat-plan-page .rtse-form-field {
+    width: 100%;
+    margin: 0;
+}
+
+.rtse-seat-plan-page .rtse-form-field label {
+    display: block;
+    margin: 0 0 7px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.rtse-seat-plan-page .rtse-form-field input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 13px;
+    line-height: 1.4;
+    outline: none;
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+.rtse-seat-plan-page .rtse-form-field input:focus {
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, .12);
+}
+
+.rtse-seat-plan-page .rtse-form-field small {
+    display: block;
+    margin: 7px 0 0;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.rtse-seat-plan-page .rtse-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 20px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid #edf2f7;
+}
+
+.rtse-seat-plan-page .rtse-modal-actions button {
+    min-height: 38px;
+    margin: 0;
+    padding: 8px 13px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@keyframes rtseModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .rtse-seat-plan-page .rtse-modal {
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .rtse-seat-plan-page .rtse-modal-content {
+        width: 100%;
+        max-height: calc(100vh - 20px);
+        border-radius: 15px;
+    }
+
+    .rtse-seat-plan-page .rtse-modal-header {
+        padding: 17px;
+    }
+
+    .rtse-seat-plan-page .rtse-edit-form {
+        padding: 17px;
+    }
+
+    .rtse-seat-plan-page .rtse-modal-heading h2 {
+        font-size: 17px;
+    }
+
+    .rtse-seat-plan-page .rtse-modal-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .rtse-seat-plan-page .rtse-modal-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .rtse-seat-plan-page .rtse-modal-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/* ============================================================
+   RTSE SEAT PLAN — EDIT MODAL FINAL OVERRIDES
+   ============================================================ */
+
+.rtse-seat-plan-page ~ .rtse-modal,
+.rtse-modal {
+    display: none !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    box-sizing: border-box !important;
+    padding: 20px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+}
+
+.rtse-seat-plan-page ~ .rtse-modal.active,
+.rtse-modal.active {
+    display: flex !important;
+}
+
+.rtse-modal .rtse-modal-content {
+    position: relative !important;
+    width: min(100%, 460px) !important;
+    max-width: 460px !important;
+    max-height: calc(100vh - 40px) !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24) !important;
+}
+
+.rtse-modal .rtse-modal-content h2 {
+    margin: 0 0 7px !important;
+    color: #0f172a !important;
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+}
+
+.rtse-modal .rtse-modal-content .form-group {
+    margin: 0 0 18px !important;
+}
+
+.rtse-modal .rtse-modal-content .form-group label {
+    display: block !important;
+    margin: 0 0 7px !important;
+    color: #334155 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+.rtse-modal .rtse-modal-content .form-group input {
+    width: 100% !important;
+    min-height: 44px !important;
+    box-sizing: border-box !important;
+    padding: 10px 12px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 9px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 14px !important;
+}
+
+.rtse-modal .rtse-modal-content .form-group input:focus {
+    outline: none !important;
+    border-color: #64748b !important;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12) !important;
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-actions,
+.rtse-modal .rtse-modal-content .rtse-room-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 9px !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-actions button,
+.rtse-modal .rtse-modal-content .rtse-room-actions button {
+    width: auto !important;
+    min-width: 96px !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+}
+
+.rtse-modal .rtse-modal-close {
+    flex: 0 0 auto !important;
+}
+
+@media (max-width: 520px) {
+    .rtse-modal {
+        padding: 14px !important;
+    }
+
+    .rtse-modal .rtse-modal-content {
+        width: 100% !important;
+        max-height: calc(100vh - 28px) !important;
+        padding: 20px !important;
+        border-radius: 14px !important;
+    }
+
+    .rtse-modal .rtse-modal-content h2 {
+        font-size: 19px !important;
+    }
+
+    .rtse-modal .rtse-modal-content .rtse-modal-actions,
+    .rtse-modal .rtse-modal-content .rtse-room-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .rtse-modal .rtse-modal-content .rtse-modal-actions button,
+    .rtse-modal .rtse-modal-content .rtse-room-actions button {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .rtse-modal .rtse-modal-content .rtse-modal-actions,
+    .rtse-modal .rtse-modal-content .rtse-room-actions {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* RTSE MODAL CLOSE BUTTON FINAL FIX */
+
+/* RTSE MODAL CLOSE BUTTON FINAL FIX */
+
+.rtse-modal .rtse-modal-content .rtse-modal-header {
+    position: relative !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-close {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 50% !important;
+
+    background: #f8fafc !important;
+    color: #475569 !important;
+
+    font-family: Arial, sans-serif !important;
+    font-size: 23px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    cursor: pointer !important;
+    overflow: hidden !important;
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-close:hover {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-close:active {
+    transform: scale(.96);
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-close:focus {
+    outline: none !important;
+}
+
+.rtse-modal .rtse-modal-content .rtse-modal-close:focus-visible {
+    outline: 3px solid rgba(22, 163, 74, .20) !important;
+    outline-offset: 2px !important;
+}
+
+@media (max-width: 520px) {
+    .rtse-modal .rtse-modal-content .rtse-modal-close {
+        flex: 0 0 34px !important;
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        min-height: 34px !important;
+        font-size: 22px !important;
+    }
+}
