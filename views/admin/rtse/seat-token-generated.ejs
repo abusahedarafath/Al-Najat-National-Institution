@@ -1,0 +1,52 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+        <div class="container">
+
+            <section class="profile-card">
+                <div class="rtse-section-heading">
+                    <div>
+                        <h1>Seat Plan Tokens Generated</h1>
+                        <p>
+                            <%= allocatedCount %> allocated seat(s) were locked
+                            and the token PDF was generated.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    style="
+                        display:flex;
+                        gap:12px;
+                        flex-wrap:wrap;
+                        margin-top:20px;
+                    "
+                >
+                    <% pdfResult.files.forEach(file => { %>
+                        <a
+                            href="<%= file.url %>"
+                            target="_blank"
+                            rel="noopener"
+                            class="btn-save"
+                        >
+                            Open <%= file.side %> Token PDF
+                        </a>
+                    <% }) %>
+                </div>
+
+                <div style="margin-top:20px;">
+                    <a
+                        href="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/seats"
+                        class="btn-cancel"
+                    >
+                        ← Back to Seat Designer
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
