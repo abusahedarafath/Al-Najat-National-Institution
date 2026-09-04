@@ -2255,6 +2255,19 @@ exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
         const shiftId = parseInt(req.params.shiftId, 10);
         const roomId = parseInt(req.params.roomId, 10);
 
+        const gender = String(req.body.gender_lock || "").trim();
+        const section = String(req.body.section_lock || "")
+            .trim()
+            .toUpperCase();
+
+        if (!["Male", "Female"].includes(gender)) {
+            throw new Error("A valid gender is required.");
+        }
+
+        if (!["A", "B", "C", "D", "E"].includes(section)) {
+            throw new Error("A valid section is required.");
+        }
+
         const setting = await RtseSetting.get();
         const applicationYear = Number(setting?.exam_year);
 
@@ -2264,12 +2277,51 @@ exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
             );
         }
 
-        const lockResult =
-            await RtseSeatPlan.lockRoomAllocatedSeats(
+        /*
+         * Lock is the complete operation:
+         * Gender + Section -> allocate next unassigned students
+         * -> lock only occupied seats.
+         *
+         * LEFT is filled first, then RIGHT. Each side allocation is
+         * bounded by the number of matching students and available seats.
+         */
+        const leftResult =
+            await RtseSeatPlan.allocateGenderSectionToSide(
                 shiftId,
                 roomId,
-                applicationYear
+                applicationYear,
+                "LEFT",
+                gender,
+                section
             );
+
+        const remainingStudents = Number(
+            leftResult.remainingStudents || 0
+        );
+
+        let rightResult = null;
+
+        if (remainingStudents > 0) {
+            rightResult =
+                await RtseSeatPlan.allocateGenderSectionToSide(
+                    shiftId,
+                    roomId,
+                    applicationYear,
+                    "RIGHT",
+                    gender,
+                    section
+                );
+        }
+
+        const allocatedCount =
+            Number(leftResult.allocated || 0) +
+            Number(rightResult?.allocated || 0);
+
+        if (allocatedCount === 0) {
+            throw new Error(
+                `No available seats or no remaining approved ${gender} students for Section ${section}.`
+            );
+        }
 
         const pdfResult =
             await generateRoomTokenPdfs(
@@ -2278,12 +2330,14 @@ exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
                 applicationYear
             );
 
+        const room = leftResult.room || rightResult?.room;
+
         res.render("admin/rtse/seat-token-generated", {
             title: "RTSE Seat Plan Tokens",
             shiftId,
             roomId,
-            room: lockResult.room,
-            allocatedCount: lockResult.allocatedCount,
+            room,
+            allocatedCount,
             pdfResult
         });
     } catch (err) {
@@ -2295,7 +2349,7 @@ exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
         req.flash(
             "error",
             err.message ||
-            "Unable to lock seats and generate token PDF."
+            "Unable to allocate students, lock seats and generate token PDF."
         );
 
         return res.redirect(
@@ -2497,106 +2551,6 @@ exports.clearSeatDesigner = async (req, res) => {
 // =====================================
 
 // =====================================
-// Open-Ended Student Seat Allocation
-// =====================================
-
-exports.allocateStudentsToSeats = async (req, res) => {
-    try {
-        const section = String(req.body.section || "")
-            .trim()
-            .toUpperCase();
-
-        const shiftId = parseInt(req.body.shift_id, 10);
-
-        const setting = await RtseSetting.get();
-        const applicationYear = Number(setting?.exam_year);
-
-        if (!applicationYear) {
-            throw new Error(
-                "Active RTSE exam year is not configured."
-            );
-        }
-
-        const result = await RtseSeatPlan.allocateStudents(
-            section,
-            shiftId,
-            applicationYear
-        );
-
-        if (result.allocated > 0) {
-            req.flash(
-                "success",
-                `${result.allocated} student(s) allocated to seats in Section ${section}.`
-            );
-        } else {
-            req.flash(
-                "warning",
-                result.message ||
-                `No students were allocated to Section ${section}.`
-            );
-        }
-    } catch (err) {
-        console.error(
-            "RTSE seat allocation error:",
-            err
-        );
-
-        req.flash(
-            "error",
-            err.message ||
-            "Unable to allocate students to seats."
-        );
-    }
-
-    return res.redirect("/admin/rtse/seat-plan");
-};
-
-
-exports.clearStudentSeatAllocations = async (req, res) => {
-    try {
-        const section = String(req.body.section || "")
-            .trim()
-            .toUpperCase();
-
-        const shiftId = parseInt(req.body.shift_id, 10);
-
-        const setting = await RtseSetting.get();
-        const applicationYear = Number(setting?.exam_year);
-
-        if (!applicationYear) {
-            throw new Error(
-                "Active RTSE exam year is not configured."
-            );
-        }
-
-        const count =
-            await RtseSeatPlan.clearStudentAllocations(
-                section,
-                shiftId,
-                applicationYear
-            );
-
-        req.flash(
-            "success",
-            `${count} student allocation(s) cleared for Section ${section}.`
-        );
-    } catch (err) {
-        console.error(
-            "RTSE seat allocation clear error:",
-            err
-        );
-
-        req.flash(
-            "error",
-            err.message ||
-            "Unable to clear student allocations."
-        );
-    }
-
-    return res.redirect("/admin/rtse/seat-plan");
-};
-
-
 // Seat Plan Page
 // =====================================
 

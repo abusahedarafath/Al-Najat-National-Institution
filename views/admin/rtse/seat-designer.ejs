@@ -164,15 +164,52 @@
                         <form
                             action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/lock"
                             method="POST"
+                            style="
+                                display:flex;
+                                gap:8px;
+                                flex-wrap:wrap;
+                                align-items:center;
+                            "
                             onsubmit="return confirm(
-                                'Lock all allocated seats in this room and generate the seat plan token PDF?'
+                                'Lock Gender + Section, automatically assign the next unassigned approved students, lock only occupied seats, and generate the seat plan token PDF?'
                             );"
                         >
+                            <select
+                                name="gender_lock"
+                                required
+                                style="
+                                    padding:8px;
+                                    border:1px solid #ccc;
+                                    border-radius:7px;
+                                "
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+
+                            <select
+                                name="section_lock"
+                                required
+                                style="
+                                    padding:8px;
+                                    border:1px solid #ccc;
+                                    border-radius:7px;
+                                "
+                            >
+                                <option value="">Select Section</option>
+                                <% ["A","B","C","D","E"].forEach(lockSection => { %>
+                                    <option value="<%= lockSection %>">
+                                        Section <%= lockSection %>
+                                    </option>
+                                <% }) %>
+                            </select>
+
                             <button
                                 type="submit"
                                 class="btn-save"
                             >
-                                Lock Seats & Generate Tokens
+                                🔒 Lock & Generate Tokens
                             </button>
                         </form>
 

@@ -598,24 +598,6 @@ router.post(
 );
 
 
-// =====================================
-// Student Seat Allocation
-// =====================================
-
-router.post(
-    "/rtse/seat-plan/allocate",
-    auth.isAdmin,
-    express.urlencoded({ extended: true }),
-    adminRtseController.allocateStudentsToSeats
-);
-
-router.post(
-    "/rtse/seat-plan/allocate/clear",
-    auth.isAdmin,
-    express.urlencoded({ extended: true }),
-    adminRtseController.clearStudentSeatAllocations
-);
-
 
 // =====================================
 // Seat Designer
