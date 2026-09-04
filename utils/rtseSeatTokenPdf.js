@@ -50,59 +50,117 @@ function getLogicalCornerSeatNo(seat, sideSeats, rowNo) {
 }
 
 function drawToken(doc, student, seatNo, x, y, width, height, examName) {
-    doc
-        .rect(x, y, width, height)
-        .stroke();
+    // Draw the complete token as a fixed rectangular area.
+    // Nothing inside this function is allowed to create a new PDF page.
+    doc.save();
 
-    const padding = 14;
+    doc.rect(x, y, width, height).stroke();
+
+    const padding = 12;
+    const innerWidth = Math.max(20, width - padding * 2);
+
+    // Keep every text block inside the token's fixed bounds.
+    // The student name is deliberately constrained so it can never
+    // push the following fields onto another PDF page.
+    let examFontSize = 12;
+    while (
+        examFontSize > 8 &&
+        doc.widthOfString(String(examName || ""), {
+            font: "Helvetica-Bold",
+            size: examFontSize
+        }) > innerWidth
+    ) {
+        examFontSize -= 0.5;
+    }
 
     doc
         .font("Helvetica-Bold")
-        .fontSize(13)
-        .text(examName, x + padding, y + 12, {
-            width: width - padding * 2,
-            align: "center"
+        .fontSize(examFontSize)
+        .text(String(examName || ""), x + padding, y + 9, {
+            width: innerWidth,
+            height: 18,
+            align: "center",
+            lineBreak: false
         });
-
-    let cursor = y + 43;
 
     doc
         .font("Helvetica")
-        .fontSize(10)
-        .text("Student Name:", x + padding, cursor, {
-            width: width - padding * 2
+        .fontSize(9)
+        .text("Student Name:", x + padding, y + 34, {
+            width: innerWidth,
+            height: 12,
+            lineBreak: false
         });
+
+    const studentName = String(student.full_name || "").trim();
+
+    // Fit the student name into one fixed line.
+    // This prevents long names from increasing token height.
+    let nameFontSize = 10;
+    while (
+        nameFontSize > 6 &&
+        doc.widthOfString(studentName, {
+            font: "Helvetica-Bold",
+            size: nameFontSize
+        }) > innerWidth
+    ) {
+        nameFontSize -= 0.5;
+    }
+
+    let displayName = studentName;
+
+    // Final safety truncation. The database value is NOT changed.
+    while (
+        displayName.length > 1 &&
+        doc.widthOfString(displayName, {
+            font: "Helvetica-Bold",
+            size: nameFontSize
+        }) > innerWidth
+    ) {
+        displayName = displayName.slice(0, -1);
+    }
+
+    if (displayName !== studentName && displayName.length > 3) {
+        displayName = displayName.slice(0, -3).trimEnd() + "...";
+    }
 
     doc
         .font("Helvetica-Bold")
-        .fontSize(11)
-        .text(student.full_name || "", x + padding, cursor + 14, {
-            width: width - padding * 2
+        .fontSize(nameFontSize)
+        .text(displayName, x + padding, y + 48, {
+            width: innerWidth,
+            height: 14,
+            lineBreak: false
         });
-
-    cursor += 43;
 
     doc
         .font("Helvetica")
-        .fontSize(10)
-        .text(`Section: ${student.section || ""}`, x + padding, cursor, {
-            width: width - padding * 2
+        .fontSize(9)
+        .text(`Section: ${student.section || ""}`, x + padding, y + 69, {
+            width: innerWidth,
+            height: 12,
+            lineBreak: false
         });
-
-    cursor += 18;
 
     doc
-        .text("Roll- RTSE26", x + padding, cursor, {
-            width: width - padding * 2
+        .font("Helvetica")
+        .fontSize(9)
+        .text("Roll- RTSE26", x + padding, y + 87, {
+            width: innerWidth,
+            height: 12,
+            lineBreak: false
         });
-
-    cursor += 18;
 
     doc
-        .text(`No- ${student.roll_no ?? ""}`, x + padding, cursor, {
-            width: width - padding * 2
+        .font("Helvetica")
+        .fontSize(9)
+        .text(`No- ${student.roll_no ?? ""}`, x + padding, y + 105, {
+            width: innerWidth,
+            height: 12,
+            lineBreak: false
         });
 
+    doc.restore();
 }
 
 function finishDocument(doc, outputPath) {
