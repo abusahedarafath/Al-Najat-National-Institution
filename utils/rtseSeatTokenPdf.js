@@ -441,14 +441,82 @@ async function generateRoomTokenPdfs(
         applicationYear
     );
 
-    if (!students.length) {
-        throw new Error(
-            "No locked student seats are available for token generation."
+    /*
+     * Always remove the previous PDFs for this exact room first.
+     * This prevents stale FULL/LEFT/RIGHT token files remaining
+     * after seats or students are unlocked.
+     */
+    let roomNo = null;
+
+    if (students.length) {
+        roomNo = students[0].room_no;
+    } else {
+        const [rooms] = await db.query(
+            `
+            SELECT room_no
+            FROM rtse_seat_plan_rooms
+            WHERE id = ?
+              AND shift_id = ?
+              AND application_year = ?
+            LIMIT 1
+            `,
+            [
+                roomId,
+                shiftId,
+                applicationYear
+            ]
         );
+
+        roomNo = rooms[0]?.room_no || roomId;
+    }
+
+    const safeShift = safeFilePart(shiftId);
+    const safeRoom = safeFilePart(roomNo);
+
+    const staleFiles = [
+        path.join(
+            OUTPUT_DIR,
+            `RTSE-${safeShift}-Room-${safeRoom}-FULL.pdf`
+        ),
+        path.join(
+            OUTPUT_DIR,
+            `RTSE-${safeShift}-Room-${safeRoom}-LEFT.pdf`
+        ),
+        path.join(
+            OUTPUT_DIR,
+            `RTSE-${safeShift}-Room-${safeRoom}-RIGHT.pdf`
+        )
+    ];
+
+    for (const staleFile of staleFiles) {
+        try {
+            if (fs.existsSync(staleFile)) {
+                fs.unlinkSync(staleFile);
+            }
+        } catch (error) {
+            console.error(
+                "Unable to remove stale RTSE token PDF:",
+                staleFile,
+                error
+            );
+        }
+    }
+
+    /*
+     * An unlocked/empty room has no token PDF.
+     * Returning an empty result is intentional.
+     */
+    if (!students.length) {
+        return {
+            seatSystem: null,
+            files: []
+        };
     }
 
     const seatSystem =
-        String(students[0].seat_system || "FULL").toUpperCase();
+        String(
+            students[0].seat_system || "FULL"
+        ).toUpperCase();
 
     if (seatSystem === "CORNER_TO_CORNER") {
         const left = await generateSidePdf(
@@ -488,7 +556,6 @@ async function generateRoomTokenPdfs(
         files: [full]
     };
 }
-
 module.exports = {
     generateRoomTokenPdfs
 };

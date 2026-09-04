@@ -2187,29 +2187,10 @@ exports.updateRoomSeatSystem = async (req, res) => {
 };
 
 exports.updateSeatDesignerSeat = async (req, res) => {
-
-    // Reset this individual seat's Gender + Section restriction.
-    if (req.body.reset_seat === "1") {
-        req.body.section = "";
-        req.body.gender = "Any";
-    }
-
     try {
         const shiftId = parseInt(req.params.shiftId, 10);
         const roomId = parseInt(req.params.roomId, 10);
         const seatId = parseInt(req.params.seatId, 10);
-
-        const sectionValue = String(
-            req.body.section || ""
-        ).trim().toUpperCase();
-
-        const section =
-            sectionValue === "" ? null : sectionValue;
-
-        const gender = String(
-            req.body.gender || "Any"
-        ).trim();
-
 
         const setting = await RtseSetting.get();
         const applicationYear = Number(setting?.exam_year);
@@ -2220,6 +2201,129 @@ exports.updateSeatDesignerSeat = async (req, res) => {
             );
         }
 
+        /*
+         * Reset means actual unlock/release, not merely clearing
+         * the visual restriction.
+         */
+        if (req.body.reset_seat === "1") {
+            const result =
+                await RtseSeatPlan.unlockSeatAndResetAssignment(
+                    seatId,
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
+            const pdfResult =
+                await generateRoomTokenPdfs(
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
+            if (result.released > 0) {
+                req.flash(
+                    "success",
+                    "Seat unlocked and its student assignment was released."
+                );
+            } else {
+                req.flash(
+                    "success",
+                    "Seat unlocked."
+                );
+            }
+
+            /*
+             * The PDF generator removes stale room PDFs when there
+             * are no remaining locked student seats.
+             */
+            if (pdfResult.files.length) {
+                return res.render("admin/rtse/seat-token-generated", {
+                    title: "RTSE Seat Plan Tokens",
+                    shiftId,
+                    roomId,
+                    room: null,
+                    allocatedCount: 0,
+                    pdfResult,
+                    unlocked: true
+                });
+            }
+
+            return res.redirect(
+                `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
+            );
+        }
+
+        const sectionValue = String(
+            req.body.section || ""
+        ).trim().toUpperCase();
+
+        const section =
+            sectionValue === ""
+                ? null
+                : sectionValue;
+
+        const gender = String(
+            req.body.gender || "Any"
+        ).trim();
+
+        /*
+         * When the effective Gender + Section combination is complete,
+         * this operation becomes an individual-seat allocation/lock.
+         *
+         * When incomplete, it remains the existing configuration-only
+         * behavior.
+         */
+        const allocation =
+            await RtseSeatPlan.allocateStudentToSpecificSeat(
+                seatId,
+                shiftId,
+                roomId,
+                applicationYear,
+                section,
+                gender
+            );
+
+        if (allocation.complete) {
+            if (allocation.allocated) {
+                const pdfResult =
+                    await generateRoomTokenPdfs(
+                        shiftId,
+                        roomId,
+                        applicationYear
+                    );
+
+                return res.render(
+                    "admin/rtse/seat-token-generated",
+                    {
+                        title: "RTSE Seat Plan Tokens",
+                        shiftId,
+                        roomId,
+                        room: {
+                            room_no: allocation.roomNo
+                        },
+                        allocatedCount: 1,
+                        pdfResult
+                    }
+                );
+            }
+
+            if (allocation.reason === "no_student") {
+                throw new Error(
+                    `No remaining approved ${allocation.gender} student was found for Section ${allocation.section}.`
+                );
+            }
+
+            if (allocation.reason === "configured") {
+                throw new Error(
+                    "This seat is already configured and cannot be overwritten."
+                );
+            }
+        }
+
+        /*
+         * Partial Gender/Section remains a normal restriction.
+         */
         await RtseSeatPlan.updateSeat(
             seatId,
             shiftId,
@@ -2234,7 +2338,10 @@ exports.updateSeatDesignerSeat = async (req, res) => {
             "Seat configuration updated."
         );
     } catch (err) {
-        console.error(err);
+        console.error(
+            "RTSE individual seat lock error:",
+            err
+        );
 
         req.flash(
             "error",
@@ -2242,7 +2349,7 @@ exports.updateSeatDesignerSeat = async (req, res) => {
         );
     }
 
-    res.redirect(
+    return res.redirect(
         `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
     );
 };
@@ -2396,23 +2503,54 @@ exports.updateSeatSideLocks = async (req, res) => {
 
         /*
          * Unlock:
-         * Preserve the existing side-lock behavior when both values
-         * are cleared. No student allocation is performed.
+         * release only students/seats physically assigned to this
+         * exact side, clear the side lock, then regenerate the room
+         * token PDFs so stale tokens disappear.
          */
         if (!genderLock && !sectionLock) {
-            await RtseSeatPlan.updateRoomSideLocks(
-                shiftId,
-                roomId,
-                applicationYear,
-                side,
-                null,
-                null
-            );
+            const result =
+                await RtseSeatPlan.unlockRoomSideAndResetAssignments(
+                    shiftId,
+                    roomId,
+                    applicationYear,
+                    side
+                );
 
-            req.flash(
-                "success",
-                `${side} side unlocked.`
-            );
+            const pdfResult =
+                await generateRoomTokenPdfs(
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
+            if (result.released > 0) {
+                req.flash(
+                    "success",
+                    `${side} side unlocked and ${result.released} student seat assignment(s) released.`
+                );
+            } else {
+                req.flash(
+                    "success",
+                    `${side} side unlocked.`
+                );
+            }
+
+            /*
+             * PDF generation is intentionally performed even when
+             * nothing remains assigned. The generator removes stale
+             * files for this room in that case.
+             */
+            if (pdfResult.files.length) {
+                return res.render("admin/rtse/seat-token-generated", {
+                    title: "RTSE Seat Plan Tokens",
+                    shiftId,
+                    roomId,
+                    room: null,
+                    allocatedCount: 0,
+                    pdfResult,
+                    unlocked: true
+                });
+            }
 
             return res.redirect(
                 `/admin/rtse/seat-plan/shifts/${req.params.shiftId}/rooms/${req.params.roomId}/seats`
@@ -2420,9 +2558,7 @@ exports.updateSeatSideLocks = async (req, res) => {
         }
 
         /*
-         * Universal allocation requires the complete Gender + Section
-         * combination. A partial side lock remains available only for
-         * the existing restriction workflow.
+         * Partial side locks remain configuration-only.
          */
         if (!genderLock || !sectionLock) {
             await RtseSeatPlan.updateRoomSideLocks(
@@ -2445,14 +2581,9 @@ exports.updateSeatSideLocks = async (req, res) => {
         }
 
         /*
-         * Complete Gender + Section = bounded Universal Lock.
-         *
-         * The model calculates:
-         *
-         *   MIN(remaining approved students,
-         *       remaining valid seats)
-         *
-         * and immediately allocates only that many seats.
+         * Complete Gender + Section:
+         * allocate only as many matching students as available seats,
+         * persist the side lock, and immediately generate the token PDF.
          */
         const result =
             await RtseSeatPlan.allocateGenderSectionToSide(
@@ -2465,22 +2596,38 @@ exports.updateSeatSideLocks = async (req, res) => {
             );
 
         if (result.allocated > 0) {
-            req.flash(
-                "success",
-                `${side}: ${result.allocated} seat(s) allocated for ${genderLock} Section ${sectionLock}. ` +
-                `${result.remainingStudents} eligible student(s) remain. ` +
-                `${result.remainingSeats} seat(s) remain available on this side.`
+            await RtseSeatPlan.updateRoomSideLocks(
+                shiftId,
+                roomId,
+                applicationYear,
+                side,
+                genderLock,
+                sectionLock
             );
-        } else if (
-            result.eligibleStudents === 0
-        ) {
+
+            const pdfResult =
+                await generateRoomTokenPdfs(
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
+            return res.render("admin/rtse/seat-token-generated", {
+                title: "RTSE Seat Plan Tokens",
+                shiftId,
+                roomId,
+                room: result.room,
+                allocatedCount: result.allocated,
+                pdfResult
+            });
+        }
+
+        if (result.eligibleStudents === 0) {
             req.flash(
                 "warning",
                 `No remaining approved ${genderLock} students were found for Section ${sectionLock}.`
             );
-        } else if (
-            result.availableSeats === 0
-        ) {
+        } else if (result.availableSeats === 0) {
             req.flash(
                 "warning",
                 `No available seats remain on the ${side} side.`
@@ -2499,8 +2646,7 @@ exports.updateSeatSideLocks = async (req, res) => {
 
         req.flash(
             "error",
-            err.message ||
-            "Unable to apply side lock."
+            err.message || "Unable to apply side lock."
         );
     }
 
