@@ -196,11 +196,11 @@ background:#fff;
 
 <div class="header">
 
+<% if (examSetting && examSetting.logo) { %>
 <img
-
 src="/uploads/arsp-settings/<%= examSetting.logo %>"
-
 class="logo">
+<% } %>
 
 <div class="title">
 
@@ -230,11 +230,11 @@ Active Rural Social Progress (ARSP)
 
 </div>
 
+<% if (student && student.photo) { %>
 <img
-
 src="/uploads/rtse/<%= student.photo %>"
-
 class="photo">
+<% } %>
 
 </div>
 
