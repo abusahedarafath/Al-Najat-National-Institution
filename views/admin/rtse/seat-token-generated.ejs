@@ -28,11 +28,10 @@
                     <% pdfResult.files.forEach(file => { %>
                         <a
                             href="<%= file.url %>"
-                            target="_blank"
-                            rel="noopener"
+                            download
                             class="btn-save"
                         >
-                            Open <%= file.side %> Token PDF
+                            Download <%= file.side %> Token PDF
                         </a>
                     <% }) %>
                 </div>
