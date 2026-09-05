@@ -932,12 +932,54 @@ body{
             ? examSetting
             : {};
 
-    const examinationDate =
+    function formatExamDate(value) {
+        if (!value) return "________________";
+
+        const raw = String(value).trim();
+
+        // Prefer the calendar date contained in YYYY-MM-DD values.
+        // This avoids UTC timezone conversion changing the displayed day.
+        const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+        if (match) {
+            const year = Number(match[1]);
+            const month = Number(match[2]);
+            const day = Number(match[3]);
+
+            const date = new Date(year, month - 1, day);
+
+            if (
+                date.getFullYear() === year &&
+                date.getMonth() === month - 1 &&
+                date.getDate() === day
+            ) {
+                return date.toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                });
+            }
+        }
+
+        const parsed = new Date(raw);
+
+        if (!Number.isNaN(parsed.getTime())) {
+            return parsed.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+        }
+
+        return raw;
+    }
+
+    const examinationDate = formatExamDate(
         examSettingSafe.exam_date ||
         examSettingSafe.examination_date ||
         safeStudent.exam_date ||
-        safeStudent.examination_date ||
-        "________________";
+        safeStudent.examination_date
+    );
 
     const examCentreSafe =
           (typeof examCentre !== "undefined" && examCentre)

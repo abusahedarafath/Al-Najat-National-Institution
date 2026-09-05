@@ -1322,15 +1322,23 @@ exports.viewAdmitCard = async (req, res) => {
             await RtseExamSetting.get();
 
         // Resolve the student's examination shift from the
-        // shift-wise configuration saved under Examination Settings.
+        // shift-wise sections configured under Examination Settings.
+        // The admit card must not depend on seat-plan shift assignment.
         let examShift = null;
+        if (examSetting && student.section) {
+            const configuredShifts =
+                await RtseExamSetting.getShifts(examSetting.id);
 
-        if (examSetting && student.shift_id) {
-            examShift =
-                await RtseExamSetting.getShiftForStudent(
-                    examSetting.id,
-                    student.shift_id
-                );
+            const studentSection =
+                String(student.section).trim().toUpperCase();
+
+            examShift = configuredShifts.find((shift) =>
+                Array.isArray(shift.sections) &&
+                shift.sections.some((section) =>
+                    String(section.section || "").trim().toUpperCase() ===
+                    studentSection
+                )
+            ) || null;
         }
 
         // Resolve the examination centre from the student's
