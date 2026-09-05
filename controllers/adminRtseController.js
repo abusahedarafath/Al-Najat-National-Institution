@@ -2063,6 +2063,12 @@ exports.seatDesignerPage = async (req, res) => {
             throw new Error("Shift or room not found.");
         }
 
+        const pdfResult = await generateRoomTokenPdfs(
+            shiftId,
+            roomId,
+            applicationYear
+        );
+
         res.render(
             "admin/rtse/seat-designer",
             {
@@ -2070,7 +2076,9 @@ exports.seatDesignerPage = async (req, res) => {
                 applicationYear,
                 shiftId,
                 roomId,
-                shift
+                shift,
+                pdfResult,
+                tokenAllocatedCount: 0
             }
         );
     } catch (err) {
