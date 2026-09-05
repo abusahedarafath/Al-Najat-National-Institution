@@ -2300,12 +2300,32 @@ exports.updateSeatDesignerSeat = async (req, res) => {
 
         if (allocation.complete) {
             if (allocation.allocated) {
-                const pdfResult =
+                const generatedPdfResult =
                     await generateRoomTokenPdfs(
                         shiftId,
                         roomId,
                         applicationYear
                     );
+
+                /*
+                 * Individual-seat allocation:
+                 * In FULL mode, show only the FULL token PDF.
+                 * The FULL PDF is A4 landscape. The LEFT/RIGHT PDFs
+                 * are portrait side PDFs and are not the individual
+                 * seat result.
+                 *
+                 * Universal Lock is intentionally unchanged and
+                 * continues to receive the complete PDF result.
+                 */
+                const pdfResult =
+                    generatedPdfResult.seatSystem === "FULL"
+                        ? {
+                            ...generatedPdfResult,
+                            files: generatedPdfResult.files.filter(
+                                file => file.side === "FULL"
+                            )
+                        }
+                        : generatedPdfResult;
 
                 const designerShift = await RtseSeatPlan.getSeatDesigner(
                     shiftId,
