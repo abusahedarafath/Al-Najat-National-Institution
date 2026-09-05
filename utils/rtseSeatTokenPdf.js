@@ -300,7 +300,8 @@ async function generateSidePdf(
     shiftId,
     roomId,
     roomNo,
-    usePhysicalSeatNo = false
+    usePhysicalSeatNo = false,
+    landscape = false
 ) {
     ensureOutputDir();
 
@@ -365,7 +366,7 @@ async function generateSidePdf(
 
     const doc = new PDFDocument({
         size: "A4",
-        layout: "portrait",
+        layout: landscape ? "landscape" : "portrait",
         margin: 28
     });
 
@@ -522,13 +523,23 @@ async function generateRoomTokenPdfs(
         ).toUpperCase();
 
     if (seatSystem === "CORNER_TO_CORNER") {
+        const full = await generateFullPdf(
+            students,
+            examName,
+            shiftId,
+            roomId,
+            students[0].room_no
+        );
+
         const left = await generateSidePdf(
             students,
             examName,
             "LEFT",
             shiftId,
             roomId,
-            students[0].room_no
+            students[0].room_no,
+            false,
+            false
         );
 
         const right = await generateSidePdf(
@@ -537,12 +548,14 @@ async function generateRoomTokenPdfs(
             "RIGHT",
             shiftId,
             roomId,
-            students[0].room_no
+            students[0].room_no,
+            false,
+            false
         );
 
         return {
             seatSystem,
-            files: [left, right]
+            files: [full, left, right]
         };
     }
 
@@ -554,6 +567,12 @@ async function generateRoomTokenPdfs(
         students[0].room_no
     );
 
+    /*
+     * FULL seat system:
+     * Generate FULL + LEFT + RIGHT token PDFs.
+     *
+     * All three PDFs are A4 landscape/horizontal.
+     */
     const left = await generateSidePdf(
         students,
         examName,
@@ -561,6 +580,7 @@ async function generateRoomTokenPdfs(
         shiftId,
         roomId,
         students[0].room_no,
+        true,
         true
     );
 
@@ -571,11 +591,12 @@ async function generateRoomTokenPdfs(
         shiftId,
         roomId,
         students[0].room_no,
+        true,
         true
     );
 
     return {
-        seatSystem,
+        seatSystem: "FULL",
         files: [full, left, right]
     };
 }
