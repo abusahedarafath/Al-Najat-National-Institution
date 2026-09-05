@@ -3,6 +3,7 @@ const RtseResult = require("../models/RtseResult");
 const RtseCertificate = require("../models/RtseCertificate");
 const RtseSetting = require("../models/RtseSetting");
 const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseCentre = require("../models/RtseCentre");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 const QRCode = require("qrcode");
 
@@ -539,6 +540,40 @@ exports.admitCard = async (req, res) => {
         const examSetting =
             await RtseExamSetting.get();
 
+        // Resolve the student's examination shift from the
+        // shift-wise sections configured under Examination Settings.
+        // The admit card must not depend on seat-plan shift assignment.
+        let examShift = null;
+        if (examSetting && application.section) {
+            const configuredShifts =
+                await RtseExamSetting.getShifts(examSetting.id);
+
+            const studentSection =
+                String(application.section).trim().toUpperCase();
+
+            examShift = configuredShifts.find((shift) =>
+                Array.isArray(shift.sections) &&
+                shift.sections.some((section) =>
+                    String(section.section || "").trim().toUpperCase() ===
+                    studentSection
+                )
+            ) || null;
+        }
+
+        // Resolve the examination centre from the student's
+        // registered school and its approved centre assignment.
+        let examCentre = null;
+        if (
+            application.school_id &&
+            application.application_year
+        ) {
+            examCentre =
+                await RtseCentre.getSchoolAssignment(
+                    application.school_id,
+                    application.application_year
+                );
+        }
+
         // Admit card must be generated for this student.
         if (
             Number(application.admit_generated) !== 1 ||
@@ -553,6 +588,8 @@ exports.admitCard = async (req, res) => {
                     attendance: null,
                     qrData: null,
                     examSetting,
+                    examShift,
+                    examCentre,
                                               examYear:
                                                   examSetting?.exam_year ||
                                                   arspSetting?.exam_year ||
@@ -576,7 +613,9 @@ exports.admitCard = async (req, res) => {
                     student: application,
                     attendance: null,
                     qrData: null,
-                    examSetting,
+                examSetting,
+                examShift,
+                examCentre,
                                               examYear:
                                                   examSetting?.exam_year ||
                                                   arspSetting?.exam_year ||
@@ -623,6 +662,8 @@ exports.admitCard = async (req, res) => {
                 attendance,
                 qrData,
                 examSetting,
+                examShift,
+                examCentre,
                                                     examYear:
                                                         examSetting?.exam_year ||
                                                         arspSetting?.exam_year ||
