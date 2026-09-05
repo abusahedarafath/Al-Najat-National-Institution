@@ -49,7 +49,7 @@ function getLogicalCornerSeatNo(seat, sideSeats, rowNo) {
     return rowBase + (physical === first ? 3 : 4);
 }
 
-function drawToken(doc, student, seatNo, x, y, width, height, examName) {
+function drawToken(doc, student, seatNo, x, y, width, height, examName, examNameFontSize = 10, examNamePadding = 12, examNameHorizontalFit = false, examNameWrap = false) {
     // Draw the complete token as a fixed rectangular area.
     // Nothing inside this function is allowed to create a new PDF page.
     doc.save();
@@ -62,26 +62,53 @@ function drawToken(doc, student, seatNo, x, y, width, height, examName) {
     // Keep every text block inside the token's fixed bounds.
     // The student name is deliberately constrained so it can never
     // push the following fields onto another PDF page.
-    let examFontSize = 12;
-    while (
-        examFontSize > 8 &&
-        doc.widthOfString(String(examName || ""), {
-            font: "Helvetica-Bold",
-            size: examFontSize
-        }) > innerWidth
-    ) {
-        examFontSize -= 0.5;
-    }
+    const examText = String(examName || "").trim();
 
+    // Examination name stays inside a fixed two-line area.
+    // It is never horizontally squeezed. Long titles wrap naturally.
+    // Student information keeps its original fixed position.
     doc
         .font("Helvetica-Bold")
-        .fontSize(examFontSize)
-        .text(String(examName || ""), x + padding, y + 9, {
-            width: innerWidth,
-            height: 18,
+        .fontSize(examNameFontSize);
+
+    const examAvailableWidth = Math.max(
+        20,
+        width - examNamePadding * 2
+    );
+
+    if (examNameWrap) {
+        doc.text(examText, x + examNamePadding, y + 5, {
+            width: examAvailableWidth,
+            height: 24,
             align: "center",
-            lineBreak: false
+            lineGap: 0,
+            lineBreak: true
         });
+    } else {
+        const examWords = examText.split(/\\s+/).filter(Boolean);
+
+        const wordWidths = examWords.map((word) =>
+            doc.widthOfString(word, {
+                size: examNameFontSize
+            })
+        );
+
+        const normalSpaceWidth = doc.widthOfString(" ", {
+            size: examNameFontSize
+        });
+
+        const naturalTitleWidth =
+            wordWidths.reduce((total, value) => total + value, 0) +
+            normalSpaceWidth * Math.max(0, examWords.length - 1);
+
+        const examX =
+            x + Math.max(0, (width - naturalTitleWidth) / 2);
+
+        doc.text(examText, examX, y + 9, {
+            lineBreak: false,
+            continued: false
+        });
+    }
 
     doc
         .font("Helvetica")
@@ -209,8 +236,7 @@ async function getRoomTokenStudents(shiftId, roomId, applicationYear) {
         WHERE a.archive = 0
           AND a.status = 'Approved'
           AND a.application_year = ?
-          AND a.shift_id = ?
-          AND a.room_id = ?
+          AND sp.room_id = ?
           AND a.seat_id IS NOT NULL
           AND sp.is_locked = 1
         ORDER BY
@@ -218,7 +244,6 @@ async function getRoomTokenStudents(shiftId, roomId, applicationYear) {
             sp.seat_no ASC
     `, [
         applicationYear,
-        shiftId,
         roomId
     ]);
 
@@ -281,7 +306,11 @@ async function generateFullPdf(students, examName, shiftId, roomId, roomNo) {
             y,
             tokenWidth,
             tokenHeight,
-            examName
+            examName,
+            8.5,
+            6,
+            false,
+            true
         );
     }
 
@@ -420,7 +449,11 @@ async function generateSidePdf(
             y,
             tokenWidth,
             tokenHeight,
-            examName
+            examName,
+            8.5,
+            6,
+            false,
+            true
         );
     }
 
