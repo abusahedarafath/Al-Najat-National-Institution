@@ -65,7 +65,6 @@ router.get(
 
 router.post(
     "/apply",
-    rtsePublicController.requireApplicationOpen,
     upload.fields([
         {
             name: "photo",

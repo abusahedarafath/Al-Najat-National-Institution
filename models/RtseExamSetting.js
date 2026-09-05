@@ -35,6 +35,200 @@ class RtseExamSetting {
         return rows[0] || null;
     }
 
+  // =====================================
+  // Get Examination Shifts
+  // =====================================
+
+  static async getShifts(examSettingId){
+    const [rows] = await db.query(
+      `SELECT
+         es.id,
+         es.exam_setting_id,
+         es.shift_id,
+         es.reporting_time,
+         es.exam_start_time,
+         es.exam_end_time,
+         es.is_active,
+         s.shift_no,
+         s.shift_name,
+         s.layout,
+         s.is_active AS shift_master_active
+       FROM rtse_exam_shifts es
+       INNER JOIN rtse_seat_plan_shifts s
+         ON s.id=es.shift_id
+       WHERE es.exam_setting_id=?
+       ORDER BY s.shift_no ASC, es.id ASC`,
+      [examSettingId]
+    );
+
+    for (const shift of rows) {
+      const [sections] = await db.query(
+        `SELECT id, section
+         FROM rtse_exam_shift_sections
+         WHERE exam_shift_id=?
+         ORDER BY section ASC`,
+        [shift.id]
+      );
+
+      shift.sections = sections;
+    }
+
+    return rows;
+  }
+
+  // =====================================
+  // Get Student's Examination Shift
+  // =====================================
+
+  static async getShiftForStudent(examSettingId, shiftId){
+    if (!examSettingId || !shiftId) {
+      return null;
+    }
+
+    const [rows] = await db.query(
+      `SELECT
+         es.id,
+         es.exam_setting_id,
+         es.shift_id,
+         es.reporting_time,
+         es.exam_start_time,
+         es.exam_end_time,
+         es.is_active,
+         s.shift_no,
+         s.shift_name,
+         s.layout
+       FROM rtse_exam_shifts es
+       INNER JOIN rtse_seat_plan_shifts s
+         ON s.id=es.shift_id
+       WHERE es.exam_setting_id=?
+         AND es.shift_id=?
+       LIMIT 1`,
+      [examSettingId, shiftId]
+    );
+
+    if (!rows.length) {
+      return null;
+    }
+
+    const shift = rows[0];
+
+    const [sections] = await db.query(
+      `SELECT id, section
+       FROM rtse_exam_shift_sections
+       WHERE exam_shift_id=?
+       ORDER BY section ASC`,
+      [shift.id]
+    );
+
+    shift.sections = sections;
+
+    return shift;
+  }
+
+  // =====================================
+  // Save Examination Shifts
+  // =====================================
+
+  static async saveShifts(examSettingId, shifts){
+    const items = Array.isArray(shifts) ? shifts : [];
+
+    const connection = await db.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      // Validate all submitted shift IDs before replacing existing data.
+      const shiftIds = items.map(item => Number(item.shift_id));
+
+      if (shiftIds.some(id => !Number.isInteger(id) || id <= 0)) {
+        throw new Error("Invalid examination shift selected.");
+      }
+
+      if (new Set(shiftIds).size !== shiftIds.length) {
+        throw new Error(
+          "The same examination shift cannot be selected more than once."
+        );
+      }
+
+      if (shiftIds.length) {
+        const placeholders = shiftIds.map(() => "?").join(",");
+
+        const [validShifts] = await connection.query(
+          `SELECT id
+           FROM rtse_seat_plan_shifts
+           WHERE is_active=1
+             AND id IN (${placeholders})`,
+          shiftIds
+        );
+
+        const validIds = new Set(
+          validShifts.map(row => Number(row.id))
+        );
+
+        for (const shiftId of shiftIds) {
+          if (!validIds.has(shiftId)) {
+            throw new Error(
+              "One or more selected examination shifts are unavailable."
+            );
+          }
+        }
+      }
+
+      // Replace the examination configuration only after validation succeeds.
+      await connection.query(
+        `DELETE FROM rtse_exam_shifts
+         WHERE exam_setting_id=?`,
+        [examSettingId]
+      );
+
+      for (const item of items) {
+        const shiftId = Number(item.shift_id);
+
+        const [result] = await connection.query(
+          `INSERT INTO rtse_exam_shifts
+             (
+               exam_setting_id,
+               shift_id,
+               reporting_time,
+               exam_start_time,
+               exam_end_time,
+               is_active
+             )
+           VALUES (?, ?, ?, ?, ?, 1)`,
+          [
+            examSettingId,
+            shiftId,
+            item.reporting_time || null,
+            item.exam_start_time || null,
+            item.exam_end_time || null
+          ]
+        );
+
+        const sections = Array.isArray(item.sections)
+          ? item.sections
+          : [];
+
+        for (const section of sections) {
+          await connection.query(
+            `INSERT INTO rtse_exam_shift_sections
+               (exam_shift_id, section)
+             VALUES (?, ?)`,
+            [result.insertId, section]
+          );
+        }
+      }
+
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+
+    return await this.getShifts(examSettingId);
+  }
+
 
     // =====================================
     // Get Active Examination

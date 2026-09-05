@@ -447,6 +447,7 @@ router.post(
 
     auth.isAdmin,
 
+    multer().none(),
     adminRtseController.createExamSetting
 
 );
@@ -483,6 +484,7 @@ router.post(
 
     auth.isAdmin,
 
+    multer().none(),
     adminRtseController.updateExamSetting
 
 );

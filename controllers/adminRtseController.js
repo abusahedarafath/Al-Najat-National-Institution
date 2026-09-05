@@ -29,6 +29,7 @@ const QRCode = require("qrcode");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 
 const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseCentre = require("../models/RtseCentre");
 const { generateRoomTokenPdfs } =
 require("../utils/rtseSeatTokenPdf");
 // =====================================
@@ -1320,6 +1321,30 @@ exports.viewAdmitCard = async (req, res) => {
         const examSetting =
             await RtseExamSetting.get();
 
+        // Resolve the student's examination shift from the
+        // shift-wise configuration saved under Examination Settings.
+        let examShift = null;
+
+        if (examSetting && student.shift_id) {
+            examShift =
+                await RtseExamSetting.getShiftForStudent(
+                    examSetting.id,
+                    student.shift_id
+                );
+        }
+
+        // Resolve the examination centre from the student's
+        // registered school and its centre assignment.
+        let examCentre = null;
+
+        if (student.school_id && student.application_year) {
+            examCentre =
+                await RtseCentre.getSchoolAssignment(
+                    student.school_id,
+                    student.application_year
+                );
+        }
+
         // Guarantee an attendance QR record for a generated admit.
         let attendance = null;
 
@@ -1364,6 +1389,8 @@ exports.viewAdmitCard = async (req, res) => {
                 qrData,
 
                                 examSetting,
+                examShift,
+                examCentre,
                 examYear:
                     examSetting?.exam_year ||
                     setting?.exam_year ||
@@ -1558,6 +1585,107 @@ exports.hideAdmitCards = async (req, res) => {
 
 
 
+
+function normalizeExamTime(value) {
+    const raw = String(value || "").trim();
+
+    if (!raw) {
+        return null;
+    }
+
+    // Accept normal 12-hour format:
+    // 10:30 AM
+    // 2:00 PM
+    // 10 PM
+    const match = raw.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+
+    if (!match) {
+        throw new Error(
+            `Invalid examination time "${raw}". Please use a format such as 10:30 PM.`
+        );
+    }
+
+    let hour = Number(match[1]);
+    const minute = Number(match[2] || "00");
+    const meridiem = match[3].toUpperCase();
+
+    if (hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+        throw new Error(
+            `Invalid examination time "${raw}". Please use a format such as 10:30 PM.`
+        );
+    }
+
+    if (meridiem === "AM") {
+        if (hour === 12) hour = 0;
+    } else {
+        if (hour !== 12) hour += 12;
+    }
+
+    return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
+}
+
+function normalizeExamShifts(body) {
+    let raw = body.exam_shifts || [];
+
+    if (!Array.isArray(raw)) {
+        raw = [raw];
+    }
+
+    const seenShiftIds = new Set();
+
+    return raw.map((item, index) => {
+        const shiftId = Number(item.shift_id);
+
+        if (!Number.isInteger(shiftId) || shiftId <= 0) {
+            throw new Error(
+                `Please select a valid shift for Shift ${index + 1}.`
+            );
+        }
+
+        if (seenShiftIds.has(shiftId)) {
+            throw new Error(
+                `The same examination shift cannot be selected more than once.`
+            );
+        }
+
+        seenShiftIds.add(shiftId);
+
+        let sections = item.sections || [];
+
+        if (!Array.isArray(sections)) {
+            sections = [sections];
+        }
+
+        sections = [
+            ...new Set(
+                sections
+                    .map(value =>
+                        String(value || "").trim().toUpperCase()
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+        const allowedSections = ["A", "B", "C", "D", "E"];
+
+        for (const section of sections) {
+            if (!allowedSections.includes(section)) {
+                throw new Error(
+                    `Invalid section "${section}" in Shift ${index + 1}.`
+                );
+            }
+        }
+
+        return {
+            shift_id: shiftId,
+            reporting_time: normalizeExamTime(item.reporting_time),
+            exam_start_time: normalizeExamTime(item.exam_start_time),
+            exam_end_time: normalizeExamTime(item.exam_end_time),
+            sections
+        };
+    });
+}
+
 // =====================================
 // RTSE Examination Control Centre
 // =====================================
@@ -1600,16 +1728,36 @@ exports.examSettingPage = async (req, res) => {
 // -------------------------------------
 
 exports.newExamSettingPage = async (req, res) => {
+    try {
+        const db = require("../config/database");
 
-    res.render(
-        "admin/rtse/exam-setting-form",
-        {
-            title: "Create RTSE Examination",
-            examination: null,
-            mode: "create"
-        }
-    );
+        const [shifts] = await db.query(`
+            SELECT
+                id,
+                shift_no,
+                shift_name,
+                is_active,
+                layout
+            FROM rtse_seat_plan_shifts
+            WHERE is_active=1
+            ORDER BY shift_no ASC
+        `);
 
+        res.render(
+            "admin/rtse/exam-setting-form",
+            {
+                title: "Create RTSE Examination",
+                examination: null,
+                mode: "create",
+                shifts,
+                examShifts: []
+            }
+        );
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Unable to load examination form.");
+        res.redirect("/admin/rtse/exam-settings");
+    }
 };
 
 
@@ -1646,11 +1794,19 @@ exports.createExamSetting = async (req, res) => {
 
         }
 
+        const examShifts =
+            normalizeExamShifts(req.body);
+
         const examination =
             await RtseExamSetting.create({
                 ...req.body,
                 status: "INACTIVE"
             });
+
+        await RtseExamSetting.saveShifts(
+            examination.id,
+            examShifts
+        );
 
         req.flash(
             "success",
@@ -1734,49 +1890,47 @@ exports.viewExamSetting = async (req, res) => {
 // -------------------------------------
 
 exports.editExamSettingPage = async (req, res) => {
-
     try {
-
         const examination =
-            await RtseExamSetting.getById(
-                req.params.id
-            );
+            await RtseExamSetting.getById(req.params.id);
 
         if (!examination) {
-
-            req.flash(
-                "error",
-                "Examination not found."
-            );
-
-            return res.redirect(
-                "/admin/rtse/exam-settings"
-            );
+            req.flash("error", "Examination not found.");
+            return res.redirect("/admin/rtse/exam-settings");
         }
+
+        const db = require("../config/database");
+
+        const [shifts] = await db.query(`
+            SELECT
+                id,
+                shift_no,
+                shift_name,
+                is_active,
+                layout
+            FROM rtse_seat_plan_shifts
+            WHERE is_active=1
+            ORDER BY shift_no ASC
+        `);
+
+        const examShifts =
+            await RtseExamSetting.getShifts(examination.id);
 
         res.render(
             "admin/rtse/exam-setting-form",
             {
                 title: "Edit RTSE Examination",
                 examination,
-                mode: "edit"
+                mode: "edit",
+                shifts,
+                examShifts
             }
         );
-
     } catch (err) {
-
         console.error(err);
-
-        req.flash(
-            "error",
-            "Unable to load examination."
-        );
-
-        res.redirect(
-            "/admin/rtse/exam-settings"
-        );
+        req.flash("error", "Unable to load examination.");
+        res.redirect("/admin/rtse/exam-settings");
     }
-
 };
 
 
@@ -1827,9 +1981,27 @@ exports.updateExamSetting = async (req, res) => {
 
         }
 
+        const examShifts =
+            normalizeExamShifts(req.body);
+
         await RtseExamSetting.update(
             id,
-            req.body
+            {
+                ...req.body,
+
+                // Legacy global timing/centre fields are no longer
+                // used by the examination settings form. Preserve
+                // existing values instead of replacing them with NULL.
+                reporting_time: examination.reporting_time,
+                exam_start_time: examination.exam_start_time,
+                exam_end_time: examination.exam_end_time,
+                exam_centre: examination.exam_centre
+            }
+        );
+
+        await RtseExamSetting.saveShifts(
+            id,
+            examShifts
         );
 
         req.flash(
@@ -2300,6 +2472,12 @@ exports.updateSeatDesignerSeat = async (req, res) => {
 
         if (allocation.complete) {
             if (allocation.allocated) {
+                const designerShift = await RtseSeatPlan.getSeatDesigner(
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
                 const generatedPdfResult =
                     await generateRoomTokenPdfs(
                         shiftId,
@@ -2308,30 +2486,38 @@ exports.updateSeatDesignerSeat = async (req, res) => {
                     );
 
                 /*
-                 * Individual-seat allocation:
-                 * In FULL mode, show only the FULL token PDF.
-                 * The FULL PDF is A4 landscape. The LEFT/RIGHT PDFs
-                 * are portrait side PDFs and are not the individual
-                 * seat result.
+                 * Individual-seat PDF selection must follow the actual
+                 * room seat system, not the selected seat position.
                  *
-                 * Universal Lock is intentionally unchanged and
-                 * continues to receive the complete PDF result.
+                 * FULL:
+                 *   expose only FULL.pdf -> A4 landscape.
+                 *
+                 * CORNER_TO_CORNER:
+                 *   expose LEFT/RIGHT PDFs -> A4 portrait.
+                 *
+                 * Universal Lock uses its own existing PDF result path
+                 * and is intentionally not changed here.
                  */
+                const roomSeatSystem =
+                    String(designerShift?.seat_system || "")
+                        .trim()
+                        .toUpperCase();
+
                 const pdfResult =
-                    generatedPdfResult.seatSystem === "FULL"
+                    roomSeatSystem === "FULL"
                         ? {
-                            ...generatedPdfResult,
+                            seatSystem: "FULL",
                             files: generatedPdfResult.files.filter(
-                                file => file.side === "FULL"
+                                file =>
+                                    String(file.side || "")
+                                        .trim()
+                                        .toUpperCase() === "FULL"
                             )
                         }
-                        : generatedPdfResult;
-
-                const designerShift = await RtseSeatPlan.getSeatDesigner(
-                    shiftId,
-                    roomId,
-                    applicationYear
-                );
+                        : {
+                            seatSystem: roomSeatSystem,
+                            files: generatedPdfResult.files
+                        };
 
                 return res.render("admin/rtse/seat-designer", {
                     title: "Seat Designer",

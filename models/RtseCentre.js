@@ -405,6 +405,9 @@ class RtseCentre {
                 ON s.id = sca.school_id
             WHERE sca.school_id = ?
               AND sca.application_year = ?
+              AND LOWER(sca.status) = 'approved'
+              AND LOWER(c.status) = 'approved'
+              AND LOWER(s.status) = 'approved'
             LIMIT 1
         `, [schoolId, applicationYear]);
 

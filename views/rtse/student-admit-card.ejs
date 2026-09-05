@@ -38,7 +38,7 @@ body{
     padding:4mm;
 
     display:grid;
-    grid-template-rows:1fr 1fr;
+    grid-template-rows:155mm 1fr;
     gap:3mm;
 
     background:#fff;
@@ -234,7 +234,7 @@ body{
 
     grid-template-columns:minmax(0,1fr) 29mm;
 
-    gap:3mm;
+    gap:2.5mm;
 
     min-height:0;
 }
@@ -315,8 +315,8 @@ body{
 }
 
 .photo-frame{
-    width:25mm;
-    height:28mm;
+    width:24mm;
+    height:26mm;
 
     padding:1mm;
 
@@ -344,8 +344,8 @@ body{
 }
 
 .qr-frame{
-    width:27mm;
-    height:27mm;
+    width:24mm;
+    height:24mm;
 
     padding:1.2mm;
 
@@ -378,7 +378,7 @@ body{
 }
 
 .qr-label{
-    width:27mm;
+    width:24mm;
 
     margin-top:-1mm;
 
@@ -410,19 +410,19 @@ body{
 
     grid-template-columns:1fr 1.2fr 1fr;
 
-    gap:2mm;
+    gap:1.5mm;
 
-    margin-top:3mm;
+    margin-top:2mm;
 
-    padding-top:2.5mm;
+    padding-top:2mm;
 
     border-top:1px solid #8da8c4;
 }
 
 .exam-box{
-    min-height:13mm;
+    min-height:10.5mm;
 
-    padding:2mm;
+    padding:1.5mm;
 
     border:1px solid #174a86;
     border-radius:1.8mm;
@@ -446,7 +446,7 @@ body{
 }
 
 .exam-value{
-    margin-top:1.5mm;
+    margin-top:1mm;
 
     color:#162c47;
 
@@ -463,11 +463,10 @@ body{
 ========================================================= */
 
 .important-strip{
-    position:absolute;
+    position:relative;
 
-    left:4mm;
-    right:4mm;
-    bottom:3mm;
+    width:100%;
+    margin-top:2mm;
 
     min-height:6.5mm;
 
@@ -497,12 +496,17 @@ body{
 ========================================================= */
 
 .ticket-footer{
-    position:absolute;
+    position:relative;
 
-    right:5mm;
-    bottom:10mm;
+    width:100%;
+    min-height:8mm;
 
-    width:30mm;
+    margin-top:2mm;
+
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:center;
 
     text-align:center;
 }
@@ -935,21 +939,74 @@ body{
         safeStudent.examination_date ||
         "________________";
 
-    const examinationCentre =
-        examSettingSafe.exam_centre ||
-        examSettingSafe.exam_center ||
-        examSettingSafe.examination_centre ||
-        examSettingSafe.examination_center ||
-        safeStudent.exam_centre ||
-        safeStudent.exam_center ||
-        "________________";
+    const examCentreSafe =
+          (typeof examCentre !== "undefined" && examCentre)
+              ? examCentre
+              : null;
 
-    const shift =
-        examSettingSafe.shift ||
-        safeStudent.shift ||
-        "________________";
+      const examinationCentre =
+          examCentreSafe?.centre_name ||
+          examCentreSafe?.centre_code ||
+          "________________";
 
-    const qrAvailable =
+      const examShiftSafe =
+          (typeof examShift !== "undefined" && examShift)
+              ? examShift
+              : null;
+
+      const shift =
+          examShiftSafe?.shift_name ||
+          (
+              examShiftSafe?.shift_no
+                  ? `Shift ${examShiftSafe.shift_no}`
+                  : "________________"
+          );
+
+      function formatExamTime(value) {
+          if (!value) return "________________";
+
+          const raw = String(value);
+          const match = raw.match(/(\d{1,2}):(\d{2})(?::\d{2})?/);
+
+          if (!match) return raw;
+
+          let hour = Number(match[1]);
+          const minute = match[2];
+
+          if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
+              return raw;
+          }
+
+          const suffix = hour >= 12 ? "PM" : "AM";
+
+          hour = hour % 12;
+          if (hour === 0) hour = 12;
+
+          return `${hour}:${minute} ${suffix}`;
+      }
+
+      const reportingTime =
+          formatExamTime(examShiftSafe?.reporting_time);
+
+      const examStartTime =
+          formatExamTime(examShiftSafe?.exam_start_time);
+
+      const examEndTime =
+          formatExamTime(examShiftSafe?.exam_end_time);
+
+      const examSections =
+          Array.isArray(examShiftSafe?.sections)
+              ? examShiftSafe.sections
+                  .map(item => item?.section || item)
+                  .filter(Boolean)
+              : [];
+
+      const examinationSections =
+          examSections.length
+              ? examSections.join(", ")
+              : "________________";
+
+      const qrAvailable =
         typeof qrData === "string" &&
         qrData.startsWith("data:image/") &&
         qrData.length > 100;
@@ -986,7 +1043,7 @@ body{
             <div class="header-title">
 
                 <h1>
-                    RATANRI TALENT SEARCH EXAMINATION
+                    <%= examSettingSafe.exam_name || "RATABARI TALENT SEARCH EXAMINATION" %>
                 </h1>
 
                 <div class="organised">
@@ -1136,52 +1193,68 @@ body{
         </div>
 
 
-        <!-- EXAMINATION INFORMATION -->
+          <!-- EXAMINATION INFORMATION -->
 
-        <div class="exam-information">
+          <div class="exam-information">
 
-            <div class="exam-box">
+              <div class="exam-box">
+                  <div class="exam-label">
+                      Examination Date
+                  </div>
+                  <div class="exam-value">
+                      <%= examinationDate %>
+                  </div>
+              </div>
 
-                <div class="exam-label">
-                    Examination Date
-                </div>
+              <div class="exam-box">
+                  <div class="exam-label">
+                      Examination Centre
+                  </div>
+                  <div class="exam-value">
+                      <%= examinationCentre %>
+                  </div>
+              </div>
 
-                <div class="exam-value">
-                    <%= examinationDate %>
-                </div>
+              <div class="exam-box">
+                  <div class="exam-label">
+                      Shift
+                  </div>
+                  <div class="exam-value">
+                      <%= shift %>
+                  </div>
+              </div>
 
-            </div>
+              <div class="exam-box">
+                  <div class="exam-label">
+                      Reporting Time
+                  </div>
+                  <div class="exam-value">
+                      <%= reportingTime %>
+                  </div>
+              </div>
+
+              <div class="exam-box">
+                  <div class="exam-label">
+                      Examination Time
+                  </div>
+                  <div class="exam-value">
+                      <%= examStartTime %> – <%= examEndTime %>
+                  </div>
+              </div>
+
+              <div class="exam-box">
+                  <div class="exam-label">
+                      Sections
+                  </div>
+                  <div class="exam-value">
+                      <%= examinationSections %>
+                  </div>
+              </div>
+
+          </div>
 
 
-            <div class="exam-box">
-
-                <div class="exam-label">
-                    Examination Centre
-                </div>
-
-                <div class="exam-value">
-                    <%= examinationCentre %>
-                </div>
-
-            </div>
-
-
-            <div class="exam-box">
-
-                <div class="exam-label">
-                    Shift
-                </div>
-
-                <div class="exam-value">
-                    <%= shift %>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- CONTROLLER SIGNATURE -->
+<!-- CONTROLLER SIGNATURE -->
 
         <div class="ticket-footer">
 
