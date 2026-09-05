@@ -373,7 +373,7 @@ async function generateSidePdf(
     const pageWidth = doc.page.width;
     const pageHeight = doc.page.height;
 
-    const columns = 2;
+    const columns = landscape ? 4 : 2;
     const gap = 12;
     const tokenWidth =
         (pageWidth - doc.page.margins.left - doc.page.margins.right -
