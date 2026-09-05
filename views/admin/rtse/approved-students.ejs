@@ -154,6 +154,7 @@
                                 <th>Reg. No.</th>
 
                                 <th>Student</th>
+                                <th>Father Name</th>
 
                                 <th>Class</th>
 
@@ -177,7 +178,7 @@
                                 <tr>
 
                                     <td
-                                        colspan="7"
+                                        colspan="8"
                                         style="text-align:center;padding:30px;">
 
                                         No approved students
@@ -216,6 +217,9 @@
                                             <%= student.school_name %>
                                         </small>
 
+                                    </td>
+                                    <td>
+                                        <%= student.father_name || "-" %>
                                     </td>
 
 
@@ -363,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
             tbody.innerHTML = `
                 <tr>
                     <td
-                        colspan="7"
+                        colspan="8"
                         style="text-align:center;padding:30px;">
                         No approved students found in
                         Section ${escapeHtml(section)}.
@@ -423,6 +427,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             </small>
 
                         </td>
+                                    <td>
+                                        ${escapeHtml(student.father_name || "-")}
+                                    </td>
 
                         <td>
                             ${escapeHtml(student.class)}

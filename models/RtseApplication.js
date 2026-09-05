@@ -390,6 +390,7 @@ class RtseApplication {
                 id,
                 registration_no,
                 full_name,
+                father_name,
                 mobile,
                 school_name,
                 class,

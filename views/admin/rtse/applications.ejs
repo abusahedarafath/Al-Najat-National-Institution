@@ -113,6 +113,7 @@
                             <tr>
                                 <th>Registration</th>
                                 <th>Student</th>
+                                <th>Father Name</th>
                                 <th>School</th>
                                 <th>Class</th>
                                 <th>Section</th>
@@ -148,6 +149,10 @@
                                             <%= application.mobile %>
                                         </small>
 
+                                    </td>
+
+                                    <td>
+                                        <%= application.father_name || "-" %>
                                     </td>
 
                                     <td>
@@ -216,7 +221,7 @@
                             <% if(!applications.length){ %>
 
                                 <tr>
-                                    <td colspan="8" style="text-align:center;padding:30px;">
+                                    <td colspan="9" style="text-align:center;padding:30px;">
                                         No applications found.
                                     </td>
                                 </tr>
@@ -354,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
             tbody.innerHTML = `
                 <tr>
                     <td
-                        colspan="7"
+                        colspan="9"
                         style="text-align:center;padding:30px;">
                         No applications found.
                     </td>
@@ -412,6 +417,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         <small>
                             ${escapeHtml(application.mobile)}
                         </small>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(application.father_name || "-")}
                     </td>
 
                     <td>
