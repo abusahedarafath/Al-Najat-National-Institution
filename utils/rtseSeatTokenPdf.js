@@ -145,7 +145,7 @@ function drawToken(doc, student, seatNo, x, y, width, height, examName) {
     doc
         .font("Helvetica")
         .fontSize(9)
-        .text("Roll- RTSE26", x + padding, y + 87, {
+        .text(`Roll- ${String(student.roll_no || "RTSE26").split("-")[0]}`, x + padding, y + 87, {
             width: innerWidth,
             height: 12,
             lineBreak: false
@@ -154,7 +154,7 @@ function drawToken(doc, student, seatNo, x, y, width, height, examName) {
     doc
         .font("Helvetica")
         .fontSize(9)
-        .text(`No- ${student.roll_no ?? ""}`, x + padding, y + 105, {
+        .text(`No- ${student.roll_number ?? ""}`, x + padding, y + 105, {
             width: innerWidth,
             height: 12,
             lineBreak: false
@@ -179,6 +179,7 @@ async function getExamName() {
     const [rows] = await db.query(`
         SELECT exam_name
         FROM rtse_exam_settings
+        WHERE LOWER(status) = 'active'
         ORDER BY id DESC
         LIMIT 1
     `);
