@@ -299,7 +299,8 @@ async function generateSidePdf(
     side,
     shiftId,
     roomId,
-    roomNo
+    roomNo,
+    usePhysicalSeatNo = false
 ) {
     ensureOutputDir();
 
@@ -339,13 +340,15 @@ async function generateSidePdf(
     const prepared = [];
 
     for (const student of sideStudents) {
-        const logicalSeatNo = getLogicalCornerSeatNo(
-            student,
-            rows[Number(student.row_no)][side],
-            student.row_no
-        );
+        const logicalSeatNo = usePhysicalSeatNo
+            ? Number(student.seat_no)
+            : getLogicalCornerSeatNo(
+                  student,
+                  rows[Number(student.row_no)][side],
+                  student.row_no
+              );
 
-        if (logicalSeatNo === null) {
+        if (!Number.isFinite(logicalSeatNo) || logicalSeatNo <= 0) {
             continue;
         }
 
@@ -551,9 +554,29 @@ async function generateRoomTokenPdfs(
         students[0].room_no
     );
 
+    const left = await generateSidePdf(
+        students,
+        examName,
+        "LEFT",
+        shiftId,
+        roomId,
+        students[0].room_no,
+        true
+    );
+
+    const right = await generateSidePdf(
+        students,
+        examName,
+        "RIGHT",
+        shiftId,
+        roomId,
+        students[0].room_no,
+        true
+    );
+
     return {
         seatSystem,
-        files: [full]
+        files: [full, left, right]
     };
 }
 module.exports = {
