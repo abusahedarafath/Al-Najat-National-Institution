@@ -2238,14 +2238,20 @@ exports.updateSeatDesignerSeat = async (req, res) => {
              * are no remaining locked student seats.
              */
             if (pdfResult.files.length) {
-                return res.render("admin/rtse/seat-token-generated", {
-                    title: "RTSE Seat Plan Tokens",
+                const designerShift = await RtseSeatPlan.getSeatDesigner(
                     shiftId,
                     roomId,
-                    room: null,
-                    allocatedCount: 0,
+                    applicationYear
+                );
+
+                return res.render("admin/rtse/seat-designer", {
+                    title: "Seat Designer",
+                    applicationYear,
+                    shiftId,
+                    roomId,
+                    shift: designerShift,
                     pdfResult,
-                    unlocked: true
+                    tokenAllocatedCount: 0
                 });
             }
 
@@ -2293,19 +2299,21 @@ exports.updateSeatDesignerSeat = async (req, res) => {
                         applicationYear
                     );
 
-                return res.render(
-                    "admin/rtse/seat-token-generated",
-                    {
-                        title: "RTSE Seat Plan Tokens",
-                        shiftId,
-                        roomId,
-                        room: {
-                            room_no: allocation.roomNo
-                        },
-                        allocatedCount: 1,
-                        pdfResult
-                    }
+                const designerShift = await RtseSeatPlan.getSeatDesigner(
+                    shiftId,
+                    roomId,
+                    applicationYear
                 );
+
+                return res.render("admin/rtse/seat-designer", {
+                    title: "Seat Designer",
+                    applicationYear,
+                    shiftId,
+                    roomId,
+                    shift: designerShift,
+                    pdfResult,
+                    tokenAllocatedCount: 1
+                });
             }
 
             if (allocation.reason === "no_student") {
@@ -2439,13 +2447,20 @@ exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
 
         const room = leftResult.room || rightResult?.room;
 
-        res.render("admin/rtse/seat-token-generated", {
-            title: "RTSE Seat Plan Tokens",
+        const designerShift = await RtseSeatPlan.getSeatDesigner(
             shiftId,
             roomId,
-            room,
-            allocatedCount,
-            pdfResult
+            applicationYear
+        );
+
+        res.render("admin/rtse/seat-designer", {
+            title: "Seat Designer",
+            applicationYear,
+            shiftId,
+            roomId,
+            shift: designerShift,
+            pdfResult,
+            tokenAllocatedCount: allocatedCount
         });
     } catch (err) {
         console.error(
@@ -2541,14 +2556,20 @@ exports.updateSeatSideLocks = async (req, res) => {
              * files for this room in that case.
              */
             if (pdfResult.files.length) {
-                return res.render("admin/rtse/seat-token-generated", {
-                    title: "RTSE Seat Plan Tokens",
+                const designerShift = await RtseSeatPlan.getSeatDesigner(
                     shiftId,
                     roomId,
-                    room: null,
-                    allocatedCount: 0,
+                    applicationYear
+                );
+
+                return res.render("admin/rtse/seat-designer", {
+                    title: "Seat Designer",
+                    applicationYear,
+                    shiftId,
+                    roomId,
+                    shift: designerShift,
                     pdfResult,
-                    unlocked: true
+                    tokenAllocatedCount: 0
                 });
             }
 
@@ -2612,13 +2633,20 @@ exports.updateSeatSideLocks = async (req, res) => {
                     applicationYear
                 );
 
-            return res.render("admin/rtse/seat-token-generated", {
-                title: "RTSE Seat Plan Tokens",
+            const designerShift = await RtseSeatPlan.getSeatDesigner(
                 shiftId,
                 roomId,
-                room: result.room,
-                allocatedCount: result.allocated,
-                pdfResult
+                applicationYear
+            );
+
+            return res.render("admin/rtse/seat-designer", {
+                title: "Seat Designer",
+                applicationYear,
+                shiftId,
+                roomId,
+                shift: designerShift,
+                pdfResult,
+                tokenAllocatedCount: result.allocated
             });
         }
 

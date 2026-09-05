@@ -122,6 +122,46 @@
 
             </section>
 
+            <% if (typeof pdfResult !== "undefined" && pdfResult && pdfResult.files && pdfResult.files.length) { %>
+                <section class="profile-card" style="
+                    margin-bottom:20px;
+                    border:1px solid #b8d4f5;
+                    background:#f7fbff;
+                ">
+                    <div class="rtse-section-heading">
+                        <div>
+                            <h2>Seat Plan Token PDF</h2>
+                            <p>
+                                <% if (typeof tokenAllocatedCount !== "undefined" && tokenAllocatedCount > 0) { %>
+                                    <strong><%= tokenAllocatedCount %></strong>
+                                    student seat(s) were allocated and locked.
+                                <% } else { %>
+                                    The current seat plan token PDF is ready.
+                                <% } %>
+                                The PDF was generated automatically.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="
+                        display:flex;
+                        gap:10px;
+                        flex-wrap:wrap;
+                        margin-top:16px;
+                    ">
+                        <% pdfResult.files.forEach(file => { %>
+                            <a
+                                href="<%= file.url %>"
+                                download
+                                class="btn-save"
+                            >
+                                Download <%= file.side %> Token PDF
+                            </a>
+                        <% }) %>
+                    </div>
+                </section>
+            <% } %>
+
             <section class="profile-card rtse-layout-card">
 
                 <div class="rtse-layout-header">
