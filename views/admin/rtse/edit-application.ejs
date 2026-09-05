@@ -21,6 +21,7 @@
             <form
                 action="/admin/rtse/application/<%= application.id %>/edit"
                 method="POST"
+                enctype="multipart/form-data"
                 data-history-fix="off">
 
                 <div class="profile-card">
@@ -147,6 +148,68 @@
                                 required
                             ><%= application.address || '' %></textarea>
                         </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Candidate Photo</label>
+
+                            <% if (application.photo) { %>
+                                <div style="margin:8px 0 12px;">
+                                    <img
+                                        id="currentRtsePhoto"
+                                        src="/uploads/rtse/<%= application.photo %>"
+                                        alt="Current candidate photo"
+                                        style="
+                                            width:120px;
+                                            height:150px;
+                                            object-fit:cover;
+                                            border:1px solid #ddd;
+                                            border-radius:8px;
+                                            display:block;
+                                            background:#f5f5f5;
+                                        "
+                                    >
+                                    <small style="display:block;margin-top:6px;color:#555;">
+                                        Current photo
+                                    </small>
+                                </div>
+                            <% } %>
+
+                            <input
+                                type="file"
+                                name="photo"
+                                id="adminRtsePhoto"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                            >
+
+                            <div
+                                id="adminRtsePhotoInfo"
+                                style="
+                                    margin-top:8px;
+                                    color:#555;
+                                    font-size:13px;
+                                    line-height:1.5;
+                                "
+                            >
+                                Optional — upload a new photo only if you want to replace the current photo.
+                                The system will automatically resize and compress it to reduce file size.
+                                Maximum upload size: 5 MB.
+                            </div>
+
+                            <img
+                                id="adminRtsePhotoPreview"
+                                alt="New candidate photo preview"
+                                style="
+                                    display:none;
+                                    margin-top:12px;
+                                    width:120px;
+                                    height:150px;
+                                    object-fit:cover;
+                                    border:1px solid #ddd;
+                                    border-radius:8px;
+                                    background:#f5f5f5;
+                                "
+                            >
+                        </div>
+
 
 
                         <div class="form-group">
@@ -203,5 +266,56 @@
     </main>
 
 </div>
+
+<script>
+(function () {
+    const input = document.getElementById("adminRtsePhoto");
+    const preview = document.getElementById("adminRtsePhotoPreview");
+    const info = document.getElementById("adminRtsePhotoInfo");
+
+    if (!input || !preview || !info) {
+        return;
+    }
+
+    input.addEventListener("change", function () {
+        const file = input.files && input.files[0];
+
+        if (!file) {
+            preview.removeAttribute("src");
+            preview.style.display = "none";
+            info.textContent =
+                "Optional — upload a new photo only if you want to replace the current photo. The system will automatically resize and compress it to reduce file size. Maximum upload size: 5 MB.";
+            return;
+        }
+
+        const sizeMb = file.size / (1024 * 1024);
+
+        if (sizeMb > 5) {
+            input.value = "";
+            preview.removeAttribute("src");
+            preview.style.display = "none";
+            info.textContent =
+                "Selected image is larger than 5 MB. Please choose a smaller image.";
+            return;
+        }
+
+        info.textContent =
+            "Selected: " +
+            file.name +
+            " (" +
+            sizeMb.toFixed(2) +
+            " MB). It will be automatically resized and compressed when saved.";
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            preview.src = event.target.result;
+            preview.style.display = "block";
+        };
+
+        reader.readAsDataURL(file);
+    });
+})();
+</script>
 
 <%- include("../partials/footer") %>

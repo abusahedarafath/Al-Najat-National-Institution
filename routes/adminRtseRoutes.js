@@ -5,6 +5,28 @@ const router = express.Router();
 const seatDesignerBody = multer().none();
 const roomFormBody = multer().none();
 
+const rtseAdminPhotoUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedMime = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (allowedMime.includes(file.mimetype)) {
+            return cb(null, true);
+        }
+
+        return cb(
+            new Error("Only JPG, JPEG, PNG and WEBP images are allowed.")
+        );
+    }
+});
+
 const auth = require("../middleware/auth");
 
 const adminRtseController =
@@ -106,13 +128,10 @@ router.get(
 );
 
 router.post(
-
     "/rtse/application/:id/edit",
-
     auth.isAdmin,
-
+    rtseAdminPhotoUpload.single("photo"),
     adminRtseController.updateApplication
-
 );
 
 

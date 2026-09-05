@@ -32,6 +32,97 @@ const RtseExamSetting = require("../models/RtseExamSetting");
 const RtseCentre = require("../models/RtseCentre");
 const { generateRoomTokenPdfs } =
 require("../utils/rtseSeatTokenPdf");
+
+const fs = require("fs");
+const path = require("path");
+const sharp = require("sharp");
+// =====================================
+// RTSE Admin Photo Compression
+// =====================================
+const RTSE_UPLOAD_DIR = path.join(
+    __dirname,
+    "..",
+    "public",
+    "uploads",
+    "rtse"
+);
+
+function safeRtsePhotoPath(filename) {
+    if (!filename) {
+        return null;
+    }
+
+    const safeName = path.basename(String(filename));
+
+    if (!safeName || safeName !== String(filename)) {
+        return null;
+    }
+
+    return path.join(RTSE_UPLOAD_DIR, safeName);
+}
+
+async function saveCompressedRtseAdminPhoto(file) {
+    if (!file || !file.buffer) {
+        return null;
+    }
+
+    fs.mkdirSync(RTSE_UPLOAD_DIR, { recursive: true });
+
+    const filename =
+        Date.now() +
+        "-" +
+        Math.round(Math.random() * 1000000000) +
+        ".jpg";
+
+    const outputPath = path.join(
+        RTSE_UPLOAD_DIR,
+        filename
+    );
+
+    try {
+        await sharp(file.buffer)
+            .rotate()
+            .resize({
+                width: 600,
+                height: 800,
+                fit: "inside",
+                withoutEnlargement: true
+            })
+            .jpeg({
+                quality: 78,
+                mozjpeg: true
+            })
+            .toFile(outputPath);
+
+        return filename;
+    } catch (error) {
+        if (fs.existsSync(outputPath)) {
+            fs.unlinkSync(outputPath);
+        }
+
+        throw new Error(
+            "The selected candidate photo could not be processed."
+        );
+    }
+}
+
+function deleteRtseAdminPhoto(filename) {
+    const filePath = safeRtsePhotoPath(filename);
+
+    if (!filePath || !fs.existsSync(filePath)) {
+        return;
+    }
+
+    try {
+        fs.unlinkSync(filePath);
+    } catch (error) {
+        console.error(
+            "Unable to remove replaced RTSE photo:",
+            error
+        );
+    }
+}
+
 // =====================================
 // RTSE Dashboard
 // =====================================
@@ -517,56 +608,70 @@ res.render(
 // =====================================
 
 exports.updateApplication = async (req, res) => {
+    let newPhotoFilename = null;
 
     try {
+        const existingApplication =
+            await RtseApplication.getById(req.params.id);
+
+        if (!existingApplication) {
+            req.flash("error", "Application not found.");
+            return res.redirect("/admin/rtse");
+        }
+
+        // Replace the photo only when the administrator
+        // explicitly uploads a new image.
+        if (req.file) {
+            newPhotoFilename =
+                await saveCompressedRtseAdminPhoto(req.file);
+        }
 
         await RtseApplication.update(
-
             req.params.id,
-
             req.body,
-
-            req.files
-
+            newPhotoFilename
         );
 
+        // Delete the previous photo only after the database
+        // update succeeds.
+        if (
+            newPhotoFilename &&
+            existingApplication.photo &&
+            existingApplication.photo !== newPhotoFilename
+        ) {
+            deleteRtseAdminPhoto(existingApplication.photo);
+        }
+
         req.flash(
-
             "success",
-
             "Application updated successfully."
-
         );
 
         res.redirect(
-
             "/admin/rtse/application/" +
             req.params.id
-
         );
-
     } catch (err) {
+        // Preserve the old photo if the update fails.
+        if (newPhotoFilename) {
+            deleteRtseAdminPhoto(newPhotoFilename);
+        }
 
         console.error(err);
 
         req.flash(
-
             "error",
-
-            "Unable to update application."
-
+            err && err.message
+                ? err.message
+                : "Unable to update application."
         );
 
         res.redirect(
-
             "/admin/rtse/application/" +
             req.params.id +
             "/edit"
-
         );
-
     }
-
 };
 
 

@@ -1453,10 +1453,11 @@ static async getSectionStatistics(){
 // =====================================
 // Update Application
 // =====================================
-    static async update(id, data) {
+    static async update(id, data, photoFilename = null) {
         // Recalculate section automatically from the updated class.
-        // Student-uploaded photo and identity_document are intentionally
-        // NOT included here and therefore cannot be changed by this edit.
+        // Photo is changed only when the admin explicitly supplies
+        // a newly compressed replacement filename.
+        // identity_document is intentionally never changed here.
         const section = this.getSection(data.class);
         const schoolId = Number(data.school_id);
 
@@ -1479,46 +1480,57 @@ static async getSectionStatistics(){
 
         const school = schoolRows[0];
 
-        await db.query(
-            `UPDATE rtse_applications
-             SET
-                full_name=?,
-                father_name=?,
-                mother_name=?,
-                gender=?,
-                dob=?,
-                mobile=?,
-                email=?,
-                school_id=?,
-                school_name=?,
-                district=?,
-                state=?,
-                pincode=?,
-                class=?,
-                section=?,
-                address=?,
-                status=?
-             WHERE id=?`,
-            [
-                data.full_name,
-                data.father_name,
-                data.mother_name,
-                data.gender,
-                data.dob,
-                data.mobile,
-                data.email,
-                school.id,
-                school.school_name,
-                data.district,
-                data.state,
-                data.pincode,
-                data.class,
-                section,
-                data.address,
-                data.status,
-                id
-            ]
-        );
+        const updateFields = [
+        "full_name=?",
+        "father_name=?",
+        "mother_name=?",
+        "gender=?",
+        "dob=?",
+        "mobile=?",
+        "email=?",
+        "school_id=?",
+        "school_name=?",
+        "district=?",
+        "state=?",
+        "pincode=?",
+        "class=?",
+        "section=?",
+        "address=?",
+        "status=?"
+    ];
+
+    const updateValues = [
+        data.full_name,
+        data.father_name,
+        data.mother_name,
+        data.gender,
+        data.dob,
+        data.mobile,
+        data.email,
+        school.id,
+        school.school_name,
+        data.district,
+        data.state,
+        data.pincode,
+        data.class,
+        section,
+        data.address,
+        data.status
+    ];
+
+    if (photoFilename) {
+        updateFields.push("photo=?");
+        updateValues.push(photoFilename);
+    }
+
+    updateValues.push(id);
+
+    await db.query(
+        `UPDATE rtse_applications
+         SET ${updateFields.join(", ")}
+         WHERE id=?`,
+        updateValues
+    );
     }
 
 
