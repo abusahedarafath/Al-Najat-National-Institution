@@ -1,0 +1,316 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Examination Details</h1>
+
+                    <p style="margin:6px 0 0;color:#6b7280;">
+                        RTSE Examination Control Centre
+                    </p>
+
+                </div>
+
+                <a
+                    href="/admin/rtse/exam-settings"
+                    class="btn-cancel"
+                    style="text-decoration:none;"
+                >
+                    ← Back
+                </a>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:flex-start;
+                    gap:20px;
+                    flex-wrap:wrap;
+                    margin-bottom:25px;
+                ">
+
+                    <div>
+
+                        <h2 style="margin:0 0 8px;">
+                            <%= examination.exam_name %>
+                        </h2>
+
+                        <div style="color:#6b7280;">
+                            Examination Year:
+                            <strong>
+                                <%= examination.exam_year %>
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <% if (examination.status === "ACTIVE") { %>
+
+                        <span style="
+                            display:inline-block;
+                            padding:7px 13px;
+                            border-radius:20px;
+                            background:#dcfce7;
+                            color:#166534;
+                            font-weight:700;
+                        ">
+                            ● ACTIVE
+                        </span>
+
+                    <% } else { %>
+
+                        <span style="
+                            display:inline-block;
+                            padding:7px 13px;
+                            border-radius:20px;
+                            background:#f3f4f6;
+                            color:#4b5563;
+                            font-weight:700;
+                        ">
+                            ● INACTIVE
+                        </span>
+
+                    <% } %>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>Application Start Date</label>
+
+                        <div>
+                            <%= examination.application_start_date || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Application End Date</label>
+
+                        <div>
+                            <%= examination.application_end_date || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Examination Date</label>
+
+                        <div>
+                            <%= examination.exam_date || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Reporting Time</label>
+
+                        <div>
+                            <%= examination.reporting_time || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Examination Start Time</label>
+
+                        <div>
+                            <%= examination.exam_start_time || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Examination End Time</label>
+
+                        <div>
+                            <%= examination.exam_end_time || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Result Publish Date</label>
+
+                        <div>
+                            <%= examination.result_publish_date || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Certificate Publish Date</label>
+
+                        <div>
+                            <%= examination.certificate_publish_date || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="form-group"
+                        style="grid-column:1/-1;"
+                    >
+
+                        <label>Default Examination Centre</label>
+
+                        <div>
+                            <%= examination.exam_centre || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="form-group"
+                        style="grid-column:1/-1;"
+                    >
+
+                        <label>Controller of Examination</label>
+
+                        <div>
+                            <%= examination.controller_name || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Created At</label>
+
+                        <div>
+                            <%= examination.created_at || "—" %>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Last Updated</label>
+
+                        <div>
+                            <%= examination.updated_at || "—" %>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    justify-content:flex-end;
+                    gap:10px;
+                    margin-top:25px;
+                    flex-wrap:wrap;
+                ">
+
+                    <a
+                        href="/admin/rtse/exam-settings/<%= examination.id %>/edit"
+                        class="btn-cancel"
+                        style="text-decoration:none;"
+                    >
+                        Edit
+                    </a>
+
+
+                    <% if (examination.status === "ACTIVE") { %>
+
+                        <form
+                            action="/admin/rtse/exam-settings/<%= examination.id %>/deactivate"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-cancel"
+                                onclick="return confirm('Deactivate this examination?');"
+                            >
+                                Deactivate
+                            </button>
+
+                        </form>
+
+                    <% } else { %>
+
+                        <form
+                            action="/admin/rtse/exam-settings/<%= examination.id %>/activate"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-save"
+                                onclick="return confirm('Make this examination active?');"
+                            >
+                                Activate
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            action="/admin/rtse/exam-settings/<%= examination.id %>/delete"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-cancel"
+                                style="color:#b91c1c;"
+                                onclick="return confirm('Delete this examination permanently?');"
+                            >
+                                Delete
+                            </button>
+
+                        </form>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

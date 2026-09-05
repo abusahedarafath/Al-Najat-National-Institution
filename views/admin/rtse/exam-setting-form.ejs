@@ -1,0 +1,686 @@
+<%- include("../partials/header") %>
+
+<%
+function formatExamTime(value) {
+    if (!value) return "";
+
+    let raw = String(value);
+
+    // Handle MySQL TIME values such as HH:MM:SS.
+    const match = raw.match(/(\d{1,2}):(\d{2})(?::\d{2})?/);
+
+    if (!match) return "";
+
+    let hour = Number(match[1]);
+    const minute = match[2];
+
+    if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
+        return "";
+    }
+
+    const suffix = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+
+    return `${hour}:${minute} ${suffix}`;
+}
+%>
+
+
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        <%= mode === "edit"
+                            ? "Edit RTSE Examination"
+                            : "Create RTSE Examination" %>
+                    </h1>
+
+                    <p style="margin:6px 0 0;color:#6b7280;">
+                        <%= mode === "edit"
+                            ? "Update the examination details."
+                            : "Create a new examination cycle." %>
+                    </p>
+
+                </div>
+
+                <a
+                    href="/admin/rtse/exam-settings"
+                    class="btn-cancel"
+                    style="text-decoration:none;"
+                >
+                    ← Back
+                </a>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <form
+                    action="<%= mode === 'edit'
+                        ? '/admin/rtse/exam-settings/' + examination.id + '/edit'
+                        : '/admin/rtse/exam-settings/new' %>"
+                    method="POST"
+                >
+
+                    <div class="form-grid">
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="form-group">
+    <label>
+        Examination Name *
+    </label>
+    <input
+        type="text"
+        name="exam_name"
+        value="<%= examination?.exam_name || '' %>"
+        required
+        maxlength="200"
+        placeholder="e.g. Ratabari Talent Search Examination"
+    >
+</div>
+
+<div class="form-group">
+    <label>
+        Examination Year *
+    </label>
+    <input
+        type="number"
+        name="exam_year"
+        value="<%= examination?.exam_year || '' %>"
+        required
+        min="2000"
+        max="2100"
+    >
+</div>
+
+<div class="form-group">
+    <label>
+        Application Start Date
+    </label>
+    <input
+        type="date"
+        name="application_start_date"
+        value="<%= examination?.application_start_date || '' %>"
+    >
+</div>
+
+<div class="form-group">
+    <label>
+        Application End Date
+    </label>
+    <input
+        type="date"
+        name="application_end_date"
+        value="<%= examination?.application_end_date || '' %>"
+    >
+</div>
+
+<div class="form-group">
+    <label>
+        Examination Date *
+    </label>
+    <input
+        type="date"
+        name="exam_date"
+        value="<%= examination?.exam_date || '' %>"
+        required
+    >
+</div>
+
+<div class="form-group">
+
+                            <label>
+                                Result Publish Date
+                            </label>
+
+                            <input
+                                type="date"
+                                name="result_publish_date"
+                                value="<%= examination?.result_publish_date || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Certificate Publish Date
+                            </label>
+
+                            <input
+                                type="date"
+                                name="certificate_publish_date"
+                                value="<%= examination?.certificate_publish_date || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div
+    class="form-group"
+    style="grid-column:1/-1;"
+>
+    <div style="
+        padding:14px 16px;
+        border:1px solid #bfdbfe;
+        border-radius:10px;
+        background:#eff6ff;
+        color:#1e3a5f;
+    ">
+        <strong>Examination Centre</strong>
+
+        <div style="
+            margin-top:6px;
+            font-size:13px;
+            line-height:1.6;
+        ">
+            Examination centres are assigned through the
+            <strong>School → Centre Assignment</strong> system.
+            Each student's admit card will automatically show
+            the centre assigned to the student's registered school.
+            No centre is selected in Examination Settings.
+        </div>
+    </div>
+</div>
+
+
+
+<div
+    class="form-group"
+    style="grid-column:1/-1;"
+>
+    <label>
+        Examination Shifts &amp; Sections
+    </label>
+
+    <div style="
+        margin-top:8px;
+        padding:13px 15px;
+        background:#f9fafb;
+        border:1px solid #e5e7eb;
+        border-radius:10px;
+        color:#4b5563;
+        font-size:13px;
+        line-height:1.6;
+    ">
+        Configure the examination hierarchy as
+        <strong>Shift → Sections</strong>.
+        Each shift has its own reporting time,
+        starting time and ending time.
+        Enter time in normal 12-hour format, for example
+        <strong>10:30 PM</strong>.
+    </div>
+
+    <div
+        id="exam-shifts"
+        style="
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+            margin-top:14px;
+        "
+    >
+
+        <% (examShifts || []).forEach((es, index) => { %>
+
+            <div
+                data-shift-card
+                style="
+                    padding:16px;
+                    border:1px solid #dbe3ec;
+                    border-radius:12px;
+                    background:#f8fafc;
+                "
+            >
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:1.4fr 1fr 1fr 1fr auto;
+                    gap:10px;
+                    align-items:end;
+                ">
+
+                    <div>
+                        <label>Shift</label>
+
+                        <select
+                            name="exam_shifts[<%= index %>][shift_id]"
+                            required
+                            style="width:100%;"
+                        >
+                            <option value="">Select shift</option>
+
+                            <% (shifts || []).forEach(shift => { %>
+                                <option
+                                    value="<%= shift.id %>"
+                                    <%= Number(es.shift_id) === Number(shift.id)
+                                        ? "selected"
+                                        : "" %>
+                                >
+                                    Shift <%= shift.shift_no %>
+                                    — <%= shift.shift_name %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Reporting Time</label>
+
+                        <input
+                            type="text"
+                            name="exam_shifts[<%= index %>][reporting_time]"
+                            value="<%= formatExamTime(es.reporting_time) %>"
+                            placeholder="10:30 AM"
+                            inputmode="text"
+                            autocomplete="off"
+                            pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Starting Time</label>
+
+                        <input
+                            type="text"
+                            name="exam_shifts[<%= index %>][exam_start_time]"
+                            value="<%= formatExamTime(es.exam_start_time) %>"
+                            placeholder="11:00 AM"
+                            inputmode="text"
+                            autocomplete="off"
+                            pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Ending Time</label>
+
+                        <input
+                            type="text"
+                            name="exam_shifts[<%= index %>][exam_end_time]"
+                            value="<%= formatExamTime(es.exam_end_time) %>"
+                            placeholder="1:00 PM"
+                            inputmode="text"
+                            autocomplete="off"
+                            pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$"
+                        >
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        data-remove-shift
+                    >
+                        Remove
+                    </button>
+
+                </div>
+
+                <div style="margin-top:14px;">
+
+                    <label>
+                        Sections for this Shift
+                    </label>
+
+                    <div style="
+                        display:flex;
+                        flex-wrap:wrap;
+                        gap:9px;
+                        margin-top:7px;
+                    ">
+
+                        <% ["A","B","C","D","E"].forEach(section => { %>
+
+                            <label style="
+                                display:flex;
+                                align-items:center;
+                                gap:6px;
+                                padding:7px 10px;
+                                border:1px solid #d1d5db;
+                                border-radius:8px;
+                                background:#fff;
+                                cursor:pointer;
+                            ">
+
+                                <input
+                                    type="checkbox"
+                                    name="exam_shifts[<%= index %>][sections][]"
+                                    value="<%= section %>"
+                                    <%= (es.sections || []).some(
+                                        s => String(s.section || s).toUpperCase() === section
+                                    ) ? "checked" : "" %>
+                                >
+
+                                Section <%= section %>
+
+                            </label>
+
+                        <% }) %>
+
+                    </div>
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    </div>
+
+    <button
+        type="button"
+        id="add-exam-shift"
+        class="btn-cancel"
+        style="margin-top:12px;"
+    >
+        + Add Shift
+    </button>
+
+</div>
+
+<div
+                            class="form-group"
+                            style="grid-column:1/-1;"
+                        >
+
+                            <label>
+                                Controller of Examination
+                            </label>
+
+                            <input
+                                type="text"
+                                name="controller_name"
+                                value="<%= examination?.controller_name || '' %>"
+                                maxlength="200"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+                    <% if (mode === "create") { %>
+
+                        <div style="
+                            margin-top:20px;
+                            padding:13px 15px;
+                            background:#f9fafb;
+                            border:1px solid #e5e7eb;
+                            border-radius:10px;
+                            color:#4b5563;
+                            font-size:14px;
+                        ">
+                            New examinations are created as
+                            <strong>INACTIVE</strong>.
+                            Activate the examination from the list after reviewing it.
+                        </div>
+
+                    <% } %>
+
+
+                    <div style="
+                        display:flex;
+                        justify-content:flex-end;
+                        gap:10px;
+                        margin-top:25px;
+                        flex-wrap:wrap;
+                    ">
+
+                        <a
+                            href="/admin/rtse/exam-settings"
+                            class="btn-cancel"
+                            style="text-decoration:none;"
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn-save"
+                        >
+                            <%= mode === "edit"
+                                ? "Update Examination"
+                                : "Save Examination" %>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+(function () {
+    const container =
+        document.getElementById("exam-shifts");
+
+    const addButton =
+        document.getElementById("add-exam-shift");
+
+    if (!container || !addButton) {
+        return;
+    }
+
+    let index =
+        container.querySelectorAll("[data-shift-card]").length;
+
+    const shiftOptions = `
+        <option value="">Select shift</option>
+        <% (shifts || []).forEach(shift => { %>
+            <option value="<%= shift.id %>">
+                Shift <%= shift.shift_no %>
+                — <%= shift.shift_name %>
+            </option>
+        <% }) %>
+    `;
+
+    function timeInput(name, placeholder) {
+        return `
+            <input
+                type="text"
+                name="${name}"
+                placeholder="${placeholder}"
+                inputmode="text"
+                autocomplete="off"
+                pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM|am|pm)$"
+            >
+        `;
+    }
+
+    addButton.addEventListener("click", function () {
+
+        const card =
+            document.createElement("div");
+
+        card.setAttribute(
+            "data-shift-card",
+            ""
+        );
+
+        card.style.cssText = `
+            padding:16px;
+            border:1px solid #dbe3ec;
+            border-radius:12px;
+            background:#f8fafc;
+        `;
+
+        card.innerHTML = `
+            <div style="
+                display:grid;
+                grid-template-columns:1.4fr 1fr 1fr 1fr auto;
+                gap:10px;
+                align-items:end;
+            ">
+
+                <div>
+                    <label>Shift</label>
+
+                    <select
+                        name="exam_shifts[${index}][shift_id]"
+                        required
+                        style="width:100%;"
+                    >
+                        ${shiftOptions}
+                    </select>
+                </div>
+
+                <div>
+                    <label>Reporting Time</label>
+                    ${timeInput(
+                        `exam_shifts[${index}][reporting_time]`,
+                        "10:30 AM"
+                    )}
+                </div>
+
+                <div>
+                    <label>Starting Time</label>
+                    ${timeInput(
+                        `exam_shifts[${index}][exam_start_time]`,
+                        "11:00 AM"
+                    )}
+                </div>
+
+                <div>
+                    <label>Ending Time</label>
+                    ${timeInput(
+                        `exam_shifts[${index}][exam_end_time]`,
+                        "1:00 PM"
+                    )}
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-cancel"
+                    data-remove-shift
+                >
+                    Remove
+                </button>
+
+            </div>
+
+            <div style="margin-top:14px;">
+
+                <label>
+                    Sections for this Shift
+                </label>
+
+                <div style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:9px;
+                    margin-top:7px;
+                ">
+
+                    ${["A","B","C","D","E"].map(section => `
+                        <label style="
+                            display:flex;
+                            align-items:center;
+                            gap:6px;
+                            padding:7px 10px;
+                            border:1px solid #d1d5db;
+                            border-radius:8px;
+                            background:#fff;
+                            cursor:pointer;
+                        ">
+                            <input
+                                type="checkbox"
+                                name="exam_shifts[${index}][sections][]"
+                                value="${section}"
+                            >
+                            Section ${section}
+                        </label>
+                    `).join("")}
+
+                </div>
+            </div>
+        `;
+
+        container.appendChild(card);
+        index++;
+    });
+
+    container.addEventListener("click", function (event) {
+
+        const button =
+            event.target.closest("[data-remove-shift]");
+
+        if (!button) {
+            return;
+        }
+
+        const card =
+            button.closest("[data-shift-card]");
+
+        if (card) {
+            card.remove();
+        }
+    });
+
+    document.querySelector("form").addEventListener(
+        "submit",
+        function (event) {
+
+            const selects =
+                container.querySelectorAll(
+                    'select[name*="[shift_id]"]'
+                );
+
+            const selected =
+                new Set();
+
+            for (const select of selects) {
+
+                if (!select.value) {
+                    continue;
+                }
+
+                if (selected.has(select.value)) {
+                    event.preventDefault();
+
+                    alert(
+                        "The same shift cannot be added more than once."
+                    );
+
+                    select.focus();
+                    return;
+                }
+
+                selected.add(select.value);
+            }
+        }
+    );
+})();
+</script>
+
+<%- include("../partials/footer") %>
