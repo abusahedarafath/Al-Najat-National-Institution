@@ -58,6 +58,7 @@ router.get(
 
 router.post(
     "/student/login",
+    multer().none(),
     rtseStudentController.login
 );
 
