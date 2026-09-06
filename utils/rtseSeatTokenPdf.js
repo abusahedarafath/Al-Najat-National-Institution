@@ -202,6 +202,105 @@ function finishDocument(doc, outputPath) {
     });
 }
 
+
+function drawDynamicPdfHeader(
+    doc,
+    {
+        examName,
+        roomNo,
+        shiftNo,
+        pdfType,
+        studentCount,
+        configuredSeatCount,
+        sectionCount,
+        sectionNames
+    }
+) {
+    const pageWidth = doc.page.width;
+    const marginLeft = doc.page.margins.left;
+    const marginRight = doc.page.margins.right;
+
+    const safeExamName = String(examName || "RTSE").trim();
+    const safeRoomNo = String(roomNo ?? "-").trim();
+    const safeShiftNo = String(shiftNo ?? "-").trim();
+    const safePdfType = String(pdfType || "FULL").trim().toUpperCase();
+    const safeStudentCount = Number.isFinite(Number(studentCount))
+        ? Number(studentCount)
+        : 0;
+    const safeConfiguredSeatCount = Number.isFinite(Number(configuredSeatCount))
+        ? Number(configuredSeatCount)
+        : 0;
+    const safeSectionCount = Number.isFinite(Number(sectionCount))
+        ? Number(sectionCount)
+        : 0;
+
+    const safeSectionNames = Array.isArray(sectionNames)
+        ? sectionNames
+            .map(section => String(section || "").trim())
+            .filter(Boolean)
+        : [];
+
+    const sectionLabel = safeSectionNames.length
+        ? `${safeSectionCount} (${safeSectionNames.join(", ")})`
+        : String(safeSectionCount);
+
+    const headerText =
+        `${safeExamName}  |  Room: ${safeRoomNo}` +
+        `  |  Shift: ${safeShiftNo}` +
+        `  |  PDF: ${safePdfType}` +
+        `  |  Students: ${safeStudentCount}` +
+        `  |  Configured Seats: ${safeConfiguredSeatCount}` +
+        `  |  Sections: ${sectionLabel}`;
+
+    /*
+     * The header intentionally stays inside the existing top margin.
+     * No token dimensions, positions, pagination, or drawToken()
+     * behaviour are changed.
+     */
+    const headerY = Math.max(6, doc.page.margins.top - 17);
+    const availableWidth =
+        pageWidth - marginLeft - marginRight;
+
+    doc.save();
+
+    doc
+        .font("Helvetica-Bold")
+        .fontSize(7.2)
+        .fillColor("#111827");
+
+    /*
+     * PDFKit's widthOfString() lets us dynamically reduce the font
+     * size for long exam names without changing the token layout.
+     */
+    let fontSize = 7.2;
+
+    while (
+        fontSize > 5.2 &&
+        doc.widthOfString(headerText, {
+            size: fontSize
+        }) > availableWidth
+    ) {
+        fontSize -= 0.2;
+    }
+
+    doc
+        .fontSize(fontSize)
+        .text(
+            headerText,
+            marginLeft,
+            headerY,
+            {
+                width: availableWidth,
+                height: 12,
+                align: "center",
+                lineBreak: false,
+                ellipsis: true
+            }
+        );
+
+    doc.restore();
+}
+
 async function getExamName() {
     const [rows] = await db.query(`
         SELECT exam_name
@@ -227,12 +326,15 @@ async function getRoomTokenStudents(shiftId, roomId, applicationYear) {
             sp.seat_no,
             sp.position,
             r.seat_system,
-            r.room_no
+            r.room_no,
+            s.shift_no
         FROM rtse_applications a
         INNER JOIN rtse_seat_plan_seats sp
             ON sp.id = a.seat_id
         INNER JOIN rtse_seat_plan_rooms r
             ON r.id = sp.room_id
+        LEFT JOIN rtse_seat_plan_shifts s
+            ON s.id = r.shift_id
         WHERE a.archive = 0
           AND a.status = 'Approved'
           AND a.application_year = ?
@@ -250,7 +352,14 @@ async function getRoomTokenStudents(shiftId, roomId, applicationYear) {
     return rows;
 }
 
-async function generateFullPdf(students, examName, shiftId, roomId, roomNo) {
+async function generateFullPdf(
+    students,
+    examName,
+    shiftId,
+    roomId,
+    roomNo,
+    headerMeta
+) {
     ensureOutputDir();
 
     const outputPath = path.join(
@@ -279,9 +388,31 @@ async function generateFullPdf(students, examName, shiftId, roomId, roomNo) {
         (pageHeight - doc.page.margins.top - doc.page.margins.bottom -
             gap * (rowsPerPage - 1)) / rowsPerPage;
 
+    drawDynamicPdfHeader(doc, {
+        examName,
+        roomNo,
+        shiftNo: headerMeta?.shiftNo ?? shiftId,
+        pdfType: "FULL",
+        studentCount: students.length,
+        configuredSeatCount: headerMeta?.configuredSeatCount ?? 0,
+        sectionCount: headerMeta?.sectionCount ?? 0,
+        sectionNames: headerMeta?.sectionNames ?? []
+    });
+
     for (let index = 0; index < students.length; index++) {
         if (index > 0 && index % 16 === 0) {
             doc.addPage();
+
+            drawDynamicPdfHeader(doc, {
+                examName,
+                roomNo,
+                shiftNo: headerMeta?.shiftNo ?? shiftId,
+                pdfType: "FULL",
+                studentCount: students.length,
+                configuredSeatCount: headerMeta?.configuredSeatCount ?? 0,
+                sectionCount: headerMeta?.sectionCount ?? 0,
+                sectionNames: headerMeta?.sectionNames ?? []
+            });
         }
 
         const pageIndex = index % 16;
@@ -331,7 +462,8 @@ async function generateSidePdf(
     roomId,
     roomNo,
     usePhysicalSeatNo = false,
-    landscape = false
+    landscape = false,
+    headerMeta = null
 ) {
     ensureOutputDir();
 
@@ -422,9 +554,31 @@ async function generateSidePdf(
 
     const tokensPerPage = rowsPerPage * columns;
 
+    drawDynamicPdfHeader(doc, {
+        examName,
+        roomNo,
+        shiftNo: headerMeta?.shiftNo ?? shiftId,
+        pdfType: side,
+        studentCount: prepared.length,
+        configuredSeatCount: headerMeta?.configuredSeatCount ?? 0,
+        sectionCount: headerMeta?.sectionCount ?? 0,
+        sectionNames: headerMeta?.sectionNames ?? []
+    });
+
     for (let index = 0; index < prepared.length; index++) {
         if (index > 0 && index % tokensPerPage === 0) {
             doc.addPage();
+
+            drawDynamicPdfHeader(doc, {
+                examName,
+                roomNo,
+                shiftNo: headerMeta?.shiftNo ?? shiftId,
+                pdfType: side,
+                studentCount: prepared.length,
+                configuredSeatCount: headerMeta?.configuredSeatCount ?? 0,
+                sectionCount: headerMeta?.sectionCount ?? 0,
+                sectionNames: headerMeta?.sectionNames ?? []
+            });
         }
 
         const pageIndex = index % tokensPerPage;
@@ -556,13 +710,68 @@ async function generateRoomTokenPdfs(
             students[0].seat_system || "FULL"
         ).toUpperCase();
 
+    /*
+     * Header metadata comes from the same room/seat-plan data used
+     * by the existing allocation system.
+     */
+    const [roomMetaRows] = await db.query(`
+        SELECT
+            r.room_no,
+            s.shift_no,
+            COUNT(
+                CASE
+                    WHEN sp.is_active = 1
+                    AND sp.section IS NOT NULL
+                    THEN 1
+                END
+            ) AS configured_seat_count
+        FROM rtse_seat_plan_rooms r
+        LEFT JOIN rtse_seat_plan_shifts s
+            ON s.id = r.shift_id
+        LEFT JOIN rtse_seat_plan_seats sp
+            ON sp.room_id = r.id
+            AND sp.shift_id = r.shift_id
+        WHERE r.id = ?
+            AND r.shift_id = ?
+            AND r.application_year = ?
+        GROUP BY
+            r.id,
+            r.room_no,
+            s.shift_no
+        LIMIT 1
+    `, [
+        roomId,
+        shiftId,
+        applicationYear
+    ]);
+
+    const roomMeta = roomMetaRows[0] || {};
+
+    const sectionNames = [
+        ...new Set(
+            students
+                .map(student => String(student.section || "").trim())
+                .filter(Boolean)
+        )
+    ];
+
+    const headerMeta = {
+        shiftNo: roomMeta.shift_no ?? students[0].shift_no ?? shiftId,
+        configuredSeatCount: Number(
+            roomMeta.configured_seat_count || 0
+        ),
+        sectionCount: sectionNames.length,
+        sectionNames
+    };
+
     if (seatSystem === "CORNER_TO_CORNER") {
         const full = await generateFullPdf(
             students,
             examName,
             shiftId,
             roomId,
-            students[0].room_no
+            students[0].room_no,
+            headerMeta
         );
 
         const left = await generateSidePdf(
@@ -573,7 +782,8 @@ async function generateRoomTokenPdfs(
             roomId,
             students[0].room_no,
             false,
-            false
+            false,
+            headerMeta
         );
 
         const right = await generateSidePdf(
@@ -584,7 +794,8 @@ async function generateRoomTokenPdfs(
             roomId,
             students[0].room_no,
             false,
-            false
+            false,
+            headerMeta
         );
 
         return {
@@ -598,7 +809,8 @@ async function generateRoomTokenPdfs(
         examName,
         shiftId,
         roomId,
-        students[0].room_no
+        students[0].room_no,
+        headerMeta
     );
 
     /*
@@ -615,7 +827,8 @@ async function generateRoomTokenPdfs(
         roomId,
         students[0].room_no,
         true,
-        true
+        true,
+        headerMeta
     );
 
     const right = await generateSidePdf(
@@ -626,7 +839,8 @@ async function generateRoomTokenPdfs(
         roomId,
         students[0].room_no,
         true,
-        true
+        true,
+        headerMeta
     );
 
     return {
