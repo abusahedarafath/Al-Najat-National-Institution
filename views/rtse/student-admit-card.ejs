@@ -1184,15 +1184,21 @@ body{
                     </div>
                 </div>
 
-                <div class="id-row">
-                    <div class="id-label">
-                        Class & Section
-                    </div>
-                    <div class="id-colon">:</div>
-                    <div class="id-value">
-                        CLASS <%= studentClass %> - <%= section %>
-                    </div>
-                </div>
+
+<div class="id-row">
+    <div class="id-label">Class</div>
+    <div class="id-colon">:</div>
+    <div class="id-value"><%= studentClass %></div>
+</div>
+
+<div class="id-row">
+    <div class="id-label">Section</div>
+    <div class="id-colon">:</div>
+    <div class="id-value"><%= student.section %></div>
+</div>
+
+
+
 
             </div>
 
@@ -1284,14 +1290,6 @@ body{
                   </div>
               </div>
 
-              <div class="exam-box">
-                  <div class="exam-label">
-                      Sections
-                  </div>
-                  <div class="exam-value">
-                      <%= examinationSections %>
-                  </div>
-              </div>
 
           </div>
 
@@ -1303,12 +1301,9 @@ body{
             <div class="signature-line"></div>
 
             <div class="signature">
-                Controller of Examination
+                Controller of RTSE
             </div>
 
-            <div class="signature">
-                <strong>ARSP</strong>
-            </div>
 
         </div>
 
