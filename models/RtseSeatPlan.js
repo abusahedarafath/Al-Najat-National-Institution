@@ -506,19 +506,57 @@ class RtseSeatPlan {
             ]
         );
 
-        await db.query(
+        /*
+         * Seat generation is additive.
+         *
+         * Existing seats must never be deleted or recreated because their
+         * database IDs may be referenced by rtse_applications and their
+         * is_locked / section / gender values must remain unchanged.
+         *
+         * rowCount represents the TOTAL desired row count. Therefore:
+         *   existing 10 rows + request 10 rows = no new seats
+         *   existing 10 rows + request 20 rows = add rows 11-20
+         *
+         * New seats continue from the next available seat number.
+         */
+        const [existingRows] = await db.query(
             `
-            DELETE FROM rtse_seat_plan_seats
+            SELECT
+                MAX(row_no) AS max_row_no,
+                MAX(seat_no) AS max_seat_no,
+                COUNT(*) AS seat_count
+            FROM rtse_seat_plan_seats
             WHERE shift_id = ?
               AND room_id = ?
             `,
             [shiftId, roomId]
         );
 
-        const values = [];
-        let seatNo = 1;
+        const existingMaxRow = Number(
+            existingRows[0]?.max_row_no || 0
+        );
 
-        for (let row = 1; row <= rowCount; row++) {
+        const existingMaxSeatNo = Number(
+            existingRows[0]?.max_seat_no || 0
+        );
+
+        /*
+         * If the requested layout is not an expansion, do not destroy
+         * existing seats. A smaller/equal row count cannot safely rebuild
+         * a room that may already contain locked/assigned seats.
+         */
+        if (existingMaxRow >= rowCount) {
+            return 0;
+        }
+
+        const values = [];
+        let seatNo = existingMaxSeatNo + 1;
+
+        for (
+            let row = existingMaxRow + 1;
+            row <= rowCount;
+            row++
+        ) {
             if (layout === "TWO_SIDE") {
                 for (let i = 0; i < seatsPerSide; i++) {
                     values.push([
