@@ -653,6 +653,13 @@ router.post(
 );
 
 router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/universal-unlock",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.unlockSingleLineUniversalLock
+);
+
+router.post(
     "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/side-lock",
     auth.isAdmin,
     seatDesignerBody,

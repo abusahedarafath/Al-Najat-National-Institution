@@ -2955,6 +2955,88 @@ exports.lockSingleLineSeatsAndGenerateTokens = async (
     }
 };
 
+
+exports.unlockSingleLineUniversalLock = async (req, res) => {
+    const shiftId = Number(req.params.shiftId);
+    const roomId = Number(req.params.roomId);
+
+    try {
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const shift =
+            await RtseSeatPlan.getSeatDesigner(
+                shiftId,
+                roomId,
+                applicationYear
+            );
+
+        if (!shift) {
+            throw new Error("RTSE shift/room not found.");
+        }
+
+        if (shift.layout !== "SINGLE_LINE") {
+            throw new Error(
+                "Universal unlock is available only for SINGLE_LINE layout."
+            );
+        }
+
+        const result =
+            await RtseSeatPlan.unlockSingleLineUniversalLock(
+                shiftId,
+                roomId,
+                applicationYear
+            );
+
+        /*
+         * Regenerate the room token PDFs even when no student
+         * assignment remains. This removes stale token files.
+         */
+        await generateRoomTokenPdfs(
+            shiftId,
+            roomId,
+            applicationYear
+        );
+
+        if (result.released > 0) {
+            req.flash(
+                "success",
+                `Universal lock removed and ${result.released} student seat assignment(s) released.`
+            );
+        } else {
+            req.flash(
+                "success",
+                "Universal lock removed and applicable seats unlocked."
+            );
+        }
+
+        return res.redirect(
+            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+        );
+    } catch (error) {
+        console.error(
+            "RTSE SINGLE_LINE universal unlock error:",
+            error
+        );
+
+        req.flash(
+            "error",
+            error.message ||
+                "Unable to unlock the SINGLE_LINE universal room lock."
+        );
+
+        return res.redirect(
+            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+        );
+    }
+};
+
 exports.updateSeatSideLocks = async (req, res) => {
     try {
         const shiftId = parseInt(req.params.shiftId, 10);

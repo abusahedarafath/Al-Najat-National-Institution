@@ -814,17 +814,33 @@
                                     </button>
 
                                     <button
-                                        type="submit"
+                                        type="button"
                                         class="btn btn-outline-danger"
                                         onclick="
-                                            this.form.gender_lock.value='';
-                                            this.form.section_lock.value='';
+                                            if (confirm('Universal Unlock will release the students assigned by the current Universal Gender + Section lock and unlock those seats. Existing other locked seats will remain unchanged. Continue?')) {
+                                                document.getElementById('rtse-single-line-universal-unlock-form').submit();
+                                            }
                                         "
                                     >
-                                        Clear Lock
+                                        Universal Unlock &amp; Release
                                     </button>
+
+
                                 </div>
                             </form>
+
+                                <form
+                                    id="rtse-single-line-universal-unlock-form"
+                                    method="POST"
+                                    action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/universal-unlock"
+                                    class="d-none"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="application_year"
+                                        value="<%= applicationYear %>"
+                                    >
+                                </form>
                         </div>
                     </div>
 

@@ -1658,6 +1658,221 @@ class RtseSeatPlan {
         );
     }
 
+
+    static async unlockSingleLineUniversalLock(
+        shiftId,
+        roomId,
+        applicationYear
+    ) {
+        const normalizedShiftId = Number(shiftId);
+        const normalizedRoomId = Number(roomId);
+        const normalizedYear = Number(applicationYear);
+
+        if (
+            !Number.isInteger(normalizedShiftId) ||
+            normalizedShiftId < 1
+        ) {
+            throw new Error("Invalid RTSE shift.");
+        }
+
+        if (
+            !Number.isInteger(normalizedRoomId) ||
+            normalizedRoomId < 1
+        ) {
+            throw new Error("Invalid RTSE room.");
+        }
+
+        if (!normalizedYear) {
+            throw new Error("Invalid RTSE application year.");
+        }
+
+        const connection = await db.getConnection();
+
+        try {
+            await connection.beginTransaction();
+
+            const [rooms] = await connection.query(
+                `
+                    SELECT
+                        id,
+                        seat_system,
+                        universal_gender_lock,
+                        universal_section_lock
+                    FROM rtse_seat_plan_rooms
+                    WHERE id = ?
+                      AND shift_id = ?
+                      AND application_year = ?
+                    LIMIT 1
+                `,
+                [
+                    normalizedRoomId,
+                    normalizedShiftId,
+                    normalizedYear
+                ]
+            );
+
+            if (!rooms.length) {
+                throw new Error("Room not found.");
+            }
+
+            const room = rooms[0];
+
+            if (room.seat_system !== "FULL" &&
+                room.seat_system !== "CORNER_TO_CORNER") {
+                /*
+                 * SINGLE_LINE is represented by the shift layout.
+                 * The room seat_system is still allowed to be either
+                 * FULL or CORNER_TO_CORNER.
+                 */
+            }
+
+            const universalGender =
+                String(room.universal_gender_lock || "").trim();
+
+            const universalSection =
+                String(room.universal_section_lock || "")
+                    .trim()
+                    .toUpperCase();
+
+            /*
+             * Find only applications belonging to the currently
+             * stored universal Gender + Section combination and
+             * physically assigned to this exact room.
+             *
+             * This prevents pre-existing individual/configured
+             * locks from being released accidentally.
+             */
+            const [assigned] = await connection.query(
+                `
+                    SELECT
+                        a.id AS application_id,
+                        a.seat_id
+                    FROM rtse_applications a
+                    INNER JOIN rtse_seat_plan_seats sp
+                        ON sp.id = a.seat_id
+                    WHERE a.archive = 0
+                      AND a.status = 'Approved'
+                      AND a.application_year = ?
+                      AND a.shift_id = ?
+                      AND a.room_id = ?
+                      AND a.seat_id IS NOT NULL
+                      AND sp.shift_id = ?
+                      AND sp.room_id = ?
+                      AND sp.is_locked = 1
+                      AND sp.gender = ?
+                      AND sp.section = ?
+                    FOR UPDATE
+                `,
+                [
+                    normalizedYear,
+                    normalizedShiftId,
+                    normalizedRoomId,
+                    normalizedShiftId,
+                    normalizedRoomId,
+                    universalGender,
+                    universalSection
+                ]
+            );
+
+            const applicationIds = assigned
+                .map(row => Number(row.application_id))
+                .filter(Number.isInteger);
+
+            const seatIds = assigned
+                .map(row => Number(row.seat_id))
+                .filter(Number.isInteger);
+
+            if (applicationIds.length) {
+                const placeholders =
+                    applicationIds.map(() => "?").join(",");
+
+                await connection.query(
+                    `
+                        UPDATE rtse_applications
+                        SET
+                            shift_id = NULL,
+                            room_id = NULL,
+                            seat_id = NULL,
+                            room_no = NULL,
+                            seat_no = NULL
+                        WHERE id IN (${placeholders})
+                          AND application_year = ?
+                    `,
+                    [
+                        ...applicationIds,
+                        normalizedYear
+                    ]
+                );
+            }
+
+            /*
+             * Unlock only the physical seats that belonged to the
+             * universal Gender + Section allocation.
+             *
+             * Any other locked/configured seat remains untouched.
+             */
+            if (seatIds.length) {
+                const placeholders =
+                    seatIds.map(() => "?").join(",");
+
+                await connection.query(
+                    `
+                        UPDATE rtse_seat_plan_seats
+                        SET
+                            section = NULL,
+                            gender = 'Any',
+                            is_locked = 0
+                        WHERE id IN (${placeholders})
+                          AND shift_id = ?
+                          AND room_id = ?
+                          AND is_locked = 1
+                          AND gender = ?
+                          AND section = ?
+                    `,
+                    [
+                        ...seatIds,
+                        normalizedShiftId,
+                        normalizedRoomId,
+                        universalGender,
+                        universalSection
+                    ]
+                );
+            }
+
+            /*
+             * Always clear the room-level universal restriction.
+             */
+            await connection.query(
+                `
+                    UPDATE rtse_seat_plan_rooms
+                    SET
+                        universal_gender_lock = NULL,
+                        universal_section_lock = NULL
+                    WHERE id = ?
+                      AND shift_id = ?
+                      AND application_year = ?
+                `,
+                [
+                    normalizedRoomId,
+                    normalizedShiftId,
+                    normalizedYear
+                ]
+            );
+
+            await connection.commit();
+
+            return {
+                released: applicationIds.length,
+                unlockedSeats: seatIds.length
+            };
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+
     static async getRoomUniversalLock(
         shiftId,
         roomId,
