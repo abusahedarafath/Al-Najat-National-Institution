@@ -3017,7 +3017,7 @@ exports.unlockSingleLineUniversalLock = async (req, res) => {
         }
 
         return res.redirect(
-            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}/seats`
         );
     } catch (error) {
         console.error(
@@ -3032,7 +3032,7 @@ exports.unlockSingleLineUniversalLock = async (req, res) => {
         );
 
         return res.redirect(
-            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}/seats`
         );
     }
 };
