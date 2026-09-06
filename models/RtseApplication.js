@@ -1103,6 +1103,54 @@ static async generateAdmitCards(section, applicationYear){
 // Get Admit Card Students
 // =====================================
 
+static async getGeneratedAdmitCardStudents(section, applicationYear){
+    const [rows] = await db.query(
+        `
+        SELECT *
+        FROM rtse_applications
+        WHERE
+            archive = 0
+            AND status = 'Approved'
+            AND application_year = ?
+            AND roll_no IS NOT NULL
+            AND section = ?
+            AND admit_generated = 1
+        ORDER BY
+            CAST(
+                SUBSTRING_INDEX(roll_no, '-', -1)
+                AS UNSIGNED
+            ) ASC,
+            roll_no ASC
+        `,
+        [applicationYear, section]
+    );
+    return rows;
+}
+
+static async getAllGeneratedAdmitCardStudents(applicationYear){
+    const [rows] = await db.query(
+        `
+        SELECT *
+        FROM rtse_applications
+        WHERE
+            archive = 0
+            AND status = 'Approved'
+            AND application_year = ?
+            AND roll_no IS NOT NULL
+            AND admit_generated = 1
+        ORDER BY
+            section ASC,
+            CAST(
+                SUBSTRING_INDEX(roll_no, '-', -1)
+                AS UNSIGNED
+            ) ASC,
+            roll_no ASC
+        `,
+        [applicationYear]
+    );
+    return rows;
+}
+
 static async getAdmitCardStudents(section, applicationYear){
 
     const [rows] = await db.query(

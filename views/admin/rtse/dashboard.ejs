@@ -62,6 +62,15 @@
 
                     <% } %>
 
+<% if(admitGenerated){ %>
+    <a
+        href="/admin/rtse/admit-cards/pdf/all"
+        class="btn-save"
+    >
+        🖨️ Print / Save All Generated Admit Cards
+    </a>
+<% } %>
+
 
                     <% if(admitGenerated){ %>
 
@@ -211,7 +220,8 @@
 
                 <div class="rtse-section-grid">
 
-                    <% RTSE_FIXED_SECTION_ORDER.forEach(section=>{ %>
+
+        <% RTSE_FIXED_SECTION_ORDER.forEach(section=>{ %>
 
                         <% const data =
                             RTSE_SECTION_MAP[section] || {};
@@ -304,6 +314,15 @@
                                 >
                                     📊 Section Excel
                                 </a>
+
+                                <% if(Number(data.admit_generated || 0) > 0){ %>
+                                    <a
+                                        href="/admin/rtse/admit-cards/pdf/<%= section %>"
+                                        class="btn-save"
+                                    >
+                                        🖨️ Print / Save All Admit Cards
+                                    </a>
+                                <% } %>
 
                             </div>
 

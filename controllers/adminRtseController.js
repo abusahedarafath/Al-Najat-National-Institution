@@ -5232,3 +5232,257 @@ exports.allCertificates = async (req,res)=>{
     }
 
 };
+
+/**
+ * Download all generated RTSE admit cards for one section.
+ * Exactly one student is rendered per PDF page.
+ */
+/**
+ * Prepare the exact data contract used by the existing
+ * student admit-card EJS template.
+ */
+const prepareRtseAdmitCardData = async (student) => {
+    const ArspSetting = require("../models/ArspSetting");
+
+    const setting = await ArspSetting.get();
+    const examSetting = await RtseExamSetting.get();
+    const admitCardSetting = await RtseAdmitCardSetting.get();
+
+    // Resolve the student's examination shift from the
+    // shift-wise sections configured under Examination Settings.
+    let examShift = null;
+
+    if (examSetting && student.section) {
+        const configuredShifts =
+            await RtseExamSetting.getShifts(examSetting.id);
+
+        const studentSection =
+            String(student.section)
+                .trim()
+                .toUpperCase();
+
+        examShift =
+            configuredShifts.find((shift) =>
+                Array.isArray(shift.sections) &&
+                shift.sections.some((section) =>
+                    String(section.section || "")
+                        .trim()
+                        .toUpperCase() === studentSection
+                )
+            ) || null;
+    }
+
+    // Resolve the examination centre from the student's
+    // registered school and its centre assignment.
+    let examCentre = null;
+
+    if (student.school_id && student.application_year) {
+        examCentre =
+            await RtseCentre.getSchoolAssignment(
+                student.school_id,
+                student.application_year
+            );
+    }
+
+    // Guarantee an attendance QR record for a generated admit.
+    let attendance = null;
+
+    if (
+        Number(student.admit_generated) === 1 &&
+        student.status === "Approved" &&
+        student.roll_no
+    ) {
+        attendance =
+            await RtseExamAttendance.ensureForApplication(
+                student.id
+            );
+    }
+
+    let qrData = null;
+
+    if (attendance && attendance.qr_token) {
+        qrData = await QRCode.toDataURL(
+            attendance.qr_token,
+            {
+                width: 180,
+                margin: 2,
+                errorCorrectionLevel: "M"
+            }
+        );
+    }
+
+    return {
+        title: "RTSE Admit Card",
+        setting,
+        student,
+        attendance,
+        qrData,
+        examSetting,
+        examShift,
+        examCentre,
+        admitCardSetting,
+        examYear:
+            examSetting?.exam_year ||
+            setting?.exam_year ||
+            new Date().getFullYear()
+    };
+};
+
+/**
+ * Render bulk generated RTSE admit cards using the
+ * EXACT existing student admit-card design.
+ *
+ * This intentionally renders an HTML print page rather
+ * than using PDFKit, because the production server has
+ * no HTML/CSS-to-PDF browser engine installed.
+ */
+exports.downloadSectionAdmitCardsPdf = async (req, res) => {
+    try {
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
+
+        const validSections = ["A", "B", "C", "D", "E"];
+
+        if (!validSections.includes(section)) {
+            req.flash(
+                "error",
+                "Invalid RTSE section."
+            );
+
+            return res.redirect("/admin/rtse");
+        }
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const students =
+            await RtseApplication
+                .getGeneratedAdmitCardStudents(
+                    section,
+                    applicationYear
+                );
+
+        if (!students.length) {
+            req.flash(
+                "error",
+                `No generated admit cards found for Section ${section}.`
+            );
+
+            return res.redirect("/admin/rtse");
+        }
+
+        const cards = [];
+
+        for (const student of students) {
+            cards.push(
+                await prepareRtseAdmitCardData(student)
+            );
+        }
+
+        return res.render(
+            "rtse/bulk-student-admit-cards",
+            {
+                title:
+                    `RTSE ${applicationYear} Section ${section} Admit Cards`,
+                cards,
+                applicationYear,
+                section
+            }
+        );
+    } catch (err) {
+        console.error(
+            "Bulk RTSE section admit-card error:",
+            err
+        );
+
+        if (res.headersSent) {
+            return res.end();
+        }
+
+        req.flash(
+            "error",
+            "Unable to prepare the section Admit Cards."
+        );
+
+        return res.redirect("/admin/rtse");
+    }
+};
+
+/**
+ * Render every generated RTSE admit card using the
+ * exact existing student admit-card design.
+ */
+exports.downloadAllAdmitCardsPdf = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const students =
+            await RtseApplication
+                .getAllGeneratedAdmitCardStudents(
+                    applicationYear
+                );
+
+        if (!students.length) {
+            req.flash(
+                "error",
+                "No generated admit cards found."
+            );
+
+            return res.redirect("/admin/rtse");
+        }
+
+        const cards = [];
+
+        for (const student of students) {
+            cards.push(
+                await prepareRtseAdmitCardData(student)
+            );
+        }
+
+        return res.render(
+            "rtse/bulk-student-admit-cards",
+            {
+                title:
+                    `RTSE ${applicationYear} All Generated Admit Cards`,
+                cards,
+                applicationYear,
+                section: null
+            }
+        );
+    } catch (err) {
+        console.error(
+            "Bulk RTSE all admit-card error:",
+            err
+        );
+
+        if (res.headersSent) {
+            return res.end();
+        }
+
+        req.flash(
+            "error",
+            "Unable to prepare the complete RTSE Admit Cards."
+        );
+
+        return res.redirect("/admin/rtse");
+    }
+};

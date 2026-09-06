@@ -374,6 +374,18 @@ router.post(
 // =====================================
 
 router.get(
+    "/rtse/admit-cards/pdf/all",
+    auth.isAdmin,
+    adminRtseController.downloadAllAdmitCardsPdf
+);
+
+router.get(
+    "/rtse/admit-cards/pdf/:section",
+    auth.isAdmin,
+    adminRtseController.downloadSectionAdmitCardsPdf
+);
+
+router.get(
 
     "/rtse/application/:id/admit-card",
 
