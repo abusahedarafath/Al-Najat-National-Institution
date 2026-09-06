@@ -2,6 +2,7 @@ const ExcelJS = require("exceljs");
 const path = require("path");
 const fs = require("fs");
 const RtseApplication = require("../models/RtseApplication");
+const RtseSetting = require("../models/RtseSetting");
 
 class RtseExcel {
 
@@ -42,18 +43,25 @@ class RtseExcel {
     // Export Section Wise
     // =====================================
     static async exportSection(req, res, section) {
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error("Active RTSE exam year is not configured.");
+        }
 
         const students =
-            await RtseApplication.getApprovedSectionStudents(section);
+            await RtseApplication.getApprovedSectionStudents(
+                section,
+                applicationYear
+            );
 
         return this.buildExcel(
             students,
             `RTSE-Section-${section}.xlsx`,
             res
         );
-
     }
-
 
     // =====================================
     // Build Excel
