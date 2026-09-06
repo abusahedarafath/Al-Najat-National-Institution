@@ -511,6 +511,32 @@ body{
     text-align:center;
 }
 
+.ticket-footer .signature{
+    width:42mm;
+    text-align:right;
+}
+
+.ticket-footer .signature img{
+    display:block;
+    max-width:180px;
+    max-height:55px;
+    width:auto;
+    height:auto;
+    margin:0 0 1mm auto;
+    object-fit:contain;
+}
+
+.ticket-footer .signature-line{
+    margin:0 0 1mm auto;
+}
+
+.signature-authorised-name{
+    font-size:2mm;
+    color:#34485e;
+    text-align:right;
+    margin-right: 5mm;
+}
+
 .signature{
     font-size:2mm;
     color:#34485e;
@@ -1295,18 +1321,32 @@ body{
 
 
 <!-- CONTROLLER SIGNATURE -->
-
         <div class="ticket-footer">
 
-            <div class="signature-line"></div>
-
             <div class="signature">
-                Controller of RTSE
+
+                <div class="signature-line"></div>
+
+                <% if (
+                    typeof admitCardSetting !== "undefined" &&
+                    admitCardSetting &&
+                    admitCardSetting.signature_image
+                ) { %>
+
+                    <img
+                        src="/uploads/rtse/<%= admitCardSetting.signature_image %>"
+                        alt="RTSE Signature"
+                    >
+
+                <% } %>
+
+                <div class="signature-authorised-name">
+                    Controller of RTSE
+                </div>
+
             </div>
 
-
         </div>
-
 
         <!-- IMPORTANT MESSAGE -->
 
@@ -1339,95 +1379,32 @@ body{
 
         <div class="instructions-list">
 
-            <div class="instruction">
+            <% for (let i = 1; i <= 5; i++) { %>
 
-                <div class="instruction-number">
-                    1
-                </div>
+                <% const instruction =
+                    typeof admitCardSetting !== "undefined" &&
+                    admitCardSetting
+                        ? admitCardSetting[`instruction_${i}`]
+                        : null;
+                %>
 
-                <div class="instruction-text">
+                <% if (instruction) { %>
 
-                    Carry your School ID Card and Admit Card.
-                    Ensure the Admit Card is scanned by the
-                    <strong>ARSP Super Scanner</strong>,
-                    or you may be marked
-                    <span class="danger">ABSENT</span>.
+                    <div class="instruction">
 
-                </div>
+                        <div class="instruction-number">
+                            <%= i %>
+                        </div>
 
-            </div>
+                        <div class="instruction-text">
+                            <%= instruction %>
+                        </div>
 
+                    </div>
 
-            <div class="instruction">
+                <% } %>
 
-                <div class="instruction-number">
-                    2
-                </div>
-
-                <div class="instruction-text">
-
-                    Report at least
-                    <strong>30 minutes</strong>
-                    before the reporting time.
-                    No entry will be allowed after the gate closes.
-
-                </div>
-
-            </div>
-
-
-            <div class="instruction">
-
-                <div class="instruction-number">
-                    3
-                </div>
-
-                <div class="instruction-text">
-
-                    Mobile phones, smart watches, Bluetooth devices,
-                    calculators and other electronic devices are
-                    <span class="danger">strictly prohibited</span>.
-                    Violation may result in expulsion.
-
-                </div>
-
-            </div>
-
-
-            <div class="instruction">
-
-                <div class="instruction-number">
-                    4
-                </div>
-
-                <div class="instruction-text">
-
-                    Fill and mark the OMR carefully as instructed.
-                    Do not fold, damage or tamper with it.
-                    <strong>Submit the OMR</strong>
-                    to the invigilator before leaving.
-
-                </div>
-
-            </div>
-
-
-            <div class="instruction">
-
-                <div class="instruction-number">
-                    5
-                </div>
-
-                <div class="instruction-text">
-
-                    Cheating, copying, impersonation or any unfair
-                    means will result in
-                    <span class="danger">disqualification</span>.
-                    Follow all instructions given by examination officials.
-
-                </div>
-
-            </div>
+            <% } %>
 
         </div>
 

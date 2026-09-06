@@ -1,0 +1,153 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-main">
+
+        <div class="page-header">
+            <div>
+                <h1>RTSE Admit Card Settings</h1>
+                <p>
+                    Manage the RTSE signature and instructions
+                    automatically printed on student admit cards.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <form
+                    method="POST"
+                    action="/admin/rtse/admit-card-settings"
+                    enctype="multipart/form-data"
+                >
+
+                    <h3>RTSE Signature</h3>
+
+                    <p class="text-muted">
+                        This signature will automatically appear
+                        above "Controller of RTSE" on the admit card.
+                    </p>
+
+                    <% if (admitSetting && admitSetting.signature_image) { %>
+
+                        <div
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                min-height:120px;
+                                padding:15px;
+                                margin-bottom:15px;
+                                border:1px solid #ddd;
+                                border-radius:8px;
+                                background:#fff;
+                            "
+                        >
+                            <img
+                                src="/uploads/rtse/<%= admitSetting.signature_image %>"
+                                alt="Current RTSE Signature"
+                                style="
+                                    max-width:400px;
+                                    max-height:120px;
+                                    object-fit:contain;
+                                "
+                            >
+                        </div>
+
+                    <% } else { %>
+
+                        <div class="alert alert-secondary">
+                            No RTSE signature has been saved yet.
+                        </div>
+
+                    <% } %>
+
+                    <div class="mb-4">
+
+                        <label
+                            for="signature"
+                            class="form-label"
+                        >
+                            Replace RTSE Signature
+                        </label>
+
+                        <input
+                            type="file"
+                            id="signature"
+                            name="signature"
+                            class="form-control"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <small class="text-muted">
+                            JPG, PNG or WEBP. Maximum 5 MB.
+                        </small>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <h3 class="mt-4">
+                        Important Instructions
+                    </h3>
+
+                    <p class="text-muted">
+                        These five instructions are automatically
+                        printed in the numbered instruction section
+                        of every RTSE admit card.
+                    </p>
+
+
+                    <% for (let i = 1; i <= 5; i++) { %>
+
+                        <div class="mb-3">
+
+                            <label
+                                for="instruction_<%= i %>"
+                                class="form-label"
+                            >
+                                Instruction <%= i %>
+                            </label>
+
+                            <textarea
+                                id="instruction_<%= i %>"
+                                name="instruction_<%= i %>"
+                                class="form-control"
+                                rows="3"
+                                required
+                            ><%= admitSetting?.[`instruction_${i}`] || "" %></textarea>
+
+                        </div>
+
+                    <% } %>
+
+
+                    <div class="mt-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Save Admit Card Settings
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

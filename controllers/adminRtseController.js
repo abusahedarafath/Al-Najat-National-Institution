@@ -29,6 +29,7 @@ const QRCode = require("qrcode");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 
 const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
 const RtseCentre = require("../models/RtseCentre");
 const { generateRoomTokenPdfs } =
 require("../utils/rtseSeatTokenPdf");
@@ -1394,6 +1395,136 @@ exports.admitGenerationPage = async (req, res) => {
     }
 };
 // =====================================
+// =====================================
+// RTSE Admit Card Settings
+// =====================================
+
+exports.admitCardSettingsPage = async (req, res) => {
+    try {
+        const admitSetting =
+            await RtseAdmitCardSetting.get();
+
+        res.render(
+            "admin/rtse/admit-card-settings",
+            {
+                title: "RTSE Admit Card Settings",
+                admitSetting
+            }
+        );
+    } catch (err) {
+        console.error(
+            "RTSE admit card settings load error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load RTSE Admit Card Settings."
+        );
+
+        return res.redirect("/admin/rtse");
+    }
+};
+
+exports.updateAdmitCardSettings = async (req, res) => {
+    try {
+        const current =
+            await RtseAdmitCardSetting.get();
+
+        let signatureImage =
+            current?.signature_image || null;
+
+        if (req.file && req.file.buffer) {
+            fs.mkdirSync(RTSE_UPLOAD_DIR, {
+                recursive: true
+            });
+
+            const filename =
+                "rtse-signature-" +
+                Date.now() +
+                "-" +
+                Math.round(Math.random() * 1000000000) +
+                ".png";
+
+            const outputPath =
+                path.join(
+                    RTSE_UPLOAD_DIR,
+                    filename
+                );
+
+            await sharp(req.file.buffer)
+                .rotate()
+                .resize({
+                    width: 1000,
+                    height: 300,
+                    fit: "inside",
+                    withoutEnlargement: true
+                })
+                .png()
+                .toFile(outputPath);
+
+            const oldSignature =
+                signatureImage;
+
+            signatureImage = filename;
+
+            if (
+                oldSignature &&
+                oldSignature !== filename
+            ) {
+                const oldPath =
+                    safeRtsePhotoPath(oldSignature);
+
+                if (oldPath && fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+        }
+
+        const instructions = [
+            req.body.instruction_1,
+            req.body.instruction_2,
+            req.body.instruction_3,
+            req.body.instruction_4,
+            req.body.instruction_5
+        ].map(value => {
+            const normalized =
+                String(value || "").trim();
+
+            return normalized || null;
+        });
+
+        await RtseAdmitCardSetting.update(
+            signatureImage,
+            instructions
+        );
+
+        req.flash(
+            "success",
+            "RTSE Admit Card Settings updated successfully."
+        );
+
+        return res.redirect(
+            "/admin/rtse/admit-card-settings"
+        );
+    } catch (err) {
+        console.error(
+            "RTSE admit card settings update error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+                "Unable to update RTSE Admit Card Settings."
+        );
+
+        return res.redirect(
+            "/admin/rtse/admit-card-settings"
+        );
+    }
+};
+
 // //View Admit Card
 // =====================================
 
@@ -1425,6 +1556,9 @@ exports.viewAdmitCard = async (req, res) => {
 
         const examSetting =
             await RtseExamSetting.get();
+
+        const admitCardSetting =
+            await RtseAdmitCardSetting.get();
 
         // Resolve the student's examination shift from the
         // shift-wise sections configured under Examination Settings.
@@ -1504,6 +1638,7 @@ exports.viewAdmitCard = async (req, res) => {
                                 examSetting,
                 examShift,
                 examCentre,
+                admitCardSetting,
                 examYear:
                     examSetting?.exam_year ||
                     setting?.exam_year ||

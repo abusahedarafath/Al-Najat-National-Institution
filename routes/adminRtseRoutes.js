@@ -352,6 +352,24 @@ router.post(
 );
 
 // =====================================
+// RTSE Admit Card Settings
+// =====================================
+
+router.get(
+    "/rtse/admit-card-settings",
+    auth.isAdmin,
+    adminRtseController.admitCardSettingsPage
+);
+
+router.post(
+    "/rtse/admit-card-settings",
+    auth.isAdmin,
+    rtseAdminPhotoUpload.single("signature"),
+    adminRtseController.updateAdmitCardSettings
+);
+
+
+// =====================================
 // View Admit Card
 // =====================================
 

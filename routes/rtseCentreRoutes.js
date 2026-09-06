@@ -7,6 +7,8 @@ const authController =
 
 const centreAuth =
     require("../middleware/rtseCentreAuth");
+const RtseAdmitCardSetting =
+    require("../models/RtseAdmitCardSetting");
 
 // =====================================
 // Public Centre Login
@@ -346,6 +348,8 @@ router.get(
 
                 const setting = await ArspSetting.get();
                 const examSetting = await RtseExamSetting.get();
+                const admitCardSetting =
+                    await RtseAdmitCardSetting.get();
 
                 return res.render(
                     "rtse/student-admit-card",
@@ -356,6 +360,7 @@ router.get(
                         attendance,
                         qrData,
                         examSetting,
+                        admitCardSetting,
                         examYear:
                             examSetting?.exam_year ||
                             setting?.exam_year ||

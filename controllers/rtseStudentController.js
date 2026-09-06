@@ -4,6 +4,7 @@ const RtseCertificate = require("../models/RtseCertificate");
 const RtseSetting = require("../models/RtseSetting");
 const RtseExamSetting = require("../models/RtseExamSetting");
 const RtseCentre = require("../models/RtseCentre");
+const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 const QRCode = require("qrcode");
 
@@ -540,6 +541,9 @@ exports.admitCard = async (req, res) => {
         const examSetting =
             await RtseExamSetting.get();
 
+        const admitCardSetting =
+            await RtseAdmitCardSetting.get();
+
         // Resolve the student's examination shift from the
         // shift-wise sections configured under Examination Settings.
         // The admit card must not depend on seat-plan shift assignment.
@@ -590,6 +594,7 @@ exports.admitCard = async (req, res) => {
                     examSetting,
                     examShift,
                     examCentre,
+                    admitCardSetting,
                                               examYear:
                                                   examSetting?.exam_year ||
                                                   arspSetting?.exam_year ||
@@ -664,6 +669,7 @@ exports.admitCard = async (req, res) => {
                 examSetting,
                 examShift,
                 examCentre,
+                admitCardSetting,
                                                     examYear:
                                                         examSetting?.exam_year ||
                                                         arspSetting?.exam_year ||
