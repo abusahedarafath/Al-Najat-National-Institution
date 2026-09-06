@@ -819,7 +819,7 @@
 
                             <button
                                 type="button"
-                                class="btn btn-outline-danger mt-2"
+                                class="rtse-single-universal-unlock-button"
                                 onclick="
                                     if (confirm('Universal Unlock will release the students assigned by the current Universal Gender + Section lock and unlock those seats. Existing other locked seats will remain unchanged. Continue?')) {
                                         document.getElementById('rtse-single-line-universal-unlock-form').submit();
@@ -1166,6 +1166,36 @@ const seatIsLocked =
 %>
 
 <style>
+.rtse-single-universal-unlock-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 38px;
+    margin-top: 8px;
+    padding: 8px 14px;
+    border: 1px solid #dc3545;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #dc3545;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.rtse-single-universal-unlock-button:hover {
+    background: #dc3545;
+    color: #ffffff;
+}
+
+.rtse-single-universal-unlock-button:active,
+.rtse-single-universal-unlock-button:focus {
+    background: #dc3545;
+    color: #ffffff;
+}
+
 .rtse-seat-card-locked {
     background: #dbeafe !important;
     border-color: #2563eb !important;
