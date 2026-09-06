@@ -646,6 +646,13 @@ router.post(
 );
 
 router.post(
+    "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/universal-lock",
+    auth.isAdmin,
+    seatDesignerBody,
+    adminRtseController.lockSingleLineSeatsAndGenerateTokens
+);
+
+router.post(
     "/rtse/seat-plan/shifts/:shiftId/rooms/:roomId/side-lock",
     auth.isAdmin,
     seatDesignerBody,

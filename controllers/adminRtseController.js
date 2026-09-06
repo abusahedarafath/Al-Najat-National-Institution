@@ -2808,6 +2808,153 @@ exports.lockRoomSeatsAndGenerateTokens = async (req, res) => {
 };
 
 
+exports.lockSingleLineSeatsAndGenerateTokens = async (
+    req,
+    res
+) => {
+    const shiftId = Number(req.params.shiftId);
+    const roomId = Number(req.params.roomId);
+
+    const genderLock =
+        String(req.body.gender_lock || "").trim();
+
+    const sectionLock =
+        String(req.body.section_lock || "")
+            .trim()
+            .toUpperCase();
+
+    try {
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const shift =
+            await RtseSeatPlan.getSeatDesigner(
+                shiftId,
+                roomId,
+                applicationYear
+            );
+
+        if (!shift) {
+            throw new Error("RTSE shift/room not found.");
+        }
+
+        if (shift.layout !== "SINGLE_LINE") {
+            throw new Error(
+                "Universal room lock is available only for SINGLE_LINE layout."
+            );
+        }
+
+        /*
+         * Empty values clear the room-level universal restriction.
+         * Existing seat assignments are deliberately preserved.
+         */
+        if (!genderLock && !sectionLock) {
+            await RtseSeatPlan.updateRoomUniversalLock(
+                shiftId,
+                roomId,
+                applicationYear,
+                null,
+                null
+            );
+
+            req.flash(
+                "success",
+                "Universal room lock settings cleared."
+            );
+
+            return res.redirect(
+                `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+            );
+        }
+
+        if (
+            !["Male", "Female"].includes(genderLock) ||
+            !["A", "B", "C", "D", "E"].includes(sectionLock)
+        ) {
+            throw new Error(
+                "Select both a valid gender and section."
+            );
+        }
+
+        const result =
+            await RtseSeatPlan.allocateGenderSectionToRoom(
+                shiftId,
+                roomId,
+                applicationYear,
+                genderLock,
+                sectionLock
+            );
+
+        await RtseSeatPlan.updateRoomUniversalLock(
+            shiftId,
+            roomId,
+            applicationYear,
+            genderLock,
+            sectionLock
+        );
+
+        if (result.allocated > 0) {
+            const pdfResult =
+                await generateRoomTokenPdfs(
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
+            const designerShift =
+                await RtseSeatPlan.getSeatDesigner(
+                    shiftId,
+                    roomId,
+                    applicationYear
+                );
+
+            return res.render(
+                "admin/rtse/seat-designer",
+                {
+                    title: "Seat Designer",
+                    applicationYear,
+                    shiftId,
+                    roomId,
+                    shift: designerShift,
+                    pdfResult,
+                    tokenAllocatedCount: result.allocated
+                }
+            );
+        }
+
+        req.flash(
+            "error",
+            result.eligibleStudents > 0
+                ? "No available seats remain for this Gender + Section."
+                : "No unallocated approved students match this Gender + Section."
+        );
+
+        return res.redirect(
+            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+        );
+    } catch (error) {
+        console.error(
+            "RTSE SINGLE_LINE universal lock error:",
+            error
+        );
+
+        req.flash(
+            "error",
+            error.message || "Unable to apply universal room lock."
+        );
+
+        return res.redirect(
+            `/admin/rtse/seat-plan/shifts/${shiftId}/rooms/${roomId}`
+        );
+    }
+};
+
 exports.updateSeatSideLocks = async (req, res) => {
     try {
         const shiftId = parseInt(req.params.shiftId, 10);

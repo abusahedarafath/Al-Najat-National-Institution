@@ -723,6 +723,111 @@
                         }
                     %>
 
+                    <div class="card mb-3 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title mb-2">
+                                Universal Gender + Section Lock
+                            </h5>
+
+                            <p class="text-muted small mb-3">
+                                SINGLE_LINE uses one universal room lock
+                                across the entire room. Existing locked
+                                seats remain unchanged.
+                            </p>
+
+                            <form
+                                method="POST"
+                                action="/admin/rtse/seat-plan/shifts/<%= shiftId %>/rooms/<%= roomId %>/universal-lock"
+                                class="row g-2 align-items-end"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="application_year"
+                                    value="<%= applicationYear %>"
+                                >
+
+                                <div class="col-md-4">
+                                    <label class="form-label">
+                                        Gender
+                                    </label>
+
+                                    <select
+                                        name="gender_lock"
+                                        class="form-select"
+                                    >
+                                        <option value="">
+                                            Select Gender
+                                        </option>
+
+                                        <option
+                                            value="Male"
+                                            <%= shift.universal_gender_lock === "Male"
+                                                ? "selected"
+                                                : "" %>
+                                        >
+                                            Male
+                                        </option>
+
+                                        <option
+                                            value="Female"
+                                            <%= shift.universal_gender_lock === "Female"
+                                                ? "selected"
+                                                : "" %>
+                                        >
+                                            Female
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">
+                                        Section
+                                    </label>
+
+                                    <select
+                                        name="section_lock"
+                                        class="form-select"
+                                    >
+                                        <option value="">
+                                            Select Section
+                                        </option>
+
+                                        <% ["A","B","C","D","E"].forEach(section => { %>
+                                            <option
+                                                value="<%= section %>"
+                                                <%= shift.universal_section_lock === section
+                                                    ? "selected"
+                                                    : "" %>
+                                            >
+                                                <%= section %>
+                                            </option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 d-flex gap-2">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+                                        Lock &amp; Generate Tokens
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-danger"
+                                        onclick="
+                                            this.form.gender_lock.value='';
+                                            this.form.section_lock.value='';
+                                        "
+                                    >
+                                        Clear Lock
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <div class="rtse-single-layout">
 
                         <% singleRowKeys.forEach(rowNo => { %>
@@ -747,8 +852,8 @@
                                             seat,
                                             shiftId,
                                             roomId,
-                                            null,
-                                            null,
+                                            shift.universal_gender_lock,
+                                            shift.universal_section_lock,
                                             shift.seat_system !== "CORNER_TO_CORNER" ||
                                                 isSingleLineCornerSeat(
                                                     seat,
