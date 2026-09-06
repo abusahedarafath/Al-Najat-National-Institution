@@ -153,7 +153,7 @@ exports.editPage = async (req, res) => {
                 await RtseCentre.getApproved();
 
             currentAssignment =
-                await RtseCentre.getSchoolAssignment(
+                await RtseCentre.getSchoolAssignmentForAdminEdit(
                     school.id,
                     activeExam.exam_year
                 );
@@ -415,7 +415,7 @@ exports.reject = async (req, res) => {
 
         await ArspSchool.reject(
             req.params.id,
-            req.body.remarks || "Rejected by administrator.",
+            (req.body && req.body.remarks) || "Rejected by administrator.",
             req.session.user.id
         );
 

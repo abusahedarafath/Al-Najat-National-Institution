@@ -414,6 +414,47 @@ class RtseCentre {
         return rows[0] || null;
     }
 
+    // -------------------------------------
+    // Get a school's current centre assignment
+    // for the administrator edit form.
+    //
+    // Unlike getSchoolAssignment(), this method
+    // also returns Pending assignments so an admin
+    // can see a centre that was just changed and is
+    // awaiting centre approval.
+    // -------------------------------------
+    static async getSchoolAssignmentForAdminEdit(schoolId, applicationYear) {
+        const [rows] = await db.query(`
+            SELECT
+                sca.*,
+                c.centre_code,
+                c.centre_name,
+                c.status AS centre_status,
+                s.school_code,
+                s.school_name,
+                s.status AS school_status
+            FROM rtse_school_centre_assignments sca
+            INNER JOIN rtse_centres c
+                ON c.id = sca.centre_id
+            INNER JOIN arsp_schools s
+                ON s.id = sca.school_id
+            WHERE sca.school_id = ?
+              AND sca.application_year = ?
+              AND LOWER(sca.status) IN ('approved', 'pending')
+              AND LOWER(c.status) = 'approved'
+            ORDER BY
+                CASE
+                    WHEN LOWER(sca.status) = 'pending' THEN 0
+                    ELSE 1
+                END,
+                sca.updated_at DESC,
+                sca.id DESC
+            LIMIT 1
+        `, [schoolId, applicationYear]);
+
+        return rows[0] || null;
+    }
+
     static async getAssignments(centreId, applicationYear = null) {
         let sql = `
             SELECT
