@@ -813,21 +813,21 @@
                                         Lock &amp; Generate Tokens
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline-danger"
-                                        onclick="
-                                            if (confirm('Universal Unlock will release the students assigned by the current Universal Gender + Section lock and unlock those seats. Existing other locked seats will remain unchanged. Continue?')) {
-                                                document.getElementById('rtse-single-line-universal-unlock-form').submit();
-                                            }
-                                        "
-                                    >
-                                        Universal Unlock &amp; Release
-                                    </button>
-
 
                                 </div>
                             </form>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-danger mt-2"
+                                onclick="
+                                    if (confirm('Universal Unlock will release the students assigned by the current Universal Gender + Section lock and unlock those seats. Existing other locked seats will remain unchanged. Continue?')) {
+                                        document.getElementById('rtse-single-line-universal-unlock-form').submit();
+                                    }
+                                "
+                            >
+                                Universal Unlock &amp; Release
+                            </button>
 
                                 <form
                                     id="rtse-single-line-universal-unlock-form"
