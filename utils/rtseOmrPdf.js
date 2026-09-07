@@ -214,12 +214,41 @@ function drawHeader(doc, data, omrColors = SECTION_OMR_PALETTE.A) {
         .fillColor(COLORS.black)
         .text("ROLL:", x + 8, 72);
 
+    const examYear = String(
+        data.exam_year || data.application_year || ""
+    ).trim();
+
+    const rollPrefix = examYear
+        ? `RTSE${examYear.slice(-2)}`
+        : "RTSE";
+
+    const rollNumber = String(
+        data.roll_number ?? ""
+    ).replace(/\D/g, "").slice(-4).padStart(4, "0");
+
     fitText(
         doc,
-        data.roll_no,
+        rollPrefix,
         x + 45,
         71,
-        180,
+        65,
+        10,
+        7,
+        { height: 15 }
+    );
+
+    doc
+        .font("Times-Bold")
+        .fontSize(10)
+        .fillColor(COLORS.black)
+        .text("NO:", x + 116, 72);
+
+    fitText(
+        doc,
+        rollNumber,
+        x + 142,
+        71,
+        83,
         10,
         7,
         { height: 15 }
@@ -347,7 +376,26 @@ function drawInstructionPanel(doc, omrColors = SECTION_OMR_PALETTE.A) {
             .font("Times-Bold")
             .fontSize(13)
             .fillColor(omrColors.primary)
-            .text("❖", x + 10, yy);
+        // Four-diamond instruction icon.
+        const iconX = x + 16;
+        const iconY = yy + 7;
+        const diamond = 4.2;
+        const gap = 1.4;
+
+        [
+            [iconX, iconY - diamond - gap],
+            [iconX - diamond - gap, iconY],
+            [iconX + diamond + gap, iconY],
+            [iconX, iconY + diamond + gap]
+        ].forEach(([cx, cy]) => {
+            doc
+                .moveTo(cx, cy - diamond)
+                .lineTo(cx + diamond, cy)
+                .lineTo(cx, cy + diamond)
+                .lineTo(cx - diamond, cy)
+                .closePath()
+                .fill(omrColors.primary);
+        });
 
         doc
             .font("Times-Roman")
