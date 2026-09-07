@@ -1,0 +1,405 @@
+<%- include("../partials/header") %>
+
+<style>
+.hh-settings-view {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.hh-settings-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.hh-settings-head h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.hh-settings-head p {
+    margin: 6px 0 0;
+    color: #64748b;
+}
+
+.hh-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.hh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #dbe2ea;
+}
+
+.hh-btn-edit {
+    background: #0f2747;
+    color: #fff;
+    border-color: #0f2747;
+}
+
+.hh-btn-back {
+    background: #fff;
+    color: #334155;
+}
+
+.hh-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 20px rgba(15, 39, 71, .05);
+}
+
+.hh-card h2 {
+    margin: 0 0 18px;
+    font-size: 19px;
+    color: #0f2747;
+}
+
+.hh-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.hh-field {
+    border: 1px solid #edf1f5;
+    background: #f8fafc;
+    border-radius: 11px;
+    padding: 13px 15px;
+}
+
+.hh-field-full {
+    grid-column: 1 / -1;
+}
+
+.hh-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 6px;
+}
+
+.hh-value {
+    color: #172033;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.hh-muted {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.hh-principle {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    background: #f8fafc;
+}
+
+.hh-principle-icon {
+    font-size: 22px;
+    margin-bottom: 7px;
+}
+
+.hh-principle h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.hh-principle p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+@media (max-width: 700px) {
+    .hh-settings-view {
+        padding: 15px;
+    }
+
+    .hh-settings-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .hh-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hh-field-full {
+        grid-column: auto;
+    }
+
+    .hh-card {
+        padding: 18px;
+        border-radius: 13px;
+    }
+}
+</style>
+
+<div class="hh-settings-view">
+
+    <div class="hh-settings-head">
+        <div>
+            <h1>Honour Heart Settings</h1>
+            <p>Read-only view of the currently saved Honour Heart content.</p>
+        </div>
+
+        <div class="hh-actions">
+            <a href="/admin/honour-heart/settings" class="hh-btn hh-btn-back">
+                ← Back
+            </a>
+
+            <a href="/admin/honour-heart/settings/edit" class="hh-btn hh-btn-edit">
+                ✏️ Edit Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- PAGE IDENTITY -->
+    <section id="identity" class="hh-card">
+        <h2>Page Identity</h2>
+
+        <div class="hh-grid">
+            <div class="hh-field">
+                <span class="hh-label">Eyebrow</span>
+                <div class="hh-value <%= !settings?.identity_eyebrow ? 'hh-muted' : '' %>">
+                    <%= settings?.identity_eyebrow || 'Not set' %>
+                </div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Title</span>
+                <div class="hh-value <%= !settings?.identity_title ? 'hh-muted' : '' %>">
+                    <%= settings?.identity_title || 'Not set' %>
+                </div>
+            </div>
+
+            <div class="hh-field hh-field-full">
+                <span class="hh-label">Tagline</span>
+                <div class="hh-value <%= !settings?.identity_tagline ? 'hh-muted' : '' %>">
+                    <%= settings?.identity_tagline || 'Not set' %>
+                </div>
+            </div>
+
+            <div class="hh-field hh-field-full">
+                <span class="hh-label">Description</span>
+                <div class="hh-value <%= !settings?.identity_description ? 'hh-muted' : '' %>">
+                    <%= settings?.identity_description || 'Not set' %>
+                </div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Primary Button</span>
+                <div class="hh-value">
+                    <%= settings?.identity_primary_text || 'Not set' %>
+                    <% if (settings?.identity_primary_url) { %>
+                        <br><small><%= settings.identity_primary_url %></small>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Secondary Button</span>
+                <div class="hh-value">
+                    <%= settings?.identity_secondary_text || 'Not set' %>
+                    <% if (settings?.identity_secondary_url) { %>
+                        <br><small><%= settings.identity_secondary_url %></small>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SELECTION BODY -->
+    <section class="hh-card">
+        <h2 id="selection">Selection Body</h2>
+
+        <div class="hh-grid">
+            <div class="hh-field">
+                <span class="hh-label">Eyebrow</span>
+                <div class="hh-value"><%= settings?.selection_eyebrow || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Title</span>
+                <div class="hh-value"><%= settings?.selection_title || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field hh-field-full">
+                <span class="hh-label">Description</span>
+                <div class="hh-value"><%= settings?.selection_description || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Button</span>
+                <div class="hh-value">
+                    <%= settings?.selection_button_text || 'Not set' %>
+                    <% if (settings?.selection_button_url) { %>
+                        <br><small><%= settings.selection_button_url %></small>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Selection Note</span>
+                <div class="hh-value"><%= settings?.selection_note || 'Not set' %></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEGACY -->
+    <section class="hh-card">
+        <h2 id="legacy">Honour Heart Legacy</h2>
+
+        <div class="hh-grid">
+            <div class="hh-field">
+                <span class="hh-label">Eyebrow</span>
+                <div class="hh-value"><%= settings?.legacy_eyebrow || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Title</span>
+                <div class="hh-value"><%= settings?.legacy_title || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field hh-field-full">
+                <span class="hh-label">Description</span>
+                <div class="hh-value"><%= settings?.legacy_description || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Button</span>
+                <div class="hh-value">
+                    <%= settings?.legacy_button_text || 'Not set' %>
+                    <% if (settings?.legacy_button_url) { %>
+                        <br><small><%= settings.legacy_button_url %></small>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="hh-card">
+        <h2 id="principles">Recognition Principles</h2>
+
+        <div class="hh-grid">
+            <% for (let i = 1; i <= 5; i++) { %>
+                <div class="hh-principle">
+                    <div class="hh-principle-icon">
+                        <%= settings?.[`principle_${i}_icon`] || '✦' %>
+                    </div>
+
+                    <h3>
+                        <%= settings?.[`principle_${i}_title`] || `Principle ${i}` %>
+                    </h3>
+
+                    <p>
+                        <%= settings?.[`principle_${i}_description`] || 'Not set' %>
+                    </p>
+                </div>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- SECRETARIAT -->
+    <section class="hh-card">
+        <h2 id="secretariat">Secretariat</h2>
+
+        <div class="hh-grid">
+            <div class="hh-field">
+                <span class="hh-label">Eyebrow</span>
+                <div class="hh-value"><%= settings?.secretariat_eyebrow || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Title</span>
+                <div class="hh-value"><%= settings?.secretariat_title || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field hh-field-full">
+                <span class="hh-label">Description</span>
+                <div class="hh-value"><%= settings?.secretariat_description || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Primary Button</span>
+                <div class="hh-value">
+                    <%= settings?.secretariat_primary_text || 'Not set' %>
+                    <% if (settings?.secretariat_primary_url) { %>
+                        <br><small><%= settings.secretariat_primary_url %></small>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Secondary Button</span>
+                <div class="hh-value">
+                    <%= settings?.secretariat_secondary_text || 'Not set' %>
+                    <% if (settings?.secretariat_secondary_url) { %>
+                        <br><small><%= settings.secretariat_secondary_url %></small>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POPUP -->
+    <section class="hh-card">
+        <h2 id="popup">Award Popup</h2>
+
+        <div class="hh-grid">
+            <div class="hh-field">
+                <span class="hh-label">Status</span>
+                <div class="hh-value">
+                    <%= settings?.popup_enabled === 'Yes' ? 'Enabled' : 'Disabled' %>
+                </div>
+            </div>
+
+            <div class="hh-field">
+                <span class="hh-label">Title</span>
+                <div class="hh-value"><%= settings?.popup_title || 'Not set' %></div>
+            </div>
+
+            <div class="hh-field hh-field-full">
+                <span class="hh-label">Description</span>
+                <div class="hh-value"><%= settings?.popup_description || 'Not set' %></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hh-actions">
+        <a href="/admin/honour-heart/settings" class="hh-btn hh-btn-back">
+            ← Back to Settings
+        </a>
+
+        <a href="/admin/honour-heart/settings/edit" class="hh-btn hh-btn-edit">
+            ✏️ Edit Settings
+        </a>
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

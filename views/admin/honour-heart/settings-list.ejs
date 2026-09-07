@@ -1,0 +1,592 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+        <div class="container">
+
+            <div class="page-header">
+                <div>
+                    <h1>Honour Heart Settings</h1>
+                    <p>Control the public ARSP Honour Heart Award page.</p>
+                </div>
+            </div>
+
+            <form
+                action="/admin/honour-heart/settings"
+                method="POST"
+                enctype="multipart/form-data"
+                class="admin-form"
+            >
+
+                <!-- =====================================================
+                     PAGE IDENTITY
+                ====================================================== -->
+                <section class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">01 · Page Identity</span>
+                            <h2>Honour Heart Introduction</h2>
+                            <p>
+                                Control the main identity and introduction shown
+                                at the top of the public Honour Heart page.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-grid">
+
+                        <div class="form-group">
+                            <label for="identity_eyebrow">Eyebrow</label>
+                            <input
+                                id="identity_eyebrow"
+                                type="text"
+                                name="identity_eyebrow"
+                                value="<%= settings.identity_eyebrow || '' %>"
+                                placeholder="ARSP HONOUR HEART AWARD"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="identity_title">Title</label>
+                            <input
+                                id="identity_title"
+                                type="text"
+                                name="identity_title"
+                                value="<%= settings.identity_title || '' %>"
+                                placeholder="Honour Heart"
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="identity_tagline">Tagline</label>
+                            <input
+                                id="identity_tagline"
+                                type="text"
+                                name="identity_tagline"
+                                value="<%= settings.identity_tagline || '' %>"
+                                placeholder="Recognising hearts that serve humanity."
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="identity_description">Description</label>
+                            <textarea
+                                id="identity_description"
+                                name="identity_description"
+                                rows="5"
+                                placeholder="Introduce the Honour Heart Award and its purpose."
+                            ><%= settings.identity_description || '' %></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="identity_primary_text">Primary Button Text</label>
+                            <input
+                                id="identity_primary_text"
+                                type="text"
+                                name="identity_primary_text"
+                                value="<%= settings.identity_primary_text || '' %>"
+                                placeholder="View Awardees"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="identity_primary_url">Primary Button URL</label>
+                            <input
+                                id="identity_primary_url"
+                                type="text"
+                                name="identity_primary_url"
+                                value="<%= settings.identity_primary_url || '' %>"
+                                placeholder="/honour-heart/awardees"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="identity_secondary_text">Secondary Button Text</label>
+                            <input
+                                id="identity_secondary_text"
+                                type="text"
+                                name="identity_secondary_text"
+                                value="<%= settings.identity_secondary_text || '' %>"
+                                placeholder="Learn More"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="identity_secondary_url">Secondary Button URL</label>
+                            <input
+                                id="identity_secondary_url"
+                                type="text"
+                                name="identity_secondary_url"
+                                value="<%= settings.identity_secondary_url || '' %>"
+                                placeholder="#selection-body"
+                            >
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <!-- =====================================================
+                     SELECTION BODY
+                ====================================================== -->
+                <section class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">02 · Selection Body</span>
+                            <h2>Honour Heart Selection Body</h2>
+                            <p>
+                                Manage the explanation shown alongside the
+                                active Honour Heart Selection Board.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-grid">
+
+                        <div class="form-group">
+                            <label for="selection_eyebrow">Eyebrow</label>
+                            <input
+                                id="selection_eyebrow"
+                                type="text"
+                                name="selection_eyebrow"
+                                value="<%= settings.selection_eyebrow || '' %>"
+                                placeholder="THE SELECTION BODY"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="selection_title">Title</label>
+                            <input
+                                id="selection_title"
+                                type="text"
+                                name="selection_title"
+                                value="<%= settings.selection_title || '' %>"
+                                placeholder="Honour Heart Selection Body"
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="selection_description">Description</label>
+                            <textarea
+                                id="selection_description"
+                                name="selection_description"
+                                rows="6"
+                                placeholder="Explain how the Selection Body contributes to the award."
+                            ><%= settings.selection_description || '' %></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="selection_button_text">Button Text</label>
+                            <input
+                                id="selection_button_text"
+                                type="text"
+                                name="selection_button_text"
+                                value="<%= settings.selection_button_text || '' %>"
+                                placeholder="Meet the Selection Body"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="selection_button_url">Button URL</label>
+                            <input
+                                id="selection_button_url"
+                                type="text"
+                                name="selection_button_url"
+                                value="<%= settings.selection_button_url || '' %>"
+                                placeholder="#selection-body"
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="selection_note">Selection Note</label>
+                            <textarea
+                                id="selection_note"
+                                name="selection_note"
+                                rows="4"
+                                placeholder="Add the supporting note displayed below the Selection Body."
+                            ><%= settings.selection_note || '' %></textarea>
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <!-- =====================================================
+                     LEGACY / PREVIOUS AWARDEES
+                ====================================================== -->
+                <section class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">03 · Legacy</span>
+                            <h2>Honour Heart Legacy</h2>
+                            <p>
+                                Control the introduction to previous Honour
+                                Heart awardees. Awardee records remain managed
+                                from the Awardees section.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-grid">
+
+                        <div class="form-group">
+                            <label for="legacy_eyebrow">Eyebrow</label>
+                            <input
+                                id="legacy_eyebrow"
+                                type="text"
+                                name="legacy_eyebrow"
+                                value="<%= settings.legacy_eyebrow || '' %>"
+                                placeholder="HONOUR HEART LEGACY"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="legacy_title">Title</label>
+                            <input
+                                id="legacy_title"
+                                type="text"
+                                name="legacy_title"
+                                value="<%= settings.legacy_title || '' %>"
+                                placeholder="ARSP Honour Heart Legacy"
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="legacy_description">Description</label>
+                            <textarea
+                                id="legacy_description"
+                                name="legacy_description"
+                                rows="5"
+                                placeholder="Introduce previous Honour Heart awardees."
+                            ><%= settings.legacy_description || '' %></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="legacy_button_text">Button Text</label>
+                            <input
+                                id="legacy_button_text"
+                                type="text"
+                                name="legacy_button_text"
+                                value="<%= settings.legacy_button_text || '' %>"
+                                placeholder="View All Awardees"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="legacy_button_url">Button URL</label>
+                            <input
+                                id="legacy_button_url"
+                                type="text"
+                                name="legacy_button_url"
+                                value="<%= settings.legacy_button_url || '' %>"
+                                placeholder="/honour-heart/awardees"
+                            >
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <!-- =====================================================
+                     RECOGNITION PRINCIPLES
+                ====================================================== -->
+                <section class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">04 · Principles</span>
+                            <h2>Recognition Principles</h2>
+                            <p>
+                                Configure the five principles displayed on
+                                the public Honour Heart page.
+                            </p>
+                        </div>
+                    </div>
+
+                    <% for (let i = 1; i <= 5; i++) { %>
+
+                        <div class="admin-principle">
+                            <div class="admin-principle-number">
+                                <span><%= String(i).padStart(2, "0") %></span>
+                            </div>
+
+                            <div class="admin-principle-fields">
+
+                                <div class="admin-form-grid">
+
+                                    <div class="form-group">
+                                        <label for="principle_<%= i %>_icon">
+                                            Icon
+                                        </label>
+                                        <input
+                                            id="principle_<%= i %>_icon"
+                                            type="text"
+                                            name="principle_<%= i %>_icon"
+                                            value="<%= settings['principle_' + i + '_icon'] || '' %>"
+                                            placeholder="fa-solid fa-heart"
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="principle_<%= i %>_title">
+                                            Title
+                                        </label>
+                                        <input
+                                            id="principle_<%= i %>_title"
+                                            type="text"
+                                            name="principle_<%= i %>_title"
+                                            value="<%= settings['principle_' + i + '_title'] || '' %>"
+                                            placeholder="Service Before Recognition"
+                                        >
+                                    </div>
+
+                                    <div class="form-group admin-form-full">
+                                        <label for="principle_<%= i %>_description">
+                                            Description
+                                        </label>
+                                        <textarea
+                                            id="principle_<%= i %>_description"
+                                            name="principle_<%= i %>_description"
+                                            rows="4"
+                                            placeholder="Describe this recognition principle."
+                                        ><%= settings['principle_' + i + '_description'] || '' %></textarea>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    <% } %>
+
+                </section>
+
+
+                <!-- =====================================================
+                     SECRETARIAT
+                ====================================================== -->
+                <section class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">05 · Secretariat</span>
+                            <h2>Honour Heart Secretariat</h2>
+                            <p>
+                                Control the closing call-to-action and
+                                Secretariat information.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-grid">
+
+                        <div class="form-group">
+                            <label for="secretariat_eyebrow">Eyebrow</label>
+                            <input
+                                id="secretariat_eyebrow"
+                                type="text"
+                                name="secretariat_eyebrow"
+                                value="<%= settings.secretariat_eyebrow || '' %>"
+                                placeholder="HONOUR HEART SECRETARIAT"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secretariat_title">Title</label>
+                            <input
+                                id="secretariat_title"
+                                type="text"
+                                name="secretariat_title"
+                                value="<%= settings.secretariat_title || '' %>"
+                                placeholder="A recognition rooted in service"
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="secretariat_description">Description</label>
+                            <textarea
+                                id="secretariat_description"
+                                name="secretariat_description"
+                                rows="5"
+                                placeholder="Add the closing Secretariat message."
+                            ><%= settings.secretariat_description || '' %></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secretariat_primary_text">Primary Button Text</label>
+                            <input
+                                id="secretariat_primary_text"
+                                type="text"
+                                name="secretariat_primary_text"
+                                value="<%= settings.secretariat_primary_text || '' %>"
+                                placeholder="Contact Secretariat"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secretariat_primary_url">Primary Button URL</label>
+                            <input
+                                id="secretariat_primary_url"
+                                type="text"
+                                name="secretariat_primary_url"
+                                value="<%= settings.secretariat_primary_url || '' %>"
+                                placeholder="/contact"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secretariat_secondary_text">Secondary Button Text</label>
+                            <input
+                                id="secretariat_secondary_text"
+                                type="text"
+                                name="secretariat_secondary_text"
+                                value="<%= settings.secretariat_secondary_text || '' %>"
+                                placeholder="View Awardees"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secretariat_secondary_url">Secondary Button URL</label>
+                            <input
+                                id="secretariat_secondary_url"
+                                type="text"
+                                name="secretariat_secondary_url"
+                                value="<%= settings.secretariat_secondary_url || '' %>"
+                                placeholder="/honour-heart/awardees"
+                            >
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <!-- =====================================================
+                     POPUP
+                ====================================================== -->
+                <section class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">06 · Award Popup</span>
+                            <h2>Upcoming Award Popup</h2>
+                            <p>
+                                These fields work with the upcoming awardee
+                                popup already used by Honour Heart.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-grid">
+
+                        <div class="form-group">
+                            <label for="popup_title">Popup Title</label>
+                            <input
+                                id="popup_title"
+                                type="text"
+                                name="popup_title"
+                                value="<%= settings.popup_title || '' %>"
+                                placeholder="Next Honour Heart Award"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="popup_enabled">Popup Enabled</label>
+                            <select id="popup_enabled" name="popup_enabled">
+                                <option
+                                    value="Yes"
+                                    <%= settings.popup_enabled === "Yes" ? "selected" : "" %>
+                                >
+                                    Yes
+                                </option>
+                                <option
+                                    value="No"
+                                    <%= settings.popup_enabled === "No" ? "selected" : "" %>
+                                >
+                                    No
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="popup_description">Popup Description</label>
+                            <textarea
+                                id="popup_description"
+                                name="popup_description"
+                                rows="5"
+                                placeholder="Add the short message displayed in the award popup."
+                            ><%= settings.popup_description || '' %></textarea>
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <!-- =====================================================
+                     LEGACY ABOUT FIELDS
+                ====================================================== -->
+                <section class="admin-card admin-card-muted">
+                    <div class="admin-card-header">
+                        <div>
+                            <span class="admin-section-eyebrow">07 · Legacy Fields</span>
+                            <h2>Existing About Content</h2>
+                            <p>
+                                These fields are retained for compatibility
+                                with the previous Honour Heart implementation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-grid">
+
+                        <div class="form-group admin-form-full">
+                            <label for="about_title">Legacy About Title</label>
+                            <input
+                                id="about_title"
+                                type="text"
+                                name="about_title"
+                                value="<%= settings.about_title || '' %>"
+                            >
+                        </div>
+
+                        <div class="form-group admin-form-full">
+                            <label for="about_description">Legacy About Description</label>
+                            <textarea
+                                id="about_description"
+                                name="about_description"
+                                rows="6"
+                            ><%= settings.about_description || '' %></textarea>
+                        </div>
+
+                    </div>
+                </section>
+
+
+
+                <!-- =====================================================
+                     ACTIONS
+                ====================================================== -->
+                <div class="form-actions admin-sticky-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        <i class="fas fa-save"></i>
+                        Save Honour Heart Settings
+                    </button>
+
+                    <a
+                        href="/admin/honour-heart"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>
+</div>

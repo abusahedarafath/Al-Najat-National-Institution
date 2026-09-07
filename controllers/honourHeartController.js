@@ -815,96 +815,145 @@ exports.awardeeDelete = async (req, res) => {
 // ======================================
 
 exports.settings = async (req, res) => {
-
     try {
-
         const settings = await HonourHeartSetting.get();
 
         res.render(
-
             "admin/honour-heart/settings",
-
             {
-
                 title: "Honour Heart Settings",
-
-                settings
-
+                settings,
+                query: req.query || {}
             }
-
         );
-
     } catch (err) {
-
         console.error(err);
-
-        res.send(err);
-
+        res.status(500).send("Internal Server Error");
     }
+};
 
+exports.viewSettings = async (req, res) => {
+    try {
+        const settings = await HonourHeartSetting.get();
+
+        res.render(
+            "admin/honour-heart/settings-view",
+            {
+                title: "View Honour Heart Settings",
+                settings
+            }
+        );
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+exports.editSettings = async (req, res) => {
+    try {
+        const settings = await HonourHeartSetting.get();
+
+        res.render(
+            "admin/honour-heart/settings-edit",
+            {
+                title: "Edit Honour Heart Settings",
+                settings
+            }
+        );
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
 };
 
 exports.updateSettings = async (req, res) => {
-
     try {
-
         const old = await HonourHeartSetting.get();
 
-        let heroBanner = old.hero_banner;
+        const body = req.body || {};
 
-        if (req.file) {
-
-            if (old.hero_banner) {
-
-                const oldFile = path.join(
-
-                    "public/uploads/honour-heart/settings",
-
-                    old.hero_banner
-
-                );
-
-                if (fs.existsSync(oldFile)) {
-
-                    fs.unlinkSync(oldFile);
-
-                }
-
-            }
-
-            heroBanner = req.file.filename;
-
-        }
+        // Preserve every existing saved value unless that field was
+        // actually submitted by the edit form.
+        const value = (field) =>
+            Object.prototype.hasOwnProperty.call(body, field)
+                ? body[field]
+                : old[field];
 
         const data = {
+            // Existing settings
+            about_title: value("about_title"),
+            about_description: value("about_description"),
+            popup_title: value("popup_title"),
+            popup_description: value("popup_description"),
+            popup_enabled: Object.prototype.hasOwnProperty.call(body, "popup_enabled")
+                ? (body.popup_enabled === "Yes" ? "Yes" : "No")
+                : old.popup_enabled,
 
-            about_title: req.body.about_title,
+            // Page identity
+            identity_eyebrow: value("identity_eyebrow"),
+            identity_title: value("identity_title"),
+            identity_tagline: value("identity_tagline"),
+            identity_description: value("identity_description"),
+            identity_primary_text: value("identity_primary_text"),
+            identity_primary_url: value("identity_primary_url"),
+            identity_secondary_text: value("identity_secondary_text"),
+            identity_secondary_url: value("identity_secondary_url"),
 
-            about_description: req.body.about_description,
+            // Selection body
+            selection_eyebrow: value("selection_eyebrow"),
+            selection_title: value("selection_title"),
+            selection_description: value("selection_description"),
+            selection_button_text: value("selection_button_text"),
+            selection_button_url: value("selection_button_url"),
+            selection_note: value("selection_note"),
 
-            hero_banner: heroBanner,
+            // Legacy
+            legacy_eyebrow: value("legacy_eyebrow"),
+            legacy_title: value("legacy_title"),
+            legacy_description: value("legacy_description"),
+            legacy_button_text: value("legacy_button_text"),
+            legacy_button_url: value("legacy_button_url"),
 
-            popup_title: req.body.popup_title,
+            // Recognition principles
+            principle_1_icon: value("principle_1_icon"),
+            principle_1_title: value("principle_1_title"),
+            principle_1_description: value("principle_1_description"),
 
-            popup_description: req.body.popup_description,
+            principle_2_icon: value("principle_2_icon"),
+            principle_2_title: value("principle_2_title"),
+            principle_2_description: value("principle_2_description"),
 
-            popup_enabled: req.body.popup_enabled
+            principle_3_icon: value("principle_3_icon"),
+            principle_3_title: value("principle_3_title"),
+            principle_3_description: value("principle_3_description"),
 
+            principle_4_icon: value("principle_4_icon"),
+            principle_4_title: value("principle_4_title"),
+            principle_4_description: value("principle_4_description"),
+
+            principle_5_icon: value("principle_5_icon"),
+            principle_5_title: value("principle_5_title"),
+            principle_5_description: value("principle_5_description"),
+
+            // Secretariat
+            secretariat_eyebrow: value("secretariat_eyebrow"),
+            secretariat_title: value("secretariat_title"),
+            secretariat_description: value("secretariat_description"),
+            secretariat_primary_text: value("secretariat_primary_text"),
+            secretariat_primary_url: value("secretariat_primary_url"),
+            secretariat_secondary_text: value("secretariat_secondary_text"),
+            secretariat_secondary_url: value("secretariat_secondary_url")
         };
 
         await HonourHeartSetting.update(data);
 
-        res.redirect("/admin/honour-heart/settings");
-
+        res.redirect("/admin/honour-heart/settings?saved=1");
     } catch (err) {
-
         console.error(err);
-
-        res.send(err);
-
+        res.status(500).send("Internal Server Error");
     }
-
 };
+
 
 
 

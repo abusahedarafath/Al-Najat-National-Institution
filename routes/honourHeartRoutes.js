@@ -14,31 +14,14 @@ const { isAdmin } = require("../middleware/auth");
 const storage = multer.diskStorage({
 
     destination:(req,file,cb)=>{
-
-        if(file.fieldname==="hero_banner"){
-
-            cb(null,"public/uploads/honour-heart/settings");
-
-        }else if(file.fieldname==="photo"){
-
-            if(req.originalUrl.includes("/legends")){
-
-                cb(null,"public/uploads/honour-heart/legends");
-
-            }else if(req.originalUrl.includes("/board")){
-
-                cb(null,"public/uploads/honour-heart/board");
-
-            }else{
-
-                cb(null,"public/uploads/honour-heart/awardees");
-
-            }
-
+        if(req.originalUrl.includes("/legends")){
+            cb(null,"public/uploads/honour-heart/legends");
+        }else if(req.originalUrl.includes("/board")){
+            cb(null,"public/uploads/honour-heart/board");
+        }else{
+            cb(null,"public/uploads/honour-heart/awardees");
         }
-
     },
-
     filename:(req,file,cb)=>{
 
         cb(
@@ -310,13 +293,24 @@ honourHeartController.settings
 
 );
 
+router.get(
+"/admin/honour-heart/settings/view",
+isAdmin,
+honourHeartController.viewSettings
+);
+
+router.get(
+"/admin/honour-heart/settings/edit",
+isAdmin,
+honourHeartController.editSettings
+);
+
 router.post(
 
 "/admin/honour-heart/settings",
 
 isAdmin,
 
-upload.single("hero_banner"),
 
 honourHeartController.updateSettings
 

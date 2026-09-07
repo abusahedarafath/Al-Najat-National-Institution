@@ -1,147 +1,426 @@
 <%- include("../partials/header") %>
 
-<div class="admin-layout">
+<style>
+.hh-cms {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
 
-    <%- include("../partials/sidebar") %>
+.hh-cms-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
 
-    <main class="admin-content">
+.hh-cms-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #0f2747;
+}
 
-        <div class="container">
+.hh-cms-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+}
 
-            <div class="page-header">
+.hh-edit-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 17px;
+    border-radius: 10px;
+    background: #0f2747;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+}
 
-                <div>
+.hh-settings-list {
+    display: grid;
+    gap: 15px;
+}
 
-                    <h1>Honour Heart Settings</h1>
+.hh-setting-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 21px 22px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    box-shadow: 0 5px 18px rgba(15, 39, 71, .045);
+}
 
-                    <p>ARSP Honour Heart Award</p>
+.hh-setting-info {
+    min-width: 0;
+}
 
+.hh-setting-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    background: #f1f5f9;
+    color: #0f2747;
+    font-size: 21px;
+    margin-bottom: 10px;
+}
+
+.hh-setting-info h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #172033;
+}
+
+.hh-setting-info p {
+    margin: 5px 0 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.hh-setting-meta {
+    margin-top: 7px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.hh-setting-actions {
+    display: flex;
+    gap: 9px;
+    flex: 0 0 auto;
+}
+
+.hh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.hh-btn-view {
+    color: #334155;
+    background: #fff;
+    border: 1px solid #dbe2ea;
+}
+
+.hh-btn-edit {
+    color: #fff;
+    background: #0f2747;
+    border: 1px solid #0f2747;
+}
+
+.hh-empty {
+    padding: 35px 20px;
+    text-align: center;
+    background: #fff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 15px;
+    color: #64748b;
+}
+
+/* Saved successfully overlay */
+.hh-save-success {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, .42);
+    backdrop-filter: blur(4px);
+    animation: hhOverlayIn .25s ease both;
+}
+
+.hh-save-success-card {
+    width: min(360px, 100%);
+    padding: 31px 25px;
+    text-align: center;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .2);
+    animation: hhSuccessPop .45s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.hh-success-check {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ecfdf5;
+    font-size: 39px;
+    animation: hhCheckPop .55s .1s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.hh-save-success-card h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 22px;
+}
+
+.hh-save-success-card p {
+    margin: 8px 0 0;
+    color: #64748b;
+}
+
+@keyframes hhOverlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes hhSuccessPop {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(.88);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes hhCheckPop {
+    from {
+        opacity: 0;
+        transform: scale(.3) rotate(-15deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+@media (max-width: 700px) {
+    .hh-cms {
+        padding: 15px;
+    }
+
+    .hh-cms-header {
+        flex-direction: column;
+    }
+
+    .hh-edit-main {
+        width: 100%;
+    }
+
+    .hh-setting-card {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .hh-setting-actions {
+        width: 100%;
+    }
+
+    .hh-btn {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="hh-cms">
+
+    <div class="hh-cms-header">
+        <div>
+            <h1>Honour Heart Settings</h1>
+            <p>Manage the content and configuration of the ARSP Honour Heart Award.</p>
+        </div>
+
+        <a href="/admin/honour-heart/settings/edit" class="hh-edit-main">
+            ✏️ Edit Settings
+        </a>
+    </div>
+
+    <div class="hh-settings-list">
+
+        <!-- PAGE IDENTITY -->
+        <article class="hh-setting-card">
+            <div class="hh-setting-info">
+                <div class="hh-setting-icon">◈</div>
+                <h2>Page Identity</h2>
+                <p>
+                    <%= settings?.identity_title || settings?.about_title || "Honour Heart Award" %>
+                </p>
+                <div class="hh-setting-meta">
+                    Main identity, tagline, description and buttons
                 </div>
-
             </div>
 
-            <form
-                action="/admin/honour-heart/settings"
-                method="POST"
-                enctype="multipart/form-data"
-                class="admin-form">
+            <div class="hh-setting-actions">
+                <a href="/admin/honour-heart/settings/view#identity" class="hh-btn hh-btn-view">
+                    👁 View
+                </a>
+                <a href="/admin/honour-heart/settings/edit#identity" class="hh-btn hh-btn-edit">
+                    ✏️ Edit
+                </a>
+            </div>
+        </article>
 
-                <div class="form-group">
-
-                    <label>Current Hero Banner</label>
-
-                    <% if (settings.hero_banner) { %>
-
-                        <img
-                            src="/uploads/honour-heart/settings/<%= settings.hero_banner %>"
-                            style="width:100%;max-width:650px;border-radius:12px;border:1px solid #ddd;">
-
-                    <% } else { %>
-
-                        <p>No Hero Banner Uploaded</p>
-
-                    <% } %>
-
+        <!-- SELECTION BODY -->
+        <article class="hh-setting-card">
+            <div class="hh-setting-info">
+                <div class="hh-setting-icon">◎</div>
+                <h2>Selection Body</h2>
+                <p>
+                    <%= settings?.selection_title || "Honour Heart Selection Body" %>
+                </p>
+                <div class="hh-setting-meta">
+                    Selection information, description, button and note
                 </div>
+            </div>
 
-                <div class="form-group">
+            <div class="hh-setting-actions">
+                <a href="/admin/honour-heart/settings/view#selection" class="hh-btn hh-btn-view">
+                    👁 View
+                </a>
+                <a href="/admin/honour-heart/settings/edit#selection" class="hh-btn hh-btn-edit">
+                    ✏️ Edit
+                </a>
+            </div>
+        </article>
 
-                    <label>Change Hero Banner</label>
-
-                    <input
-                        type="file"
-                        name="hero_banner">
-
+        <!-- LEGACY -->
+        <article class="hh-setting-card">
+            <div class="hh-setting-info">
+                <div class="hh-setting-icon">★</div>
+                <h2>Honour Heart Legacy</h2>
+                <p>
+                    <%= settings?.legacy_title || "ARSP Honour Heart Legacy" %>
+                </p>
+                <div class="hh-setting-meta">
+                    Legacy heading, description and action
                 </div>
+            </div>
 
-                <div class="form-group">
+            <div class="hh-setting-actions">
+                <a href="/admin/honour-heart/settings/view#legacy" class="hh-btn hh-btn-view">
+                    👁 View
+                </a>
+                <a href="/admin/honour-heart/settings/edit#legacy" class="hh-btn hh-btn-edit">
+                    ✏️ Edit
+                </a>
+            </div>
+        </article>
 
-                    <label>About Title</label>
-
-                    <input
-                        type="text"
-                        name="about_title"
-                        value="<%= settings.about_title || '' %>">
-
+        <!-- RECOGNITION PRINCIPLES -->
+        <article class="hh-setting-card">
+            <div class="hh-setting-info">
+                <div class="hh-setting-icon">✦</div>
+                <h2>Recognition Principles</h2>
+                <p>Five principles guiding Honour Heart recognition.</p>
+                <div class="hh-setting-meta">
+                    5 configurable principles
                 </div>
+            </div>
 
-                <div class="form-group">
+            <div class="hh-setting-actions">
+                <a href="/admin/honour-heart/settings/view#principles" class="hh-btn hh-btn-view">
+                    👁 View
+                </a>
+                <a href="/admin/honour-heart/settings/edit#principles" class="hh-btn hh-btn-edit">
+                    ✏️ Edit
+                </a>
+            </div>
+        </article>
 
-                    <label>About Description</label>
-
-                    <textarea
-                        name="about_description"
-                        rows="8"><%= settings.about_description || '' %></textarea>
-
+        <!-- SECRETARIAT -->
+        <article class="hh-setting-card">
+            <div class="hh-setting-info">
+                <div class="hh-setting-icon">⌂</div>
+                <h2>Secretariat</h2>
+                <p>
+                    <%= settings?.secretariat_title || "ARSP Honour Heart Secretariat" %>
+                </p>
+                <div class="hh-setting-meta">
+                    Secretariat information and action buttons
                 </div>
+            </div>
 
-                <div class="form-group">
+            <div class="hh-setting-actions">
+                <a href="/admin/honour-heart/settings/view#secretariat" class="hh-btn hh-btn-view">
+                    👁 View
+                </a>
+                <a href="/admin/honour-heart/settings/edit#secretariat" class="hh-btn hh-btn-edit">
+                    ✏️ Edit
+                </a>
+            </div>
+        </article>
 
-                    <label>Popup Title</label>
-
-                    <input
-                        type="text"
-                        name="popup_title"
-                        value="<%= settings.popup_title || '' %>">
-
+        <!-- POPUP -->
+        <article class="hh-setting-card">
+            <div class="hh-setting-info">
+                <div class="hh-setting-icon">▣</div>
+                <h2>Award Popup</h2>
+                <p>
+                    <%= settings?.popup_title || "Award announcement popup" %>
+                </p>
+                <div class="hh-setting-meta">
+                    Status:
+                    <strong>
+                        <%= settings?.popup_enabled === "Yes" ? "Enabled" : "Disabled" %>
+                    </strong>
                 </div>
+            </div>
 
-                <div class="form-group">
+            <div class="hh-setting-actions">
+                <a href="/admin/honour-heart/settings/view#popup" class="hh-btn hh-btn-view">
+                    👁 View
+                </a>
+                <a href="/admin/honour-heart/settings/edit#popup" class="hh-btn hh-btn-edit">
+                    ✏️ Edit
+                </a>
+            </div>
+        </article>
 
-                    <label>Popup Description</label>
+    </div>
+</div>
 
-                    <textarea
-                        name="popup_description"
-                        rows="6"><%= settings.popup_description || '' %></textarea>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Popup Enabled</label>
-
-                    <select name="popup_enabled">
-
-                        <option
-                            value="Yes"
-                            <%= settings.popup_enabled === "Yes" ? "selected" : "" %>>
-                            Yes
-                        </option>
-
-                        <option
-                            value="No"
-                            <%= settings.popup_enabled === "No" ? "selected" : "" %>>
-                            No
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-actions">
-
-                    <button
-                        type="submit"
-                        class="btn btn-success">
-
-                        <i class="fas fa-save"></i>
-
-                        Save Settings
-
-                    </button>
-
-                    <a
-                        href="/admin/honour-heart"
-                        class="btn btn-secondary">
-
-                        Cancel
-
-                    </a>
-
-                </div>
-
-            </form>
-
+<% if (typeof query !== "undefined" && query.saved === "1") { %>
+    <div class="hh-save-success" id="hhSaveSuccess">
+        <div class="hh-save-success-card">
+            <div class="hh-success-check">✅</div>
+            <h2>Saved Successfully</h2>
+            <p>Your Honour Heart settings have been updated.</p>
         </div>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            const overlay = document.getElementById("hhSaveSuccess");
+            if (overlay) {
+                overlay.style.transition = "opacity .3s ease";
+                overlay.style.opacity = "0";
+
+                setTimeout(function () {
+                    overlay.remove();
+                    window.history.replaceState(
+                        {},
+                        document.title,
+                        window.location.pathname
+                    );
+                }, 320);
+            }
+        }, 1800);
+    </script>
+<% } %>
 
 <%- include("../partials/footer") %>
