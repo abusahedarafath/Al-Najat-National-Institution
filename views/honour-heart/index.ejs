@@ -1,825 +1,2813 @@
 <%- include("../partials/header") %>
 
-<% if (settings && settings.hero_banner) { %>
 
-<section
-    class="honour-hero"
-    style="background-image:url('/uploads/honour-heart/settings/<%= settings.hero_banner %>');">
+<!-- HONOUR HEART DEDICATED MOBILE/DESKTOP HEADER -->
+<div class="hh-reference-header">
+    <div class="hh-reference-header-inner">
 
-    <div class="honour-hero-overlay">
+        <a href="/" class="hh-reference-brand">
+            <span class="hh-reference-logo">
+                <img
+                        src="<%= siteSettings && siteSettings.logo ? siteSettings.logo : '/images/logo.png' %>"
+                        alt="<%= siteSettings && siteSettings.institution_name ? siteSettings.institution_name : 'ARSP' %>"
+                    >
+            </span>
 
-        <div class="container">
+            <span class="hh-reference-brand-text">
+                <strong>ACTIVE RURAL SOCIAL PROGRESS (ARSP)</strong>
+                <small>TOGETHER FOR A BETTER SOCIETY</small>
+            </span>
+        </a>
 
-            <div class="honour-hero-content">
+        <button
+            type="button"
+            class="hh-reference-menu"
+            aria-label="Open navigation"
+            onclick="document.body.classList.toggle('hh-reference-menu-open')"
+        >
+            ☰
+        </button>
 
-                <span class="section-badge">
-                    ARSP National Honour
+    </div>
+</div>
+
+<main class="hh-page">
+
+    <!-- HONOUR HEART IDENTITY -->
+    <section class="hh-identity">
+        <div class="hh-identity-inner">
+
+            <div class="hh-trophy">
+                <div class="hh-laurel hh-laurel-left">❯</div>
+                <div class="hh-trophy-icon">
+                    <span>🏆</span>
+                    <strong>ARSP</strong>
+                    <small>HONOUR<br>HEART</small>
+                </div>
+                <div class="hh-laurel hh-laurel-right">❮</div>
+            </div>
+
+            <div class="hh-identity-copy">
+                <span class="hh-eyebrow">
+                    <%= settings?.identity_eyebrow || "ARSP HONOUR HEART" %>
                 </span>
 
                 <h1>
-                    ARSP Honour Heart Award
+                    <%= settings?.identity_title || "ARSP HONOUR HEART" %>
                 </h1>
 
-                <p>
-                    <%= settings.about_title %>
-                </p>
-
-                <a
-                    href="#about-award"
-                    class="btn btn-light">
-                    Learn More
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<% } %>
-
-<section class="breadcrumb-section">
-
-<div class="container">
-
-<nav>
-
-<a href="/">Home</a>
-
-<span>/</span>
-
-<span>
-
-ARSP Honour Heart Award
-
-</span>
-
-</nav>
-
-</div>
-
-</section>
-
-
-<section
-    class="about-section"
-    id="about-award">
-
-    <div class="container">
-
-        <div class="about-award-card">
-
-            <div class="about-award-left">
-
-                <span class="section-badge">
-                    ABOUT THE AWARD
-                </span>
-
                 <h2>
-                    ARSP Honour Heart Award
+                    <%= settings?.identity_tagline || "Recognising the Hearts that Inspire Society" %>
                 </h2>
 
                 <p>
-                    <%= settings.about_description %>
+                    <%= settings?.identity_description ||
+                        "The ARSP Honour HEART is a prestigious recognition presented by Active Rural Social Progress (ARSP) to individuals who have made remarkable contributions towards welfare, development, empowerment, and social progress." %>
                 </p>
 
-            </div>
+                <div class="hh-identity-actions">
+                    <a
+                        href="<%= settings?.identity_primary_url || '#previous-awardees' %>"
+                        class="hh-btn hh-btn-primary"
+                    >
+                        <span>🏆</span>
+                        <%= settings?.identity_primary_text || "VIEW AWARDEES" %>
+                    </a>
 
-            <div class="about-award-right">
-
-                <div class="award-icon-box">
-
-                    <i class="fas fa-award"></i>
-
+                    <a
+                        href="<%= settings?.identity_secondary_url || '#selection-board' %>"
+                        class="hh-btn hh-btn-secondary"
+                    >
+                        <span>♟</span>
+                        <%= settings?.identity_secondary_text || "SELECTION BODY" %>
+                    </a>
                 </div>
+            </div>
 
+            <div class="hh-recognition-box">
+                <div>♙ <span>Recognises individuals for their extraordinary contributions in various fields of service.</span></div>
+                <div>♨ <span>Encourages and motivates selfless service and social responsibility.</span></div>
+                <div>▣ <span>Awardees are displayed chronologically with the most recent recipient at the top.</span></div>
+                <div>◎ <span>The individual selected for the forthcoming award is shown at the very top in a light-grey card.</span></div>
+                <div>★ <span>A legacy dedicated to service, inspiration, leadership, and social progress.</span></div>
             </div>
 
         </div>
-
-    </div>
-
-</section>
+    </section>
 
 
-
-
-<% if (upcomingAwardee) { %>
-
-<section class="upcoming-award">
-
-    <div class="container">
-
-        <div class="premium-award-card">
-
-            <div class="premium-award-header">
-
-                <h4>ARSP</h4>
-
-                <h1>ARSP HONOUR HEART AWARD</h1>
-
-                <h3>UPCOMING AWARDEE</h3>
-
-            </div>
-
-            
-
-<div class="premium-award-body">
-
-    <div class="premium-photo-frame">
-
-        <div class="gold-ring">
-
-            <img
-                src="/uploads/honour-heart/awardees/<%= upcomingAwardee.photo %>"
-                alt="<%= upcomingAwardee.name %>">
-
+    <!-- AT A GLANCE -->
+    <section class="hh-section hh-glance">
+        <div class="hh-section-heading">
+            <span>AT A GLANCE</span>
         </div>
 
-    </div>
+        <div class="hh-stat-grid">
 
-    <div>
+            <div class="hh-stat-card">
+                <span class="hh-stat-icon">🏆</span>
+                <strong><%= previousAwardees.length + (upcomingAwardee ? 1 : 0) %></strong>
+                <small>Honour HEART<br>Recipients</small>
+            </div>
 
-        <div class="premium-award-name">
+            <div class="hh-stat-card">
+                <span class="hh-stat-icon">♟</span>
+                <strong><%= board.length %></strong>
+                <small>Selection Body<br>Members</small>
+            </div>
 
+            <div class="hh-stat-card">
+                <span class="hh-stat-icon">▣</span>
+                <strong>2021</strong>
+                <small>Recognition<br>Started</small>
+            </div>
+
+            <div class="hh-stat-card">
+                <span class="hh-stat-icon">♕</span>
+                <strong><%= upcomingAwardee ? 1 : 0 %></strong>
+                <small>Upcoming<br>Honouree</small>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SELECTION BODY -->
+    <section id="selection-board" class="hh-section hh-selection">
+        <div class="hh-section-heading">
+            <span>ARSP HONOUR HEART</span>
             <h2>
-
-                <%= upcomingAwardee.name %>
-
+                <%= settings?.selection_title || "SELECTION BODY" %>
             </h2>
-
             <p>
-
-                <%= upcomingAwardee.designation %>
-
+                <%= settings?.selection_description ||
+                    "The ARSP Honour HEART recipient is selected by an independent Selection Body consisting of four distinguished members." %>
             </p>
-
         </div>
 
-        
+        <div class="hh-board-shell">
 
-            
+            <button class="hh-carousel-arrow hh-carousel-prev" type="button" aria-label="Previous">
+                ‹
+            </button>
 
-            <div class="premium-award-info">
+            <div class="hh-board-track">
+                <% board.forEach((member, index) => { %>
+                    <article class="hh-board-card">
 
-                <div>
-
-                    <strong>Award Year</strong>
-
-                    <span><%= upcomingAwardee.award_year %></span>
-
-                </div>
-
-                <div>
-
-                    <strong>Category</strong>
-
-                    <span><%= upcomingAwardee.award_category %></span>
-
-                </div>
-
-                <div>
-
-                    <strong>Named After</strong>
-
-                    <span><%= upcomingAwardee.legend_name %></span>
-
-                </div>
-
-                <div>
-
-                    <strong>Venue</strong>
-
-                    <span><%= upcomingAwardee.venue %></span>
-
-                </div>
-
-            </div>
-
-            <div class="premium-award-description">
-
-                <%= upcomingAwardee.biography %>
-
-            </div>
-
-            <div class="premium-award-button">
-
-                <a
-                    href="/honour-heart/awardee/<%= upcomingAwardee.id %>"
-                    class="btn btn-primary">
-
-                    View Complete Profile
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<% } %>
-
-
-
-<!-- =========================================
-     LEGENDARY PERSONALITIES
-========================================== -->
-
-<section class="legend-intro-section">
-
-<div class="container">
-
-<div class="legend-intro-card">
-
-<div class="legend-intro-content">
-
-<span class="section-badge">
-
-ARSP Honour Heart Award
-
-</span>
-
-<h2>
-
-Legendary Personalities
-
-</h2>
-
-<p>
-
-The ARSP Honour Heart Award honours the timeless legacy of distinguished personalities whose vision, sacrifice, wisdom and lifelong service continue to inspire present and future generations. Explore the remarkable lives of these legends whose names have become an everlasting symbol of excellence.
-
-</p>
-
-<a
-
-href="/honour-heart/legends"
-
-class="btn btn-primary">
-
-<i class="fas fa-landmark"></i>
-
-Explore Legendary Personalities
-
-</a>
-
-</div>
-
-<div class="legend-intro-icon">
-
-<i class="fas fa-landmark"></i>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-
-
-<section class="selection-board">
-
-    <div class="container">
-
-        <div class="section-title">
-
-            <span class="section-badge">
-
-                OFFICIAL COMMITTEE
-
-            </span>
-
-            <h2>
-
-                Honour Heart Selection Board
-
-            </h2>
-
-            <p>
-
-                The independent Selection Board is responsible for evaluating nominees and selecting personalities whose contributions have created a lasting impact on society.
-
-            </p>
-
-        </div>
-
-        <div class="selection-grid">
-
-            <% board.forEach(member=>{ %>
-
-                <div class="selection-card">
-
-                    <div class="selection-photo">
-
-                        <img
-                            src="/uploads/honour-heart/board/<%= member.photo %>"
-                            alt="<%= member.name %>">
-
-                    </div>
-
-                    <div class="selection-content">
-
-                        <h3>
-
-                            <%= member.name %>
-
-                        </h3>
-
-                        <h5>
-
-                            <%= member.designation %>
-
-                        </h5>
-
-                        <% if(member.organisation){ %>
-
-                            <p>
-
-                                <i class="fas fa-building"></i>
-
-                                <%= member.organisation %>
-
-                            </p>
-
-                        <% } %>
-
-                    </div>
-
-                </div>
-
-            <% }) %>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="legend-section">
-
-    <div class="container">
-
-        <div class="section-title">
-
-            <span class="section-badge">
-                LEGENDARY PERSONALITIES
-            </span>
-
-            <h2>
-                Great Souls Who Inspire Generations
-            </h2>
-
-            <p>
-                Every ARSP Honour Heart Award is dedicated to the ideals and
-                legacy of extraordinary personalities whose lives continue to
-                inspire humanity.
-            </p>
-
-        </div>
-
-        <div class="legend-grid">
-
-            <% legends.forEach(legend => { %>
-
-                <a
-                    href="/honour-heart/legend/<%= legend.slug %>"
-                    class="legend-card">
-
-                    <div class="legend-image">
-
-                        <img
-                            src="/uploads/honour-heart/legends/<%= legend.photo %>"
-                            alt="<%= legend.name %>">
-
-                    </div>
-
-                    <div class="legend-body">
-
-                        <h3><%= legend.name %></h3>
-
-                        <h5><%= legend.designation %></h5>
-
-                        <div class="legend-btn">
-
-                            Read Biography
-
-                            <i class="fas fa-arrow-right"></i>
-
+                        <div class="hh-board-number">
+                            <%= index + 1 %>
                         </div>
 
-                    </div>
+                        <div class="hh-board-photo">
+                            <% if (member.photo) { %>
+                                <img
+                                    src="/uploads/honour-heart/board/<%= member.photo %>"
+                                    alt="<%= member.name %>"
+                                >
+                            <% } else { %>
+                                <div class="hh-photo-placeholder">👤</div>
+                            <% } %>
+                        </div>
 
-                </a>
+                        <div class="hh-board-info">
+                            <h3><%= member.name %></h3>
 
-            <% }) %>
+                            <span class="hh-board-role">
+                                <%= index === 0 ? "CHAIRPERSON" : "MEMBER" %>
+                            </span>
+
+                            <% if (member.designation) { %>
+                                <p><%= member.designation %></p>
+                            <% } %>
+
+                            <% if (member.organisation) { %>
+                                <small><%= member.organisation %></small>
+                            <% } %>
+                        </div>
+
+                    </article>
+                <% }) %>
+            </div>
+
+            <button class="hh-carousel-arrow hh-carousel-next" type="button" aria-label="Next">
+                ›
+            </button>
 
         </div>
 
-    </div>
+        <div class="hh-carousel-dots" data-carousel-dots="board">
+            <% const boardDots = Math.max(1, Math.min(6, board.length)); %>
+            <% for (let i = 0; i < boardDots; i++) { %>
+                <span class="<%= i === 0 ? 'active' : '' %>"></span>
+            <% } %>
+        </div>
 
-</section>
-
-
-
-
-<section class="award-stats-section">
-
-    <div class="container">
-
-        <div class="section-title">
-
-            <span class="section-badge">
-
-                ACHIEVEMENTS
-
-            </span>
-
-            <h2>
-
-                ARSP Honour Heart Award At A Glance
-
-            </h2>
-
+        <div class="hh-selection-note">
+            <span>♢</span>
             <p>
-
-                A quick overview of the Honour Heart Award and its growing legacy.
-
+                <%= settings?.selection_note ||
+                    "The Selection Body evaluates nominations based on contribution to society, impact, leadership, dedication, consistency, and ethical conduct. The decision is made independently and without any discrimination." %>
             </p>
-
         </div>
+    </section>
 
-        <div class="stats-grid">
 
-            <div class="stat-card">
+    <!-- UPCOMING HONOUREE -->
+    <% if (upcomingAwardee) { %>
+        <section class="hh-section hh-upcoming-section">
 
-                <div class="stat-icon">
-
-                    <i class="fas fa-award"></i>
-
-                </div>
-
-                <h3>
-
-                    <%= previousAwardees.length + (upcomingAwardee ? 1 : 0) %>
-
-                </h3>
-
-                <p>Total Awardees</p>
-
+            <div class="hh-section-heading compact">
+                <span>UPCOMING HONOUREE</span>
             </div>
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-
-                    <i class="fas fa-landmark"></i>
-
-                </div>
-
-                <h3>
-
-                    <%= legends.length %>
-
-                </h3>
-
-                <p>Legendary Personalities</p>
-
-            </div>
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-
-                    <i class="fas fa-users"></i>
-
-                </div>
-
-                <h3>
-
-                    <%= board.length %>
-
-                </h3>
-
-                <p>Selection Board Members</p>
-
-            </div>
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-
-                    <i class="fas fa-calendar-check"></i>
-
-                </div>
-
-                <h3>
-
-                    <%= new Date().getFullYear() %>
-
-                </h3>
-
-                <p>Current Award Year</p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<section class="awardees">
-
-    <div class="container">
-
-        <div class="section-title">
-
-            <span class="section-badge">
-
-                HONOUR ROLL
-
-            </span>
-
-            <h2>
-
-                Previous Honour Heart Awardees
-
-            </h2>
-
-            <p>
-
-                Every recipient represents excellence, dedication and extraordinary service to humanity.
-
-            </p>
-
-        </div>
-
-        <div class="awardees-grid">
-
-            <% previousAwardees.forEach(awardee=>{ %>
-
-                <a
-                    href="/honour-heart/awardee/<%= awardee.id %>"
-                    class="awardee-card">
-
-                    <div class="awardee-photo">
-
-                        <img
-                            src="/uploads/honour-heart/awardees/<%= awardee.photo %>"
-                            alt="<%= awardee.name %>">
-
-                        <span class="award-year">
-
-                            <%= awardee.award_year %>
-
-                        </span>
-
-                    </div>
-
-                    <div class="awardee-content">
-
-                        <h3>
-
-                            <%= awardee.name %>
-
-                        </h3>
-
-                        <h5>
-
-                            <%= awardee.designation %>
-
-                        </h5>
-
-                        <p>
-
-                            <strong>
-
-                                <%= awardee.award_category %>
-
-                            </strong>
-
-                        </p>
-
-                        <span class="awardee-btn">
-
-                            View Full Profile
-
-                            <i class="fas fa-arrow-right"></i>
-
-                        </span>
-
-                    </div>
-
-                </a>
-
-            <% }) %>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-<% if(settings.popup_enabled==="Yes"){ %>
-
-<div id="awardPopup" class="award-popup">
-
-<div class="award-popup-content">
-
-<button
-id="closeAwardPopup"
-class="award-popup-close">
-
-×
-
-</button>
-
-<div id="awardPopupBody">
-
-Loading...
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-
-window.addEventListener("load", async () => {
-
-    try {
-
-        const res = await fetch("/honour-heart/popup");
-
-        const data = await res.json();
-
-        if (!data.id) return;
-
-        document.getElementById("awardPopupBody").innerHTML = `
-
-            <span class="section-badge">
-                Upcoming Award
-            </span>
-
-            <img
-                src="/uploads/honour-heart/awardees/${data.photo}"
-                class="popup-photo">
-
-            <h2>${data.name}</h2>
-
-            <h4>
-                ARSP Honour Heart Award ${data.award_year}
-            </h4>
-
-            <p>
-                ${data.biography.substring(0,220)}...
-            </p>
 
             <a
-                href="/honour-heart/awardee/${data.id}"
-                class="btn btn-success">
+                class="hh-upcoming-card hh-upcoming-reference-card"
+                href="/honour-heart/awardee/<%= upcomingAwardee.id %>"
+            >
 
-                View Complete Profile
+                <div class="hh-upcoming-photo">
+                    <% if (upcomingAwardee.photo) { %>
+                        <img
+                            src="/uploads/honour-heart/awardees/<%= upcomingAwardee.photo %>"
+                            alt="<%= upcomingAwardee.name %>"
+                        >
+                    <% } else { %>
+                        <div class="hh-photo-placeholder">👤</div>
+                    <% } %>
+                </div>
+
+                <div class="hh-upcoming-info">
+
+                    <span class="hh-upcoming-label">
+                        UPCOMING HONOUREE
+                    </span>
+
+                    <h2>
+                        <%= upcomingAwardee.name %>
+                    </h2>
+
+                    <% if (upcomingAwardee.designation) { %>
+                        <p class="hh-upcoming-designation">
+                            <%= upcomingAwardee.designation %>
+                        </p>
+                    <% } %>
+
+                    <% if (upcomingAwardee.venue) { %>
+                        <small class="hh-upcoming-location">
+                            ● <%= upcomingAwardee.venue %>
+                        </small>
+                    <% } %>
+
+                    <% if (upcomingAwardee.award_category) { %>
+                        <span class="hh-upcoming-category">
+                            <%= upcomingAwardee.award_category %>
+                        </span>
+                    <% } %>
+
+                </div>
+
+                <div class="hh-upcoming-year">
+
+                    <span>AWARD YEAR</span>
+
+                    <strong>
+                        <%= upcomingAwardee.award_year || "—" %>
+                    </strong>
+
+                    <small>
+                        To Be Conferred
+                    </small>
+
+                </div>
 
             </a>
 
-        `;
+        </section>
+    <% } %>
 
-        document
-            .getElementById("awardPopup")
-            .classList.add("show");
 
-    } catch (err) {
+    <!-- LEGACY -->
+    <section id="previous-awardees" class="hh-section hh-legacy">
 
-        console.log(err);
+        <div class="hh-section-heading">
+            <span>ARSP HONOUR HEART</span>
+            <h2><%= settings?.legacy_title || "LEGACY" %></h2>
+            <p>
+                <%= settings?.legacy_description ||
+                    "Honouring individuals whose service, leadership and social impact continue to inspire a better society." %>
+            </p>
+        </div>
 
+        <div class="hh-legacy-list">
+
+            <% previousAwardees.forEach((awardee) => { %>
+
+                <a
+                    href="/honour-heart/awardee/<%= awardee.id %>"
+                    class="hh-legacy-row"
+                >
+
+                    <div class="hh-year">
+                        <%= awardee.award_year || "—" %>
+                    </div>
+
+                    <div class="hh-legacy-photo">
+                        <% if (awardee.photo) { %>
+                            <img
+                                src="/uploads/honour-heart/awardees/<%= awardee.photo %>"
+                                alt="<%= awardee.name %>"
+                            >
+                        <% } else { %>
+                            <div class="hh-photo-placeholder">👤</div>
+                        <% } %>
+                    </div>
+
+                    <div class="hh-legacy-person">
+                        <h3><%= awardee.name %></h3>
+
+                        <% if (awardee.designation) { %>
+                            <p><%= awardee.designation %></p>
+                        <% } %>
+
+                        <% if (awardee.venue) { %>
+                            <small>● <%= awardee.venue %></small>
+                        <% } %>
+                    </div>
+
+                    <div class="hh-legacy-date">
+                        <span>AWARDED IN</span>
+                        <strong><%= awardee.award_year || "—" %></strong>
+                    </div>
+
+                    <span class="hh-row-arrow">›</span>
+
+                </a>
+
+            <% }) %>
+
+        </div>
+
+        <a
+            href="<%= settings?.legacy_button_url || '/honour-heart/awardees' %>"
+            class="hh-view-all"
+        >
+            <span>♟</span>
+            <%= settings?.legacy_button_text || "VIEW ALL AWARDEES" %>
+        </a>
+
+    </section>
+
+
+    <!-- RECOGNITION PRINCIPLES -->
+    <section class="hh-section hh-principles">
+
+        <div class="hh-section-heading">
+            <span>OUR RECOGNITION PRINCIPLES</span>
+        </div>
+
+        <div class="hh-principles-grid">
+
+            <% for (let i = 1; i <= 5; i++) { %>
+                <div class="hh-principle">
+
+                    <div class="hh-principle-icon">
+                        <%= settings?.["principle_" + i + "_icon"] || ["♡","✦","♧","⚖","✓"][i - 1] %>
+                    </div>
+
+                    <strong>
+                        <%= settings?.["principle_" + i + "_title"] || [
+                            "Selfless Service",
+                            "Positive Social Impact",
+                            "Leadership & Inspiration",
+                            "Fairness & Transparency",
+                            "Integrity & Accountability"
+                        ][i - 1] %>
+                    </strong>
+
+                    <p>
+                        <%= settings?.["principle_" + i + "_description"] || "" %>
+                    </p>
+
+                </div>
+            <% } %>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<style id="hh-upcoming-reference-fix">
+
+/* =========================================================
+   UPCOMING HONOUREE — REFERENCE CARD
+   ========================================================= */
+
+.hh-upcoming-reference-card {
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+
+    display: grid !important;
+    grid-template-columns: 64px minmax(0, 1fr) 92px !important;
+
+    align-items: center !important;
+
+    gap: 11px !important;
+
+    padding: 9px 11px !important;
+
+    border: 1px solid #d7b45b !important;
+    border-radius: 8px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #fffdf8 0%,
+            #ffffff 60%,
+            #fffdf7 100%
+        ) !important;
+
+    box-shadow: none !important;
+
+    text-decoration: none !important;
+}
+
+
+/* portrait */
+
+.hh-reference-card .hh-upcoming-photo {
+    width: 58px !important;
+    height: 58px !important;
+
+    min-width: 58px !important;
+    min-height: 58px !important;
+
+    border-radius: 50% !important;
+
+    overflow: hidden !important;
+
+    border: 2px solid #d9dfe7 !important;
+
+    background: #eef1f4 !important;
+
+    box-shadow: none !important;
+}
+
+.hh-reference-card .hh-upcoming-photo img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: cover !important;
+
+    display: block !important;
+}
+
+
+/* central information */
+
+.hh-reference-card .hh-upcoming-info {
+    min-width: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    justify-content: center !important;
+    align-items: flex-start !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.hh-reference-card .hh-upcoming-label {
+    display: block !important;
+
+    margin: 0 0 2px !important;
+
+    color: #b17c1c !important;
+
+    font-size: 6px !important;
+    line-height: 1 !important;
+
+    font-weight: 900 !important;
+
+    letter-spacing: .1em !important;
+}
+
+.hh-reference-card .hh-upcoming-info h2 {
+    margin: 0 0 3px !important;
+
+    color: #102f5e !important;
+
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+
+    font-weight: 900 !important;
+}
+
+.hh-reference-card .hh-upcoming-designation {
+    display: block !important;
+
+    margin: 0 0 2px !important;
+
+    color: #536174 !important;
+
+    font-size: 7px !important;
+    line-height: 1.25 !important;
+}
+
+.hh-reference-card .hh-upcoming-location {
+    display: block !important;
+
+    margin: 0 !important;
+
+    color: #59677a !important;
+
+    font-size: 6px !important;
+    line-height: 1.2 !important;
+}
+
+.hh-reference-card .hh-upcoming-category {
+    display: inline-block !important;
+
+    margin-top: 4px !important;
+
+    color: #98701d !important;
+
+    font-size: 5px !important;
+    line-height: 1.15 !important;
+
+    font-weight: 800 !important;
+}
+
+
+/* award year */
+
+.hh-reference-card .hh-upcoming-year {
+    min-width: 0 !important;
+
+    border-left: 1px solid #dfe3e8 !important;
+
+    padding: 4px 0 4px 10px !important;
+
+    text-align: center !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.hh-reference-card .hh-upcoming-year span {
+    display: block !important;
+
+    color: #7b8491 !important;
+
+    font-size: 5px !important;
+    line-height: 1.1 !important;
+
+    font-weight: 800 !important;
+}
+
+.hh-reference-card .hh-upcoming-year strong {
+    display: block !important;
+
+    margin: 2px 0 !important;
+
+    color: #102f5e !important;
+
+    font-size: 20px !important;
+    line-height: 1 !important;
+
+    font-weight: 900 !important;
+}
+
+.hh-reference-card .hh-upcoming-year small {
+    display: block !important;
+
+    color: #8a929d !important;
+
+    font-size: 5px !important;
+    line-height: 1.1 !important;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .hh-upcoming-section {
+        width: calc(100% - 18px) !important;
+
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
     }
 
-});
-
-document.addEventListener("click", function (e) {
-
-    if (
-
-        e.target.id === "awardPopup" ||
-
-        e.target.id === "closeAwardPopup"
-
-    ) {
-
-        document
-            .getElementById("awardPopup")
-            .classList.remove("show");
-
+    .hh-upcoming-section .hh-section-heading {
+        margin-bottom: 5px !important;
     }
 
-});
+    .hh-upcoming-reference-card {
+        width: 100% !important;
+
+        min-height: 0 !important;
+        height: 76px !important;
+
+        grid-template-columns: 45px minmax(0,1fr) 52px !important;
+
+        gap: 7px !important;
+
+        padding: 6px 7px !important;
+
+        border-radius: 6px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-photo {
+        width: 42px !important;
+        height: 42px !important;
+
+        min-width: 42px !important;
+        min-height: 42px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-label {
+        font-size: 4px !important;
+
+        margin-bottom: 2px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-info h2 {
+        font-size: 8px !important;
+
+        margin-bottom: 2px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-designation {
+        font-size: 4.5px !important;
+
+        margin-bottom: 1px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-location {
+        font-size: 4px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-category {
+        margin-top: 3px !important;
+
+        font-size: 3.8px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-year {
+        padding-left: 6px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-year span {
+        font-size: 3.8px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-year strong {
+        font-size: 15px !important;
+
+        margin: 2px 0 !important;
+    }
+
+    .hh-reference-card .hh-upcoming-year small {
+        font-size: 3.8px !important;
+    }
+}
+
+
+/* very small phones */
+
+@media (max-width: 390px) {
+
+    .hh-upcoming-reference-card {
+        height: 72px !important;
+
+        grid-template-columns: 41px minmax(0,1fr) 49px !important;
+
+        gap: 6px !important;
+
+        padding: 5px 6px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-photo {
+        width: 38px !important;
+        height: 38px !important;
+
+        min-width: 38px !important;
+        min-height: 38px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-info h2 {
+        font-size: 7.5px !important;
+    }
+
+    .hh-reference-card .hh-upcoming-year strong {
+        font-size: 14px !important;
+    }
+}
+
+</style>
 
 
 
+<style id="hh-final-mobile-fix">
 
+/* =========================================================
+   FINAL MOBILE REFERENCE POLISH
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    /* Remove excess page spacing */
+    .hh-page {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .hh-identity {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .hh-identity-inner {
+        margin: 0 auto !important;
+        padding: 9px 0 8px !important;
+    }
+
+    /* -----------------------------------------------------
+       AT A GLANCE
+       ----------------------------------------------------- */
+
+    .hh-glance {
+        padding: 9px 0 10px !important;
+    }
+
+    .hh-glance .hh-section-heading {
+        text-align: center !important;
+        margin: 0 0 6px !important;
+    }
+
+    .hh-stat-grid {
+        width: 100% !important;
+        height: 61px !important;
+        min-height: 61px !important;
+    }
+
+    .hh-stat-card {
+        height: 61px !important;
+        min-height: 61px !important;
+        justify-content: center !important;
+    }
+
+
+    /* -----------------------------------------------------
+       SELECTION BODY
+       ----------------------------------------------------- */
+
+    .hh-selection {
+        padding-top: 9px !important;
+        padding-bottom: 7px !important;
+    }
+
+    .hh-selection .hh-section-heading {
+        margin-bottom: 6px !important;
+    }
+
+    .hh-board-shell {
+        height: 103px !important;
+        align-items: center !important;
+    }
+
+    .hh-board-track {
+        height: 100px !important;
+        overflow: hidden !important;
+    }
+
+    .hh-board-card {
+        height: 96px !important;
+        min-height: 96px !important;
+        max-height: 96px !important;
+    }
+
+    .hh-selection-note {
+        margin-top: 5px !important;
+    }
+
+
+    /* -----------------------------------------------------
+       UPCOMING
+       ----------------------------------------------------- */
+
+    .hh-upcoming-section {
+        padding-top: 7px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .hh-upcoming-section .hh-section-heading {
+        margin-bottom: 5px !important;
+    }
+
+    .hh-upcoming-card {
+        min-height: 82px !important;
+        height: 82px !important;
+    }
+
+
+    /* -----------------------------------------------------
+       LEGACY
+       ----------------------------------------------------- */
+
+    .hh-legacy {
+        padding-top: 8px !important;
+        padding-bottom: 7px !important;
+    }
+
+    .hh-legacy .hh-section-heading {
+        margin-bottom: 5px !important;
+    }
+
+    .hh-legacy-list {
+        margin-top: 3px !important;
+    }
+
+    .hh-legacy-row {
+        min-height: 42px !important;
+        height: 42px !important;
+    }
+
+    .hh-view-all {
+        margin-top: 5px !important;
+    }
+
+
+    /* -----------------------------------------------------
+       RECOGNITION PRINCIPLES
+       THIS IS THE IMPORTANT FIX
+       ----------------------------------------------------- */
+
+    .hh-principles {
+        width: calc(100% - 18px) !important;
+        margin: 0 auto !important;
+        padding: 9px 0 10px !important;
+        display: block !important;
+        text-align: center !important;
+    }
+
+    .hh-principles .hh-section-heading {
+        width: 100% !important;
+        display: block !important;
+        margin: 0 0 8px !important;
+        padding: 0 !important;
+        text-align: center !important;
+    }
+
+    .hh-principles .hh-section-heading > span {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        font-size: 6px !important;
+        line-height: 1.3 !important;
+    }
+
+    .hh-principles-grid {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 0 !important;
+        align-items: start !important;
+        justify-items: stretch !important;
+    }
+
+    .hh-principle {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        height: 48px !important;
+        padding: 0 2px !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        text-align: center !important;
+        overflow: hidden !important;
+    }
+
+    .hh-principle-icon {
+        flex: 0 0 auto !important;
+        width: 22px !important;
+        height: 22px !important;
+        margin: 0 auto 3px !important;
+        font-size: 15px !important;
+        line-height: 22px !important;
+    }
+
+    .hh-principle strong {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        font-size: 4.2px !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .hh-principle p {
+        display: none !important;
+    }
+
+
+    /* -----------------------------------------------------
+       FOOTER
+       ----------------------------------------------------- */
+
+    body:has(.hh-page) footer.footer {
+        margin: 0 !important;
+        padding: 12px 10px 5px !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-container {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+        gap: 10px !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-column {
+        min-width: 0 !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-column:first-child {
+        grid-column: 1 / -1 !important;
+        text-align: center !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-logo {
+        width: 58px !important;
+        max-width: 58px !important;
+        height: auto !important;
+        margin: 0 auto 4px !important;
+    }
+
+    body:has(.hh-page) footer.footer h3 {
+        font-size: 8px !important;
+        margin: 2px 0 3px !important;
+    }
+
+    body:has(.hh-page) footer.footer p,
+    body:has(.hh-page) footer.footer li,
+    body:has(.hh-page) footer.footer a {
+        font-size: 4.5px !important;
+        line-height: 1.25 !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-social {
+        margin-top: 4px !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-bottom {
+        margin-top: 7px !important;
+        padding-top: 5px !important;
+        font-size: 4px !important;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+    .hh-principles-grid {
+        grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+    }
+
+    .hh-principle {
+        height: 45px !important;
+        padding: 0 1px !important;
+    }
+
+    .hh-principle-icon {
+        width: 19px !important;
+        height: 19px !important;
+        line-height: 19px !important;
+        font-size: 13px !important;
+    }
+
+    .hh-principle strong {
+        font-size: 3.7px !important;
+    }
+}
+
+</style>
+
+
+<style>
+/* =========================================================
+   ARSP HONOUR HEART — REFERENCE DESIGN
+   ========================================================= */
+
+.hh-page {
+    background: #ffffff;
+    color: #14233f;
+    font-family: inherit;
+    overflow: hidden;
+}
+
+.hh-section {
+    width: min(1200px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 28px 0;
+}
+
+.hh-identity {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.hh-identity-inner {
+    width: min(1200px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 28px 0 22px;
+    display: grid;
+    grid-template-columns: 190px 1fr 330px;
+    gap: 28px;
+    align-items: center;
+}
+
+.hh-trophy {
+    min-height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.hh-trophy-icon {
+    width: 125px;
+    height: 145px;
+    border-radius: 50% 50% 18px 18px;
+    background: linear-gradient(#f7d778, #d79d25);
+    border: 5px solid #b27a14;
+    box-shadow: 0 10px 22px rgba(0,0,0,.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #16284a;
+    text-align: center;
+}
+
+.hh-trophy-icon span {
+    font-size: 33px;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+
+.hh-trophy-icon strong {
+    font-size: 13px;
+}
+
+.hh-trophy-icon small {
+    font-size: 9px;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.hh-laurel {
+    position: absolute;
+    color: #bd8420;
+    font-size: 60px;
+    opacity: .75;
+}
+
+.hh-laurel-left {
+    left: 5px;
+}
+
+.hh-laurel-right {
+    right: 5px;
+}
+
+.hh-identity-copy {
+    min-width: 0;
+}
+
+.hh-eyebrow,
+.hh-section-heading > span {
+    display: block;
+    color: #bd8420;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.hh-identity-copy h1 {
+    margin: 2px 0 2px;
+    color: #0d2854;
+    font-size: clamp(30px, 4vw, 45px);
+    line-height: 1;
+    font-weight: 900;
+}
+
+.hh-identity-copy h2 {
+    margin: 7px 0 12px;
+    color: #bd8420;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.hh-identity-copy p {
+    margin: 0;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.hh-identity-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 16px;
+}
+
+.hh-btn {
+    min-height: 34px;
+    padding: 0 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.hh-btn-primary {
+    color: #fff;
+    background: #102b58;
+}
+
+.hh-btn-secondary {
+    color: #102b58;
+    background: #fff;
+    border: 1px solid #d5dbe5;
+}
+
+.hh-recognition-box {
+    border: 1px solid #dfe4eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(15,39,71,.04);
+}
+
+.hh-recognition-box div {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 7px;
+    padding: 7px 0;
+    border-bottom: 1px solid #edf0f4;
+    font-size: 9px;
+    line-height: 1.35;
+    color: #374151;
+}
+
+.hh-recognition-box div:last-child {
+    border-bottom: 0;
+}
+
+.hh-recognition-box div > span:first-child {
+    color: #bd8420;
+}
+
+.hh-section-heading {
+    text-align: center;
+    margin-bottom: 17px;
+}
+
+.hh-section-heading h2 {
+    margin: 2px 0 4px;
+    color: #0d2854;
+    font-size: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.hh-section-heading p {
+    max-width: 800px;
+    margin: 5px auto 0;
+    color: #657084;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.hh-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid #e1e5eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.hh-stat-card {
+    min-height: 86px;
+    padding: 11px 8px;
+    text-align: center;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hh-stat-card:last-child {
+    border-right: 0;
+}
+
+.hh-stat-icon {
+    color: #0d2854;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.hh-stat-card strong {
+    color: #102b58;
+    font-size: 22px;
+    line-height: 1.05;
+    margin-top: 3px;
+}
+
+.hh-stat-card small {
+    color: #64748b;
+    font-size: 8px;
+    line-height: 1.2;
+}
+
+.hh-board-shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.hh-board-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 24px) / 4);
+    gap: 8px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.hh-board-card {
+    min-width: 0;
+    position: relative;
+    border: 1px solid #e0e5ec;
+    border-radius: 9px;
+    padding: 10px;
+    background: #fff;
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.hh-board-number {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: #0d2854;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+}
+
+.hh-board-photo {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #e5e7eb;
+    background: #f3f4f6;
+}
+
+.hh-board-photo img,
+.hh-legacy-photo img,
+.hh-upcoming-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.hh-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: #edf0f3;
+    color: #9ca3af;
+    font-size: 22px;
+}
+
+.hh-board-info {
+    min-width: 0;
+}
+
+.hh-board-info h3 {
+    margin: 0;
+    color: #173463;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 900;
+}
+
+.hh-board-role {
+    display: inline-block;
+    margin: 3px 0;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: #f4d27c;
+    color: #6b4a08;
+    font-size: 6px;
+    line-height: 1;
+    font-weight: 900;
+}
+
+.hh-board-info p,
+.hh-board-info small {
+    display: block;
+    margin: 0;
+    color: #64748b;
+    font-size: 7px;
+    line-height: 1.35;
+}
+
+.hh-carousel-arrow {
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+    border: 1px solid #dbe1e8;
+    border-radius: 50%;
+    background: #fff;
+    color: #0d2854;
+    font-size: 19px;
+    line-height: 20px;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.hh-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 9px;
+}
+
+.hh-carousel-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #cbd5e1;
+}
+
+.hh-carousel-dots span.active {
+    background: #0d2854;
+}
+
+.hh-selection-note {
+    margin: 11px auto 0;
+    max-width: 950px;
+    border: 1px solid #d9e0e8;
+    border-radius: 7px;
+    background: #f8fafc;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.hh-selection-note > span {
+    color: #0d2854;
+    font-size: 16px;
+}
+
+.hh-selection-note p {
+    margin: 0;
+    color: #586579;
+    font-size: 8px;
+    line-height: 1.45;
+}
+
+.hh-upcoming-section {
+    padding-top: 15px;
+}
+
+.hh-section-heading.compact {
+    margin-bottom: 8px;
+}
+
+.hh-upcoming-card {
+    display: grid;
+    grid-template-columns: 76px 1fr 105px;
+    gap: 14px;
+    align-items: center;
+    padding: 11px 14px;
+    border: 1px solid #d9b96a;
+    border-radius: 9px;
+    background: #fffdf7;
+    text-decoration: none;
+    color: inherit;
+}
+
+.hh-upcoming-photo {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #d7dce3;
+    background: #eee;
+}
+
+.hh-upcoming-label {
+    color: #bd8420;
+    font-size: 7px;
+    font-weight: 900;
+}
+
+.hh-upcoming-info h2 {
+    margin: 2px 0 2px;
+    color: #163260;
+    font-size: 15px;
+}
+
+.hh-upcoming-info p,
+.hh-upcoming-info small {
+    display: block;
+    margin: 2px 0;
+    color: #5c6879;
+    font-size: 8px;
+}
+
+.hh-category {
+    display: inline-block;
+    margin-top: 3px;
+    color: #8a6519;
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.hh-upcoming-year {
+    border-left: 1px solid #e5e7eb;
+    padding-left: 15px;
+    text-align: center;
+}
+
+.hh-upcoming-year span,
+.hh-upcoming-year small {
+    display: block;
+    color: #64748b;
+    font-size: 7px;
+}
+
+.hh-upcoming-year strong {
+    display: block;
+    color: #0d2854;
+    font-size: 23px;
+}
+
+.hh-legacy {
+    padding-top: 20px;
+}
+
+.hh-legacy-list {
+    border-top: 1px solid #e3e7ed;
+}
+
+.hh-legacy-row {
+    display: grid;
+    grid-template-columns: 48px 45px 1fr 85px 20px;
+    align-items: center;
+    gap: 9px;
+    min-height: 64px;
+    padding: 7px 8px;
+    border-bottom: 1px solid #e7ebf0;
+    text-decoration: none;
+    color: inherit;
+}
+
+.hh-year {
+    width: 39px;
+    padding: 4px 2px;
+    border-radius: 4px;
+    background: #102b58;
+    color: #fff;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.hh-legacy-photo {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #e0e5ea;
+}
+
+.hh-legacy-person {
+    min-width: 0;
+}
+
+.hh-legacy-person h3 {
+    margin: 0;
+    color: #173463;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.hh-legacy-person p,
+.hh-legacy-person small {
+    display: block;
+    margin: 2px 0 0;
+    color: #667085;
+    font-size: 7px;
+    line-height: 1.25;
+}
+
+.hh-legacy-date {
+    border-left: 1px solid #e5e7eb;
+    padding-left: 9px;
+    text-align: center;
+}
+
+.hh-legacy-date span {
+    display: block;
+    color: #64748b;
+    font-size: 6px;
+}
+
+.hh-legacy-date strong {
+    color: #173463;
+    font-size: 10px;
+}
+
+.hh-row-arrow {
+    color: #0d2854;
+    font-size: 20px;
+    text-align: center;
+}
+
+.hh-view-all {
+    width: fit-content;
+    margin: 12px auto 0;
+    padding: 7px 20px;
+    border: 1px solid #bfc8d5;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #173463;
+    background: #fff;
+    text-decoration: none;
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.hh-principles {
+    padding-bottom: 32px;
+}
+
+.hh-principles-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.hh-principle {
+    text-align: center;
+    padding: 8px 5px;
+}
+
+.hh-principle-icon {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 5px;
+    display: grid;
+    place-items: center;
+    color: #173463;
+    font-size: 22px;
+}
+
+.hh-principle strong {
+    display: block;
+    color: #173463;
+    font-size: 8px;
+    line-height: 1.25;
+}
+
+.hh-principle p {
+    margin: 4px 0 0;
+    color: #697586;
+    font-size: 7px;
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   MOBILE — MATCH REFERENCE PROPORTIONS
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .hh-section {
+        width: calc(100% - 18px);
+        padding: 11px 0;
+    }
+
+    .hh-identity-inner {
+        width: calc(100% - 18px);
+        padding: 12px 0 9px;
+        grid-template-columns: 76px 1fr;
+        gap: 9px;
+        align-items: start;
+    }
+
+    .hh-trophy {
+        min-height: 100px;
+    }
+
+    .hh-trophy-icon {
+        width: 66px;
+        height: 77px;
+        border-width: 3px;
+    }
+
+    .hh-trophy-icon span {
+        font-size: 20px;
+    }
+
+    .hh-trophy-icon strong {
+        font-size: 8px;
+    }
+
+    .hh-trophy-icon small {
+        font-size: 5px;
+    }
+
+    .hh-laurel {
+        font-size: 32px;
+    }
+
+    .hh-laurel-left {
+        left: -3px;
+    }
+
+    .hh-laurel-right {
+        right: -3px;
+    }
+
+    .hh-eyebrow {
+        font-size: 6px;
+    }
+
+    .hh-identity-copy h1 {
+        font-size: 21px;
+        line-height: 1;
+    }
+
+    .hh-identity-copy h2 {
+        font-size: 8px;
+        margin: 4px 0 6px;
+    }
+
+    .hh-identity-copy p {
+        font-size: 7px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .hh-identity-actions {
+        margin-top: 7px;
+        gap: 5px;
+    }
+
+    .hh-btn {
+        min-height: 23px;
+        padding: 0 7px;
+        border-radius: 4px;
+        font-size: 6px;
+        gap: 3px;
+    }
+
+    .hh-recognition-box {
+        grid-column: 1 / -1;
+        padding: 5px 8px;
+        display: none;
+    }
+
+    .hh-stat-grid {
+        border-radius: 5px;
+    }
+
+    .hh-stat-card {
+        min-height: 58px;
+        padding: 5px 2px;
+    }
+
+    .hh-stat-icon {
+        font-size: 14px;
+    }
+
+    .hh-stat-card strong {
+        font-size: 16px;
+    }
+
+    .hh-stat-card small {
+        font-size: 5px;
+    }
+
+    .hh-section-heading {
+        margin-bottom: 7px;
+    }
+
+    .hh-section-heading > span {
+        font-size: 6px;
+    }
+
+    .hh-section-heading h2 {
+        font-size: 12px;
+        margin: 1px 0;
+    }
+
+    .hh-section-heading p {
+        font-size: 6px;
+        line-height: 1.35;
+    }
+
+    .hh-board-shell {
+        gap: 3px;
+    }
+
+    .hh-board-track {
+        grid-auto-columns: calc((100% - 12px) / 4);
+        gap: 4px;
+    }
+
+    .hh-board-card {
+        min-height: 93px;
+        padding: 5px 3px;
+        grid-template-columns: 1fr;
+        gap: 3px;
+        text-align: center;
+        justify-items: center;
+    }
+
+    .hh-board-number {
+        width: 12px;
+        height: 12px;
+        font-size: 5px;
+        left: 2px;
+        top: 2px;
+    }
+
+    .hh-board-photo {
+        width: 37px;
+        height: 37px;
+    }
+
+    .hh-board-info h3 {
+        font-size: 6px;
+        line-height: 1.1;
+    }
+
+    .hh-board-role {
+        font-size: 4px;
+        margin: 2px 0;
+        padding: 1px 3px;
+    }
+
+    .hh-board-info p,
+    .hh-board-info small {
+        font-size: 4px;
+        line-height: 1.15;
+    }
+
+    .hh-carousel-arrow {
+        flex-basis: 17px;
+        width: 17px;
+        height: 17px;
+        font-size: 14px;
+        line-height: 12px;
+    }
+
+    .hh-carousel-dots {
+        margin-top: 4px;
+    }
+
+    .hh-carousel-dots span {
+        width: 4px;
+        height: 4px;
+    }
+
+    .hh-selection-note {
+        margin-top: 5px;
+        padding: 4px 6px;
+        gap: 4px;
+    }
+
+    .hh-selection-note > span {
+        font-size: 10px;
+    }
+
+    .hh-selection-note p {
+        font-size: 5px;
+        line-height: 1.3;
+    }
+
+    .hh-upcoming-card {
+        grid-template-columns: 46px 1fr 48px;
+        gap: 6px;
+        padding: 6px;
+        border-radius: 5px;
+    }
+
+    .hh-upcoming-photo {
+        width: 42px;
+        height: 42px;
+    }
+
+    .hh-upcoming-label {
+        font-size: 4px;
+    }
+
+    .hh-upcoming-info h2 {
+        font-size: 9px;
+        margin: 1px 0;
+    }
+
+    .hh-upcoming-info p,
+    .hh-upcoming-info small {
+        font-size: 5px;
+        margin: 1px 0;
+    }
+
+    .hh-category {
+        font-size: 4px;
+        margin-top: 1px;
+    }
+
+    .hh-upcoming-year {
+        padding-left: 5px;
+    }
+
+    .hh-upcoming-year span,
+    .hh-upcoming-year small {
+        font-size: 4px;
+    }
+
+    .hh-upcoming-year strong {
+        font-size: 13px;
+    }
+
+    .hh-legacy {
+        padding-top: 9px;
+    }
+
+    .hh-legacy-row {
+        grid-template-columns: 29px 31px 1fr 48px 10px;
+        gap: 5px;
+        min-height: 43px;
+        padding: 4px 2px;
+    }
+
+    .hh-year {
+        width: 27px;
+        padding: 3px 1px;
+        font-size: 5px;
+        border-radius: 3px;
+    }
+
+    .hh-legacy-photo {
+        width: 29px;
+        height: 29px;
+    }
+
+    .hh-legacy-person h3 {
+        font-size: 6px;
+        line-height: 1.1;
+    }
+
+    .hh-legacy-person p,
+    .hh-legacy-person small {
+        font-size: 4px;
+        line-height: 1.1;
+    }
+
+    .hh-legacy-date {
+        padding-left: 4px;
+    }
+
+    .hh-legacy-date span {
+        font-size: 3.5px;
+    }
+
+    .hh-legacy-date strong {
+        font-size: 6px;
+    }
+
+    .hh-row-arrow {
+        font-size: 13px;
+    }
+
+    .hh-view-all {
+        margin-top: 6px;
+        padding: 4px 11px;
+        font-size: 5px;
+        border-radius: 4px;
+    }
+
+    .hh-principles {
+        padding-bottom: 12px;
+    }
+
+    .hh-principles-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+    }
+
+    .hh-principle {
+        padding: 2px 1px;
+    }
+
+    .hh-principle-icon {
+        width: 22px;
+        height: 22px;
+        font-size: 15px;
+        margin-bottom: 2px;
+    }
+
+    .hh-principle strong {
+        font-size: 4.5px;
+    }
+
+    .hh-principle p {
+        display: none;
+    }
+}
+
+
+/* VERY SMALL PHONES */
+
+@media (max-width: 380px) {
+
+    .hh-identity-inner {
+        grid-template-columns: 67px 1fr;
+    }
+
+    .hh-trophy-icon {
+        width: 58px;
+        height: 69px;
+    }
+
+    .hh-identity-copy h1 {
+        font-size: 18px;
+    }
+
+    .hh-identity-copy h2 {
+        font-size: 7px;
+    }
+
+    .hh-board-card {
+        min-height: 88px;
+    }
+
+    .hh-board-photo {
+        width: 34px;
+        height: 34px;
+    }
+
+    .hh-board-info h3 {
+        font-size: 5.5px;
+    }
+
+    .hh-legacy-row {
+        grid-template-columns: 27px 29px 1fr 43px 8px;
+        gap: 4px;
+    }
+}
+</style>
+
+
+<style id="hh-reference-final-overrides">
+
+/* =========================================================
+   ARSP HONOUR HEART — FINAL REFERENCE LAYOUT
+   ========================================================= */
+
+.hh-reference-header {
+    width: 100%;
+    height: 48px;
+    background: #071d4b;
+    border-bottom: 2px solid #d8ad38;
+    position: relative;
+    z-index: 100;
+}
+
+.hh-reference-header-inner {
+    width: min(1200px, calc(100% - 30px));
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hh-reference-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.hh-reference-logo {
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    display: grid;
+    place-items: center;
+}
+
+.hh-reference-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.hh-reference-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.hh-reference-brand-text strong {
+    font-size: 8px;
+    letter-spacing: .02em;
+}
+
+.hh-reference-brand-text small {
+    margin-top: 2px;
+    color: #e8bf45;
+    font-size: 5px;
+    font-weight: 800;
+}
+
+.hh-reference-menu {
+    width: 29px;
+    height: 29px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+
+/* Hide the normal site header ONLY on this page.
+   The dedicated header above replaces it. */
+
+body:has(.hh-page) > header,
+body:has(.hh-page) .navbar,
+body:has(.hh-page) .main-header {
+    display: none !important;
+}
+
+
+/* MAIN */
+
+.hh-page {
+    width: 100%;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    overflow: hidden !important;
+}
+
+.hh-page,
+.hh-page * {
+    box-sizing: border-box;
+}
+
+
+/* IDENTITY */
+
+.hh-identity {
+    border-bottom: 1px solid #dce1e8 !important;
+    background: #fff !important;
+}
+
+.hh-identity-inner {
+    width: min(1200px, calc(100% - 36px)) !important;
+    padding: 24px 0 20px !important;
+    margin: 0 auto !important;
+    display: grid !important;
+    grid-template-columns: 175px minmax(0, 1fr) 310px !important;
+    gap: 22px !important;
+    align-items: center !important;
+}
+
+.hh-trophy {
+    min-height: 155px !important;
+}
+
+.hh-trophy-icon {
+    width: 108px !important;
+    height: 124px !important;
+}
+
+.hh-identity-copy h1 {
+    font-family: Georgia, "Times New Roman", serif !important;
+    color: #092657 !important;
+    font-size: 40px !important;
+    letter-spacing: -.02em !important;
+}
+
+.hh-identity-copy h2 {
+    color: #bd8720 !important;
+    font-size: 14px !important;
+}
+
+.hh-identity-copy p {
+    color: #4c5665 !important;
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+}
+
+.hh-recognition-box {
+    display: block !important;
+}
+
+
+/* SECTION COMMON */
+
+.hh-section {
+    width: min(1120px, calc(100% - 36px)) !important;
+    padding: 20px 0 !important;
+    margin: 0 auto !important;
+}
+
+.hh-section-heading {
+    margin-bottom: 10px !important;
+}
+
+.hh-section-heading > span {
+    color: #ae7b1b !important;
+    font-size: 9px !important;
+    letter-spacing: .1em !important;
+}
+
+.hh-section-heading h2 {
+    font-family: Georgia, "Times New Roman", serif !important;
+    color: #0a2959 !important;
+    font-size: 19px !important;
+}
+
+.hh-section-heading p {
+    font-size: 9px !important;
+}
+
+
+/* STATS */
+
+.hh-stat-grid {
+    width: 100% !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    border-radius: 7px !important;
+}
+
+.hh-stat-card {
+    min-height: 78px !important;
+}
+
+
+/* BOARD */
+
+.hh-selection {
+    padding-top: 19px !important;
+}
+
+.hh-board-shell {
+    width: 100% !important;
+}
+
+.hh-board-track {
+    width: 100% !important;
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: calc((100% - 24px) / 4) !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+}
+
+.hh-board-track::-webkit-scrollbar {
+    display: none !important;
+}
+
+.hh-board-card {
+    min-width: 0 !important;
+    min-height: 115px !important;
+}
+
+.hh-carousel-arrow {
+    display: grid !important;
+    place-items: center !important;
+    flex: 0 0 26px !important;
+    width: 26px !important;
+    height: 26px !important;
+}
+
+
+/* UPCOMING */
+
+.hh-upcoming-card {
+    min-height: 90px !important;
+}
+
+
+/* LEGACY */
+
+.hh-legacy {
+    padding-top: 18px !important;
+}
+
+.hh-legacy-list {
+    width: 100% !important;
+    display: block !important;
+}
+
+.hh-legacy-row {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 43px 45px minmax(0,1fr) 90px 18px !important;
+    min-height: 60px !important;
+    align-items: center !important;
+}
+
+
+/* PRINCIPLES — FORCE FIVE ACROSS */
+
+.hh-principles {
+    width: min(1120px, calc(100% - 36px)) !important;
+}
+
+.hh-principles-grid {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: start !important;
+}
+
+.hh-principle {
+    width: auto !important;
+    min-width: 0 !important;
+    display: block !important;
+    text-align: center !important;
+}
+
+.hh-principle-icon {
+    margin: 0 auto 5px !important;
+}
+
+.hh-principle strong {
+    display: block !important;
+}
+
+
+/* FOOTER — COMPACT ON HONOUR HEART */
+
+main.hh-page + footer.footer {
+    margin-top: 0 !important;
+    padding: 22px 0 8px !important;
+}
+
+body:has(.hh-page) footer.footer {
+    min-height: 0 !important;
+}
+
+body:has(.hh-page) footer.footer .footer-container {
+    max-width: 1120px !important;
+}
+
+body:has(.hh-page) footer.footer .footer-logo {
+    max-width: 85px !important;
+}
+
+body:has(.hh-page) footer.footer h3 {
+    font-size: 13px !important;
+}
+
+body:has(.hh-page) footer.footer p,
+body:has(.hh-page) footer.footer li,
+body:has(.hh-page) footer.footer a {
+    font-size: 9px !important;
+    line-height: 1.4 !important;
+}
+
+
+/* =========================================================
+   MOBILE REFERENCE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .hh-reference-header {
+        height: 43px;
+    }
+
+    .hh-reference-header-inner {
+        width: calc(100% - 16px);
+    }
+
+    .hh-reference-logo {
+        width: 27px;
+        height: 27px;
+    }
+
+    .hh-reference-brand-text strong {
+        font-size: 6px;
+    }
+
+    .hh-reference-brand-text small {
+        font-size: 4px;
+    }
+
+    .hh-reference-menu {
+        width: 26px;
+        height: 26px;
+        font-size: 19px;
+    }
+
+
+    /* identity matches reference compactness */
+
+    .hh-identity-inner {
+        width: calc(100% - 18px) !important;
+        padding: 12px 0 10px !important;
+        grid-template-columns: 72px minmax(0,1fr) !important;
+        gap: 8px !important;
+    }
+
+    .hh-trophy {
+        min-height: 93px !important;
+    }
+
+    .hh-trophy-icon {
+        width: 61px !important;
+        height: 72px !important;
+    }
+
+    .hh-laurel {
+        font-size: 27px !important;
+    }
+
+    .hh-eyebrow {
+        display: inline-block !important;
+        background: #e9f2fb !important;
+        border-radius: 14px !important;
+        padding: 4px 9px !important;
+        font-size: 5px !important;
+    }
+
+    .hh-identity-copy h1 {
+        font-size: 20px !important;
+        margin: 3px 0 !important;
+    }
+
+    .hh-identity-copy h2 {
+        font-size: 7px !important;
+        margin: 3px 0 5px !important;
+    }
+
+    .hh-identity-copy p {
+        font-size: 6px !important;
+        line-height: 1.35 !important;
+        -webkit-line-clamp: 4 !important;
+    }
+
+    .hh-identity-actions {
+        margin-top: 6px !important;
+    }
+
+    .hh-btn {
+        min-height: 23px !important;
+        padding: 0 7px !important;
+        font-size: 5px !important;
+    }
+
+    .hh-recognition-box {
+        display: none !important;
+    }
+
+
+    /* sections */
+
+    .hh-section {
+        width: calc(100% - 18px) !important;
+        padding: 12px 0 !important;
+    }
+
+    .hh-section-heading {
+        margin-bottom: 7px !important;
+    }
+
+    .hh-section-heading > span {
+        font-size: 5px !important;
+    }
+
+    .hh-section-heading h2 {
+        font-size: 12px !important;
+        margin: 2px 0 !important;
+    }
+
+    .hh-section-heading p {
+        font-size: 5px !important;
+        line-height: 1.35 !important;
+    }
+
+
+    /* four stat cards */
+
+    .hh-stat-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    .hh-stat-card {
+        min-height: 61px !important;
+        padding: 4px 2px !important;
+    }
+
+    .hh-stat-icon {
+        font-size: 12px !important;
+    }
+
+    .hh-stat-card strong {
+        font-size: 15px !important;
+    }
+
+    .hh-stat-card small {
+        font-size: 4.5px !important;
+    }
+
+
+    /* selection: four cards */
+
+    .hh-board-shell {
+        gap: 2px !important;
+    }
+
+    .hh-board-track {
+        grid-auto-columns: calc((100% - 12px) / 4) !important;
+        gap: 4px !important;
+        overflow-x: hidden !important;
+    }
+
+    .hh-board-card {
+        min-height: 100px !important;
+        padding: 5px 2px !important;
+        border-radius: 8px !important;
+        grid-template-columns: 1fr !important;
+        text-align: center !important;
+        justify-items: center !important;
+    }
+
+    .hh-board-number {
+        width: 13px !important;
+        height: 13px !important;
+        font-size: 5px !important;
+    }
+
+    .hh-board-photo {
+        width: 38px !important;
+        height: 38px !important;
+    }
+
+    .hh-board-info h3 {
+        font-size: 5.5px !important;
+    }
+
+    .hh-board-role {
+        font-size: 3.5px !important;
+    }
+
+    .hh-board-info p,
+    .hh-board-info small {
+        font-size: 3.7px !important;
+    }
+
+    .hh-carousel-arrow {
+        flex-basis: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 13px !important;
+    }
+
+    .hh-carousel-dots {
+        margin: 4px 0 !important;
+    }
+
+
+    /* note */
+
+    .hh-selection-note {
+        margin-top: 4px !important;
+        padding: 5px 7px !important;
+    }
+
+    .hh-selection-note p {
+        font-size: 4.5px !important;
+    }
+
+
+    /* upcoming */
+
+    .hh-upcoming-section {
+        padding-top: 8px !important;
+    }
+
+    .hh-upcoming-card {
+        min-height: 88px !important;
+        grid-template-columns: 43px minmax(0,1fr) 50px !important;
+        gap: 6px !important;
+        padding: 7px !important;
+    }
+
+    .hh-upcoming-photo {
+        width: 39px !important;
+        height: 39px !important;
+    }
+
+    .hh-upcoming-info h2 {
+        font-size: 8px !important;
+    }
+
+    .hh-upcoming-info p,
+    .hh-upcoming-info small {
+        font-size: 4.5px !important;
+    }
+
+    .hh-upcoming-year strong {
+        font-size: 14px !important;
+    }
+
+
+    /* legacy rows */
+
+    .hh-legacy-row {
+        grid-template-columns: 29px 31px minmax(0,1fr) 45px 9px !important;
+        min-height: 43px !important;
+        gap: 4px !important;
+        padding: 4px 1px !important;
+    }
+
+    .hh-year {
+        width: 27px !important;
+        font-size: 5px !important;
+    }
+
+    .hh-legacy-photo {
+        width: 29px !important;
+        height: 29px !important;
+    }
+
+    .hh-legacy-person h3 {
+        font-size: 5.5px !important;
+    }
+
+    .hh-legacy-person p,
+    .hh-legacy-person small {
+        font-size: 3.8px !important;
+    }
+
+    .hh-legacy-date span {
+        font-size: 3.2px !important;
+    }
+
+    .hh-legacy-date strong {
+        font-size: 5.5px !important;
+    }
+
+    .hh-row-arrow {
+        font-size: 12px !important;
+    }
+
+    .hh-view-all {
+        margin-top: 6px !important;
+        padding: 5px 12px !important;
+        font-size: 5px !important;
+    }
+
+
+    /* five principles — ALWAYS HORIZONTAL */
+
+    .hh-principles {
+        width: calc(100% - 18px) !important;
+        padding: 10px 0 13px !important;
+    }
+
+    .hh-principles-grid {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        width: 100% !important;
+        gap: 1px !important;
+    }
+
+    .hh-principle {
+        display: block !important;
+        width: 100% !important;
+        padding: 2px 1px !important;
+    }
+
+    .hh-principle-icon {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 14px !important;
+        margin: 0 auto 2px !important;
+    }
+
+    .hh-principle strong {
+        font-size: 3.8px !important;
+        line-height: 1.15 !important;
+    }
+
+    .hh-principle p {
+        display: none !important;
+    }
+
+
+    /* compact footer */
+
+    body:has(.hh-page) footer.footer {
+        padding: 16px 10px 7px !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-container {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-column:first-child {
+        grid-column: 1 / -1 !important;
+        text-align: center !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-logo {
+        max-width: 70px !important;
+        margin: 0 auto 7px !important;
+    }
+
+    body:has(.hh-page) footer.footer h3 {
+        font-size: 9px !important;
+        margin-bottom: 4px !important;
+    }
+
+    body:has(.hh-page) footer.footer p,
+    body:has(.hh-page) footer.footer li,
+    body:has(.hh-page) footer.footer a {
+        font-size: 5px !important;
+        line-height: 1.3 !important;
+    }
+
+    body:has(.hh-page) footer.footer .footer-bottom {
+        font-size: 4px !important;
+        padding-top: 6px !important;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .hh-identity-inner {
+        grid-template-columns: 66px minmax(0,1fr) !important;
+    }
+
+    .hh-trophy-icon {
+        width: 56px !important;
+        height: 67px !important;
+    }
+
+    .hh-identity-copy h1 {
+        font-size: 18px !important;
+    }
+
+    .hh-board-card {
+        min-height: 94px !important;
+    }
+}
+
+</style>
+
+
+<script>
+(function () {
+
+    function setupCarousel(section) {
+        const track = section.querySelector(".hh-board-track");
+        const prev = section.querySelector(".hh-carousel-prev");
+        const next = section.querySelector(".hh-carousel-next");
+        const dots = section.querySelectorAll(".hh-carousel-dots span");
+
+        if (!track || !prev || !next) return;
+
+        let index = 0;
+
+        function visibleCards() {
+            return window.innerWidth <= 700 ? 4 : 4;
+        }
+
+        function maxIndex() {
+            return Math.max(
+                0,
+                track.children.length - visibleCards()
+            );
+        }
+
+        function update() {
+            const cards = track.children;
+            if (!cards.length) return;
+
+            const first = cards[0];
+            const gap = parseFloat(getComputedStyle(track).gap || "0");
+            const width = first.getBoundingClientRect().width + gap;
+
+            track.scrollTo({
+                left: index * width,
+                behavior: "smooth"
+            });
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle(
+                    "active",
+                    i === Math.min(
+                        dots.length - 1,
+                        Math.floor(index / Math.max(1, visibleCards()))
+                    )
+                );
+            });
+
+            prev.disabled = index <= 0;
+            next.disabled = index >= maxIndex();
+        }
+
+        prev.addEventListener("click", function () {
+            index = Math.max(0, index - 1);
+            update();
+        });
+
+        next.addEventListener("click", function () {
+            index = Math.min(maxIndex(), index + 1);
+            update();
+        });
+
+        window.addEventListener("resize", update);
+        update();
+    }
+
+    document.querySelectorAll(".hh-selection").forEach(setupCarousel);
+
+})();
 </script>
-
-<% } %>
-
-
-<!-- =========================================
-     CONTACT / NOMINATION INFORMATION
-========================================= -->
-
-<section class="honour-contact-section">
-
-<div class="container">
-
-<div class="honour-contact-card">
-
-<div>
-
-<h2>
-
-ARSP Honour Heart Award Secretariat
-
-</h2>
-
-<span class="section-badge">
-
-Official Communication
-
-</span>
-
-<p>
-
-
-For all official enquiries regarding nominations, award selection,
-ceremony arrangements, partnerships, media communication or other
-matters related to the ARSP Honour Heart Award, please contact the
-Award Secretariat.
-
-
-
-</p>
-
-</div>
-
-<div class="honour-contact-buttons">
-
-<a
-
-href="/contact"
-
-class="btn btn-primary">
-
-<i class="fas fa-envelope"></i>
-
-Contact Us
-
-</a>
-
-<a
-
-href="/about"
-
-class="btn btn-outline-light">
-
-<i class="fas fa-info-circle"></i>
-
-Learn More
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
 
 <%- include("../partials/footer") %>

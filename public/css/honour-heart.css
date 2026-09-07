@@ -1,1520 +1,2177 @@
-/* ==========================================================
-   ARSP HONOUR HEART AWARD
-   Version 2.0
-   Professional Edition
-========================================================== */
+/* ============================================================
+   ARSP HONOUR HEART
+   Clean reference implementation
+   ============================================================ */
 
+:root {
+    --hh-navy: #061d49;
+    --hh-navy-2: #0a2d68;
+    --hh-blue: #edf6ff;
+    --hh-blue-2: #dceeff;
+    --hh-cream: #fbfaf6;
+    --hh-gold: #e5b93f;
+    --hh-gold-2: #f4cf68;
+    --hh-text: #102d5c;
+    --hh-muted: #68778c;
+    --hh-border: #d8e2ee;
+    --hh-white: #ffffff;
+    --hh-shadow: 0 5px 18px rgba(8, 37, 82, .09);
+    --hh-shadow-lg: 0 12px 30px rgba(8, 37, 82, .13);
+}
 
-/* ==========================================================
-   VARIABLES
-========================================================== */
+.hh-page {
+    background: #fff;
+    color: var(--hh-text);
+    overflow: hidden;
+}
 
-:root{
+.hh-page *,
+.hh-page *::before,
+.hh-page *::after {
+    box-sizing: border-box;
+}
 
-    --primary:#0b6b35;
-    --primary-dark:#084d26;
-    --secondary:#198754;
-    --gold:#c89b3c;
-
-    --white:#ffffff;
-    --light:#f8fafc;
-    --border:#e9ecef;
-
-    --text:#333333;
-    --muted:#666666;
-
-    --shadow:0 12px 35px rgba(0,0,0,.08);
-    --shadow-lg:0 18px 45px rgba(0,0,0,.15);
-
-    --radius:20px;
-
+.hh-shell {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
 }
 
 
-/* ==========================================================
-   GLOBAL
-========================================================== */
+/* ============================================================
+   IDENTITY
+   ============================================================ */
 
-body{
-
-    background:#fff;
-    color:var(--text);
-
+.hh-identity {
+    background: #fff;
+    border-bottom: 1px solid var(--hh-border);
+    padding: 24px 0 20px;
 }
 
-.about-section,
-.upcoming-award,
-.legend-intro-section,
-.legend-section,
-.selection-board,
-.award-stats-section,
-.awardees,
-.honour-contact-section{
-
-    padding:90px 0;
-
+.hh-identity .hh-shell {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 28px;
+    align-items: center;
 }
 
-.container{
-
-    width:min(1180px,92%);
-    margin:auto;
-
+.hh-identity-trophy {
+    height: 205px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-
-/* ==========================================================
-   COMMON SECTION TITLE
-========================================================== */
-
-.section-title{
-
-    text-align:center;
-    margin-bottom:55px;
-
+.hh-identity-trophy img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
-.section-title h2{
-
-    font-size:42px;
-    color:var(--primary);
-    margin:18px 0;
-
+.hh-trophy-placeholder {
+    width: 150px;
+    height: 170px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #f8e8ad, #d9ad35);
+    color: var(--hh-navy);
+    font-size: 70px;
+    box-shadow: var(--hh-shadow-lg);
 }
 
-.section-title p{
-
-    color:var(--muted);
-    font-size:18px;
-    line-height:1.8;
-    max-width:760px;
-    margin:auto;
-
+.hh-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: var(--hh-blue-2);
+    color: var(--hh-navy);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
 }
 
-
-/* ==========================================================
-   BADGE
-========================================================== */
-
-.section-badge{
-
-    display:inline-block;
-
-    padding:10px 24px;
-
-    background:var(--primary);
-
-    color:#fff;
-
-    border-radius:50px;
-
-    font-size:13px;
-
-    font-weight:700;
-
-    letter-spacing:1px;
-
+.hh-identity-copy h1 {
+    margin: 10px 0 0;
+    color: var(--hh-navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: .9;
+    letter-spacing: -.8px;
 }
 
-
-/* ==========================================================
-   HERO
-========================================================== */
-
-.honour-hero{
-
-    min-height:560px;
-
-    background-size:cover;
-
-    background-position:center;
-
-    background-repeat:no-repeat;
-
-    position:relative;
-
+.hh-identity-copy h1 strong {
+    display: block;
+    font-weight: 800;
 }
 
-.honour-hero-overlay{
-
-    min-height:560px;
-
-    background:linear-gradient(
-
-        rgba(0,0,0,.65),
-
-        rgba(0,0,0,.45)
-
-    );
-
-    display:flex;
-
-    align-items:center;
-
+.hh-gold-line {
+    width: 100px;
+    height: 3px;
+    margin: 11px 0 8px;
+    border-radius: 10px;
+    background: var(--hh-gold);
 }
 
-.honour-hero-content{
-
-    max-width:760px;
-
-    color:#fff;
-
+.hh-identity-copy h2 {
+    margin: 0 0 7px;
+    color: #b58a1d;
+    font-size: 17px;
+    font-weight: 800;
 }
 
-.honour-hero-content h1{
-
-    font-size:62px;
-
-    margin:25px 0;
-
-    font-weight:700;
-
+.hh-identity-copy p {
+    max-width: 760px;
+    margin: 0;
+    color: #4e5e74;
+    font-size: 13px;
+    line-height: 1.55;
 }
 
-.honour-hero-content p{
+.hh-identity-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 13px;
+}
 
-    font-size:22px;
+.hh-primary-btn,
+.hh-secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 36px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .35px;
+}
 
-    line-height:1.9;
+.hh-primary-btn {
+    color: #fff;
+    background: var(--hh-navy);
+}
 
+.hh-secondary-btn {
+    color: var(--hh-navy);
+    background: #fff;
+    border: 1px solid #cbd8e8;
 }
 
 
-/* ==========================================================
-   BREADCRUMB
-========================================================== */
+/* ============================================================
+   SECTION COMMON
+   ============================================================ */
 
-.breadcrumb-section{
-
-    background:#f8f9fa;
-
-    border-bottom:1px solid #ececec;
-
-    padding:16px 0;
-
+.hh-section-heading {
+    margin-bottom: 13px;
 }
 
-.breadcrumb-section nav{
-
-    display:flex;
-
-    gap:10px;
-
-    align-items:center;
-
-    font-size:15px;
-
+.hh-section-heading > span {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: #8d6b19;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
 }
 
-.breadcrumb-section a{
-
-    color:var(--primary);
-
-    text-decoration:none;
-
-    font-weight:600;
-
+.hh-section-heading h2 {
+    margin: 0 0 4px;
+    color: var(--hh-navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 27px;
+    line-height: 1.05;
 }
 
-.breadcrumb-section span{
-
-    color:#777;
-
+.hh-section-heading p {
+    max-width: 720px;
+    margin: 0;
+    color: #607086;
+    font-size: 12px;
+    line-height: 1.45;
 }
 
-
-/* ==========================================================
-   ABOUT AWARD
-========================================================== */
-
-.about-award-card{
-
-    display:flex;
-
-    gap:60px;
-
-    align-items:center;
-
-    background:#fff;
-
-    padding:55px;
-
-    border-radius:var(--radius);
-
-    box-shadow:var(--shadow);
-
+.hh-heading-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 15px;
 }
 
-.about-award-left{
-
-    flex:1;
-
+.hh-centered {
+    text-align: center;
 }
 
-.about-award-left h2{
-
-    color:var(--primary);
-
-    margin:20px 0;
-
-    font-size:40px;
-
-}
-
-.about-award-left p{
-
-    line-height:2;
-
-    color:#555;
-
-    font-size:17px;
-
-    text-align:justify;
-
-}
-
-.about-award-right{
-
-    width:220px;
-
-    display:flex;
-
-    justify-content:center;
-
-}
-
-.award-icon-box{
-
-    width:180px;
-
-    height:180px;
-
-    border-radius:50%;
-
-    background:linear-gradient(
-        135deg,
-        var(--primary),
-        var(--secondary)
-    );
-
-    color:#fff;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-size:72px;
-
-    box-shadow:var(--shadow);
-
+.hh-centered > span {
+    margin-bottom: 0;
 }
 
 
+/* ============================================================
+   STATS
+   ============================================================ */
 
-
-
-/* ==========================================================
-   UPCOMING AWARDEE
-========================================================== */
-
-.awardee-card{
-
-    display:grid;
-
-    grid-template-columns:340px 1fr;
-
-    gap:45px;
-
-    background:#fff;
-
-    border-radius:var(--radius);
-
-    padding:35px;
-
-    box-shadow:var(--shadow);
-
-    border:2px solid var(--primary);
-
+.hh-stats-section {
+    padding: 13px 0;
+    background: #fff;
 }
 
-.awardee-photo{
-
-    overflow:hidden;
-
-    border-radius:18px;
-
+.hh-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--hh-border);
+    border-radius: 9px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--hh-shadow);
 }
 
-.awardee-photo img{
-
-    width:100%;
-
-    height:440px;
-
-    object-fit:cover;
-
-    display:block;
-
-    transition:.4s;
-
+.hh-stat {
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border-right: 1px solid var(--hh-border);
 }
 
-.awardee-card:hover .awardee-photo img{
-
-    transform:scale(1.04);
-
+.hh-stat:last-child {
+    border-right: 0;
 }
 
-.award-year{
-
-    display:inline-block;
-
-    background:var(--primary);
-
-    color:#fff;
-
-    padding:10px 24px;
-
-    border-radius:40px;
-
-    font-size:14px;
-
-    font-weight:700;
-
-    margin-bottom:18px;
-
+.hh-stat-icon {
+    color: var(--hh-navy);
+    font-size: 23px;
 }
 
-.awardee-info h2{
-
-    font-size:42px;
-
-    color:var(--primary);
-
-    margin-bottom:10px;
-
+.hh-stat strong {
+    color: var(--hh-navy);
+    font-size: 23px;
+    line-height: 1;
 }
 
-.awardee-info h4{
-
-    color:#777;
-
-    font-size:22px;
-
-    margin-bottom:20px;
-
-}
-
-.awardee-info p{
-
-    color:#555;
-
-    line-height:1.9;
-
-    text-align:justify;
-
-    margin-bottom:30px;
-
-}
-
-.award-details{
-
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
-
-    gap:18px;
-
-    margin-bottom:30px;
-
-}
-
-.award-details div{
-
-    background:#f8faf8;
-
-    border-left:5px solid var(--primary);
-
-    padding:18px;
-
-    border-radius:12px;
-
-}
-
-.award-details strong{
-
-    display:block;
-
-    color:var(--primary);
-
-    margin-bottom:6px;
-
-}
-
-.award-details span{
-
-    color:#555;
-
+.hh-stat small {
+    color: #53647a;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1.2;
 }
 
 
-/* ==========================================================
-   LEGEND INTRO
-========================================================== */
-
-.legend-intro-card{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:50px;
-
-    padding:60px;
-
-    border-radius:24px;
-
-    background:linear-gradient(
-        135deg,
-        var(--primary),
-        var(--secondary)
-    );
-
-    color:#fff;
-
-    overflow:hidden;
-
-    box-shadow:var(--shadow-lg);
-
-}
-
-.legend-intro-content{
-
-    flex:1;
-
-}
-
-.legend-intro-content h2{
-
-    font-size:40px;
-
-    margin:20px 0;
-
-}
-
-.legend-intro-content p{
-
-    line-height:1.9;
-
-    font-size:18px;
-
-    margin-bottom:30px;
-
-}
-
-.legend-intro-content .btn{
-
-    background:#fff;
-
-    color:var(--primary);
-
-    font-weight:700;
-
-}
-
-.legend-intro-icon{
-
-    font-size:140px;
-
-    opacity:.15;
-
-}
-
-
-/* ==========================================================
-   LEGENDARY PERSONALITIES
-========================================================== */
-
-.legend-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-
-    gap:35px;
-
-}
-
-.legend-card{
-
-    display:block;
-
-    background:#fff;
-
-    border-radius:22px;
-
-    overflow:hidden;
-
-    text-decoration:none;
-
-    color:#222;
-
-    box-shadow:var(--shadow);
-
-    transition:.35s;
-
-}
-
-.legend-card:hover{
-
-    transform:translateY(-10px);
-
-    box-shadow:var(--shadow-lg);
-
-}
-
-.legend-image{
-
-    height:420px;
-
-    overflow:hidden;
-
-}
-
-.legend-image img{
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-
-    transition:.4s;
-
-}
-
-.legend-card:hover img{
-
-    transform:scale(1.05);
-
-}
-
-.legend-body{
-
-    padding:28px;
-
-}
-
-.legend-body h3{
-
-    color:var(--primary);
-
-    font-size:28px;
-
-    margin-bottom:8px;
-
-}
-
-.legend-body h5{
-
-    color:#666;
-
-    margin-bottom:24px;
-
-    font-weight:500;
-
-}
-
-.legend-btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    color:var(--primary);
-
-    font-weight:700;
-
-}
-
-.legend-btn i{
-
-    transition:.3s;
-
-}
-
-.legend-card:hover .legend-btn i{
-
-    transform:translateX(6px);
-
-}
-
-
-
-
-
-/* ==========================================================
+/* ============================================================
    SELECTION BOARD
-========================================================== */
+   ============================================================ */
 
-.selection-board{
-
-    background:#f8fafc;
-
+.hh-board-section {
+    padding: 18px 0 16px;
+    background: var(--hh-blue);
 }
 
-.selection-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-
-    gap:35px;
-
+.hh-view-all {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 32px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--hh-navy);
+    border: 1px solid #d5e1ef;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
 }
 
-.selection-card{
-
-    background:#fff;
-
-    border-radius:22px;
-
-    overflow:hidden;
-
-    box-shadow:var(--shadow);
-
-    transition:.35s;
-
+.hh-board-track {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
 }
 
-.selection-card:hover{
-
-    transform:translateY(-10px);
-
-    box-shadow:var(--shadow-lg);
-
+.hh-board-card {
+    min-width: 0;
+    display: flex;
+    gap: 8px;
+    padding: 7px;
+    border: 1px solid #d5e2ef;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(12, 46, 88, .06);
 }
 
-.selection-photo{
-
-    height:320px;
-
-    overflow:hidden;
-
+.hh-board-photo {
+    flex: 0 0 68px;
+    height: 68px;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #edf2f7;
 }
 
-.selection-photo img{
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-
-    transition:.4s;
-
+.hh-board-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.selection-card:hover img{
-
-    transform:scale(1.05);
-
+.hh-board-info {
+    position: relative;
+    min-width: 0;
+    padding-top: 1px;
 }
 
-.selection-content{
-
-    padding:28px;
-
-    text-align:center;
-
+.hh-board-number {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--hh-navy);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 900;
 }
 
-.selection-content h3{
-
-    color:var(--primary);
-
-    margin-bottom:10px;
-
-    font-size:26px;
-
+.hh-board-info h3 {
+    margin: 0 17px 2px 0;
+    color: var(--hh-navy);
+    font-size: 11px;
+    line-height: 1.15;
 }
 
-.selection-content h5{
-
-    color:#666;
-
-    font-weight:600;
-
-    margin-bottom:15px;
-
+.hh-board-info strong {
+    display: block;
+    color: #c29525;
+    font-size: 8px;
+    line-height: 1.2;
 }
 
-.selection-content p{
-
-    color:#777;
-
-    line-height:1.7;
-
+.hh-board-info small {
+    display: block;
+    margin-top: 4px;
+    color: #596a80;
+    font-size: 7px;
+    line-height: 1.2;
 }
 
-
-/* ==========================================================
-   AWARD STATISTICS
-========================================================== */
-
-.award-stats-section{
-
-    background:#f8fafc;
-
+.hh-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 8px 0 5px;
 }
 
-.stats-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
-    gap:30px;
-
+.hh-carousel-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c6d1df;
 }
 
-.stat-card{
-
-    background:#fff;
-
-    border-radius:20px;
-
-    padding:40px 25px;
-
-    text-align:center;
-
-    box-shadow:var(--shadow);
-
-    transition:.35s;
-
+.hh-carousel-dots span.active {
+    background: var(--hh-navy);
 }
 
-.stat-card:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:var(--shadow-lg);
-
+.hh-board-note {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    color: #53657d;
+    font-size: 8px;
+    text-align: center;
 }
 
-.stat-card i{
-
-    font-size:48px;
-
-    color:var(--primary);
-
-    margin-bottom:18px;
-
-}
-
-.stat-card h3{
-
-    font-size:42px;
-
-    color:var(--primary);
-
-    margin-bottom:10px;
-
-}
-
-.stat-card p{
-
-    color:#666;
-
+.hh-board-note i {
+    color: var(--hh-navy);
 }
 
 
-/* ==========================================================
-   PREVIOUS AWARDEES
-========================================================== */
+/* ============================================================
+   UPCOMING
+   ============================================================ */
 
-.awardees{
-
-    background:#fff;
-
+.hh-upcoming-section {
+    padding: 14px 0;
+    background: #fff;
 }
 
-.awardees-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-
-    gap:35px;
-
+.hh-upcoming {
+    overflow: hidden;
+    border: 1px solid #d9c58d;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #fffdf7, #fff);
+    box-shadow: var(--hh-shadow);
 }
 
-.awardee-item{
-
-    display:block;
-
-    background:#fff;
-
-    border-radius:22px;
-
-    overflow:hidden;
-
-    text-decoration:none;
-
-    color:inherit;
-
-    box-shadow:var(--shadow);
-
-    transition:.35s;
-
+.hh-upcoming-main {
+    padding: 12px 15px;
 }
 
-.awardee-item:hover{
-
-    transform:translateY(-10px);
-
-    box-shadow:var(--shadow-lg);
-
+.hh-upcoming-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 7px;
+    color: #b08317;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: .9px;
 }
 
-.awardee-item img{
-
-    width:100%;
-
-    height:320px;
-
-    object-fit:cover;
-
+.hh-upcoming-person {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 11px;
+    align-items: center;
 }
 
-.awardee-body{
-
-    padding:28px;
-
+.hh-upcoming-avatar {
+    width: 70px;
+    height: 70px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #edf0f3;
+    border: 3px solid #f1d57b;
 }
 
-.awardee-body h3{
-
-    color:var(--primary);
-
-    margin:15px 0 10px;
-
+.hh-upcoming-avatar img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
 }
 
-.awardee-body p{
+.hh-upcoming-text h2 {
+    margin: 0 0 2px;
+    color: var(--hh-navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    line-height: 1;
+}
 
-    color:#666;
+.hh-upcoming-text h3 {
+    margin: 0 0 6px;
+    color: #b58b24;
+    font-size: 10px;
+    line-height: 1.25;
+}
 
-    line-height:1.7;
+.hh-upcoming-text p {
+    margin: 3px 0;
+    color: #53647a;
+    font-size: 8px;
+}
 
+.hh-upcoming-text p i {
+    width: 13px;
+    color: var(--hh-navy);
+}
+
+.hh-upcoming-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 9px;
+    padding-top: 8px;
+    border-top: 1px solid #eadfbd;
+}
+
+.hh-upcoming-footer > span {
+    color: #6d7787;
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.hh-upcoming-footer > span i {
+    margin-right: 4px;
+    color: var(--hh-navy);
+}
+
+.hh-upcoming-footer strong {
+    margin-left: 3px;
+    color: var(--hh-navy);
+}
+
+.hh-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: var(--hh-navy);
+    color: #fff;
+    text-decoration: none;
+    font-size: 8px;
+    font-weight: 900;
 }
 
 
-/* ==========================================================
+/* ============================================================
+   LEGACY
+   ============================================================ */
+
+.hh-legacy-section {
+    padding: 18px 0;
+    background: var(--hh-blue);
+}
+
+.hh-legacy-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hh-legacy-item {
+    display: grid;
+    grid-template-columns: 50px 48px minmax(0, 1fr) 100px 14px;
+    gap: 9px;
+    align-items: center;
+    min-height: 57px;
+    padding: 5px 9px;
+    border: 1px solid #d7e3ef;
+    border-radius: 7px;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 2px 7px rgba(8, 37, 82, .04);
+}
+
+.hh-legacy-year {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 42px;
+    height: 20px;
+    border-radius: 3px;
+    background: var(--hh-navy);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.hh-legacy-photo {
+    width: 44px;
+    height: 44px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #eef1f4;
+}
+
+.hh-legacy-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.hh-legacy-person {
+    min-width: 0;
+}
+
+.hh-legacy-person h3 {
+    margin: 0 0 2px;
+    color: var(--hh-navy);
+    font-size: 11px;
+    line-height: 1.15;
+}
+
+.hh-legacy-person strong,
+.hh-legacy-person small {
+    display: block;
+    color: #69778a;
+    font-size: 7px;
+    line-height: 1.25;
+}
+
+.hh-legacy-person small {
+    color: #c08e1d;
+    font-weight: 800;
+}
+
+.hh-legacy-date {
+    text-align: center;
+}
+
+.hh-legacy-date span {
+    display: block;
+    color: #8a96a6;
+    font-size: 6px;
+    font-weight: 800;
+}
+
+.hh-legacy-date strong {
+    display: block;
+    color: var(--hh-navy);
+    font-size: 8px;
+}
+
+.hh-legacy-arrow {
+    color: #7b899b;
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   PRINCIPLES
+   ============================================================ */
+
+.hh-principles-section {
+    padding: 12px 0;
+    background: #fff;
+}
+
+.hh-principles {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
+.hh-principles > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 62px;
+    text-align: center;
+}
+
+.hh-principles i {
+    margin-bottom: 5px;
+    color: var(--hh-navy);
+    font-size: 18px;
+}
+
+.hh-principles strong {
+    color: #44546a;
+    font-size: 7px;
+    line-height: 1.2;
+}
+
+
+/* ============================================================
+   SECRETARIAT
+   ============================================================ */
+
+.hh-secretariat-section {
+    padding: 14px 0;
+}
+
+.hh-secretariat {
+    display: grid;
+    grid-template-columns: 55px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 17px;
+    border-radius: 9px;
+    background: linear-gradient(110deg, #061b46, #0b3a78);
+    box-shadow: var(--hh-shadow-lg);
+}
+
+.hh-secretariat-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 20px;
+}
+
+.hh-secretariat-copy > span {
+    color: var(--hh-gold-2);
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 1.1px;
+}
+
+.hh-secretariat-copy h2 {
+    margin: 3px 0 4px;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+}
+
+.hh-secretariat-copy p {
+    max-width: 650px;
+    margin: 0;
+    color: #d9e5f5;
+    font-size: 8px;
+    line-height: 1.4;
+}
+
+.hh-secretariat-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hh-secretariat-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 110px;
+    min-height: 30px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.hh-secretariat-primary {
+    background: var(--hh-gold-2);
+    color: var(--hh-navy);
+}
+
+.hh-secretariat-secondary {
+    border: 1px solid rgba(255,255,255,.35);
+    color: #fff;
+}
+
+
+/* ============================================================
    POPUP
-========================================================== */
+   ============================================================ */
 
-.award-popup{
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,.65);
-
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:20px;
-
-    z-index:99999;
-
+.award-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: rgba(2, 16, 42, .72);
+    backdrop-filter: blur(5px);
 }
 
-.award-popup.show{
-
-    display:flex;
-
+.award-popup.active,
+.award-popup.show {
+    display: flex;
 }
 
-.award-popup-content{
-
-    background:#fff;
-
-    max-width:620px;
-
-    width:100%;
-
-    border-radius:22px;
-
-    padding:35px;
-
-    position:relative;
-
-    text-align:center;
-
-    animation:popup .35s ease;
-
+.award-popup-content {
+    position: relative;
+    width: min(680px, 100%);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 20px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 25px 70px rgba(0,0,0,.25);
 }
 
-.award-popup img{
-
-    width:170px;
-
-    height:170px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    margin-bottom:20px;
-
+.award-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 31px;
+    height: 31px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--hh-navy);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
 }
 
-.award-popup-close{
 
-    position:absolute;
+/* ============================================================
+   MOBILE
+   ============================================================ */
 
-    top:15px;
+@media (max-width: 768px) {
 
-    right:20px;
-
-    border:none;
-
-    background:none;
-
-    font-size:30px;
-
-    cursor:pointer;
-
-}
-
-@keyframes popup{
-
-    from{
-
-        opacity:0;
-
-        transform:scale(.85);
-
+    .hh-shell {
+        width: calc(100% - 16px);
     }
 
-    to{
-
-        opacity:1;
-
-        transform:scale(1);
-
+    .hh-identity {
+        padding: 10px 0 8px;
     }
 
+    .hh-identity .hh-shell {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .hh-identity-trophy {
+        height: 104px;
+    }
+
+    .hh-eyebrow {
+        padding: 4px 7px;
+        font-size: 7px;
+        letter-spacing: .7px;
+    }
+
+    .hh-identity-copy h1 {
+        margin-top: 5px;
+        font-size: 26px;
+        line-height: .88;
+        letter-spacing: -.3px;
+    }
+
+    .hh-gold-line {
+        width: 48px;
+        height: 2px;
+        margin: 5px 0;
+    }
+
+    .hh-identity-copy h2 {
+        margin-bottom: 3px;
+        font-size: 9px;
+    }
+
+    .hh-identity-copy p {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        font-size: 7px;
+        line-height: 1.35;
+    }
+
+    .hh-identity-actions {
+        gap: 4px;
+        margin-top: 6px;
+    }
+
+    .hh-primary-btn,
+    .hh-secondary-btn {
+        min-height: 24px;
+        padding: 4px 7px;
+        gap: 4px;
+        font-size: 6px;
+    }
+
+
+    .hh-stats-section {
+        padding: 6px 0;
+    }
+
+    .hh-section-heading > span {
+        font-size: 6px;
+        letter-spacing: .9px;
+    }
+
+    .hh-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        border-radius: 6px;
+    }
+
+    .hh-stat {
+        min-height: 52px;
+        flex-direction: column;
+        gap: 2px;
+        padding: 5px 2px;
+    }
+
+    .hh-stat-icon {
+        font-size: 12px;
+    }
+
+    .hh-stat strong {
+        font-size: 15px;
+    }
+
+    .hh-stat small {
+        font-size: 5px;
+        line-height: 1.1;
+    }
+
+
+    .hh-board-section {
+        padding: 9px 0 7px;
+    }
+
+    .hh-section-heading {
+        margin-bottom: 7px;
+    }
+
+    .hh-section-heading h2 {
+        font-size: 18px;
+    }
+
+    .hh-section-heading p {
+        font-size: 7px;
+        line-height: 1.3;
+    }
+
+    .hh-heading-row {
+        align-items: flex-start;
+    }
+
+    .hh-view-all {
+        min-height: 23px;
+        padding: 4px 7px;
+        gap: 3px;
+        font-size: 6px;
+    }
+
+    .hh-board-track {
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+        padding: 2px 1px 5px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .hh-board-track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hh-board-card {
+        flex: 0 0 123px;
+        display: block;
+        padding: 4px;
+        border-radius: 6px;
+        scroll-snap-align: start;
+    }
+
+    .hh-board-photo {
+        width: 100%;
+        height: 77px;
+        border-radius: 4px;
+    }
+
+    .hh-board-info {
+        padding: 4px 2px 2px;
+    }
+
+    .hh-board-number {
+        width: 12px;
+        height: 12px;
+        font-size: 6px;
+    }
+
+    .hh-board-info h3 {
+        margin-right: 14px;
+        font-size: 8px;
+    }
+
+    .hh-board-info strong {
+        font-size: 6px;
+    }
+
+    .hh-board-info small {
+        margin-top: 2px;
+        font-size: 5px;
+    }
+
+    .hh-board-note {
+        font-size: 5px;
+        line-height: 1.25;
+    }
+
+    .hh-carousel-dots {
+        margin: 4px 0;
+        gap: 3px;
+    }
+
+    .hh-carousel-dots span {
+        width: 5px;
+        height: 5px;
+    }
+
+
+    .hh-upcoming-section {
+        padding: 7px 0;
+    }
+
+    .hh-upcoming {
+        border-radius: 7px;
+    }
+
+    .hh-upcoming-main {
+        padding: 8px 9px;
+    }
+
+    .hh-upcoming-label {
+        margin-bottom: 4px;
+        font-size: 6px;
+    }
+
+    .hh-upcoming-person {
+        grid-template-columns: 55px minmax(0, 1fr);
+        gap: 7px;
+    }
+
+    .hh-upcoming-avatar {
+        width: 55px;
+        height: 55px;
+        border-width: 2px;
+    }
+
+    .hh-upcoming-text h2 {
+        font-size: 17px;
+    }
+
+    .hh-upcoming-text h3 {
+        margin-bottom: 3px;
+        font-size: 7px;
+    }
+
+    .hh-upcoming-text p {
+        margin: 2px 0;
+        font-size: 6px;
+    }
+
+    .hh-upcoming-footer {
+        margin-top: 5px;
+        padding-top: 5px;
+    }
+
+    .hh-upcoming-footer > span {
+        font-size: 5px;
+    }
+
+    .hh-profile-btn {
+        padding: 5px 8px;
+        font-size: 6px;
+    }
+
+
+    .hh-legacy-section {
+        padding: 9px 0;
+    }
+
+    .hh-legacy-list {
+        gap: 3px;
+    }
+
+    .hh-legacy-item {
+        grid-template-columns: 35px 34px minmax(0, 1fr) 43px 8px;
+        gap: 5px;
+        min-height: 40px;
+        padding: 3px 5px;
+        border-radius: 5px;
+    }
+
+    .hh-legacy-year {
+        width: 31px;
+        height: 16px;
+        font-size: 6px;
+    }
+
+    .hh-legacy-photo {
+        width: 31px;
+        height: 31px;
+    }
+
+    .hh-legacy-person h3 {
+        font-size: 7px;
+    }
+
+    .hh-legacy-person strong,
+    .hh-legacy-person small {
+        font-size: 5px;
+    }
+
+    .hh-legacy-date span {
+        font-size: 4px;
+    }
+
+    .hh-legacy-date strong {
+        font-size: 6px;
+    }
+
+    .hh-legacy-arrow {
+        font-size: 6px;
+    }
+
+
+    .hh-principles-section {
+        padding: 7px 0;
+    }
+
+    .hh-principles {
+        gap: 2px;
+    }
+
+    .hh-principles > div {
+        min-height: 42px;
+    }
+
+    .hh-principles i {
+        margin-bottom: 3px;
+        font-size: 11px;
+    }
+
+    .hh-principles strong {
+        font-size: 5px;
+    }
+
+
+    .hh-secretariat-section {
+        padding: 7px 0;
+    }
+
+    .hh-secretariat {
+        grid-template-columns: 30px minmax(0, 1fr) auto;
+        gap: 6px;
+        padding: 9px;
+        border-radius: 7px;
+    }
+
+    .hh-secretariat-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+
+    .hh-secretariat-copy > span {
+        font-size: 5px;
+    }
+
+    .hh-secretariat-copy h2 {
+        margin: 2px 0;
+        font-size: 10px;
+    }
+
+    .hh-secretariat-copy p {
+        display: none;
+    }
+
+    .hh-secretariat-actions {
+        gap: 3px;
+    }
+
+    .hh-secretariat-actions a {
+        min-width: 62px;
+        min-height: 20px;
+        padding: 4px 5px;
+        font-size: 5px;
+    }
 }
 
 
-/* ==========================================================
-   CONTACT
-========================================================== */
+/* ============================================================
+   EXTRA SMALL DEVICES
+   ============================================================ */
 
-.honour-contact-card{
+@media (max-width: 390px) {
 
-    background:linear-gradient(
-        135deg,
-        var(--primary),
-        var(--secondary)
+    .hh-shell {
+        width: calc(100% - 12px);
+    }
+
+    .hh-identity .hh-shell {
+        grid-template-columns: 78px minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .hh-identity-trophy {
+        height: 92px;
+    }
+
+    .hh-identity-copy h1 {
+        font-size: 23px;
+    }
+
+    .hh-board-card {
+        flex-basis: 112px;
+    }
+
+    .hh-board-photo {
+        height: 70px;
+    }
+
+    .hh-legacy-item {
+        grid-template-columns: 31px 30px minmax(0, 1fr) 38px 7px;
+        gap: 4px;
+    }
+}
+
+
+
+/* ============================================================
+   HH REFERENCE HEADER
+   Dedicated Honour Heart identity — replaces old hero
+   ============================================================ */
+
+.hh-award-header {
+    position: relative;
+    background: #fff;
+    border-bottom: 1px solid #dce4ee;
+    overflow: hidden;
+}
+
+.hh-award-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--hh-gold),
+        transparent
     );
-
-    color:#fff;
-
-    border-radius:24px;
-
-    padding:60px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:40px;
-
 }
 
-.honour-contact-card h2{
-
-    font-size:38px;
-
-    margin-bottom:20px;
-
+.hh-award-header .hh-shell {
+    min-height: 238px;
+    display: grid;
+    grid-template-columns: 265px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
 }
 
-.honour-contact-card p{
-
-    font-size:18px;
-
-    line-height:1.9;
-
+.hh-award-mark {
+    position: relative;
+    width: 235px;
+    height: 205px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.honour-contact-buttons{
+.hh-trophy-medal {
+    position: relative;
+    z-index: 2;
+    width: 142px;
+    height: 174px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 8px;
+    border-radius: 70px 70px 18px 18px;
+    background:
+        radial-gradient(
+            circle at 50% 27%,
+            #fff7cf 0,
+            #efca55 31%,
+            #c58f1c 67%,
+            #8b6210 100%
+        );
+    border: 4px solid #d2a52d;
+    box-shadow:
+        inset 0 0 0 3px rgba(255,255,255,.55),
+        0 10px 22px rgba(68, 48, 6, .18);
+    color: var(--hh-navy);
+}
 
-    display:flex;
+.hh-trophy-ring {
+    width: 76px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.5);
+    border: 2px solid rgba(107,72,5,.35);
+}
 
-    gap:15px;
+.hh-trophy-ring i {
+    font-size: 37px;
+    color: #75520c;
+}
 
-    flex-wrap:wrap;
+.hh-trophy-medal strong {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    line-height: 1;
+}
 
+.hh-trophy-medal span {
+    margin-top: 4px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: .5px;
+}
+
+.hh-trophy-medal::after {
+    content: "SERVICE • COMPASSION • LEADERSHIP";
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    bottom: 9px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(70,47,4,.35);
+    text-align: center;
+    font-size: 5px;
+    font-weight: 900;
+    letter-spacing: .25px;
+}
+
+.hh-laurel {
+    position: absolute;
+    top: 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    color: #c79620;
+    font-size: 20px;
+}
+
+.hh-laurel-left {
+    left: 10px;
+    transform: rotate(-27deg);
+}
+
+.hh-laurel-right {
+    right: 10px;
+    transform: scaleX(-1) rotate(-27deg);
+}
+
+.hh-laurel i:nth-child(2) {
+    transform: translateX(-7px);
+}
+
+.hh-laurel i:nth-child(3) {
+    transform: translateX(-10px);
+}
+
+.hh-award-copy {
+    min-width: 0;
+}
+
+.hh-award-kicker {
+    display: inline-flex;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: #eaf2fb;
+    color: var(--hh-navy);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.hh-award-copy h1 {
+    margin: 9px 0 0;
+    color: var(--hh-navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(38px, 5vw, 58px);
+    line-height: .87;
+    letter-spacing: -.8px;
+}
+
+.hh-award-copy h1 strong {
+    display: block;
+}
+
+.hh-award-divider {
+    width: 72px;
+    height: 3px;
+    margin: 10px 0 7px;
+    background: var(--hh-gold);
+}
+
+.hh-award-copy h2 {
+    margin: 0 0 7px;
+    color: #b1841b;
+    font-size: 16px;
+    line-height: 1.15;
+}
+
+.hh-award-copy p {
+    max-width: 730px;
+    margin: 0;
+    color: #4e6077;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.hh-award-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 11px;
+}
+
+.hh-award-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .35px;
+}
+
+.hh-award-btn-primary {
+    background: var(--hh-navy);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(6,29,73,.15);
+}
+
+.hh-award-btn-secondary {
+    background: #fff;
+    color: var(--hh-navy);
+    border: 1px solid #bfcfe1;
+}
+
+
+/* ============================================================
+   MOBILE REFERENCE HEADER
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .hh-award-header {
+        margin: 0;
+    }
+
+    .hh-award-header .hh-shell {
+        width: calc(100% - 12px);
+        min-height: 139px;
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 7px;
+        align-items: center;
+    }
+
+    .hh-award-mark {
+        width: 84px;
+        height: 112px;
+    }
+
+    .hh-trophy-medal {
+        width: 68px;
+        height: 94px;
+        padding-top: 4px;
+        border-width: 2px;
+        border-radius: 38px 38px 9px 9px;
+        box-shadow:
+            inset 0 0 0 2px rgba(255,255,255,.5),
+            0 5px 11px rgba(68,48,6,.15);
+    }
+
+    .hh-trophy-ring {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 2px;
+    }
+
+    .hh-trophy-ring i {
+        font-size: 20px;
+    }
+
+    .hh-trophy-medal strong {
+        font-size: 8px;
+    }
+
+    .hh-trophy-medal span {
+        margin-top: 2px;
+        font-size: 5px;
+    }
+
+    .hh-trophy-medal::after {
+        left: 3px;
+        right: 3px;
+        bottom: 5px;
+        padding-top: 3px;
+        font-size: 2.5px;
+    }
+
+    .hh-laurel {
+        top: 23px;
+        gap: 5px;
+        font-size: 10px;
+    }
+
+    .hh-laurel-left {
+        left: 1px;
+    }
+
+    .hh-laurel-right {
+        right: 1px;
+    }
+
+    .hh-laurel i:nth-child(2) {
+        transform: translateX(-3px);
+    }
+
+    .hh-laurel i:nth-child(3) {
+        transform: translateX(-5px);
+    }
+
+    .hh-award-kicker {
+        padding: 4px 7px;
+        font-size: 6px;
+        letter-spacing: .55px;
+    }
+
+    .hh-award-copy h1 {
+        margin-top: 5px;
+        font-size: 24px;
+        line-height: .86;
+        letter-spacing: -.25px;
+    }
+
+    .hh-award-divider {
+        width: 39px;
+        height: 2px;
+        margin: 5px 0 4px;
+    }
+
+    .hh-award-copy h2 {
+        margin-bottom: 3px;
+        font-size: 8px;
+    }
+
+    .hh-award-copy p {
+        display: -webkit-box;
+        max-width: 100%;
+        overflow: hidden;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        font-size: 6px;
+        line-height: 1.3;
+    }
+
+    .hh-award-actions {
+        gap: 4px;
+        margin-top: 5px;
+    }
+
+    .hh-award-btn {
+        min-height: 23px;
+        padding: 4px 7px;
+        gap: 3px;
+        font-size: 5.5px;
+    }
+}
+
+
+@media (max-width: 390px) {
+
+    .hh-award-header .hh-shell {
+        width: calc(100% - 8px);
+        min-height: 130px;
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 5px;
+    }
+
+    .hh-award-mark {
+        width: 72px;
+        height: 104px;
+    }
+
+    .hh-trophy-medal {
+        width: 61px;
+        height: 88px;
+    }
+
+    .hh-award-copy h1 {
+        font-size: 22px;
+    }
+}
+
+/* ==========================================================
+   UPCOMING HONOUREE — FINAL MOBILE REFERENCE FIX
+   ========================================================== */
+
+.hh-upcoming-reference-card{
+  width:100%!important;
+  min-height:0!important;
+  height:76px!important;
+  display:grid!important;
+  grid-template-columns:45px minmax(0,1fr) 58px!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:6px 8px!important;
+  box-sizing:border-box!important;
+  border:1px solid #d7b45b!important;
+  border-radius:8px!important;
+  background:#fffdf8!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  text-decoration:none!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-photo{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-photo img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  display:block!important;
+  border-radius:50%!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-info{
+  min-width:0!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:flex-start!important;
+  gap:0!important;
+  overflow:hidden!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-label{
+  display:block!important;
+  margin:0 0 2px!important;
+  padding:0!important;
+  color:#b08a2e!important;
+  font-size:4px!important;
+  line-height:1!important;
+  letter-spacing:1px!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-info h2{
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  color:#102d59!important;
+  font-size:9px!important;
+  line-height:1.15!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-designation{
+  display:block!important;
+  width:100%!important;
+  margin:2px 0 0!important;
+  padding:0!important;
+  color:#68778c!important;
+  font-size:4.5px!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-location{
+  display:block!important;
+  width:100%!important;
+  margin:2px 0 0!important;
+  padding:0!important;
+  color:#68778c!important;
+  font-size:4px!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* The category must NOT become a large fourth line. */
+.hh-upcoming-reference-card .hh-upcoming-category{
+  display:none!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year{
+  height:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0 0 0 7px!important;
+  border-left:1px solid #dfe3e8!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year span{
+  display:block!important;
+  margin:0 0 3px!important;
+  color:#7b8795!important;
+  font-size:4px!important;
+  line-height:1!important;
+  letter-spacing:.4px!important;
+  white-space:nowrap!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year strong{
+  display:block!important;
+  margin:0!important;
+  color:#08285d!important;
+  font-size:15px!important;
+  line-height:1!important;
+  font-weight:800!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year small{
+  display:block!important;
+  margin:3px 0 0!important;
+  color:#68778c!important;
+  font-size:3.5px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+@media(max-width:390px){
+  .hh-upcoming-reference-card{
+    height:72px!important;
+    grid-template-columns:41px minmax(0,1fr) 52px!important;
+    gap:6px!important;
+    padding:5px 7px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-photo{
+    width:38px!important;
+    height:38px!important;
+    min-width:38px!important;
+    min-height:38px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-info h2{
+    font-size:8px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-year{
+    padding-left:6px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-year strong{
+    font-size:14px!important;
+  }
 }
 
 
 /* ==========================================================
-   RESPONSIVE
-========================================================== */
+   ARSP HONOUR HEART
+   PREMIUM UPCOMING HONOUREE
+   ========================================================== */
 
-@media(max-width:992px){
-
-    .awardee-card,
-    .about-award-card,
-    .legend-intro-card{
-
-        grid-template-columns:1fr;
-        flex-direction:column;
-
-    }
-
-    .award-details{
-
-        grid-template-columns:1fr;
-
-    }
-
-    .awardee-photo img{
-
-        height:360px;
-
-    }
-
+.hh-upcoming-section{
+  position:relative!important;
+  width:100%!important;
+  padding:14px 0 18px!important;
+  background:#fff!important;
 }
+
+.hh-upcoming-section .hh-section-heading.compact{
+  margin:0 0 9px!important;
+  text-align:center!important;
+}
+
+.hh-upcoming-section .hh-section-heading.compact span{
+  color:#b07b18!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:1.8px!important;
+}
+
+/* Premium card */
+.hh-upcoming-reference-card{
+  position:relative!important;
+  width:100%!important;
+  min-height:112px!important;
+  height:auto!important;
+  display:grid!important;
+  grid-template-columns:92px minmax(0,1fr) 112px!important;
+  align-items:center!important;
+  gap:16px!important;
+  padding:13px 17px!important;
+  box-sizing:border-box!important;
+
+  border:2px solid #d6aa35!important;
+  border-radius:15px!important;
+
+  background:
+    radial-gradient(circle at 2% 100%,rgba(243,199,78,.16),transparent 30%),
+    radial-gradient(circle at 100% 0%,rgba(243,199,78,.12),transparent 30%),
+    linear-gradient(105deg,#fffaf0 0%,#ffffff 45%,#fffdf7 100%)!important;
+
+  box-shadow:
+    0 8px 22px rgba(20,43,78,.09),
+    inset 0 0 0 1px rgba(255,255,255,.8)!important;
+
+  overflow:hidden!important;
+  text-decoration:none!important;
+  transition:transform .2s ease,box-shadow .2s ease!important;
+}
+
+.hh-upcoming-reference-card:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:
+    0 12px 28px rgba(20,43,78,.13),
+    inset 0 0 0 1px rgba(255,255,255,.8)!important;
+}
+
+/* Decorative gold wave */
+.hh-upcoming-reference-card::before{
+  content:""!important;
+  position:absolute!important;
+  left:-40px!important;
+  bottom:-46px!important;
+  width:250px!important;
+  height:90px!important;
+  border:2px solid rgba(218,171,52,.18)!important;
+  border-radius:50%!important;
+  transform:rotate(-7deg)!important;
+  pointer-events:none!important;
+}
+
+.hh-upcoming-reference-card::after{
+  content:"✦"!important;
+  position:absolute!important;
+  right:72px!important;
+  top:10px!important;
+  color:rgba(208,157,37,.18)!important;
+  font-size:30px!important;
+  pointer-events:none!important;
+}
+
+/* Portrait */
+.hh-upcoming-reference-card .hh-upcoming-photo{
+  position:relative!important;
+  width:82px!important;
+  height:82px!important;
+  min-width:82px!important;
+  min-height:82px!important;
+  border-radius:50%!important;
+  padding:4px!important;
+  box-sizing:border-box!important;
+  background:linear-gradient(135deg,#f7d66a,#c89420,#f6d66b)!important;
+  box-shadow:
+    0 3px 10px rgba(120,82,12,.20),
+    0 0 0 2px rgba(255,255,255,.9)!important;
+  overflow:visible!important;
+  z-index:2!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-photo::after{
+  content:""!important;
+  position:absolute!important;
+  inset:-5px!important;
+  border:1px solid rgba(192,143,35,.45)!important;
+  border-radius:50%!important;
+  pointer-events:none!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-photo img{
+  width:100%!important;
+  height:100%!important;
+  display:block!important;
+  object-fit:cover!important;
+  border:3px solid #fff!important;
+  border-radius:50%!important;
+  box-sizing:border-box!important;
+}
+
+.hh-upcoming-reference-card .hh-photo-placeholder{
+  width:100%!important;
+  height:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:3px solid #fff!important;
+  border-radius:50%!important;
+  background:#e8edf3!important;
+  box-sizing:border-box!important;
+}
+
+/* Middle information */
+.hh-upcoming-reference-card .hh-upcoming-info{
+  position:relative!important;
+  z-index:2!important;
+  min-width:0!important;
+  width:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-label{
+  display:block!important;
+  margin:0 0 4px!important;
+  color:#b07b18!important;
+  font-size:6px!important;
+  line-height:1!important;
+  font-weight:900!important;
+  letter-spacing:1.8px!important;
+  white-space:nowrap!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-info h2{
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  color:#092c62!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:21px!important;
+  line-height:1.05!important;
+  font-weight:700!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-designation{
+  width:100%!important;
+  margin:5px 0 3px!important;
+  color:#5d6e84!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-location{
+  width:100%!important;
+  margin:0!important;
+  color:#68788b!important;
+  font-size:7px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-location::first-letter{
+  color:#c59629!important;
+}
+
+/* Category badge */
+.hh-upcoming-reference-card .hh-upcoming-category{
+  display:inline-flex!important;
+  align-items:center!important;
+  width:auto!important;
+  max-width:100%!important;
+  margin:6px 0 0!important;
+  padding:3px 8px!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#f7d66a,#f0c34a)!important;
+  color:#533d08!important;
+  font-size:6px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  box-shadow:0 2px 5px rgba(160,113,15,.12)!important;
+}
+
+/* Award year */
+.hh-upcoming-reference-card .hh-upcoming-year{
+  position:relative!important;
+  z-index:2!important;
+  height:78px!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0 0 0 15px!important;
+  border-left:1px solid #ded9cb!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year span{
+  margin:0 0 4px!important;
+  color:#7c8793!important;
+  font-size:6px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:.8px!important;
+  white-space:nowrap!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year strong{
+  margin:0!important;
+  color:#08285d!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:27px!important;
+  line-height:1!important;
+  font-weight:800!important;
+}
+
+.hh-upcoming-reference-card .hh-upcoming-year small{
+  margin:5px 0 0!important;
+  color:#68778c!important;
+  font-size:5px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+/* ----------------------------------------------------------
+   MOBILE
+   ---------------------------------------------------------- */
 
 @media(max-width:768px){
 
-    .honour-hero{
+  .hh-upcoming-section{
+    padding:12px 0 15px!important;
+  }
 
-        min-height:380px;
+  .hh-upcoming-section .hh-section-heading.compact{
+    margin-bottom:8px!important;
+  }
 
-    }
+  .hh-upcoming-section .hh-section-heading.compact span{
+    font-size:7px!important;
+    letter-spacing:1.5px!important;
+  }
 
-    .honour-hero-overlay{
+  .hh-upcoming-reference-card{
+    min-height:96px!important;
+    height:96px!important;
+    grid-template-columns:58px minmax(0,1fr) 66px!important;
+    gap:9px!important;
+    padding:8px 9px!important;
+    border-width:1.5px!important;
+    border-radius:11px!important;
+  }
 
-        min-height:380px;
+  .hh-upcoming-reference-card::before{
+    left:-35px!important;
+    bottom:-48px!important;
+    width:170px!important;
+    height:70px!important;
+  }
 
-    }
+  .hh-upcoming-reference-card::after{
+    right:45px!important;
+    top:5px!important;
+    font-size:18px!important;
+  }
 
-    .honour-hero-content h1{
+  .hh-upcoming-reference-card .hh-upcoming-photo{
+    width:52px!important;
+    height:52px!important;
+    min-width:52px!important;
+    min-height:52px!important;
+    padding:3px!important;
+  }
 
-        font-size:38px;
+  .hh-upcoming-reference-card .hh-upcoming-photo img{
+    border-width:2px!important;
+  }
 
-    }
+  .hh-upcoming-reference-card .hh-upcoming-label{
+    font-size:4px!important;
+    letter-spacing:1.2px!important;
+    margin-bottom:3px!important;
+  }
 
-    .honour-hero-content p{
+  .hh-upcoming-reference-card .hh-upcoming-info h2{
+    font-size:12px!important;
+    line-height:1.05!important;
+  }
 
-        font-size:17px;
+  .hh-upcoming-reference-card .hh-upcoming-designation{
+    margin:3px 0 2px!important;
+    font-size:5.5px!important;
+  }
 
-    }
+  .hh-upcoming-reference-card .hh-upcoming-location{
+    font-size:4.5px!important;
+  }
 
-    .section-title h2{
+  .hh-upcoming-reference-card .hh-upcoming-category{
+    margin-top:4px!important;
+    padding:2px 5px!important;
+    font-size:4px!important;
+  }
 
-        font-size:30px;
+  .hh-upcoming-reference-card .hh-upcoming-year{
+    height:70px!important;
+    padding-left:8px!important;
+  }
 
-    }
+  .hh-upcoming-reference-card .hh-upcoming-year span{
+    margin-bottom:3px!important;
+    font-size:4px!important;
+    letter-spacing:.5px!important;
+  }
 
-    .legend-intro-icon{
+  .hh-upcoming-reference-card .hh-upcoming-year strong{
+    font-size:19px!important;
+  }
 
-        display:none;
-
-    }
-
-    .honour-contact-card{
-
-        flex-direction:column;
-
-        text-align:center;
-
-        padding:35px 25px;
-
-    }
-
+  .hh-upcoming-reference-card .hh-upcoming-year small{
+    margin-top:4px!important;
+    font-size:3.5px!important;
+  }
 }
 
-
-/* ==========================================================
-   PREMIUM UPCOMING AWARDEE
-========================================================== */
-
-.upcoming-award{
-
-    padding:70px 0;
-
-    background:#f4f7fb;
-
-}
-
-.premium-award-card{
-
-    position:relative;
-
-    background:linear-gradient(135deg,#06244b,#0b396d);
-
-    border:5px solid #d4af37;
-
-    border-radius:22px;
-
-    max-width:1100px;
-
-    margin:auto;
-
-   padding:28px 35px;
-
-    overflow:hidden;
-
-    box-shadow:0 20px 45px rgba(0,0,0,.25);
-
-}
-
-.premium-award-card::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:18px;
-
-    left:18px;
-
-    width:70px;
-
-    height:70px;
-
-    border-top:3px solid #d4af37;
-
-    border-left:3px solid #d4af37;
-
-}
-
-.premium-award-card::after{
-
-    content:"";
-
-    position:absolute;
-
-    bottom:18px;
-
-    right:18px;
-
-    width:70px;
-
-    height:70px;
-
-    border-bottom:3px solid #d4af37;
-
-    border-right:3px solid #d4af37;
-
-}
-
-.premium-award-header{
-
-    text-align:center;
-
-    margin-bottom:25px;
-
-}
-
-.premium-award-header h4{
-
-    color:#d4af37;
-
-    font-size:26px;
-
-    letter-spacing:4px;
-
-    margin:0;
-
-}
-
-.premium-award-header h1{
-
-    color:#f7df87;
-
-    font-size:38px;
-
-    margin:8px 0;
-
-    font-family:Georgia,serif;
-
-}
-
-.premium-award-header h3{
-
-    color:#ffffff;
-
-    font-size:28px;
-
-    font-weight:800;
-
-    letter-spacing:3px;
-
-    text-transform:uppercase;
-
-    margin:10px 0 20px;
-
-}
-
-.premium-award-body{
-
-    display:grid;
-
-    grid-template-columns:240px 1fr;
-
-    gap:25px;
-
-    align-items:flex-start;
-
-}
-
-.premium-photo-frame{
-
-    display:flex;
-
-    justify-content:center;
-
-}
-
-.gold-ring{
-
-    width:220px;
-
-    height:220px;
-
-    border-radius:50%;
-
-    padding:8px;
-
-    background:linear-gradient(135deg,#fff6c9,#d4af37,#fff6c9);
-
-    box-shadow:0 0 25px rgba(212,175,55,.6);
-
-}
-
-.gold-ring img{
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-
-    border-radius:50%;
-
-    border:6px solid #08244d;
-
-}
-
-.premium-award-name{
-
-    text-align:left;
-
-}
-
-.premium-award-name h2{
-
-    color:#f7df87;
-
-    font-size:46px;
-
-    font-weight:700;
-
-    line-height:1.2;
-
-    margin-bottom:12px;
-
-    font-family:Georgia,serif;
-
-}
-
-.premium-award-name p{
-
-    color:#fff;
-
-    font-size:18px;
-
-    margin-bottom:25px;
-
-}
-
-.premium-award-info{
-
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
-
-    gap:18px;
-
-    margin:25px 0;
-
-}
-
-.premium-award-info div{
-
-    background:rgba(255,255,255,.08);
-
-    border:1px solid rgba(212,175,55,.35);
-
-    border-radius:12px;
-
-    padding:16px;
-
-}
-
-.premium-award-info strong{
-
-    display:block;
-
-    color:#f7df87;
-
-    margin-bottom:6px;
-
-    font-size:13px;
-
-    text-transform:uppercase;
-
-    letter-spacing:1px;
-
-}
-
-.premium-award-info span{
-
-    color:#fff;
-
-    font-size:16px;
-
-    line-height:1.6;
-
-}
-
-.premium-award-description{
-
-    margin-top:20px;
-
-    color:#f3f3f3;
-
-    line-height:1.9;
-
-    font-size:16px;
-
-    text-align:justify;
-
-}
-
-.premium-award-button{
-
-    margin-top:30px;
-
-}
-
-.premium-award-button .btn{
-
-    background:#d4af37;
-
-    color:#08244d;
-
-    border:none;
-
-    border-radius:50px;
-
-    padding:14px 34px;
-
-    font-size:16px;
-
-    font-weight:700;
-
-    transition:.3s;
-
-}
-
-.premium-award-button .btn:hover{
-
-    background:#f7df87;
-
-    color:#08244d;
-
-}
-
-@media(max-width:900px){
-
-    .premium-award-card{
-
-        padding:30px 22px;
-
-    }
-
-    .premium-award-body{
-
-        grid-template-columns:1fr;
-
-        text-align:center;
-
-    }
-
-    .premium-award-name{
-
-        text-align:center;
-
-    }
-
-    .premium-award-info{
-
-        grid-template-columns:1fr;
-
-    }
-
-    .gold-ring{
-
-        width:180px;
-
-        height:180px;
-
-    }
-
-    .premium-award-header h1{
-
-        font-size:28px;
-
-    }
-
-    .premium-award-name h2{
-
-        font-size:28px;
-
-    }
-
-    .premium-award-header h4{
-
-        font-size:20px;
-
-    }
-
-    .premium-award-header h3{
-
-        font-size:16px;
-
-    }
-
+@media(max-width:390px){
+
+  .hh-upcoming-reference-card{
+    min-height:90px!important;
+    height:90px!important;
+    grid-template-columns:51px minmax(0,1fr) 59px!important;
+    gap:7px!important;
+    padding:7px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-photo{
+    width:46px!important;
+    height:46px!important;
+    min-width:46px!important;
+    min-height:46px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-info h2{
+    font-size:10px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-designation{
+    font-size:5px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-location{
+    font-size:4px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-year{
+    padding-left:6px!important;
+  }
+
+  .hh-upcoming-reference-card .hh-upcoming-year strong{
+    font-size:17px!important;
+  }
 }
