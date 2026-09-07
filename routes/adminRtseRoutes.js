@@ -31,6 +31,8 @@ const auth = require("../middleware/auth");
 
 const adminRtseController =
 require("../controllers/adminRtseController");
+const adminRtseOmrController =
+require("../controllers/adminRtseOmrController");
 
 
 // =====================================
@@ -372,6 +374,22 @@ router.post(
 // =====================================
 // View Admit Card
 // =====================================
+
+// =====================================
+ // RTSE OMR — Section & Individual
+ // =====================================
+
+router.get(
+    "/rtse/omr/pdf/:section",
+    auth.isAdmin,
+    adminRtseOmrController.downloadSectionOmrPdf
+);
+
+router.get(
+    "/rtse/application/:id/omr",
+    auth.isAdmin,
+    adminRtseOmrController.downloadStudentOmrPdf
+);
 
 router.get(
     "/rtse/admit-cards/pdf/all",
