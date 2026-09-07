@@ -359,6 +359,70 @@
     </section>
 
 
+
+    <!-- LEGENDARY PERSONALITIES -->
+    <section class="legend-section">
+        <div class="container">
+
+            <div class="section-title">
+                <span class="section-badge">
+                    LEGENDARY PERSONALITIES
+                </span>
+
+                <h2>
+                    Great Souls Who Inspire Generations
+                </h2>
+
+                <p>
+                    Every ARSP Honour Heart Award is dedicated to the ideals and
+                    legacy of extraordinary personalities whose lives continue to
+                    inspire humanity.
+                </p>
+            </div>
+
+            <div class="legend-grid">
+                <% legends.forEach((legend) => { %>
+
+                    <a
+                        href="/honour-heart/legend/<%= legend.slug %>"
+                        class="legend-card"
+                    >
+
+                        <div class="legend-image">
+                            <img
+                                src="/uploads/honour-heart/legends/<%= legend.photo %>"
+                                alt="<%= legend.name %>"
+                                loading="lazy"
+                            >
+                        </div>
+
+                        <div class="legend-body">
+
+                            <h3>
+                                <%= legend.name %>
+                            </h3>
+
+                            <% if (legend.designation) { %>
+                                <h5>
+                                    <%= legend.designation %>
+                                </h5>
+                            <% } %>
+
+                            <div class="legend-btn">
+                                Read Biography
+                                <span aria-hidden="true">→</span>
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                <% }) %>
+            </div>
+
+        </div>
+    </section>
+
     <!-- RECOGNITION PRINCIPLES -->
     <section class="hh-section hh-principles">
 
