@@ -8,6 +8,7 @@ const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 const QRCode = require("qrcode");
 const googleIdentityService = require("../services/googleIdentityService");
+const RtseAdmitDownload = require("../models/RtseAdmitDownload");
 
 // =====================================
 // RTSE STUDENT LOGIN PAGE
