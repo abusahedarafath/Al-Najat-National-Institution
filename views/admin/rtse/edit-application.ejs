@@ -87,23 +87,105 @@
                                 value="<%= application.email %>">
                         </div>
 
-                        <div class="form-group">
-                              <label>Registered School</label>
-                              <select name="school_id" required>
-                                  <option value="">Select Registered School</option>
+                        <div class="form-group rtse-school-selector">
+                            <label for="rtseSchoolDisplay">Registered School</label>
 
-                                  <% (schools || []).forEach(school => { %>
-                                      <option
-                                          value="<%= school.id %>"
-                                          <%= Number(application.school_id) === Number(school.id) ? "selected" : "" %>>
-                                          <%= school.school_name %>
-                                          <% if (school.school_code) { %>
-                                              — <%= school.school_code %>
-                                          <% } %>
-                                      </option>
-                                  <% }) %>
-                              </select>
-                          </div>
+                            <div class="rtse-school-dropdown" id="rtseSchoolDropdown">
+                                <button
+                                    type="button"
+                                    class="rtse-school-display"
+                                    id="rtseSchoolDisplay"
+                                    aria-haspopup="listbox"
+                                    aria-expanded="false"
+                                >
+                                    <span id="rtseSchoolDisplayText">Select Registered School</span>
+                                    <span class="rtse-school-chevron" aria-hidden="true">⌄</span>
+                                </button>
+
+                                <div
+                                    class="rtse-school-menu"
+                                    id="rtseSchoolMenu"
+                                    role="listbox"
+                                    aria-label="Registered School"
+                                >
+                                    <div class="rtse-school-menu-search">
+                                        <span class="rtse-school-search-icon" aria-hidden="true">⌕</span>
+                                        <input
+                                            type="search"
+                                            id="rtseSchoolSearch"
+                                            class="rtse-school-search"
+                                            placeholder="Search school name or code..."
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                            aria-label="Search registered school"
+                                        >
+                                    </div>
+
+                                    <div
+                                        class="rtse-school-results"
+                                        id="rtseSchoolResults"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="rtse-school-option rtse-school-placeholder"
+                                            data-value=""
+                                        >
+                                            Select Registered School
+                                        </button>
+
+                                        <% (schools || []).forEach(school => { %>
+                                            <button
+                                                type="button"
+                                                class="rtse-school-option"
+                                                data-value="<%= school.id %>"
+                                                data-school-search="<%= String(school.school_name || '') %> <%= String(school.school_code || '') %>"
+                                                role="option"
+                                                <%= Number(application.school_id) === Number(school.id) ? 'aria-selected="true"' : '' %>
+                                            >
+                                                <span class="rtse-school-option-name">
+                                                    <%= school.school_name %>
+                                                </span>
+                                                <% if (school.school_code) { %>
+                                                    <span class="rtse-school-option-code">
+                                                        <%= school.school_code %>
+                                                    </span>
+                                                <% } %>
+                                            </button>
+                                        <% }) %>
+
+                                        <div
+                                            class="rtse-school-no-results"
+                                            id="rtseSchoolNoResults"
+                                            hidden
+                                        >
+                                            No registered school found.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <select
+                                    name="school_id"
+                                    id="rtseSchoolSelect"
+                                    class="rtse-school-native-select"
+                                    required
+                                    tabindex="-1"
+                                    aria-hidden="true"
+                                >
+                                    <option value="">Select Registered School</option>
+
+                                    <% (schools || []).forEach(school => { %>
+                                        <option
+                                            value="<%= school.id %>"
+                                            <%= Number(application.school_id) === Number(school.id) ? "selected" : "" %>>
+                                            <%= school.school_name %>
+                                            <% if (school.school_code) { %>
+                                                — <%= school.school_code %>
+                                            <% } %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label>District</label>
@@ -266,6 +348,345 @@
     </main>
 
 </div>
+
+<style>
+/* RTSE Admin — searchable Registered School dropdown only */
+.rtse-school-selector {
+    position: relative;
+    z-index: 20;
+}
+
+.rtse-school-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.rtse-school-display {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 42px 11px 14px;
+    border: 1px solid #d6dce5;
+    border-radius: 10px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.rtse-school-display:hover {
+    border-color: #b9c2cf;
+}
+
+.rtse-school-display:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.rtse-school-chevron {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-55%);
+    color: #667085;
+    font-size: 20px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.rtse-school-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    max-height: 360px;
+    padding: 8px;
+    border: 1px solid #d6dce5;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(16, 24, 40, .14);
+    overflow: hidden;
+    z-index: 100;
+}
+
+.rtse-school-dropdown.is-open .rtse-school-menu {
+    display: block;
+}
+
+.rtse-school-menu-search {
+    position: relative;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eef1f5;
+}
+
+.rtse-school-search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-54%);
+    color: #7b8794;
+    font-size: 20px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.rtse-school-search {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px 9px 38px;
+    border: 1px solid #d6dce5;
+    border-radius: 9px;
+    background: #f8fafc;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.rtse-school-search:focus {
+    background: #fff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+}
+
+.rtse-school-search::placeholder {
+    color: #98a2b3;
+}
+
+.rtse-school-results {
+    max-height: 285px;
+    overflow-y: auto;
+    padding-top: 5px;
+}
+
+.rtse-school-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 11px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #344054;
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: left;
+    cursor: pointer;
+}
+
+.rtse-school-option:hover,
+.rtse-school-option:focus {
+    background: #f2f6ff;
+    color: #1d4ed8;
+    outline: none;
+}
+
+.rtse-school-option[aria-selected="true"] {
+    background: #eef4ff;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.rtse-school-option-name {
+    min-width: 0;
+}
+
+.rtse-school-option-code {
+    flex: 0 0 auto;
+    color: #667085;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.rtse-school-option[aria-selected="true"] .rtse-school-option-code {
+    color: #4f6fae;
+}
+
+.rtse-school-placeholder {
+    color: #667085;
+    border-bottom: 1px solid #eef1f5;
+    margin-bottom: 3px;
+}
+
+.rtse-school-no-results {
+    padding: 18px 12px;
+    color: #98a2b3;
+    font-size: 13px;
+    text-align: center;
+}
+
+.rtse-school-native-select {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+@media (max-width: 600px) {
+    .rtse-school-menu {
+        max-height: 330px;
+    }
+
+    .rtse-school-results {
+        max-height: 255px;
+    }
+
+    .rtse-school-display {
+        min-height: 48px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const dropdown = document.getElementById("rtseSchoolDropdown");
+    const display = document.getElementById("rtseSchoolDisplay");
+    const displayText = document.getElementById("rtseSchoolDisplayText");
+    const menu = document.getElementById("rtseSchoolMenu");
+    const searchInput = document.getElementById("rtseSchoolSearch");
+    const schoolSelect = document.getElementById("rtseSchoolSelect");
+    const results = document.getElementById("rtseSchoolResults");
+    const noResults = document.getElementById("rtseSchoolNoResults");
+
+    if (
+        !dropdown ||
+        !display ||
+        !displayText ||
+        !menu ||
+        !searchInput ||
+        !schoolSelect ||
+        !results ||
+        !noResults
+    ) {
+        return;
+    }
+
+    const schoolOptions = Array.from(
+        results.querySelectorAll(".rtse-school-option[data-value]")
+    );
+
+    function openDropdown() {
+        dropdown.classList.add("is-open");
+        display.setAttribute("aria-expanded", "true");
+
+        window.setTimeout(function () {
+            searchInput.focus();
+        }, 0);
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove("is-open");
+        display.setAttribute("aria-expanded", "false");
+    }
+
+    function updateDisplay() {
+        const selectedOption =
+            schoolSelect.options[schoolSelect.selectedIndex];
+
+        if (!selectedOption || !selectedOption.value) {
+            displayText.textContent = "Select Registered School";
+            return;
+        }
+
+        displayText.textContent = selectedOption.textContent.trim();
+    }
+
+    function selectSchool(value) {
+        schoolSelect.value = value;
+
+        schoolOptions.forEach(function (option) {
+            const selected = option.dataset.value === value;
+            option.setAttribute(
+                "aria-selected",
+                selected ? "true" : "false"
+            );
+        });
+
+        updateDisplay();
+
+        searchInput.value = "";
+        filterSchools();
+        closeDropdown();
+
+        schoolSelect.dispatchEvent(
+            new Event("change", { bubbles: true })
+        );
+    }
+
+    function filterSchools() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        schoolOptions.forEach(function (option) {
+            const searchableText = (
+                option.dataset.schoolSearch ||
+                option.textContent ||
+                ""
+            ).trim().toLowerCase();
+
+            const matches =
+                !query || searchableText.includes(query);
+
+            option.hidden = !matches;
+
+            if (matches) {
+                visibleCount++;
+            }
+        });
+
+        noResults.hidden = visibleCount !== 0;
+    }
+
+    display.addEventListener("click", function () {
+        if (dropdown.classList.contains("is-open")) {
+            closeDropdown();
+        } else {
+            openDropdown();
+        }
+    });
+
+    searchInput.addEventListener("input", filterSchools);
+
+    schoolOptions.forEach(function (option) {
+        option.addEventListener("click", function () {
+            selectSchool(option.dataset.value || "");
+        });
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!dropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeDropdown();
+        }
+    });
+
+    updateDisplay();
+
+    schoolOptions.forEach(function (option) {
+        if (option.dataset.value === schoolSelect.value) {
+            option.setAttribute("aria-selected", "true");
+        }
+    });
+})();
+</script>
 
 <script>
 (function () {
