@@ -159,6 +159,7 @@
             ? '/admin/arsp/centre/' + centre.id + '/edit'
             : '/admin/arsp/centres/add' %>"
         class="form-card"
+        data-history-fix="off"
     >
 
         <div class="form-section">
@@ -194,6 +195,11 @@
                         value="<%= centre?.centre_code || '' %>"
                         readonly
                         style="background:#f8fafc;color:#64748b;cursor:not-allowed;"
+                    >
+                    <input
+                        type="hidden"
+                        name="centre_code"
+                        value="<%= centre?.centre_code || '' %>"
                     >
 
                     <small style="display:block;margin-top:5px;color:#64748b;">
