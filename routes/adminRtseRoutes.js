@@ -50,6 +50,15 @@ router.get(
 );
 
 // =====================================
+// RTSE Students Without School
+// =====================================
+router.get(
+    "/rtse/students-without-school",
+    auth.isAdmin,
+    adminRtseController.studentsWithoutSchoolPage
+);
+
+// =====================================
 // RTSE Invited Schools
 // =====================================
 router.get(

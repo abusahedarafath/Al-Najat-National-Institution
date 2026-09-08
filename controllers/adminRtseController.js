@@ -1,6 +1,7 @@
 const RtseApplication =
 require("../models/RtseApplication");
 const RtseInvitedSchool = require("../models/RtseInvitedSchool");
+const RtseStudentsWithoutSchool = require("../models/RtseStudentsWithoutSchool");
 
 const ArspSchool = require("../models/ArspSchool");
 const RtseSetting =
@@ -153,6 +154,11 @@ exports.dashboard = async (req, res) => {
                 applicationYear
             );
 
+        const studentsWithoutSchoolCount =
+            await RtseStudentsWithoutSchool.getCount(
+                applicationYear
+            );
+
 const sectionStats = await RtseApplication.getSectionStatistics();
 
   const setting = await RtseSetting.get();
@@ -189,7 +195,9 @@ console.log("setting:", setting);
                 female: stats.female || 0,
 
 
-                invitedSchoolCount,admitGenerated,
+                invitedSchoolCount,
+                studentsWithoutSchoolCount,
+                admitGenerated,
 
                 sectionStats,
 
@@ -260,6 +268,64 @@ exports.invitedSchoolsPage = async (req, res) => {
         req.flash(
             "error",
             "Unable to load RTSE Invited Schools."
+        );
+
+        res.redirect("/admin/rtse");
+    }
+};
+
+// =====================================
+// RTSE Students Without School
+// =====================================
+exports.studentsWithoutSchoolPage = async (req, res) => {
+    try {
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const search =
+            String(req.query.search || "").trim();
+
+        const status =
+            String(req.query.status || "").trim();
+
+        const students =
+            await RtseStudentsWithoutSchool.getAll(
+                applicationYear,
+                search,
+                status
+            );
+
+        res.render(
+            "admin/rtse/students-without-school",
+            {
+                title: "RTSE Students Without School",
+                students,
+                studentCount: students.length,
+                applicationYear,
+                search,
+                status
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "RTSE Students Without School Load Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load students without school."
         );
 
         res.redirect("/admin/rtse");
