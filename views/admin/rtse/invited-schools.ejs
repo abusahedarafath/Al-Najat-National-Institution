@@ -1,0 +1,366 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>RTSE Invited Schools</h1>
+
+                    <p>
+                        Schools appearing in submitted RTSE
+                        applications for examination year
+                        <strong><%= applicationYear %></strong>.
+                    </p>
+                </div>
+
+                <div class="rtse-header-actions">
+
+                    <a
+                        href="/admin/rtse"
+                        class="btn-view"
+                    >
+                        ← RTSE Dashboard
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="rtse-statistics-grid"
+                style="margin-bottom:20px;"
+            >
+
+                <div class="rtse-stat-card">
+
+                    <h3>Invited Schools</h3>
+
+                    <h1>
+                        <%= schoolCount %>
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <div
+                    style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:15px;
+                        flex-wrap:wrap;
+                        margin-bottom:18px;
+                    "
+                >
+
+                    <div>
+                        <h2 style="margin:0;">
+                            School Directory
+                        </h2>
+
+                        <p
+                            style="
+                                margin:6px 0 0;
+                                color:#666;
+                            "
+                        >
+                            One entry per school name.
+                        </p>
+                    </div>
+
+
+                    <div
+                        style="
+                            width:100%;
+                            max-width:500px;
+                        "
+                    >
+
+                        <input
+                            type="search"
+                            id="invitedSchoolSearch"
+                            placeholder="🔎 Search schools..."
+                            autocomplete="off"
+                            aria-label="Search invited schools"
+                            style="
+                                width:100%;
+                                padding:12px 15px;
+                                border:1px solid #d1d5db;
+                                border-radius:8px;
+                                font-size:15px;
+                                box-sizing:border-box;
+                            "
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    style="
+                        margin-bottom:12px;
+                        color:#666;
+                        font-size:14px;
+                    "
+                >
+                    Showing
+                    <strong id="visibleSchoolCount">
+                        <%= schoolCount %>
+                    </strong>
+                    of
+                    <strong><%= schoolCount %></strong>
+                    schools
+                </div>
+
+
+                <div style="overflow-x:auto;">
+
+                    <table
+                        class="admin-table"
+                        id="invitedSchoolsTable"
+                        style="width:100%;"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Sl. No.</th>
+                                <th>School Name</th>
+                                <th>School Code</th>
+                                <th>Centre Name</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Students</th>
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% if (!schools.length) { %>
+
+                                <tr>
+
+                                    <td
+                                        colspan="8"
+                                        style="
+                                            text-align:center;
+                                            padding:35px;
+                                        "
+                                    >
+                                        No RTSE schools found for
+                                        <%= applicationYear %>.
+                                    </td>
+
+                                </tr>
+
+                            <% } else { %>
+
+                                <% schools.forEach((school, index) => { %>
+
+                                    <tr
+                                        class="invited-school-row"
+                                        data-search="<%=
+                                            [
+                                                school.school_name,
+                                                school.school_code,
+                                                school.centre_name,
+                                                school.status,
+                                                school.registered
+                                                    ? 'Yes'
+                                                    : 'No'
+                                            ]
+                                            .join(' ')
+                                            .toLowerCase()
+                                        %>"
+                                    >
+
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                <%= school.school_name %>
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <%= school.school_code %>
+                                        </td>
+
+                                        <td>
+                                            <%= school.centre_name %>
+                                        </td>
+
+                                        <td>
+
+                                            <% if (school.registered) { %>
+
+                                                <span class="status-approved">
+                                                    Yes
+                                                </span>
+
+                                            <% } else { %>
+
+                                                <span class="status-rejected">
+                                                    No
+                                                </span>
+
+                                            <% } %>
+
+                                        </td>
+
+                                        <td>
+                                            <%= school.status %>
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                <%= school.student_count %>
+                                            </strong>
+                                        </td>
+
+                                        <td>
+
+                                            <a
+                                                href="/admin/rtse/applications?search=<%= encodeURIComponent(school.school_name) %>"
+                                                class="btn-view"
+                                                style="
+                                                    white-space:nowrap;
+                                                    display:inline-block;
+                                                "
+                                            >
+                                                👥 See Students
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                <% }) %>
+
+                            <% } %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div
+                    id="invitedSchoolNoResults"
+                    style="
+                        display:none;
+                        text-align:center;
+                        padding:35px;
+                        color:#666;
+                    "
+                >
+                    No schools match your search.
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+(function () {
+
+    const searchInput =
+        document.getElementById(
+            "invitedSchoolSearch"
+        );
+
+    const rows =
+        Array.from(
+            document.querySelectorAll(
+                ".invited-school-row"
+            )
+        );
+
+    const noResults =
+        document.getElementById(
+            "invitedSchoolNoResults"
+        );
+
+    const visibleCount =
+        document.getElementById(
+            "visibleSchoolCount"
+        );
+
+    if (!searchInput) {
+        return;
+    }
+
+    function filterSchools() {
+
+        const query =
+            String(searchInput.value || "")
+                .trim()
+                .toLowerCase();
+
+        let visible = 0;
+
+        rows.forEach(function (row) {
+
+            const searchText =
+                String(
+                    row.dataset.search || ""
+                );
+
+            const matches =
+                !query ||
+                searchText.includes(query);
+
+            row.style.display =
+                matches ? "" : "none";
+
+            if (matches) {
+                visible++;
+            }
+
+        });
+
+        if (visibleCount) {
+            visibleCount.textContent =
+                visible;
+        }
+
+        if (noResults) {
+            noResults.style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+        }
+    }
+
+    searchInput.addEventListener(
+        "input",
+        filterSchools
+    );
+
+})();
+</script>

@@ -50,6 +50,15 @@ router.get(
 );
 
 // =====================================
+// RTSE Invited Schools
+// =====================================
+router.get(
+    "/rtse/invited-schools",
+    auth.isAdmin,
+    adminRtseController.invitedSchoolsPage
+);
+
+// =====================================
 // RTSE Live Application Search
 router.get(
     "/rtse/applications/live-search",

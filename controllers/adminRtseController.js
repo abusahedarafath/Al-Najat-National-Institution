@@ -1,5 +1,6 @@
 const RtseApplication =
 require("../models/RtseApplication");
+const RtseInvitedSchool = require("../models/RtseInvitedSchool");
 
 const ArspSchool = require("../models/ArspSchool");
 const RtseSetting =
@@ -139,7 +140,20 @@ exports.dashboard = async (req, res) => {
         const stats =
             await RtseApplication.getDashboardStats();
 
-  const sectionStats = await RtseApplication.getSectionStatistics();
+
+
+        const dashboardSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(dashboardSetting?.exam_year);
+
+        const invitedSchoolCount =
+            await RtseInvitedSchool.getCount(
+                applicationYear
+            );
+
+const sectionStats = await RtseApplication.getSectionStatistics();
 
   const setting = await RtseSetting.get();
 
@@ -174,7 +188,8 @@ console.log("setting:", setting);
 
                 female: stats.female || 0,
 
-                admitGenerated,
+
+                invitedSchoolCount,admitGenerated,
 
                 sectionStats,
 
@@ -200,6 +215,55 @@ console.log("setting:", setting);
 
     }
 
+};
+
+// =====================================
+// RTSE Invited Schools
+// =====================================
+exports.invitedSchoolsPage = async (req, res) => {
+    try {
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const schools =
+            await RtseInvitedSchool.getAll(
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/invited-schools",
+            {
+                title: "RTSE Invited Schools",
+                schools,
+                schoolCount: schools.length,
+                applicationYear
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "RTSE Invited Schools Load Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load RTSE Invited Schools."
+        );
+
+        res.redirect("/admin/rtse");
+    }
 };
 
 // =====================================
