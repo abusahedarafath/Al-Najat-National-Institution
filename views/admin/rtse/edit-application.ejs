@@ -164,26 +164,31 @@
                                 </div>
 
                                 <select
-                                    name="school_id"
-                                    id="rtseSchoolSelect"
-                                    class="rtse-school-native-select"
-                                    required
-                                    tabindex="-1"
-                                    aria-hidden="true"
-                                >
-                                    <option value="">Select Registered School</option>
-
-                                    <% (schools || []).forEach(school => { %>
+                                name="school_id"
+                                id="rtseSchoolSelect"
+                                class="rtse-school-native-select"
+                                required
+                                tabindex="-1"
+                                aria-hidden="true"
+                            >
+                                <option value="">Select Registered School</option>
+                                <% if (application.school_id) { %>
+                                    <% const selectedSchool = (schools || []).find(
+                                        school => Number(school.id) === Number(application.school_id)
+                                    ); %>
+                                    <% if (selectedSchool) { %>
                                         <option
-                                            value="<%= school.id %>"
-                                            <%= Number(application.school_id) === Number(school.id) ? "selected" : "" %>>
-                                            <%= school.school_name %>
-                                            <% if (school.school_code) { %>
-                                                — <%= school.school_code %>
+                                            value="<%= selectedSchool.id %>"
+                                            selected
+                                        >
+                                            <%= selectedSchool.school_name %>
+                                            <% if (selectedSchool.school_code) { %>
+                                                — <%= selectedSchool.school_code %>
                                             <% } %>
                                         </option>
-                                    <% }) %>
-                                </select>
+                                    <% } %>
+                                <% } %>
+                            </select>
                             </div>
                         </div>
 
@@ -604,26 +609,44 @@
         displayText.textContent = selectedOption.textContent.trim();
     }
 
-    function selectSchool(value) {
-        schoolSelect.value = value;
+    function syncNativeSelect(value, label) {
+        schoolSelect.innerHTML = "";
 
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "Select Registered School";
+        schoolSelect.appendChild(placeholder);
+
+        if (value) {
+            const selected = document.createElement("option");
+            selected.value = value;
+            selected.textContent = label;
+            selected.selected = true;
+            schoolSelect.appendChild(selected);
+        }
+
+        schoolSelect.value = value || "";
+        updateDisplay();
+        schoolSelect.dispatchEvent(
+            new Event("change", { bubbles: true })
+        );
+    }
+
+    function selectSchool(value, label) {
         schoolOptions.forEach(function (option) {
             const selected = option.dataset.value === value;
+
             option.setAttribute(
                 "aria-selected",
                 selected ? "true" : "false"
             );
         });
 
-        updateDisplay();
+        syncNativeSelect(value, label);
 
         searchInput.value = "";
         filterSchools();
         closeDropdown();
-
-        schoolSelect.dispatchEvent(
-            new Event("change", { bubbles: true })
-        );
     }
 
     function filterSchools() {
@@ -662,7 +685,10 @@
 
     schoolOptions.forEach(function (option) {
         option.addEventListener("click", function () {
-            selectSchool(option.dataset.value || "");
+            selectSchool(
+                option.dataset.value || "",
+                option.textContent.trim()
+            );
         });
     });
 
