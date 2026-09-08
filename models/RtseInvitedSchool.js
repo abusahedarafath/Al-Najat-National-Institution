@@ -26,7 +26,7 @@ class RtseInvitedSchool {
             FROM (
                 SELECT
                     MIN(TRIM(a.school_name)) AS school_name,
-                    LOWER(TRIM(a.school_name)) AS school_key,
+                    LOWER(TRIM(a.school_name)) COLLATE utf8mb4_unicode_ci AS school_key,
                     COUNT(*) AS student_count
                 FROM rtse_applications a
                 WHERE a.archive = 0
@@ -44,7 +44,7 @@ class RtseInvitedSchool {
                     1 AS registered
                 FROM (
                     SELECT
-                        LOWER(TRIM(s.school_name)) AS school_key,
+                        LOWER(TRIM(s.school_name)) COLLATE utf8mb4_unicode_ci AS school_key,
                         s.school_code,
                         s.status
                     FROM arsp_schools s
@@ -65,7 +65,7 @@ class RtseInvitedSchool {
                     ) AS centre_names
                 FROM (
                     SELECT
-                        LOWER(TRIM(s.school_name)) AS school_key,
+                        LOWER(TRIM(s.school_name)) COLLATE utf8mb4_unicode_ci AS school_key,
                         c.centre_name
                     FROM arsp_schools s
                     INNER JOIN rtse_school_centre_assignments sca
@@ -125,7 +125,7 @@ class RtseInvitedSchool {
             SELECT COUNT(*) AS total
             FROM (
                 SELECT
-                    LOWER(TRIM(school_name)) AS school_key
+                    LOWER(TRIM(school_name)) COLLATE utf8mb4_unicode_ci AS school_key
                 FROM rtse_applications
                 WHERE archive = 0
                   AND application_year = ?
