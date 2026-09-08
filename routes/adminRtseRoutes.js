@@ -498,6 +498,13 @@ router.get(
 // =====================================
 
 // =====================================
+// RTSE Students Not Sent To Centre
+router.get(
+    "/rtse/students-not-sent-to-centre",
+    auth.isAdmin,
+    adminRtseController.studentsNotSentToCentrePage
+);
+
 // RTSE Examination Control Centre
 // =====================================
 

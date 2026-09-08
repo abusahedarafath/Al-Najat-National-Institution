@@ -1,0 +1,469 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-main">
+
+        <div class="page-header">
+            <div>
+                <h1>Students Not Sent to Centre</h1>
+                <p>
+                    RTSE <%= applicationYear %> — students who do not currently
+                    have an approved examination centre assignment.
+                </p>
+            </div>
+
+            <a href="/admin/rtse" class="btn-back">
+                ← RTSE Dashboard
+            </a>
+        </div>
+
+        <div class="summary-card">
+            <div>
+                <span class="summary-label">
+                    Students Not Sent to Centre
+                </span>
+
+                <strong id="visibleCount">
+                    <%= studentCount %>
+                </strong>
+            </div>
+
+            <div class="summary-year">
+                Exam Year:
+                <strong><%= applicationYear %></strong>
+            </div>
+        </div>
+
+        <div class="filter-card">
+
+            <div class="filter-group search-group">
+                <label for="studentSearch">
+                    Search Students
+                </label>
+
+                <input
+                    type="search"
+                    id="studentSearch"
+                    placeholder="Registration No., name, school, mobile..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="filter-group">
+                <label for="studentStatus">
+                    Status
+                </label>
+
+                <select id="studentStatus">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="table-card">
+
+            <div class="table-wrapper">
+
+                <table id="studentsTable">
+
+                    <thead>
+                        <tr>
+                            <th>Sl. No.</th>
+                            <th>Registration No.</th>
+                            <th>Student Name</th>
+                            <th>Father Name</th>
+                            <th>Mobile</th>
+                            <th>School</th>
+                            <th>District</th>
+                            <th>Class</th>
+                            <th>Roll No.</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentsBody">
+
+                        <% students.forEach((student, index) => { %>
+
+                            <tr
+                                data-search="<%= [
+                                    student.registration_no,
+                                    student.full_name,
+                                    student.father_name,
+                                    student.mobile,
+                                    student.school_name,
+                                    student.district,
+                                    student.roll_no,
+                                    student.status
+                                ].filter(Boolean).join(' ').toLowerCase() %>"
+                                data-status="<%= student.status || '' %>"
+                            >
+
+                                <td class="serial">
+                                    <%= index + 1 %>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        <%= student.registration_no || '—' %>
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <%= student.full_name || '—' %>
+                                </td>
+
+                                <td>
+                                    <%= student.father_name || '—' %>
+                                </td>
+
+                                <td>
+                                    <%= student.mobile || '—' %>
+                                </td>
+
+                                <td>
+                                    <%= student.school_name || '—' %>
+                                </td>
+
+                                <td>
+                                    <%= student.district || '—' %>
+                                </td>
+
+                                <td>
+                                    <%= student.class || '—' %>
+                                    <% if (student.section) { %>
+                                        - <%= student.section %>
+                                    <% } %>
+                                </td>
+
+                                <td>
+                                    <%= student.roll_no || '—' %>
+                                </td>
+
+                                <td>
+                                    <% if (student.status === "Approved") { %>
+
+                                        <span class="status status-approved">
+                                            Approved
+                                        </span>
+
+                                    <% } else if (student.status === "Rejected") { %>
+
+                                        <span class="status status-rejected">
+                                            Rejected
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="status status-pending">
+                                            <%= student.status || "Pending" %>
+                                        </span>
+
+                                    <% } %>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="/admin/rtse/application/<%= student.id %>"
+                                        class="btn-view"
+                                    >
+                                        👁 View Application
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                        <tr
+                            id="emptyRow"
+                            class="empty-row"
+                            style="<%= students.length ? 'display:none' : '' %>"
+                        >
+                            <td colspan="11">
+                                No students found.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 6px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #64748b;
+    }
+
+    .btn-back,
+    .btn-view {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 9px 13px;
+        font-weight: 600;
+    }
+
+    .btn-back {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-view {
+        background: #eff6ff;
+        color: #1d4ed8;
+        white-space: nowrap;
+    }
+
+    .summary-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 22px;
+        margin-bottom: 20px;
+        border-radius: 14px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .summary-card strong {
+        font-size: 28px;
+        color: #0f172a;
+    }
+
+    .summary-year {
+        color: #64748b;
+    }
+
+    .summary-year strong {
+        font-size: 16px;
+    }
+
+    .filter-card {
+        display: flex;
+        align-items: end;
+        gap: 16px;
+        padding: 18px;
+        margin-bottom: 20px;
+        border-radius: 14px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+    }
+
+    .filter-group {
+        min-width: 190px;
+    }
+
+    .search-group {
+        flex: 1;
+    }
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #fff;
+        color: #0f172a;
+        outline: none;
+    }
+
+    .table-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1250px;
+    }
+
+    th,
+    td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .status {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .empty-row td {
+        text-align: center;
+        padding: 40px 20px;
+        color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+        .page-header,
+        .summary-card,
+        .filter-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-group {
+            min-width: 0;
+        }
+    }
+</style>
+
+<script>
+(function () {
+    const searchInput =
+        document.getElementById("studentSearch");
+
+    const statusSelect =
+        document.getElementById("studentStatus");
+
+    const rows = Array.from(
+        document.querySelectorAll(
+            "#studentsBody tr[data-search]"
+        )
+    );
+
+    const emptyRow =
+        document.getElementById("emptyRow");
+
+    const visibleCount =
+        document.getElementById("visibleCount");
+
+    function filterStudents() {
+        const search =
+            searchInput.value.trim().toLowerCase();
+
+        const status =
+            statusSelect.value;
+
+        let visible = 0;
+
+        rows.forEach((row) => {
+            const matchesSearch =
+                !search ||
+                row.dataset.search.includes(search);
+
+            const matchesStatus =
+                !status ||
+                row.dataset.status === status;
+
+            const show =
+                matchesSearch && matchesStatus;
+
+            row.style.display =
+                show ? "" : "none";
+
+            if (show) {
+                visible++;
+
+                row.querySelector(".serial")
+                    .textContent = visible;
+            }
+        });
+
+        visibleCount.textContent = visible;
+
+        emptyRow.style.display =
+            visible ? "none" : "";
+    }
+
+    searchInput.addEventListener(
+        "input",
+        filterStudents
+    );
+
+    statusSelect.addEventListener(
+        "change",
+        filterStudents
+    );
+})();
+</script>
+
+<%- include("../partials/footer") %>

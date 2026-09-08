@@ -2,6 +2,7 @@ const RtseApplication =
 require("../models/RtseApplication");
 const RtseInvitedSchool = require("../models/RtseInvitedSchool");
 const RtseStudentsWithoutSchool = require("../models/RtseStudentsWithoutSchool");
+const RtseStudentsNotSentToCentre = require("../models/RtseStudentsNotSentToCentre");
 
 const ArspSchool = require("../models/ArspSchool");
 const RtseSetting =
@@ -159,6 +160,11 @@ exports.dashboard = async (req, res) => {
                 applicationYear
             );
 
+        const studentsNotSentToCentreCount =
+            await RtseStudentsNotSentToCentre.getCount(
+                applicationYear
+            );
+
 const sectionStats = await RtseApplication.getSectionStatistics();
 
   const setting = await RtseSetting.get();
@@ -197,6 +203,7 @@ console.log("setting:", setting);
 
                 invitedSchoolCount,
                 studentsWithoutSchoolCount,
+                studentsNotSentToCentreCount,
                 admitGenerated,
 
                 sectionStats,
@@ -326,6 +333,59 @@ exports.studentsWithoutSchoolPage = async (req, res) => {
         req.flash(
             "error",
             "Unable to load students without school."
+        );
+
+        res.redirect("/admin/rtse");
+    }
+};
+
+// =====================================
+// RTSE Students Not Sent To Centre
+// =====================================
+exports.studentsNotSentToCentrePage = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const search =
+            String(req.query.search || "").trim();
+
+        const status =
+            String(req.query.status || "").trim();
+
+        const students =
+            await RtseStudentsNotSentToCentre.getAll(
+                applicationYear,
+                search,
+                status
+            );
+
+        res.render(
+            "admin/rtse/students-not-sent-to-centre",
+            {
+                title: "RTSE Students Not Sent to Centre",
+                students,
+                studentCount: students.length,
+                applicationYear,
+                search,
+                status
+            }
+        );
+    } catch (err) {
+        console.error(
+            "RTSE Students Not Sent To Centre Load Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load students not sent to centre."
         );
 
         res.redirect("/admin/rtse");
