@@ -33,6 +33,9 @@ const adminRtseController =
 require("../controllers/adminRtseController");
 const adminRtseOmrController =
 require("../controllers/adminRtseOmrController");
+const adminRtseAdmitDownloadController =
+require("../controllers/adminRtseAdmitDownloadController");
+
 
 
 // =====================================
@@ -74,6 +77,18 @@ router.get(
     adminRtseController.liveApplicationSearch
 );
 
+
+// =====================================
+// RTSE Admit Card Download History
+// =====================================
+
+router.get(
+    "/rtse/admit-download-history",
+    auth.isAdmin,
+    adminRtseAdmitDownloadController.historyPage
+);
+
+// =====================================
 // RTSE Student Applications
 // =====================================
 

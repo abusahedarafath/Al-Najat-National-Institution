@@ -7,6 +7,7 @@ const RtseCentre = require("../models/RtseCentre");
 const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
 const QRCode = require("qrcode");
+const googleIdentityService = require("../services/googleIdentityService");
 
 // =====================================
 // RTSE STUDENT LOGIN PAGE
@@ -198,7 +199,9 @@ exports.dashboard = async (req, res) => {
             {
                 title: "RTSE Student Dashboard",
                 application,
-                rtseSetting
+                rtseSetting,
+                googleClientId:
+                    googleIdentityService.getClientId()
             }
         );
 
@@ -630,6 +633,50 @@ exports.admitCard = async (req, res) => {
             );
         }
 
+        // =====================================
+        // Mandatory Admit Card Access Verification
+        // =====================================
+
+        const admitVerification =
+            req.session?.rtseAdmitDownload;
+
+        const verificationNow = Date.now();
+
+        const verificationValid =
+            admitVerification &&
+            Number(admitVerification.applicationId) ===
+                Number(application.id) &&
+            admitVerification.googleVerifiedAt &&
+            admitVerification.downloaderName &&
+            admitVerification.mobile &&
+            admitVerification.downloadAuthorizedAt &&
+            admitVerification.downloadExpiresAt &&
+            verificationNow <=
+                Number(admitVerification.downloadExpiresAt);
+
+        if (!verificationValid) {
+            return res.status(403).render(
+                "rtse/student-admit-card",
+                {
+                    title: "RTSE Admit Card Verification Required",
+                    setting: arspSetting,
+                    student: application,
+                    attendance: null,
+                    qrData: null,
+                    examSetting,
+                    examShift,
+                    examCentre,
+                    admitCardSetting,
+                    examYear:
+                        examSetting?.exam_year ||
+                        arspSetting?.exam_year ||
+                        new Date().getFullYear(),
+                    error:
+                        "Admit card verification is required. Please return to your RTSE student dashboard and complete Google account, name and mobile verification."
+                }
+            );
+        }
+
         // Reuse the existing attendance QR system.
         let attendance = null;
 
@@ -657,6 +704,44 @@ exports.admitCard = async (req, res) => {
                 );
 
         }
+
+        // =====================================
+        // Record Successful Admit Card Access
+        // =====================================
+
+        await RtseAdmitDownload.create({
+            applicationId: application.id,
+            registrationNo: application.registration_no,
+            studentName: application.full_name,
+            googleSubject: admitVerification.googleSubject,
+            googleEmail: admitVerification.googleEmail,
+            googleName: admitVerification.googleName,
+            downloaderName:
+                admitVerification.downloaderName,
+            mobile: admitVerification.mobile,
+            mobileVerified: false,
+            otpProvider: null,
+            otpRequestId: null,
+            verifiedAt:
+                new Date(
+                    Number(admitVerification.downloadAuthorizedAt)
+                ),
+            ipAddress:
+                admitVerification.ipAddress ||
+                (
+                    req.headers["x-forwarded-for"] ||
+                    req.socket?.remoteAddress ||
+                    null
+                ),
+            userAgent:
+                admitVerification.userAgent ||
+                req.get("user-agent") ||
+                null
+        });
+
+        // Consume the short-lived authorization immediately after
+        // the admit-card access has been successfully audited.
+        req.session.rtseAdmitDownload = null;
 
         return res.render(
             "rtse/student-admit-card",

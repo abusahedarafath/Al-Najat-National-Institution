@@ -12,6 +12,7 @@ const rtsePublicController =
 
 const rtseStudentController = require("../controllers/rtseStudentController");
 const rtseStudentAuth = require("../middleware/rtseStudentAuth");
+const rtseAdmitDownloadController = require("../controllers/rtseAdmitDownloadController");
 
 // =====================================
 // Upload Configuration
@@ -177,6 +178,35 @@ router.get(
     "/student/certificate",
     rtseStudentAuth.isLoggedIn,
     rtseStudentController.certificate
+);
+
+
+// =====================================
+// RTSE Student Admit Card Verification
+// =====================================
+
+router.get(
+    "/student/admit-download/status",
+    rtseStudentAuth.isLoggedIn,
+    rtseAdmitDownloadController.getVerificationStatus
+);
+
+router.get(
+    "/student/admit-download/google-status",
+    rtseStudentAuth.isLoggedIn,
+    rtseAdmitDownloadController.googleStatus
+);
+
+router.post(
+    "/student/admit-download/google",
+    rtseStudentAuth.isLoggedIn,
+    rtseAdmitDownloadController.verifyGoogle
+);
+
+router.post(
+    "/student/admit-download/details",
+    rtseStudentAuth.isLoggedIn,
+    rtseAdmitDownloadController.submitDetails
 );
 
 router.get(

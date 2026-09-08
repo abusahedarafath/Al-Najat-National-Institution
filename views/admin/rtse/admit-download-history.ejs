@@ -1,0 +1,691 @@
+<%- include("../partials/header") %>
+
+<style>
+
+    .rtse-history-page {
+        padding: 24px;
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .rtse-history-header {
+        margin-bottom: 20px;
+    }
+
+    .rtse-history-header h1 {
+        margin: 0;
+        font-size: 25px;
+        color: #111827;
+    }
+
+    .rtse-history-header p {
+        margin: 6px 0 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .rtse-history-stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .rtse-history-stat {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 17px;
+        box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    }
+
+    .rtse-history-stat-label {
+        color: #6b7280;
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+
+    .rtse-history-stat-value {
+        color: #111827;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .rtse-history-filters {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 17px;
+        margin-bottom: 20px;
+    }
+
+    .rtse-history-filter-grid {
+        display: grid;
+        grid-template-columns: minmax(220px, 2fr) 1fr 1fr auto;
+        gap: 10px;
+        align-items: end;
+    }
+
+    .rtse-history-field label {
+        display: block;
+        margin-bottom: 6px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .rtse-history-field input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 11px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .rtse-history-field input:focus {
+        border-color: #64748b;
+        box-shadow: 0 0 0 3px rgba(100,116,139,.1);
+    }
+
+    .rtse-history-filter-button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 17px;
+        background: #111827;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .rtse-history-clear-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 7px;
+        padding: 9px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        color: #374151;
+        background: #ffffff;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .rtse-history-table-wrap {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: auto;
+        box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    }
+
+    .rtse-history-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1250px;
+    }
+
+    .rtse-history-table th {
+        background: #f8fafc;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .rtse-history-table td {
+        padding: 12px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #374151;
+        font-size: 12px;
+        vertical-align: top;
+    }
+
+    .rtse-history-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .rtse-history-student-name {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .rtse-history-registration {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .rtse-history-google-name {
+        font-weight: 700;
+        color: #111827;
+    }
+    .rtse-history-downloader-name {
+        font-weight: 700;
+        color: #111827;
+    }
+
+
+    .rtse-history-google-email {
+        margin-top: 3px;
+        color: #64748b;
+        word-break: break-word;
+    }
+
+    .rtse-history-google-id {
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 10px;
+        word-break: break-all;
+    }
+
+    .rtse-history-mobile {
+        font-family: monospace;
+        white-space: nowrap;
+    }
+
+    .rtse-history-verified {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #166534;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .rtse-history-ip {
+        font-family: monospace;
+        white-space: nowrap;
+    }
+
+    .rtse-history-user-agent {
+        max-width: 300px;
+        color: #64748b;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    .rtse-history-empty {
+        padding: 45px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .rtse-history-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 17px;
+        flex-wrap: wrap;
+    }
+
+    .rtse-history-pagination-info {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .rtse-history-pagination-links {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .rtse-history-page-link {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #374151;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .rtse-history-page-link.active {
+        background: #111827;
+        color: #ffffff;
+        border-color: #111827;
+    }
+
+    .rtse-history-page-link.disabled {
+        opacity: .45;
+        pointer-events: none;
+    }
+
+    @media (max-width: 1100px) {
+        .rtse-history-stats {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .rtse-history-filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .rtse-history-page {
+            padding: 15px;
+        }
+
+        .rtse-history-stats {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .rtse-history-filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>
+
+<div class="rtse-history-page">
+
+    <div class="rtse-history-header">
+
+        <h1>
+            RTSE Admit Card Download History
+        </h1>
+
+        <p>
+            Audit trail of successfully verified RTSE admit-card access events.
+        </p>
+
+    </div>
+
+
+    <div class="rtse-history-stats">
+
+        <div class="rtse-history-stat">
+            <div class="rtse-history-stat-label">
+                Total Accesses
+            </div>
+            <div class="rtse-history-stat-value">
+                <%= stats.total.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-history-stat">
+            <div class="rtse-history-stat-label">
+                Today's Accesses
+            </div>
+            <div class="rtse-history-stat-value">
+                <%= stats.today.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-history-stat">
+            <div class="rtse-history-stat-label">
+                Unique Students
+            </div>
+            <div class="rtse-history-stat-value">
+                <%= stats.uniqueStudents.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-history-stat">
+            <div class="rtse-history-stat-label">
+                Unique Google Accounts
+            </div>
+            <div class="rtse-history-stat-value">
+                <%= stats.uniqueGoogleAccounts.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-history-stat">
+            <div class="rtse-history-stat-label">
+                Unique Mobile Numbers
+            </div>
+            <div class="rtse-history-stat-value">
+                <%= stats.uniqueMobileNumbers.toLocaleString() %>
+            </div>
+        </div>
+
+    </div>
+
+
+    <form
+        method="GET"
+        action="/admin/rtse/admit-download-history"
+        class="rtse-history-filters"
+    >
+
+        <div class="rtse-history-filter-grid">
+
+            <div class="rtse-history-field">
+
+                <label for="history-search">
+                    Search
+                </label>
+
+                <input
+                    type="text"
+                    id="history-search"
+                    name="search"
+                    value="<%= filters.search %>"
+                    placeholder="Student, registration, downloader, Google email, mobile, IP..."
+                >
+
+            </div>
+
+            <div class="rtse-history-field">
+
+                <label for="history-date-from">
+                    From Date
+                </label>
+
+                <input
+                    type="date"
+                    id="history-date-from"
+                    name="date_from"
+                    value="<%= filters.dateFrom %>"
+                >
+
+            </div>
+
+            <div class="rtse-history-field">
+
+                <label for="history-date-to">
+                    To Date
+                </label>
+
+                <input
+                    type="date"
+                    id="history-date-to"
+                    name="date_to"
+                    value="<%= filters.dateTo %>"
+                >
+
+            </div>
+
+            <div>
+
+                <button
+                    type="submit"
+                    class="rtse-history-filter-button"
+                >
+                    Search
+                </button>
+
+                <a
+                    href="/admin/rtse/admit-download-history"
+                    class="rtse-history-clear-button"
+                >
+                    Clear
+                </a>
+
+            </div>
+
+        </div>
+
+    </form>
+
+
+    <div class="rtse-history-table-wrap">
+
+        <% if (!history || history.length === 0) { %>
+
+            <div class="rtse-history-empty">
+                No admit-card access history found.
+            </div>
+
+        <% } else { %>
+
+            <table class="rtse-history-table">
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Google Account</th>
+                        <th>Downloader</th>
+                        <th>Mobile</th>
+                        <th>Verified At</th>
+                        <th>Accessed At</th>
+                        <th>IP Address</th>
+                        <th>Device / Browser</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% history.forEach((record, index) => { %>
+
+                        <tr>
+
+                            <td>
+                                <%= ((pagination.page - 1) * pagination.limit) + index + 1 %>
+                            </td>
+
+                            <td>
+
+                                <div class="rtse-history-student-name">
+                                    <%= record.student_name %>
+                                </div>
+
+                                <div class="rtse-history-registration">
+                                    <%= record.registration_no %>
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="rtse-history-google-name">
+                                    <%= record.google_name %>
+                                </div>
+
+                                <div class="rtse-history-google-email">
+                                    <%= record.google_email %>
+                                </div>
+
+                                <div class="rtse-history-google-id">
+                                    Google ID: <%= record.google_subject %>
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <div class="rtse-history-downloader-name">
+                                    <%= record.downloader_name || "—" %>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="rtse-history-mobile">
+                                    <%= record.mobile %>
+                                </span>
+                            </td>
+
+
+
+                            <td>
+                                <%= record.verified_at
+                                    ? new Date(record.verified_at).toLocaleString()
+                                    : "—"
+                                %>
+                            </td>
+
+                            <td>
+                                <%= record.downloaded_at
+                                    ? new Date(record.downloaded_at).toLocaleString()
+                                    : "—"
+                                %>
+                            </td>
+
+                            <td>
+                                <span class="rtse-history-ip">
+                                    <%= record.ip_address || "—" %>
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="rtse-history-user-agent">
+                                    <%= record.user_agent || "—" %>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                </tbody>
+
+            </table>
+
+        <% } %>
+
+    </div>
+
+
+    <% if (pagination.total > 0) { %>
+
+        <div class="rtse-history-pagination">
+
+            <div class="rtse-history-pagination-info">
+
+                Showing
+                <%= ((pagination.page - 1) * pagination.limit) + 1 %>
+                –
+                <%= Math.min(
+                    pagination.page * pagination.limit,
+                    pagination.total
+                ) %>
+                of
+                <%= pagination.total.toLocaleString() %>
+
+            </div>
+
+
+            <div class="rtse-history-pagination-links">
+
+                <%
+                    const queryParams = new URLSearchParams();
+
+                    if (filters.search) {
+                        queryParams.set(
+                            "search",
+                            filters.search
+                        );
+                    }
+
+                    if (filters.dateFrom) {
+                        queryParams.set(
+                            "date_from",
+                            filters.dateFrom
+                        );
+                    }
+
+                    if (filters.dateTo) {
+                        queryParams.set(
+                            "date_to",
+                            filters.dateTo
+                        );
+                    }
+
+                    function pageUrl(pageNumber) {
+                        queryParams.set(
+                            "page",
+                            pageNumber
+                        );
+
+                        return (
+                            "/admin/rtse/admit-download-history?" +
+                            queryParams.toString()
+                        );
+                    }
+                %>
+
+
+                <% if (pagination.page > 1) { %>
+
+                    <a
+                        href="<%= pageUrl(pagination.page - 1) %>"
+                        class="rtse-history-page-link"
+                    >
+                        Previous
+                    </a>
+
+                <% } else { %>
+
+                    <span class="rtse-history-page-link disabled">
+                        Previous
+                    </span>
+
+                <% } %>
+
+
+                <%
+                    const startPage =
+                        Math.max(
+                            1,
+                            pagination.page - 2
+                        );
+
+                    const endPage =
+                        Math.min(
+                            pagination.totalPages,
+                            pagination.page + 2
+                        );
+                %>
+
+
+                <% for (
+                    let pageNumber = startPage;
+                    pageNumber <= endPage;
+                    pageNumber++
+                ) { %>
+
+                    <a
+                        href="<%= pageUrl(pageNumber) %>"
+                        class="rtse-history-page-link <%= pageNumber === pagination.page ? "active" : "" %>"
+                    >
+                        <%= pageNumber %>
+                    </a>
+
+                <% } %>
+
+
+                <% if (pagination.page < pagination.totalPages) { %>
+
+                    <a
+                        href="<%= pageUrl(pagination.page + 1) %>"
+                        class="rtse-history-page-link"
+                    >
+                        Next
+                    </a>
+
+                <% } else { %>
+
+                    <span class="rtse-history-page-link disabled">
+                        Next
+                    </span>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

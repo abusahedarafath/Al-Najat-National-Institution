@@ -204,6 +204,187 @@
 
     }
 
+    /* =====================================
+       RTSE Admit Card Verification Modal
+       ===================================== */
+
+    .rtse-admit-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(15, 23, 42, .62);
+        padding: 20px;
+        overflow-y: auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .rtse-admit-modal.is-open {
+        display: flex;
+    }
+
+    .rtse-admit-modal-card {
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.22);
+        padding: 24px;
+        position: relative;
+    }
+
+    .rtse-admit-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 21px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .rtse-admit-modal-title {
+        margin: 0 35px 6px 0;
+        font-size: 20px;
+        color: #111827;
+    }
+
+    .rtse-admit-modal-subtitle {
+        margin: 0 0 20px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .rtse-admit-step {
+        display: none;
+    }
+
+    .rtse-admit-step.active {
+        display: block;
+    }
+
+    .rtse-admit-step-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .rtse-admit-mobile-input,
+    .rtse-admit-otp-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .rtse-admit-mobile-input:focus,
+    .rtse-admit-otp-input:focus {
+        border-color: #64748b;
+        box-shadow: 0 0 0 3px rgba(100,116,139,.12);
+    }
+
+    .rtse-admit-primary-button {
+        width: 100%;
+        margin-top: 14px;
+        padding: 12px 16px;
+        border: 0;
+        border-radius: 9px;
+        background: #111827;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .rtse-admit-primary-button:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    .rtse-admit-secondary-button {
+        width: 100%;
+        margin-top: 9px;
+        padding: 10px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .rtse-admit-google-box {
+        min-height: 42px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .rtse-admit-google-status {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 9px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .rtse-admit-message {
+        display: none;
+        margin-bottom: 14px;
+        padding: 10px 12px;
+        border-radius: 9px;
+        background: #fef2f2;
+        color: #991b1b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .rtse-admit-message.show {
+        display: block;
+    }
+
+    .rtse-admit-success {
+        text-align: center;
+    }
+
+    .rtse-admit-success-icon {
+        font-size: 42px;
+        margin-bottom: 8px;
+    }
+
+    .rtse-admit-countdown {
+        margin-top: 10px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+        .rtse-admit-modal {
+            padding: 12px;
+        }
+
+        .rtse-admit-modal-card {
+            padding: 20px;
+            border-radius: 15px;
+        }
+    }
+
 </style>
 
 <div class="rtse-student-dashboard">
@@ -399,9 +580,10 @@
                     </a>
 
                     <% if (rtseSetting && Number(rtseSetting.admit_publish) === 1) { %>
-<a
+                    <a
                         href="/rtse/student/admit-card"
                         class="rtse-service-card"
+                        id="rtseAdmitCardTrigger"
                     >
                         <span class="rtse-service-icon">🎫</span>
                         <span class="rtse-service-title">
@@ -411,7 +593,7 @@
                             View and print your RTSE admit card
                         </span>
                     </a>
-<% } %>
+                    <% } %>
 
                     <% if (String(application.status || "").toLowerCase() === "approved") { %>
 
@@ -450,5 +632,544 @@
     </div>
 
 </div>
+
+<!-- =====================================
+     RTSE Admit Card Verification Modal
+     ===================================== -->
+
+<div
+    class="rtse-admit-modal"
+    id="rtseAdmitVerificationModal"
+    aria-hidden="true"
+>
+    <div
+        class="rtse-admit-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rtseAdmitModalTitle"
+    >
+
+        <button
+            type="button"
+            class="rtse-admit-modal-close"
+            id="rtseAdmitModalClose"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+        <h2
+            class="rtse-admit-modal-title"
+            id="rtseAdmitModalTitle"
+        >
+            Admit Card Verification
+        </h2>
+
+        <p class="rtse-admit-modal-subtitle">
+            Select your Google account, then enter your name and mobile number before accessing the admit card.
+        </p>
+
+        <div
+            class="rtse-admit-message"
+            id="rtseAdmitVerificationMessage"
+        ></div>
+
+        <!-- STEP 1: GOOGLE -->
+
+        <div
+            class="rtse-admit-step active"
+            id="rtseAdmitGoogleStep"
+        >
+
+            <span class="rtse-admit-step-label">
+                Step 1 — Select your Google account
+            </span>
+
+            <div
+                class="rtse-admit-google-box"
+                id="rtseAdmitGoogleButton"
+            ></div>
+
+            <div class="rtse-admit-google-status">
+                Select the Google account you want recorded with this admit-card access.
+            </div>
+
+        </div>
+
+        <!-- STEP 2: NAME + MOBILE -->
+
+        <div
+            class="rtse-admit-step"
+            id="rtseAdmitDetailsStep"
+        >
+
+            <span class="rtse-admit-step-label">
+                Step 2 — Enter your details
+            </span>
+
+            <p
+                class="rtse-admit-modal-subtitle"
+                id="rtseAdmitGoogleInfo"
+            >
+                Google account verified.
+            </p>
+
+            <input
+                type="text"
+                id="rtseAdmitNameInput"
+                class="rtse-admit-mobile-input"
+                autocomplete="name"
+                maxlength="255"
+                placeholder="Enter your name"
+            >
+
+            <input
+                type="tel"
+                id="rtseAdmitMobileInput"
+                class="rtse-admit-mobile-input"
+                inputmode="numeric"
+                autocomplete="tel"
+                maxlength="10"
+                placeholder="10-digit mobile number"
+            >
+
+            <button
+                type="button"
+                class="rtse-admit-primary-button"
+                id="rtseAdmitAuthorize"
+            >
+                Continue to Admit Card
+            </button>
+
+        </div>
+
+        <!-- STEP 3: SUCCESS -->
+
+        <div
+            class="rtse-admit-step"
+            id="rtseAdmitSuccessStep"
+        >
+
+            <div class="rtse-admit-success">
+
+                <div class="rtse-admit-success-icon">
+                    ✅
+                </div>
+
+                <h3>
+                    Verification successful
+                </h3>
+
+                <p class="rtse-admit-modal-subtitle">
+                    Your admit-card access has been authorized.
+                </p>
+
+                <button
+                    type="button"
+                    class="rtse-admit-primary-button"
+                    id="rtseAdmitContinue"
+                >
+                    Continue to Admit Card
+                </button>
+
+                <div
+                    class="rtse-admit-countdown"
+                    id="rtseAdmitCountdown"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+(function () {
+    "use strict";
+
+    const trigger =
+        document.getElementById("rtseAdmitCardTrigger");
+
+    const modal =
+        document.getElementById("rtseAdmitVerificationModal");
+
+    const closeButton =
+        document.getElementById("rtseAdmitModalClose");
+
+    const message =
+        document.getElementById("rtseAdmitVerificationMessage");
+
+    const googleStep =
+        document.getElementById("rtseAdmitGoogleStep");
+
+    const detailsStep =
+        document.getElementById("rtseAdmitDetailsStep");
+
+    const successStep =
+        document.getElementById("rtseAdmitSuccessStep");
+
+    const googleButton =
+        document.getElementById("rtseAdmitGoogleButton");
+
+    const googleInfo =
+        document.getElementById("rtseAdmitGoogleInfo");
+
+    const nameInput =
+        document.getElementById("rtseAdmitNameInput");
+
+    const mobileInput =
+        document.getElementById("rtseAdmitMobileInput");
+
+    const authorizeButton =
+        document.getElementById("rtseAdmitAuthorize");
+
+    const continueButton =
+        document.getElementById("rtseAdmitContinue");
+
+    const countdown =
+        document.getElementById("rtseAdmitCountdown");
+
+    if (!trigger || !modal) {
+        return;
+    }
+
+    let countdownTimer = null;
+
+    function showMessage(text) {
+        message.textContent = text || "";
+        message.classList.toggle(
+            "show",
+            Boolean(text)
+        );
+    }
+
+    function clearMessage() {
+        showMessage("");
+    }
+
+    function showStep(step) {
+        googleStep.classList.remove("active");
+        detailsStep.classList.remove("active");
+        successStep.classList.remove("active");
+
+        step.classList.add("active");
+    }
+
+    function resetModal() {
+        clearMessage();
+
+        showStep(googleStep);
+
+        nameInput.value = "";
+        mobileInput.value = "";
+
+        authorizeButton.disabled = false;
+
+        googleInfo.textContent =
+            "Google account verified.";
+
+        countdown.textContent = "";
+
+        if (countdownTimer) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+        }
+    }
+
+    function openModal() {
+        resetModal();
+
+        modal.classList.add("is-open");
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        renderGoogleButton();
+    }
+
+    function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        if (countdownTimer) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+        }
+    }
+
+    async function postJson(url, data) {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            credentials: "same-origin",
+            body: JSON.stringify(data || {})
+        });
+
+        let result = {};
+
+        try {
+            result = await response.json();
+        } catch (error) {
+            result = {};
+        }
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message ||
+                "The verification request failed."
+            );
+        }
+
+        return result;
+    }
+
+    function startCountdown(seconds) {
+        let remaining = Number(seconds || 0);
+
+        if (countdownTimer) {
+            clearInterval(countdownTimer);
+        }
+
+        function update() {
+            if (remaining <= 0) {
+                countdown.textContent =
+                    "Authorization has expired. Please start again.";
+
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+
+                return;
+            }
+
+            countdown.textContent =
+                "Authorization expires in " +
+                remaining +
+                " seconds.";
+
+            remaining -= 1;
+        }
+
+        update();
+
+        countdownTimer =
+            setInterval(update, 1000);
+    }
+
+    function handleGoogleCredential(response) {
+        clearMessage();
+
+        if (
+            !response ||
+            !response.credential
+        ) {
+            showMessage(
+                "Google authentication did not return a valid credential."
+            );
+
+            return;
+        }
+
+        postJson(
+            "/rtse/student/admit-download/google",
+            {
+                credential:
+                    response.credential
+            }
+        )
+        .then(function (result) {
+            showStep(detailsStep);
+
+            if (
+                result.google &&
+                result.google.email
+            ) {
+                googleInfo.textContent =
+                    "Google account verified: " +
+                    result.google.email +
+                    ". Now enter your name and mobile number.";
+            }
+
+            nameInput.focus();
+        })
+        .catch(function (error) {
+            showMessage(
+                error.message ||
+                "Unable to verify the Google account."
+            );
+        });
+    }
+
+    function renderGoogleButton() {
+        if (
+            !window.google ||
+            !window.google.accounts ||
+            !window.google.accounts.id
+        ) {
+            googleButton.innerHTML =
+                "<span style='font-size:12px;color:#64748b'>Loading Google authentication…</span>";
+
+            setTimeout(
+                renderGoogleButton,
+                500
+            );
+
+            return;
+        }
+
+        const clientId =
+            "<%= typeof googleClientId !== 'undefined' ? googleClientId : '' %>";
+
+        if (!clientId) {
+            googleButton.innerHTML =
+                "<span style='font-size:12px;color:#991b1b'>Google authentication is not configured.</span>";
+
+            return;
+        }
+
+        google.accounts.id.initialize({
+            client_id: clientId,
+            callback: handleGoogleCredential,
+            ux_mode: "popup"
+        });
+
+        googleButton.innerHTML = "";
+
+        google.accounts.id.renderButton(
+            googleButton,
+            {
+                theme: "outline",
+                size: "large",
+                text: "signin_with",
+                shape: "rectangular",
+                width: 320
+            }
+        );
+    }
+
+    trigger.addEventListener(
+        "click",
+        function (event) {
+            event.preventDefault();
+            openModal();
+        }
+    );
+
+    closeButton.addEventListener(
+        "click",
+        closeModal
+    );
+
+    modal.addEventListener(
+        "click",
+        function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+            if (
+                event.key === "Escape" &&
+                modal.classList.contains("is-open")
+            ) {
+                closeModal();
+            }
+        }
+    );
+
+    authorizeButton.addEventListener(
+        "click",
+        async function () {
+            clearMessage();
+
+            const name =
+                String(nameInput.value || "")
+                    .replace(/\s+/g, " ")
+                    .trim();
+
+            const mobile =
+                String(mobileInput.value || "")
+                    .replace(/\D/g, "");
+
+            if (name.length < 2) {
+                showMessage(
+                    "Please enter your name."
+                );
+
+                nameInput.focus();
+                return;
+            }
+
+            if (name.length > 255) {
+                showMessage(
+                    "Name is too long."
+                );
+
+                nameInput.focus();
+                return;
+            }
+
+            if (!/^[6-9]\d{9}$/.test(mobile)) {
+                showMessage(
+                    "Please enter a valid 10-digit Indian mobile number."
+                );
+
+                mobileInput.focus();
+                return;
+            }
+
+            authorizeButton.disabled = true;
+
+            try {
+                const result =
+                    await postJson(
+                        "/rtse/student/admit-download/details",
+                        {
+                            name: name,
+                            mobile: mobile
+                        }
+                    );
+
+                showStep(successStep);
+
+                startCountdown(
+                    result.expiresInSeconds || 600
+                );
+            } catch (error) {
+                showMessage(
+                    error.message ||
+                    "Unable to authorize admit-card access."
+                );
+
+                authorizeButton.disabled = false;
+            }
+        }
+    );
+
+    continueButton.addEventListener(
+        "click",
+        function () {
+            window.location.href =
+                "/rtse/student/admit-card";
+        }
+    );
+})();
+</script>
+
+
+
 
 <%- include("../partials/footer") %>

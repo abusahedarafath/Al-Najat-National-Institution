@@ -88,7 +88,10 @@ const RtseExamAttendance = require("./models/RtseExamAttendance");
 const app = express();
 app.use(
     helmet({
-        contentSecurityPolicy: false
+        contentSecurityPolicy: false,
+        crossOriginOpenerPolicy: {
+            policy: "same-origin-allow-popups"
+        }
     })
 );
 app.use(compression());
