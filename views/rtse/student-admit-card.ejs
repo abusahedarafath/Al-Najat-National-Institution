@@ -1433,9 +1433,27 @@ body{
 
 <div class="print-controls">
 
-    <button onclick="window.print()">
+    <button type="button" onclick="printRtseAdmitCard()">
         Print / Save Admit Card
     </button>
+
+    <script>
+        function printRtseAdmitCard() {
+            const originalTitle = document.title;
+            document.title = "RTSE Admit Card - <%= application.registration_no %>";
+
+            const restoreTitle = () => {
+                document.title = originalTitle;
+                window.removeEventListener("afterprint", restoreTitle);
+            };
+
+            window.addEventListener("afterprint", restoreTitle);
+            window.print();
+
+            // Fallback for browsers that do not fire afterprint.
+            setTimeout(restoreTitle, 1000);
+        }
+    </script>
 
 </div>
 
