@@ -113,7 +113,194 @@
             line-height: 1.55;
         }
 
+        /* Saved settings view */
+        .saved-settings {
+            padding: 24px;
+        }
+
+        .saved-list {
+            border: 1px solid #dbe3ec;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .saved-row {
+            display: grid;
+            grid-template-columns: minmax(210px, 30%) 1fr;
+            gap: 18px;
+            padding: 13px 15px;
+            border-bottom: 1px solid #e5eaf0;
+        }
+
+        .saved-row:last-child {
+            border-bottom: 0;
+        }
+
+        .saved-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .saved-value {
+            font-size: 14px;
+            color: #172033;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .saved-actions {
+            margin-top: 22px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .view-button,
+        .edit-button {
+            display: inline-block;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .view-button {
+            background: #e8f1fb;
+            color: #174a86;
+            border: 1px solid #c8d9ed;
+        }
+
+        .edit-button {
+            background: #174a86;
+            color: #ffffff;
+            border: 1px solid #174a86;
+        }
+
+        /* Centered green success popup */
+        .success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            right: auto;
+            z-index: 9999;
+            width: min(420px, calc(100vw - 32px));
+            max-width: calc(100vw - 32px);
+            box-sizing: border-box;
+            padding: 26px 24px 22px;
+            border: 1px solid #86efac;
+            border-radius: 16px;
+            background: #f0fdf4;
+            color: #166534;
+            box-shadow: 0 20px 55px rgba(22, 101, 52, 0.25);
+            text-align: center;
+            transform: translate(-50%, -50%);
+            animation: successPopupIn 0.4s ease-out forwards;
+        }
+
+        .success-popup-icon {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #22c55e;
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 800;
+            box-shadow: 0 7px 18px rgba(34, 197, 94, 0.30);
+            animation: successIconPop 0.55s cubic-bezier(.175,.885,.32,1.275);
+        }
+
+        .success-popup-content {
+            display: block;
+        }
+
+        .success-popup-title {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .success-popup-text {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #15803d;
+        }
+
+        .success-popup-ok {
+            min-width: 110px;
+            padding: 10px 22px;
+            border: 0;
+            border-radius: 9px;
+            background: #16a34a;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.22);
+        }
+
+        .success-popup-ok:hover {
+            background: #15803d;
+        }
+
+        @keyframes successPopupIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.88);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes successIconPop {
+            0% {
+                transform: scale(0.4);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 700px) {
+            .success-popup-ok {
+                width: 100%;
+            }
+
+            .saved-settings {
+                padding: 16px;
+            }
+
+            .saved-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .saved-actions {
+                justify-content: stretch;
+            }
+
+            .view-button,
+            .edit-button {
+                flex: 1;
+                text-align: center;
+            }
+
             .grid {
                 grid-template-columns: 1fr;
             }
@@ -144,6 +331,27 @@
             <h1>RTSE Login Information PDF Settings</h1>
             <p>Control the text and contact information printed on the student Login Information PDF.</p>
         </div>
+
+        <% if (saved) { %>
+            <div class="success-popup" role="status" aria-live="polite">
+                <div class="success-popup-icon">✓</div>
+                <div class="success-popup-content">
+                    <span class="success-popup-title">Settings saved successfully</span>
+                    <span class="success-popup-text">
+                        Your Login Information PDF settings have been saved.
+                    </span>
+                    <button
+                        type="button"
+                        class="success-popup-ok"
+                        onclick="this.closest('.success-popup').remove()"
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        <% } %>
+
+        <% if (!saved) { %>
 
         <form
             method="POST"
@@ -270,6 +478,96 @@
             </div>
 
         </form>
+
+        <% } else { %>
+
+        <div class="saved-settings">
+
+            <div class="saved-list">
+
+                <div class="saved-row">
+                    <span class="saved-label">Organization Name</span>
+                    <span class="saved-value"><%= settings.organization_name %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Examination Name</span>
+                    <span class="saved-value"><%= settings.exam_name %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">PDF Title</span>
+                    <span class="saved-value"><%= settings.pdf_title %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">PDF Subtitle</span>
+                    <span class="saved-value"><%= settings.pdf_subtitle %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Website Name</span>
+                    <span class="saved-value"><%= settings.website_name %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Website URL</span>
+                    <span class="saved-value"><%= settings.website_url %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Student Login URL</span>
+                    <span class="saved-value"><%= settings.student_login_url %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Information & Assistance Contact</span>
+                    <span class="saved-value"><%= settings.information_contact || "—" %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Official Email</span>
+                    <span class="saved-value"><%= settings.official_email || "—" %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Technical Assistance Contact</span>
+                    <span class="saved-value"><%= settings.technical_contact || "—" %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Password Instruction</span>
+                    <span class="saved-value"><%= settings.password_instruction %></span>
+                </div>
+
+                <div class="saved-row">
+                    <span class="saved-label">Last Updated</span>
+                    <span class="saved-value"><%= settings.updated_at ? new Date(settings.updated_at).toLocaleString() : "—" %></span>
+                </div>
+
+            </div>
+
+            <div class="saved-actions">
+                <a
+                    href="/admin/rtse/login-information-pdf-settings?saved=1"
+                    class="view-button"
+                >
+                    View Settings
+                </a>
+
+                <a
+                    href="/admin/rtse/login-information-pdf-settings"
+                    class="edit-button"
+                >
+                    Edit Settings
+                </a>
+            </div>
+
+        </div>
+
+        <% } %>
+
+
 
     </div>
 

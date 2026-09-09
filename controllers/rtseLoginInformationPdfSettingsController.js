@@ -12,7 +12,8 @@ exports.page = async (req, res) => {
             "admin/rtse/login-information-pdf-settings",
             {
                 title: "RTSE Login Information PDF Settings",
-                settings
+                settings,
+                saved: String(req.query.saved || "") === "1"
             }
         );
     } catch (error) {
@@ -87,7 +88,7 @@ exports.update = async (req, res) => {
         }
 
         return res.redirect(
-            "/admin/rtse/login-information-pdf-settings"
+            "/admin/rtse/login-information-pdf-settings?saved=1"
         );
 
     } catch (error) {
