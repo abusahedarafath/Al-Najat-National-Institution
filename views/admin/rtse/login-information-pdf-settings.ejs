@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= title %></title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            color: #172033;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .settings-page {
+            width: min(1000px, calc(100% - 30px));
+            margin: 30px auto;
+        }
+
+        .settings-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(15, 23, 42, .10);
+            overflow: hidden;
+        }
+
+        .settings-header {
+            padding: 24px;
+            background: #174a86;
+            color: #ffffff;
+        }
+
+        .settings-header h1 {
+            margin: 0 0 7px;
+            font-size: 24px;
+        }
+
+        .settings-header p {
+            margin: 0;
+            opacity: .9;
+        }
+
+        form {
+            padding: 24px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            padding: 11px 12px;
+            font: inherit;
+            color: #172033;
+            background: #ffffff;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 20px;
+            background: #174a86;
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            background: #eef6ff;
+            color: #174a86;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .settings-page {
+                width: calc(100% - 18px);
+                margin: 9px auto;
+            }
+
+            form {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="settings-page">
+
+    <div class="settings-card">
+
+        <div class="settings-header">
+            <h1>RTSE Login Information PDF Settings</h1>
+            <p>Control the text and contact information printed on the student Login Information PDF.</p>
+        </div>
+
+        <form
+            method="POST"
+            action="/admin/rtse/login-information-pdf-settings"
+        >
+
+            <div class="grid">
+
+                <div class="field full">
+                    <label>Organization Name</label>
+                    <input
+                        type="text"
+                        name="organization_name"
+                        value="<%= settings.organization_name %>"
+                        required
+                    >
+                </div>
+
+                <div class="field full">
+                    <label>Examination Name</label>
+                    <input
+                        type="text"
+                        name="exam_name"
+                        value="<%= settings.exam_name %>"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>PDF Title</label>
+                    <input
+                        type="text"
+                        name="pdf_title"
+                        value="<%= settings.pdf_title %>"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>PDF Subtitle</label>
+                    <input
+                        type="text"
+                        name="pdf_subtitle"
+                        value="<%= settings.pdf_subtitle %>"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Website Name</label>
+                    <input
+                        type="text"
+                        name="website_name"
+                        value="<%= settings.website_name %>"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Website URL</label>
+                    <input
+                        type="url"
+                        name="website_url"
+                        value="<%= settings.website_url %>"
+                    >
+                </div>
+
+                <div class="field full">
+                    <label>Student Login URL</label>
+                    <input
+                        type="url"
+                        name="student_login_url"
+                        value="<%= settings.student_login_url %>"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Information & Assistance Contact</label>
+                    <input
+                        type="text"
+                        name="information_contact"
+                        value="<%= settings.information_contact %>"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Official Email</label>
+                    <input
+                        type="email"
+                        name="official_email"
+                        value="<%= settings.official_email %>"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Technical Assistance Contact</label>
+                    <input
+                        type="text"
+                        name="technical_contact"
+                        value="<%= settings.technical_contact %>"
+                    >
+                </div>
+
+                <div class="field full">
+                    <label>Password Instruction</label>
+                    <textarea
+                        name="password_instruction"
+                        required
+                    ><%= settings.password_instruction %></textarea>
+                </div>
+
+            </div>
+
+            <div class="note">
+                The student's actual mobile number is never printed in the PDF.
+                The PDF only displays the masked password and the password instruction.
+                The ARSP logo is loaded from the existing Site / Institution Settings.
+            </div>
+
+            <div class="actions">
+                <button type="submit">
+                    Save PDF Settings
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

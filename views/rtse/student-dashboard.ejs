@@ -540,6 +540,36 @@
 
                 <div class="rtse-services-grid">
 
+                    <div
+                        class="rtse-service-card"
+                        id="rtseLoginInformationPdfCard"
+                    >
+                        <span class="rtse-service-icon">🔐</span>
+
+                        <span class="rtse-service-title">
+                            Login Information PDF
+                        </span>
+
+                        <span class="rtse-service-description">
+                            Prepare and view your RTSE student login information PDF
+                        </span>
+
+                        <div
+                            id="rtseLoginInformationPdfActions"
+                            style="margin-top:12px;"
+                        >
+                            <button
+                                type="button"
+                                id="rtseLoginInformationPdfPrepare"
+                                style="border:0;border-radius:9px;padding:9px 12px;background:#174a86;color:#fff;font-weight:700;cursor:pointer;width:100%;"
+                            >
+                                Prepare Login Information PDF
+                            </button>
+                        </div>
+                    </div>
+
+
+
                     <a
                         href="/rtse/student/registration-slip"
                         class="rtse-service-card"
@@ -785,6 +815,198 @@
 </div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+(function () {
+    "use strict";
+
+    const actions =
+        document.getElementById("rtseLoginInformationPdfActions");
+
+    if (!actions) {
+        return;
+    }
+
+    function renderPrepare() {
+        actions.innerHTML = `
+            <button
+                type="button"
+                id="rtseLoginInformationPdfPrepare"
+                style="border:0;border-radius:9px;padding:9px 12px;background:#174a86;color:#fff;font-weight:700;cursor:pointer;width:100%;"
+            >
+                Prepare Login Information PDF
+            </button>
+        `;
+
+        const button =
+            document.getElementById("rtseLoginInformationPdfPrepare");
+
+        if (button) {
+            button.addEventListener(
+                "click",
+                prepare
+            );
+        }
+    }
+
+    function renderPrepared() {
+        actions.innerHTML = `
+            <div style="display:grid;gap:8px;">
+                <a
+                    href="/rtse/student/login-information-pdf"
+                    style="display:block;text-align:center;text-decoration:none;border-radius:9px;padding:9px 12px;background:#174a86;color:#fff;font-weight:700;"
+                >
+                    View Login Information PDF
+                </a>
+
+                <button
+                    type="button"
+                    id="rtseLoginInformationPdfReset"
+                    style="border:1px solid #174a86;border-radius:9px;padding:8px 12px;background:#fff;color:#174a86;font-weight:700;cursor:pointer;"
+                >
+                    Reset Login Information
+                </button>
+            </div>
+        `;
+
+        const resetButton =
+            document.getElementById(
+                "rtseLoginInformationPdfReset"
+            );
+
+        if (!resetButton) {
+            return;
+        }
+
+        resetButton.addEventListener(
+            "click",
+            async function () {
+
+                if (!window.confirm(
+                    "Reset the prepared Login Information PDF? Your RTSE application data will not be changed."
+                )) {
+                    return;
+                }
+
+                resetButton.disabled = true;
+                resetButton.textContent = "Resetting...";
+
+                try {
+                    const response = await fetch(
+                        "/rtse/student/login-information-pdf/reset",
+                        {
+                            method: "POST",
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest"
+                            }
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(
+                            data.message ||
+                            "Unable to reset PDF."
+                        );
+                    }
+
+                    renderPrepare();
+
+                } catch (error) {
+
+                    resetButton.disabled = false;
+                    resetButton.textContent =
+                        "Reset Login Information";
+
+                    window.alert(error.message);
+                }
+            }
+        );
+    }
+
+    async function prepare() {
+
+        const button =
+            document.getElementById(
+                "rtseLoginInformationPdfPrepare"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Preparing PDF...";
+
+        try {
+            const response = await fetch(
+                "/rtse/student/login-information-pdf/prepare",
+                {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to prepare PDF."
+                );
+            }
+
+            renderPrepared();
+
+        } catch (error) {
+
+            button.disabled = false;
+            button.textContent =
+                "Prepare Login Information PDF";
+
+            window.alert(error.message);
+        }
+    }
+
+    async function loadStatus() {
+
+        try {
+            const response = await fetch(
+                "/rtse/student/login-information-pdf/status",
+                {
+                    cache: "no-store"
+                }
+            );
+
+            if (!response.ok) {
+                renderPrepare();
+                return;
+            }
+
+            const data = await response.json();
+
+            if (
+                data.success &&
+                data.prepared
+            ) {
+                renderPrepared();
+            } else {
+                renderPrepare();
+            }
+
+        } catch (_) {
+            renderPrepare();
+        }
+    }
+
+    loadStatus();
+
+})();
+</script>
+
 
 <script>
 (function () {

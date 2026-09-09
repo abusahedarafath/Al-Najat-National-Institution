@@ -440,8 +440,21 @@
 <% } %>
 
                             </div>
-
+                            <div
+                            class="rtse-login-information-pdf-action"
+                            data-rtse-login-pdf-section="<%= section %>"
+                            style="margin-top:10px;"
+                        >
+                            <button
+                                type="button"
+                                class="btn-view"
+                                style="border:0;cursor:pointer;"
+                                onclick="prepareRtseLoginInformationPdf('<%= section %>', this)"
+                            >
+                                Prepare Login Information PDF
+                            </button>
                         </div>
+</div>
 
                     <% }) %>
 
@@ -579,5 +592,257 @@
 
 
 
+
+
+<script>
+async function getRtseLoginInformationPdfStatus(section) {
+    const response = await fetch(
+        "/admin/rtse/login-information-pdf/status/" +
+        encodeURIComponent(section),
+        {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }
+    );
+
+    const result = await response.json().catch(() => ({
+        success: false
+    }));
+
+    if (!response.ok || !result.success) {
+        throw new Error(
+            result.message ||
+            "Unable to check Login Information PDF status."
+        );
+    }
+
+    return result;
+}
+
+function renderRtseLoginInformationPdfActions(section, prepared) {
+    const container = document.querySelector(
+        '[data-rtse-login-pdf-section="' +
+        section +
+        '"]'
+    );
+
+    if (!container) return;
+
+    if (prepared) {
+        container.innerHTML = `
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <a
+                    href="/admin/rtse/login-information-pdf/view/${encodeURIComponent(section)}"
+                    class="btn-view"
+                    style="display:inline-block;text-decoration:none;"
+                >
+                    View Login Information PDF
+                </a>
+
+                <button
+                    type="button"
+                    class="btn-warning"
+                    style="border:0;cursor:pointer;"
+                    onclick="resetRtseLoginInformationPdf('${section}', this)"
+                >
+                    Reset Login Information
+                </button>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <button
+                type="button"
+                class="btn-view"
+                style="border:0;cursor:pointer;"
+                onclick="prepareRtseLoginInformationPdf('${section}', this)"
+            >
+                Prepare Login Information PDF
+            </button>
+        `;
+    }
+}
+
+async function refreshRtseLoginInformationPdfStatus(section) {
+    try {
+        const result =
+            await getRtseLoginInformationPdfStatus(section);
+
+        renderRtseLoginInformationPdfActions(
+            section,
+            Boolean(result.prepared)
+        );
+    } catch (error) {
+        console.error(
+            "RTSE Login Information PDF status error:",
+            error
+        );
+    }
+}
+
+async function prepareRtseLoginInformationPdf(section, button) {
+    if (!section || !button) return;
+
+    if (!confirm(
+        "Prepare Login Information PDFs for Section " +
+        section +
+        "?\n\n" +
+        "The saved Login Information PDF settings will be used.\n" +
+        "Roll numbers, admit cards, applications, and uploaded files will not be changed."
+    )) {
+        return;
+    }
+
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = "Preparing...";
+
+    try {
+        const response = await fetch(
+            "/admin/rtse/login-information-pdf/prepare/" +
+            encodeURIComponent(section),
+            {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }
+        );
+
+        const result = await response.json().catch(() => ({
+            success: false,
+            message: "Unexpected server response."
+        }));
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message ||
+                "Unable to prepare Login Information PDFs."
+            );
+        }
+
+        renderRtseLoginInformationPdfActions(
+            section,
+            true
+        );
+
+        alert(
+            result.message +
+            "\n\nPrepared: " +
+            result.preparedCount +
+            " section PDF." +
+            "\nStudents included: " +
+            result.studentCount
+        );
+    } catch (error) {
+        console.error(
+            "RTSE Login Information PDF preparation error:",
+            error
+        );
+
+        button.disabled = false;
+        button.textContent = originalText;
+
+        alert(
+            error.message ||
+            "Unable to prepare Login Information PDFs."
+        );
+    }
+}
+
+async function resetRtseLoginInformationPdf(section, button) {
+    if (!section || !button) return;
+
+    if (!confirm(
+        "Reset Login Information PDF preparation for Section " +
+        section +
+        "?\n\n" +
+        "Only the generated Login Information PDFs will be removed.\n" +
+        "Applications, uploaded files, roll numbers, and admit cards will not be changed."
+    )) {
+        return;
+    }
+
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = "Resetting...";
+
+    try {
+        const response = await fetch(
+            "/admin/rtse/login-information-pdf/reset/" +
+            encodeURIComponent(section),
+            {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }
+        );
+
+        const result = await response.json().catch(() => ({
+            success: false,
+            message: "Unexpected server response."
+        }));
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message ||
+                "Unable to reset Login Information PDFs."
+            );
+        }
+
+        renderRtseLoginInformationPdfActions(
+            section,
+            false
+        );
+
+        alert(
+            result.message +
+            "\n\nReset: " +
+            result.resetCount +
+            " section PDF."
+        );
+    } catch (error) {
+        console.error(
+            "RTSE Login Information PDF reset error:",
+            error
+        );
+
+        button.disabled = false;
+        button.textContent = originalText;
+
+        alert(
+            error.message ||
+            "Unable to reset Login Information PDFs."
+        );
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        document
+            .querySelectorAll(
+                "[data-rtse-login-pdf-section]"
+            )
+            .forEach(function (container) {
+                const section =
+                    container.getAttribute(
+                        "data-rtse-login-pdf-section"
+                    );
+
+                if (section) {
+                    refreshRtseLoginInformationPdfStatus(
+                        section
+                    );
+                }
+            });
+    }
+);
+</script>
 
 <%- include("../partials/footer") %>

@@ -75,7 +75,9 @@ const chairmanMessageRoutes = require("./routes/chairmanMessageRoutes");
 const siteSettingRoutes = require("./routes/siteSettingRoutes");
 const footerRoutes = require("./routes/footerRoutes");
 const rtseRoutes = require("./routes/rtse");
+const rtseStudentLoginInformationRoutes = require("./routes/rtseStudentLoginInformationRoutes");
 const rtseCentreRoutes = require("./routes/rtseCentreRoutes");
+const adminRtseLoginInformationPdfRoutes = require("./routes/adminRtseLoginInformationPdfRoutes");
 const seoRoutes = require("./routes/seoRoutes");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
 const superScannerRoutes = require("./routes/superScannerRoutes");
@@ -216,6 +218,7 @@ app.use(tirangaCertificateRoutes);
 app.use("/", adminRecoveryRoutes);
 // RTSE public routes MUST be registered before admin routes
 app.use("/rtse", rtseRoutes);
+app.use("/rtse", rtseStudentLoginInformationRoutes);
 app.use("/", rtseCentreRoutes);
 
 app.use("/", adminRoutes);
@@ -289,6 +292,7 @@ app.use("/admin", siteSettingRoutes);
 // ===============================
 
 app.use("/admin", adminRtseRoutes);
+app.use("/admin", adminRtseLoginInformationPdfRoutes);
 
 // 404 Handler
 app.use((req, res) => {
