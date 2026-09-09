@@ -1,4 +1,5 @@
 const HomePopup = require("../models/HomePopup");
+const { indiaToUtc, utcToIndia } = require("../utils/indiaDateTime");
 
 function parseForm(req) {
     const buttons = [];
@@ -40,8 +41,8 @@ function parseForm(req) {
         message: (req.body.message || "").trim(),
         buttons,
         status: req.body.status === "Active" ? "Active" : "Inactive",
-        start_at: req.body.start_at || null,
-        end_at: req.body.end_at || null,
+        start_at: indiaToUtc(req.body.start_at),
+        end_at: indiaToUtc(req.body.end_at),
         display_frequency: ["always", "session", "daily"].includes(req.body.display_frequency)
             ? req.body.display_frequency
             : "always"
@@ -98,6 +99,9 @@ exports.editPage = async (req, res) => {
             req.flash("error", "Home Page Popup not found.");
             return res.redirect("/admin/home-popups");
         }
+
+        popup.start_at = utcToIndia(popup.start_at);
+        popup.end_at = utcToIndia(popup.end_at);
 
         res.render("admin/add-home-popup", {
             title: "Edit Home Page Popup",

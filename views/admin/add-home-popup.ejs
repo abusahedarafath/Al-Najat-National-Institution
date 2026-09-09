@@ -75,7 +75,7 @@
                     type="datetime-local"
                     id="start_at"
                     name="start_at"
-                    value="<%= popup && popup.start_at ? new Date(popup.start_at).toISOString().slice(0,16) : '' %>"
+                    value="<%= popup && popup.start_at ? popup.start_at : '' %>"
                 >
             </div>
 
@@ -85,7 +85,7 @@
                     type="datetime-local"
                     id="end_at"
                     name="end_at"
-                    value="<%= popup && popup.end_at ? new Date(popup.end_at).toISOString().slice(0,16) : '' %>"
+                    value="<%= popup && popup.end_at ? popup.end_at : '' %>"
                 >
             </div>
         </div>
