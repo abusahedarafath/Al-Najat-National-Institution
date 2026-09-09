@@ -4194,7 +4194,7 @@ exports.attendanceSheet = async (req, res) => {
         }
 
         const rooms =
-            await RtseSeatPlan.getRoomWise(
+            await RtseExamAttendance.getAttendanceSheetBySection(
                 section,
                 applicationYear
             );
@@ -4243,6 +4243,286 @@ exports.attendanceSheet = async (req, res) => {
 
 
 // =====================================
+// Download Attendance Sheet PDF
+// =====================================
+exports.downloadAttendanceSheetPdf = async (req, res) => {
+    try {
+        const PDFDocument = require("pdfkit");
+
+        const section = String(req.params.section || "")
+            .trim()
+            .toUpperCase();
+
+        const validSections = ["A", "B", "C", "D", "E"];
+
+        if (!validSections.includes(section)) {
+            req.flash("error", "Invalid RTSE section.");
+            return res.redirect("/admin/rtse");
+        }
+
+        const setting = await RtseSetting.get();
+        const applicationYear = Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const rooms =
+            await RtseExamAttendance.getAttendanceSheetBySection(
+                section,
+                applicationYear
+            );
+
+        if (!rooms.length) {
+            req.flash(
+                "error",
+                `No generated admit students found for Section ${section}.`
+            );
+            return res.redirect("/admin/rtse");
+        }
+
+        const examSetting = await RtseExamSetting.get();
+
+        const filename =
+            `RTSE_${applicationYear}_Attendance_Sheet_Section_${section}.pdf`;
+
+        res.setHeader(
+            "Content-Type",
+            "application/pdf"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${filename}"`
+        );
+
+        const doc = new PDFDocument({
+            size: "A4",
+            layout: "landscape",
+            margins: {
+                top: 30,
+                bottom: 30,
+                left: 25,
+                right: 25
+            }
+        });
+
+        doc.pipe(res);
+
+        const pageWidth = doc.page.width;
+        const pageHeight = doc.page.height;
+        const left = 25;
+        const tableWidth = pageWidth - 50;
+
+        const columns = [
+            { title: "Seat", width: 45 },
+            { title: "Roll No.", width: 75 },
+            { title: "Student Name", width: 170 },
+            { title: "School", width: 225 },
+            { title: "Student Signature", width: 130 },
+            ];
+
+        const drawHeader = (roomNo) => {
+            doc.font("Helvetica-Bold")
+                .fontSize(16)
+                .text(
+                    "Ratabari Talent Search Examination",
+                    left,
+                    30,
+                    {
+                        width: tableWidth,
+                        align: "center"
+                    }
+                );
+
+            doc.fontSize(12)
+                .text(
+                    `SECTION ${section}  —  ROOM NO. ${roomNo}`,
+                    left,
+                    53,
+                    {
+                        width: tableWidth,
+                        align: "center"
+                    }
+                );
+
+            doc.font("Helvetica")
+                .fontSize(9)
+                .text(
+                    `Exam Date: ${examSetting?.exam_date || ""}    Reporting: ${examSetting?.reporting_time || ""}`,
+                    left,
+                    74,
+                    {
+                        width: tableWidth,
+                        align: "center"
+                    }
+                );
+        };
+
+        const drawTableHeader = (y) => {
+            let x = left;
+
+            doc.font("Helvetica-Bold")
+                .fontSize(8);
+
+            for (const column of columns) {
+                doc.rect(
+                    x,
+                    y,
+                    column.width,
+                    25
+                ).stroke();
+
+                doc.text(
+                    column.title,
+                    x + 3,
+                    y + 8,
+                    {
+                        width: column.width - 6,
+                        align: "center"
+                    }
+                );
+
+                x += column.width;
+            }
+
+            return y + 25;
+        };
+
+        const drawStudentRow = (student, y) => {
+            const rowHeight = 31;
+            let x = left;
+
+            const values = [
+                String(student.seat_no ?? ""),
+                String(student.roll_no ?? ""),
+                String(student.full_name ?? ""),
+                String(student.school_name ?? ""),
+                ""
+            ];
+
+            doc.font("Helvetica")
+                .fontSize(7.5);
+
+            columns.forEach((column, index) => {
+                doc.rect(
+                    x,
+                    y,
+                    column.width,
+                    rowHeight
+                ).stroke();
+
+                doc.text(
+                    values[index],
+                    x + 3,
+                    y + 8,
+                    {
+                        width: column.width - 6,
+                        height: rowHeight - 8,
+                        align: "center",
+                        ellipsis: true
+                    }
+                );
+
+                x += column.width;
+            });
+
+            return y + rowHeight;
+        };
+
+        rooms.forEach((room, roomIndex) => {
+            if (roomIndex > 0) {
+                doc.addPage();
+            }
+
+            drawHeader(room.room_no);
+
+            let y = 100;
+            y = drawTableHeader(y);
+
+            for (const student of room.students) {
+                if (y + 31 > pageHeight - 70) {
+                    doc.addPage();
+                    drawHeader(room.room_no);
+                    y = 100;
+                    y = drawTableHeader(y);
+                }
+
+                y = drawStudentRow(student, y);
+            }
+
+            const signatureY = Math.min(
+                y + 30,
+                pageHeight - 45
+            );
+
+            doc.font("Helvetica")
+                .fontSize(8);
+
+            doc.moveTo(
+                left + 60,
+                signatureY
+            )
+                .lineTo(
+                    left + 260,
+                    signatureY
+                )
+                .stroke();
+
+            doc.text(
+                "Invigilator Signature",
+                left + 60,
+                signatureY + 6,
+                {
+                    width: 200,
+                    align: "center"
+                }
+            );
+
+            doc.moveTo(
+                pageWidth - 260,
+                signatureY
+            )
+                .lineTo(
+                    pageWidth - 60,
+                    signatureY
+                )
+                .stroke();
+
+            doc.text(
+                "Chief Superintendent",
+                pageWidth - 260,
+                signatureY + 6,
+                {
+                    width: 200,
+                    align: "center"
+                }
+            );
+        });
+
+        doc.end();
+
+    } catch (err) {
+        console.error(
+            "Attendance Sheet PDF download error:",
+            err
+        );
+
+        if (res.headersSent) {
+            return res.end();
+        }
+
+        req.flash(
+            "error",
+            "Unable to download Attendance Sheet."
+        );
+
+        return res.redirect("/admin/rtse");
+    }
+};
+
 // Attendance Status Reset
 // =====================================
 

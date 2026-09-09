@@ -198,6 +198,71 @@ class RtseExamAttendance {
         return created;
     }
     // =====================================
+    // Get Attendance Sheet by Section
+    // Uses only generated-admit students.
+    // This is intentionally separate from the
+    // shared/legacy RtseSeatPlan.getRoomWise().
+    // =====================================
+    static async getAttendanceSheetBySection(section, applicationYear) {
+        const normalizedSection = String(section || "").trim().toUpperCase();
+        const normalizedYear = Number(applicationYear);
+
+        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+            throw new Error("Invalid RTSE section.");
+        }
+
+        if (!Number.isInteger(normalizedYear) || normalizedYear < 1) {
+            throw new Error("Invalid RTSE application year.");
+        }
+
+        const [rooms] = await db.query(
+            `
+            SELECT
+                room_no,
+                COUNT(*) AS total_students
+            FROM rtse_applications
+            WHERE archive = 0
+              AND application_year = ?
+              AND section = ?
+              AND status = 'Approved'
+              AND roll_no IS NOT NULL
+              AND admit_generated = 1
+              AND room_no IS NOT NULL
+            GROUP BY room_no
+            ORDER BY room_no ASC
+            `,
+            [normalizedYear, normalizedSection]
+        );
+
+        for (const room of rooms) {
+            const [students] = await db.query(
+                `
+                SELECT
+                    roll_no,
+                    registration_no,
+                    full_name,
+                    school_name,
+                    seat_no
+                FROM rtse_applications
+                WHERE archive = 0
+                  AND application_year = ?
+                  AND section = ?
+                  AND status = 'Approved'
+                  AND roll_no IS NOT NULL
+                  AND admit_generated = 1
+                  AND room_no = ?
+                ORDER BY seat_no ASC
+                `,
+                [normalizedYear, normalizedSection, room.room_no]
+            );
+
+            room.students = students;
+        }
+
+        return rooms;
+    }
+
+    // =====================================
     // Get attendance by application
     // =====================================
     static async getByApplication(applicationId) {

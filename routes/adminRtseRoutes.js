@@ -803,13 +803,15 @@ router.get(
 // =====================================
 
 router.get(
-
-    "/rtse/attendance-sheet/:section",
-
+    "/rtse/attendance-sheet/pdf/:section",
     auth.isAdmin,
+    adminRtseController.downloadAttendanceSheetPdf
+);
 
+router.get(
+    "/rtse/attendance-sheet/:section",
+    auth.isAdmin,
     adminRtseController.attendanceSheet
-
 );
 
 
