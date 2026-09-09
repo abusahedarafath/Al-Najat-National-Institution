@@ -74,7 +74,16 @@ exports.index = async (req, res) => {
         const honourHeartPopup =
             await HonourHeartAwardee.getPopup();
 
-        const homePopup = await HomePopup.getActive();
+        let homePopup = null;
+        try {
+            homePopup = await HomePopup.getActive();
+        } catch (popupError) {
+            console.error(
+                "Home Popup unavailable; continuing homepage without popup:",
+                popupError.message
+            );
+        }
+
         res.render(
             "home/index",
             {
