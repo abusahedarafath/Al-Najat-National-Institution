@@ -1127,6 +1127,55 @@ static async getGeneratedAdmitCardStudents(section, applicationYear){
     return rows;
 }
 
+// =====================================
+// Get Generated Admit Cards By School
+// Uses the same normalized school-name grouping
+// already used by the Invited Schools directory.
+// No admit-card files are created or copied.
+// =====================================
+static async getGeneratedAdmitCardStudentsBySchool(
+    schoolName,
+    applicationYear
+){
+    const normalizedSchoolName =
+        String(schoolName || "").trim();
+
+    if (!normalizedSchoolName) {
+        return [];
+    }
+
+    const [rows] = await db.query(
+        `
+        SELECT *
+        FROM rtse_applications
+        WHERE
+            archive = 0
+            AND status = 'Approved'
+            AND application_year = ?
+            AND roll_no IS NOT NULL
+            AND admit_generated = 1
+            AND school_name IS NOT NULL
+            AND TRIM(school_name) <> ''
+            AND LOWER(TRIM(school_name))
+                COLLATE utf8mb4_unicode_ci =
+                LOWER(TRIM(?))
+                COLLATE utf8mb4_unicode_ci
+        ORDER BY
+            CAST(
+                SUBSTRING_INDEX(roll_no, '-', -1)
+                AS UNSIGNED
+            ) ASC,
+            roll_no ASC
+        `,
+        [
+            applicationYear,
+            normalizedSchoolName
+        ]
+    );
+
+    return rows;
+}
+
 static async getAllGeneratedAdmitCardStudents(applicationYear){
     const [rows] = await db.query(
         `

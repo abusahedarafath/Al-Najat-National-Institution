@@ -239,16 +239,35 @@
 
                                         <td>
 
-                                            <a
-                                                href="/admin/rtse/applications?search=<%= encodeURIComponent(school.school_name) %>"
-                                                class="btn-view"
+                                            <div
                                                 style="
-                                                    white-space:nowrap;
-                                                    display:inline-block;
+                                                    display:flex;
+                                                    gap:8px;
+                                                    flex-wrap:wrap;
                                                 "
                                             >
-                                                👥 See Students
-                                            </a>
+                                                <a
+                                                    href="/admin/rtse/applications?search=<%= encodeURIComponent(school.school_name) %>"
+                                                    class="btn-view"
+                                                    style="
+                                                        white-space:nowrap;
+                                                        display:inline-block;
+                                                    "
+                                                >
+                                                    👥 See Students
+                                                </a>
+
+                                                <a
+                                                    href="/admin/rtse/admit-cards/school?school_name=<%= encodeURIComponent(school.school_name) %>"
+                                                    class="btn-view"
+                                                    style="
+                                                        white-space:nowrap;
+                                                        display:inline-block;
+                                                    "
+                                                >
+                                                    🎫 View Admit Cards
+                                                </a>
+                                            </div>
 
                                         </td>
 

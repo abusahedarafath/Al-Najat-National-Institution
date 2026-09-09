@@ -431,6 +431,12 @@ router.get(
 );
 
 router.get(
+    "/rtse/admit-cards/school",
+    auth.isAdmin,
+    adminRtseController.viewSchoolAdmitCards
+);
+
+router.get(
     "/rtse/admit-cards/pdf/:section",
     auth.isAdmin,
     adminRtseController.downloadSectionAdmitCardsPdf

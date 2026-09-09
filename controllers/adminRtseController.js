@@ -5806,6 +5806,96 @@ const prepareRtseAdmitCardData = async (student) => {
  * than using PDFKit, because the production server has
  * no HTML/CSS-to-PDF browser engine installed.
  */
+// =====================================
+// View School Admit Cards
+// Reuses the existing generated admit-card data/design.
+// =====================================
+exports.viewSchoolAdmitCards = async (req, res) => {
+    try {
+        const schoolName =
+            String(req.query.school_name || "").trim();
+
+        if (!schoolName) {
+            req.flash(
+                "error",
+                "Invalid school."
+            );
+
+            return res.redirect(
+                "/admin/rtse/invited-schools"
+            );
+        }
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const students =
+            await RtseApplication
+                .getGeneratedAdmitCardStudentsBySchool(
+                    schoolName,
+                    applicationYear
+                );
+
+        if (!students.length) {
+            req.flash(
+                "error",
+                `No generated admit cards found for ${schoolName}.`
+            );
+
+            return res.redirect(
+                "/admin/rtse/invited-schools"
+            );
+        }
+
+        const cards = [];
+
+        for (const student of students) {
+            cards.push(
+                await prepareRtseAdmitCardData(student)
+            );
+        }
+
+        return res.render(
+            "rtse/bulk-student-admit-cards",
+            {
+                title:
+                    `${schoolName} — ` +
+                    `${applicationYear} Admit Cards`,
+                cards,
+                applicationYear,
+                section: null,
+                school: {
+                    school_name: schoolName
+                }
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School Admit Cards View Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load school admit cards."
+        );
+
+        return res.redirect(
+            "/admin/rtse/invited-schools"
+        );
+    }
+};
+
 exports.downloadSectionAdmitCardsPdf = async (req, res) => {
     try {
         const section =
