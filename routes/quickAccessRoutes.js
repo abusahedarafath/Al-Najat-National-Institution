@@ -1,11 +1,17 @@
 const express = require("express");
+const multer = require("multer");
 const router = express.Router();
+
+// Quick Access admin forms are submitted as multipart/form-data.
+// No files are accepted; multer().none() parses only the text fields.
+const quickAccessFormBody = multer().none();
 
 const authMiddleware = require("../middleware/auth");
 
 router.use("/admin", authMiddleware.isAdmin);
 
 const quickAccessController = require("../controllers/quickAccessController");
+
 
 // ===============================
 // Quick Access Routes
@@ -25,6 +31,7 @@ router.get(
 
 router.post(
     "/quick-access/add",
+    quickAccessFormBody,
     quickAccessController.create
 );
 
@@ -36,6 +43,7 @@ router.get(
 
 router.post(
     "/quick-access/:id/edit",
+    quickAccessFormBody,
     quickAccessController.update
 );
 
