@@ -4,6 +4,20 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const controller = require("../controllers/adminRtseLoginInformationPdfController");
+const settingsController = require("../controllers/rtseLoginInformationPdfSettingsController");
+
+
+router.get(
+    "/rtse/login-information-pdf-settings",
+    auth.isAdmin,
+    settingsController.page
+);
+
+router.post(
+    "/rtse/login-information-pdf-settings",
+    auth.isAdmin,
+    settingsController.update
+);
 
 router.get(
     "/rtse/login-information-pdf/status/:section",
