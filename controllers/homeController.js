@@ -17,6 +17,7 @@ const HomepageAchievement =
 
 const HomepageFeature =
     require("../models/HomepageFeature");
+const HomePopup = require("../models/HomePopup");
 
 // ======================================
 // Home Page
@@ -73,6 +74,7 @@ exports.index = async (req, res) => {
         const honourHeartPopup =
             await HonourHeartAwardee.getPopup();
 
+        const homePopup = await HomePopup.getActive();
         res.render(
             "home/index",
             {
@@ -93,7 +95,7 @@ exports.index = async (req, res) => {
                 quickButtons,
 
                 honourHeartPopup,
-
+                homePopup,
                 achievements,
                 features
             }

@@ -1,0 +1,117 @@
+<%- include("partials/header") %>
+
+<div class="admin-page">
+    <div class="admin-page-header">
+        <div>
+            <h1>Home Page Popups</h1>
+            <p>Control the dynamic popup displayed on the public homepage.</p>
+        </div>
+
+        <a href="/admin/home-popups/add" class="btn btn-primary">
+            + Add Popup
+        </a>
+    </div>
+
+    <% if (typeof messages !== "undefined" && messages.success && messages.success.length) { %>
+        <div class="alert alert-success"><%= messages.success[0] %></div>
+    <% } %>
+
+    <% if (typeof messages !== "undefined" && messages.error && messages.error.length) { %>
+        <div class="alert alert-danger"><%= messages.error[0] %></div>
+    <% } %>
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Buttons</th>
+                    <th>Schedule</th>
+                    <th>Frequency</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% if (popups && popups.length) { %>
+                    <% popups.forEach(popup => { %>
+                        <tr>
+                            <td><%= popup.id %></td>
+
+                            <td>
+                                <strong><%= popup.title %></strong>
+                                <div style="margin-top:4px;opacity:.7;">
+                                    <%= popup.message.length > 90
+                                        ? popup.message.substring(0, 90) + "..."
+                                        : popup.message %>
+                                </div>
+                            </td>
+
+                            <td>
+                                <%= popup.buttons ? popup.buttons.length : 0 %>
+                            </td>
+
+                            <td>
+                                <%= popup.start_at ? popup.start_at : "Immediately" %>
+                                <br>
+                                <%= popup.end_at ? "Until " + popup.end_at : "No end date" %>
+                            </td>
+
+                            <td><%= popup.display_frequency %></td>
+
+                            <td>
+                                <% if (popup.status === "Active") { %>
+                                    <span class="status-badge active">Active</span>
+                                <% } else { %>
+                                    <span class="status-badge inactive">Inactive</span>
+                                <% } %>
+                            </td>
+
+                            <td>
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                    <a
+                                        href="/admin/home-popups/<%= popup.id %>/edit"
+                                        class="btn btn-sm btn-primary"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        method="POST"
+                                        action="/admin/home-popups/<%= popup.id %>/toggle"
+                                        style="display:inline;"
+                                    >
+                                        <button type="submit" class="btn btn-sm btn-secondary">
+                                            <%= popup.status === "Active" ? "Disable" : "Enable" %>
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="POST"
+                                        action="/admin/home-popups/<%= popup.id %>/delete"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('Delete this popup?');"
+                                    >
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" style="text-align:center;padding:40px;">
+                            No Home Page Popups found.
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<%- include("partials/footer") %>

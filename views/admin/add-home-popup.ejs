@@ -1,0 +1,258 @@
+<%- include("partials/header") %>
+
+<div class="admin-page">
+    <div class="admin-page-header">
+        <div>
+            <h1><%= popup ? "Edit Home Page Popup" : "Add Home Page Popup" %></h1>
+            <p>Configure the message and dynamic buttons shown on the homepage.</p>
+        </div>
+
+        <a href="/admin/home-popups" class="btn btn-secondary">
+            Back
+        </a>
+    </div>
+
+    <form
+        method="POST"
+        action="<%= popup ? '/admin/home-popups/' + popup.id + '/edit' : '/admin/home-popups/add' %>"
+        class="admin-form"
+        enctype="multipart/form-data"
+    >
+        <div class="form-group">
+            <label for="title">Popup Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="<%= popup ? popup.title : '' %>"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea
+                id="message"
+                name="message"
+                rows="6"
+                required
+            ><%= popup ? popup.message : '' %></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="Active" <%= popup && popup.status === "Active" ? "selected" : "" %>>
+                        Active
+                    </option>
+                    <option value="Inactive" <%= !popup || popup.status === "Inactive" ? "selected" : "" %>>
+                        Inactive
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="display_frequency">Display Frequency</label>
+                <select id="display_frequency" name="display_frequency">
+                    <option value="always" <%= popup && popup.display_frequency === "always" ? "selected" : "" %>>
+                        Every Visit
+                    </option>
+                    <option value="session" <%= popup && popup.display_frequency === "session" ? "selected" : "" %>>
+                        Once Per Session
+                    </option>
+                    <option value="daily" <%= popup && popup.display_frequency === "daily" ? "selected" : "" %>>
+                        Once Per Day
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="start_at">Start Date/Time</label>
+                <input
+                    type="datetime-local"
+                    id="start_at"
+                    name="start_at"
+                    value="<%= popup && popup.start_at ? new Date(popup.start_at).toISOString().slice(0,16) : '' %>"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="end_at">End Date/Time</label>
+                <input
+                    type="datetime-local"
+                    id="end_at"
+                    name="end_at"
+                    value="<%= popup && popup.end_at ? new Date(popup.end_at).toISOString().slice(0,16) : '' %>"
+                >
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px;">
+            <div>
+                <h2 style="margin:0;">Popup Buttons</h2>
+                <p style="margin:4px 0 0;opacity:.7;">
+                    Add as many buttons as needed.
+                </p>
+            </div>
+
+            <button type="button" id="addPopupButton" class="btn btn-secondary">
+                + Add Button
+            </button>
+        </div>
+
+        <div id="popupButtons">
+            <% const existingButtons = popup && popup.buttons && popup.buttons.length
+                ? popup.buttons
+                : [{}]; %>
+
+            <% existingButtons.forEach((button, index) => { %>
+                <div class="popup-button-row" style="border:1px solid #ddd;padding:15px;border-radius:10px;margin-bottom:12px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Button Text</label>
+                            <input
+                                type="text"
+                                name="button_label"
+                                value="<%= button.label || '' %>"
+                                placeholder="Apply Now"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Button URL</label>
+                            <input
+                                type="text"
+                                name="button_url"
+                                value="<%= button.url || '' %>"
+                                placeholder="/admission"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Button Style</label>
+                            <select name="button_color">
+                                <option value="primary" <%= button.color === "primary" ? "selected" : "" %>>
+                                    Primary
+                                </option>
+                                <option value="secondary" <%= button.color === "secondary" ? "selected" : "" %>>
+                                    Secondary
+                                </option>
+                                <option value="success" <%= button.color === "success" ? "selected" : "" %>>
+                                    Success
+                                </option>
+                                <option value="danger" <%= button.color === "danger" ? "selected" : "" %>>
+                                    Danger
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Open Link</label>
+                            <select name="button_target">
+                                <option value="_self" <%= button.target !== "_blank" ? "selected" : "" %>>
+                                    Same Tab
+                                </option>
+                                <option value="_blank" <%= button.target === "_blank" ? "selected" : "" %>>
+                                    New Tab
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-danger remove-popup-button"
+                    >
+                        Remove Button
+                    </button>
+                </div>
+            <% }) %>
+        </div>
+
+        <div style="margin-top:25px;">
+            <button type="submit" class="btn btn-primary">
+                <%= popup ? "Update Popup" : "Create Popup" %>
+            </button>
+
+            <a href="/admin/home-popups" class="btn btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const container = document.getElementById("popupButtons");
+    const addButton = document.getElementById("addPopupButton");
+
+    function createButtonRow() {
+        const row = document.createElement("div");
+
+        row.className = "popup-button-row";
+        row.style.cssText =
+            "border:1px solid #ddd;padding:15px;border-radius:10px;margin-bottom:12px;";
+
+        row.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Button Text</label>
+                    <input type="text" name="button_label" placeholder="Apply Now">
+                </div>
+
+                <div class="form-group">
+                    <label>Button URL</label>
+                    <input type="text" name="button_url" placeholder="/admission">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Button Style</label>
+                    <select name="button_color">
+                        <option value="primary">Primary</option>
+                        <option value="secondary">Secondary</option>
+                        <option value="success">Success</option>
+                        <option value="danger">Danger</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Open Link</label>
+                    <select name="button_target">
+                        <option value="_self">Same Tab</option>
+                        <option value="_blank">New Tab</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-danger remove-popup-button">
+                Remove Button
+            </button>
+        `;
+
+        container.appendChild(row);
+    }
+
+    addButton.addEventListener("click", createButtonRow);
+
+    container.addEventListener("click", function (event) {
+        if (!event.target.classList.contains("remove-popup-button")) return;
+
+        const rows = container.querySelectorAll(".popup-button-row");
+
+        if (rows.length > 1) {
+            event.target.closest(".popup-button-row").remove();
+        }
+    });
+})();
+</script>
+
+<%- include("partials/footer") %>
