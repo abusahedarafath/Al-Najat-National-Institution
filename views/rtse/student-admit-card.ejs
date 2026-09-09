@@ -1440,7 +1440,7 @@ body{
     <script>
         function printRtseAdmitCard() {
             const originalTitle = document.title;
-            document.title = "RTSE Admit Card - <%= application.registration_no %>";
+            document.title = "RTSE Admit Card - <%= registrationNo %>";
 
             const restoreTitle = () => {
                 document.title = originalTitle;
