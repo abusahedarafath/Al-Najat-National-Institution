@@ -408,7 +408,9 @@
                                             Generate Admit Cards
                                         </a>
 
-                                        <form
+
+                                        <% if(!setting.admit_publish){ %>
+<form
                                                 method="POST"
                                                 action="/admin/rtse/reset-roll/<%= section %>"
                                                 style="display:inline;"
@@ -421,6 +423,8 @@
                                                     ↩ Reset Roll No.
                                                 </button>
                                             </form>
+
+                                        <% } %>
 
                                     <% } else { %>
 
@@ -428,6 +432,7 @@
                                             ✔ Admit Cards Generated
                                         </span>
 
+                                        <% if(!setting.admit_publish){ %>
                                         <form
                                                 method="POST"
                                                 action="/admin/rtse/reset-roll/<%= section %>"
@@ -441,6 +446,7 @@
                                                     ↩ Reset Roll No.
                                                 </button>
                                             </form>
+                                        <% } %>
 
                                     <% } %>
 <% } %>
