@@ -1,6 +1,7 @@
 const ArspSchool = require("../models/ArspSchool");
 const ArspSchoolAccount = require("../models/ArspSchoolAccount");
 const RtseApplication = require("../models/RtseApplication");
+const RtseAdmitDownload = require("../models/RtseAdmitDownload");
 
 
 // =====================================
@@ -106,6 +107,80 @@ req.session.arspSchool = {
     }
 };
 
+
+// =====================================
+// School RTSE Admit Card Download History
+// =====================================
+exports.admitDownloadHistory = async (req, res) => {
+    try {
+        const schoolId = req.session?.arspSchool?.school_id;
+
+        if (!schoolId) {
+            return res.redirect("/arsp/school/login");
+        }
+
+        const school = await ArspSchool.getById(schoolId);
+
+        if (!school) {
+            req.session.arspSchool = null;
+            return res.redirect("/arsp/school/login");
+        }
+
+        const search = String(req.query.search || "").trim();
+        const dateFrom = String(req.query.dateFrom || "").trim();
+        const dateTo = String(req.query.dateTo || "").trim();
+
+        const page = Math.max(
+            1,
+            Number.parseInt(req.query.page, 10) || 1
+        );
+
+        const history = await RtseAdmitDownload.getSchoolHistory(
+            schoolId,
+            {
+                search,
+                dateFrom,
+                dateTo,
+                page,
+                limit: 25
+            }
+        );
+
+        res.setHeader(
+            "Cache-Control",
+            "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+
+        return res.render(
+            "arsp/school-admit-download-history",
+            {
+                title: "RTSE Admit Card Download History",
+                school,
+                history,
+                search,
+                dateFrom,
+                dateTo
+            }
+        );
+
+    } catch (err) {
+        console.error(
+            "School RTSE Admit Download History Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load Admit Card Download History."
+        );
+
+        return res.redirect(
+            "/arsp/school/dashboard"
+        );
+    }
+};
 
 // =====================================
 // School Dashboard

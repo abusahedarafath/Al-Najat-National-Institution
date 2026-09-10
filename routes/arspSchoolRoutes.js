@@ -137,6 +137,16 @@ router.get(
 );
 
 // =====================================
+// School RTSE Admit Card Download History
+// =====================================
+router.get(
+    "/arsp/school/rtse-admit-download-history",
+    schoolAuth.isSchoolLoggedIn,
+    schoolAuth.requirePasswordChanged,
+    authController.admitDownloadHistory
+);
+
+// =====================================
 // School Dashboard
 // =====================================
 

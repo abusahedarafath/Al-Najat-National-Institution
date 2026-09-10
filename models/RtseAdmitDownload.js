@@ -190,6 +190,166 @@ class RtseAdmitDownload {
     };
   }
 
+  // =====================================
+  // School Portal - Admit Card Download History
+  // =====================================
+  static async getSchoolHistory(schoolId, options = {}) {
+    const safeSchoolId = Number(schoolId);
+
+    if (!Number.isInteger(safeSchoolId) || safeSchoolId <= 0) {
+      throw new Error("Invalid school ID.");
+    }
+
+    const page = Math.max(
+      1,
+      Number.parseInt(options.page, 10) || 1
+    );
+
+    const limit = Math.min(
+      100,
+      Math.max(10, Number.parseInt(options.limit, 10) || 25)
+    );
+
+    const search = String(options.search || "").trim();
+    const dateFrom = String(options.dateFrom || "").trim();
+    const dateTo = String(options.dateTo || "").trim();
+
+    const conditions = [
+      `(
+        ra.school_id=?
+        OR (
+          ra.school_id IS NULL
+          AND LOWER(TRIM(ra.school_name)) COLLATE utf8mb4_unicode_ci =
+              LOWER(
+                (
+                  SELECT TRIM(s.school_name) COLLATE utf8mb4_unicode_ci
+                  FROM arsp_schools s
+                  WHERE s.id=?
+                  LIMIT 1
+                )
+              )
+        )
+      )`,
+      `ra.archive=0`
+    ];
+
+    const params = [safeSchoolId, safeSchoolId];
+
+    if (search) {
+      const like = `%${search}%`;
+
+      conditions.push(`(
+        rad.registration_no LIKE ?
+        OR rad.student_name LIKE ?
+        OR rad.google_name LIKE ?
+        OR rad.google_email LIKE ?
+        OR rad.google_subject LIKE ?
+        OR rad.downloader_name LIKE ?
+        OR rad.mobile LIKE ?
+        OR ra.full_name LIKE ?
+      )`);
+
+      params.push(
+        like,
+        like,
+        like,
+        like,
+        like,
+        like,
+        like,
+        like
+      );
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateFrom)) {
+      conditions.push("rad.downloaded_at >= ?");
+      params.push(`${dateFrom} 00:00:00`);
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateTo)) {
+      conditions.push("rad.downloaded_at <= ?");
+      params.push(`${dateTo} 23:59:59`);
+    }
+
+    const where = `WHERE ${conditions.join(" AND ")}`;
+
+    const [countRows] = await db.query(
+      `SELECT COUNT(*) AS total
+       FROM rtse_admit_downloads rad
+       INNER JOIN rtse_applications ra
+         ON ra.id=rad.application_id
+       ${where}`,
+      params
+    );
+
+    const total = Number(countRows[0]?.total || 0);
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
+    const safePage = Math.min(page, totalPages);
+    const safeOffset = (safePage - 1) * limit;
+
+    const [rows] = await db.query(
+      `SELECT
+        rad.id,
+        rad.application_id,
+        rad.registration_no,
+        rad.student_name,
+        rad.google_subject,
+        rad.google_email,
+        rad.google_name,
+        rad.downloader_name,
+        rad.mobile,
+        rad.mobile_verified,
+        rad.otp_provider,
+        rad.verified_at,
+        rad.downloaded_at,
+        rad.ip_address,
+        ra.full_name AS application_student_name,
+        ra.class AS student_class,
+        ra.section AS student_section
+       FROM rtse_admit_downloads rad
+       INNER JOIN rtse_applications ra
+         ON ra.id=rad.application_id
+       ${where}
+       ORDER BY rad.downloaded_at DESC, rad.id DESC
+       LIMIT ? OFFSET ?`,
+      [...params, limit, safeOffset]
+    );
+
+    const [statsRows] = await db.query(
+      `SELECT
+        COUNT(*) AS total,
+        COUNT(DISTINCT rad.application_id) AS unique_students,
+        SUM(
+          CASE
+            WHEN rad.downloaded_at >= CURDATE()
+            THEN 1
+            ELSE 0
+          END
+        ) AS today
+       FROM rtse_admit_downloads rad
+       INNER JOIN rtse_applications ra
+         ON ra.id=rad.application_id
+       ${where}`,
+      params
+    );
+
+    const stat = statsRows[0] || {};
+
+    return {
+      rows,
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+      stats: {
+        total: Number(stat.total || 0),
+        uniqueStudents: Number(stat.unique_students || 0),
+        today: Number(stat.today || 0)
+      }
+    };
+  }
+
   static async getAdminStats() {
     const [rows] = await db.query(`
       SELECT
