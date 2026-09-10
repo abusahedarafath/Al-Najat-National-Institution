@@ -96,7 +96,7 @@ class ArspAdmitDownload {
                 user_agent
             )
             VALUES (
-                ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
                 ?, ?, ?,
                 ?, NOW(), ?, ?
