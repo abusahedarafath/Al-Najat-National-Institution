@@ -633,6 +633,8 @@ async function getRtseLoginInformationPdfStatus(section) {
     return result;
 }
 
+const rtseAdmitCardsPublished = <%= Number(setting?.admit_publish || 0) === 1 ? "true" : "false" %>;
+
 function renderRtseLoginInformationPdfActions(section, prepared) {
     const container = document.querySelector(
         '[data-rtse-login-pdf-section="' +
@@ -653,6 +655,7 @@ function renderRtseLoginInformationPdfActions(section, prepared) {
                     View Login Information PDF
                 </a>
 
+                ${!rtseAdmitCardsPublished ? `
                 <button
                     type="button"
                     class="btn-warning"
@@ -661,6 +664,7 @@ function renderRtseLoginInformationPdfActions(section, prepared) {
                 >
                     Reset Login Information
                 </button>
+                ` : ""}
             </div>
         `;
     } else {
