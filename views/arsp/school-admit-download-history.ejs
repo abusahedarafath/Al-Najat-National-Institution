@@ -323,23 +323,123 @@
         }
 
         @media(max-width:700px) {
+            html,
+            body {
+                width:100%;
+                max-width:100%;
+                overflow-x:hidden;
+            }
+
+            .topbar {
+                min-height:58px;
+                padding:10px 12px;
+            }
+
+            .brand {
+                font-size:16px;
+            }
+
+            .brand small {
+                font-size:10px;
+            }
+
+            .logout {
+                padding:8px 10px;
+                font-size:12px;
+            }
+
             .layout {
                 display:block;
+                width:100%;
+                min-height:0;
             }
 
             .sidebar {
                 width:100%;
+                max-width:none;
+                padding:10px;
                 border-right:0;
                 border-bottom:1px solid #e2e8f0;
             }
 
+            .school-box {
+                padding:11px;
+                margin-bottom:10px;
+            }
+
+            .nav-title {
+                padding:7px 8px 5px;
+            }
+
+            .nav-link {
+                display:inline-flex;
+                width:auto;
+                margin:2px;
+                padding:8px 10px;
+                font-size:12px;
+                vertical-align:middle;
+            }
+
             .content {
-                padding:16px;
+                width:100%;
+                max-width:none;
+                min-width:0;
+                padding:14px 10px 24px;
+            }
+
+            .header {
+                margin-bottom:14px;
+            }
+
+            .header h1 {
+                font-size:21px;
+                line-height:1.25;
+            }
+
+            .header p {
+                font-size:12px;
+                line-height:1.5;
             }
 
             .filter-grid,
             .stats {
                 grid-template-columns:1fr;
+            }
+
+            .filters {
+                padding:12px;
+                margin-bottom:14px;
+            }
+
+            .field input {
+                min-width:0;
+            }
+
+            .button {
+                width:100%;
+            }
+
+            .table-wrap {
+                width:100%;
+                max-width:100%;
+                overflow-x:auto;
+                -webkit-overflow-scrolling:touch;
+            }
+
+            table {
+                min-width:900px;
+            }
+
+            .pagination {
+                align-items:stretch;
+            }
+
+            .page-info {
+                width:100%;
+            }
+
+            .page-links {
+                width:100%;
             }
         }
     </style>
