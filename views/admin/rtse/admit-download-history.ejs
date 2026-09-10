@@ -1,5 +1,11 @@
 <%- include("../partials/header") %>
 
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
 <style>
 
     .rtse-history-page {
@@ -356,7 +362,22 @@
             </div>
         </div>
 
+        <a
+            href="/admin/rtse/arsp-admit-download-history"
+            class="rtse-history-stat arsp-admit-stat-card"
+            style="display:block;text-decoration:none;cursor:pointer;"
+            aria-label="Open ARSP member admit card download history"
+        >
+            <div class="rtse-history-stat-label">
+                Admit downloaded by ARSP members
+            </div>
+            <div class="rtse-history-stat-value">
+                <%= Number(arspStats?.total || 0).toLocaleString() %>
+            </div>
+        </a>
+
     </div>
+
 
 
     <form

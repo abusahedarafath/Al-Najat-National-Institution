@@ -1,4 +1,5 @@
 const ArspMember = require("../models/ArspMember");
+const RtseApplication = require("../models/RtseApplication");
 const path = require("path");
 const fs = require("fs");
 
@@ -40,6 +41,40 @@ exports.dashboard = async (req, res) => {
 // =====================================
 // Edit My Profile
 // =====================================
+
+exports.searchStudentForAdmitCard = async (req, res) => {
+    try {
+        const registrationNo =
+            String(req.query.registration_no || "").trim();
+
+        if (!registrationNo) {
+            return res.json({
+                success: true,
+                student: null
+            });
+        }
+
+        const student =
+            await RtseApplication.searchForAdmitCardByRegistration(
+                registrationNo
+            );
+
+        return res.json({
+            success: true,
+            student: student || null
+        });
+    } catch (error) {
+        console.error(
+            "ARSP admit-card student search error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to search student."
+        });
+    }
+};
 
 exports.editProfilePage = async (req, res) => {
 

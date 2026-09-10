@@ -563,6 +563,35 @@ static async getByRegistrationAndMobile(
 
 
 // =====================================
+// Search Student For ARSP Admit Card
+// =====================================
+
+static async searchForAdmitCardByRegistration(
+    registrationNo
+){
+
+    const [rows] = await db.query(
+        `SELECT
+            registration_no,
+            full_name,
+            father_name,
+            school_name,
+            class,
+            section
+         FROM rtse_applications
+         WHERE registration_no=?
+         AND archive=0
+         LIMIT 1`,
+        [
+            registrationNo
+        ]
+    );
+
+    return rows[0] || null;
+}
+
+
+// =====================================
 // Get Public Verification Details
 // =====================================
 

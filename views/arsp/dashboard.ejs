@@ -204,6 +204,326 @@ Logout
 
 </div>
 
+
+<!-- =====================================
+     Student Admit Card Download Search
+     ===================================== -->
+
+<div class="arsp-admit-search" style="margin-top:40px;">
+
+    <h2>Student Admit Card Download</h2>
+
+    <div style="max-width:650px;">
+
+        <label
+            for="arspAdmitRegistration"
+            style="display:block;font-weight:600;margin-bottom:8px;"
+        >
+            Search Student by Registration Number
+        </label>
+
+        <input
+            type="text"
+            id="arspAdmitRegistration"
+            placeholder="Enter registration number"
+            autocomplete="off"
+            style="width:100%;padding:12px;border:1px solid #ced4da;border-radius:6px;"
+        >
+
+        <div
+            id="arspAdmitSearchStatus"
+            style="margin-top:10px;"
+        ></div>
+
+        <div
+            id="arspAdmitStudentResult"
+            style="margin-top:15px;"
+        ></div>
+
+        <div
+            id="arspAdmitMobileArea"
+            style="display:none;margin-top:20px;"
+        >
+
+            <label
+                for="arspAdmitMobile"
+                style="display:block;font-weight:600;margin-bottom:8px;"
+            >
+                Please enter registered mobile number to download his admit card
+            </label>
+
+            <input
+                type="tel"
+                id="arspAdmitMobile"
+                inputmode="numeric"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                minlength="10"
+                placeholder="Enter registered mobile number"
+                autocomplete="off"
+                style="width:100%;padding:12px;border:1px solid #ced4da;border-radius:6px;"
+            >
+
+            <button
+                type="button"
+                id="arspAdmitDownloadBtn"
+                style="margin-top:12px;padding:11px 18px;border:0;border-radius:6px;cursor:pointer;"
+            >
+                Download Admit Card
+            </button>
+
+            <div
+                id="arspAdmitDownloadStatus"
+                style="margin-top:10px;"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+(function () {
+
+    const registrationInput =
+        document.getElementById("arspAdmitRegistration");
+
+    const status =
+        document.getElementById("arspAdmitSearchStatus");
+
+    const result =
+        document.getElementById("arspAdmitStudentResult");
+
+    const mobileArea =
+        document.getElementById("arspAdmitMobileArea");
+
+    const mobileInput =
+        document.getElementById("arspAdmitMobile");
+
+    const downloadButton =
+        document.getElementById("arspAdmitDownloadBtn");
+
+    const downloadStatus =
+        document.getElementById("arspAdmitDownloadStatus");
+
+    let searchTimer = null;
+
+    mobileInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function clearStudent() {
+        result.innerHTML = "";
+        mobileArea.style.display = "none";
+        mobileInput.value = "";
+        downloadStatus.innerHTML = "";
+    }
+
+    registrationInput.addEventListener("input", function () {
+
+        clearTimeout(searchTimer);
+
+        const registrationNo =
+            registrationInput.value.trim();
+
+        clearStudent();
+
+        if (!registrationNo) {
+            status.innerHTML = "";
+            return;
+        }
+
+        status.innerHTML = "Searching...";
+
+        searchTimer = setTimeout(async function () {
+
+            try {
+
+                const response = await fetch(
+                    "/arsp/student/admit-card/search?registration_no=" +
+                    encodeURIComponent(registrationNo),
+                    {
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    status.innerHTML =
+                        '<span style="color:#dc3545;">Unable to search student.</span>';
+                    return;
+                }
+
+                if (!data.student) {
+                    status.innerHTML =
+                        '<span style="color:#dc3545;">No student found.</span>';
+                    return;
+                }
+
+                status.innerHTML =
+                    '<span style="color:#198754;">Student found.</span>';
+
+                const student = data.student;
+
+                result.innerHTML = `
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%;border-collapse:collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">Student registration number</th>
+                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">Name</th>
+                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">Father Name</th>
+                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">School Name</th>
+                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">class</th>
+                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">section</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.registration_no)}</td>
+                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.full_name)}</td>
+                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.father_name)}</td>
+                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.school_name)}</td>
+                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.class)}</td>
+                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.section)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                mobileArea.style.display = "block";
+
+            } catch (error) {
+
+                console.error(
+                    "ARSP admit-card search error:",
+                    error
+                );
+
+                status.innerHTML =
+                    '<span style="color:#dc3545;">Unable to search student.</span>';
+            }
+
+        }, 300);
+
+    });
+
+    downloadButton.addEventListener("click", async function () {
+
+        const registrationNo =
+            registrationInput.value.trim();
+
+        const mobile =
+            mobileInput.value.trim();
+
+        downloadStatus.innerHTML =
+            '<span style="color:#856404;">Verifying registered mobile number...</span>';
+
+        if (!registrationNo || !mobile) {
+
+            downloadStatus.innerHTML =
+                '<span style="color:#dc3545;">Please enter the registered mobile number.</span>';
+
+            return;
+        }
+
+        downloadButton.disabled = true;
+
+        try {
+
+            const response = await fetch(
+                "/arsp/student/admit-card/download",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "text/html"
+                    },
+                    body: JSON.stringify({
+                        registration_no: registrationNo,
+                        mobile: mobile
+                    })
+                }
+            );
+
+            if (!response.ok) {
+
+                let message =
+                    "Mobile verification failed.";
+
+                try {
+                    const data = await response.json();
+
+                    if (data && data.message) {
+                        message = data.message;
+                    }
+                } catch (_) {}
+
+                downloadStatus.innerHTML =
+                    '<span style="color:#dc3545;">' +
+                    escapeHtml(message) +
+                    '</span>';
+
+                return;
+            }
+
+            const html =
+                await response.text();
+
+            const admitWindow =
+                window.open("", "_blank");
+
+            if (!admitWindow) {
+
+                downloadStatus.innerHTML =
+                    '<span style="color:#dc3545;">Please allow pop-ups to open the admit card.</span>';
+
+                return;
+            }
+
+            admitWindow.document.open();
+            admitWindow.document.write(html);
+            admitWindow.document.close();
+
+            downloadStatus.innerHTML =
+                '<span style="color:#198754;">Admit card verified successfully.</span>';
+
+        } catch (error) {
+
+            console.error(
+                "ARSP admit-card download error:",
+                error
+            );
+
+            downloadStatus.innerHTML =
+                '<span style="color:#dc3545;">Unable to download admit card.</span>';
+
+        } finally {
+
+            downloadButton.disabled = false;
+
+        }
+
+    });
+
+})();
+</script>
+
+
 <h2 style="margin-top:40px;">
 
 Latest Notices

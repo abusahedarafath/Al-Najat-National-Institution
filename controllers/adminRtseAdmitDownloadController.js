@@ -1,5 +1,7 @@
 const RtseAdmitDownload =
   require("../models/RtseAdmitDownload");
+const ArspAdmitDownload =
+  require("../models/ArspAdmitDownload");
 
 exports.historyPage = async (req, res) => {
   try {
@@ -27,6 +29,15 @@ exports.historyPage = async (req, res) => {
     const stats =
       await RtseAdmitDownload.getAdminStats();
 
+    // Isolated ARSP member admit-card download history.
+    // Existing RTSE/Google history remains unchanged.
+    const arspHistory =
+      await ArspAdmitDownload.getAll();
+
+    const arspStats = {
+      total: arspHistory.length
+    };
+
     return res.render(
       "admin/rtse/admit-download-history",
       {
@@ -35,6 +46,8 @@ exports.historyPage = async (req, res) => {
         history: result.rows,
         pagination: result,
         stats,
+        arspHistory,
+        arspStats,
         filters: {
           search,
           dateFrom,
@@ -50,6 +63,48 @@ exports.historyPage = async (req, res) => {
 
     return res.status(500).send(
       "Unable to load RTSE admit card download history."
+    );
+  }
+};
+
+
+// =====================================================
+// ARSP MEMBER — ADMIT CARD DOWNLOAD HISTORY
+// Separate page with live all-field search.
+// Existing RTSE history remains unchanged.
+// =====================================================
+
+exports.arspHistoryPage = async (req, res) => {
+  try {
+    const search =
+      String(req.query.search || "").trim();
+
+    const arspHistory =
+      await ArspAdmitDownload.searchAll(search);
+
+    return res.render(
+      "admin/rtse/arsp-admit-download-history",
+      {
+        title:
+          "ARSP Member Admit Card Download History",
+
+        arspHistory,
+
+        arspStats: {
+          total: arspHistory.length
+        },
+
+        search
+      }
+    );
+  } catch (error) {
+    console.error(
+      "ARSP admit download history page error:",
+      error
+    );
+
+    return res.status(500).send(
+      "Unable to load ARSP admit card download history."
     );
   }
 };
