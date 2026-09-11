@@ -165,32 +165,35 @@ const hash = await bcrypt.hash(newPassword,10);
 // ==========================
 
 static async updatePasswordByMemberId(memberId, newPassword) {
+        const accountId = Number(memberId);
 
-    const hash = await bcrypt.hash(newPassword, 10);
+        if (!Number.isInteger(accountId) || accountId <= 0) {
+            throw new Error(`Invalid ARSP account/member ID: ${memberId}`);
+        }
 
-    await db.query(
+        const hash = await bcrypt.hash(newPassword, 10);
 
-        `UPDATE arsp_accounts
-         SET password=?
-         WHERE member_id=?`,
+        const [result] = await db.query(
+            `UPDATE arsp_accounts
+             SET password=?
+             WHERE id=? AND member_id=?`,
+            [
+                hash,
+                accountId,
+                accountId
+            ]
+        );
 
-        [
+        if (result.affectedRows !== 1) {
+            throw new Error(
+                `ARSP account/member ID mismatch or account not found: ${accountId}`
+            );
+        }
 
-            hash,
+        return result;
+    }
 
-            memberId
-
-        ]
-
-    );
-
-}
-
-
-
-// ==========================
-// Force Password Change
-// ==========================
+    // ==========================
 
 static async requirePasswordChange(memberId) {
 

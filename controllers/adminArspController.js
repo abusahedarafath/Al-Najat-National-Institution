@@ -1229,6 +1229,7 @@ exports.resetPasswordPage = async (req, res) => {
 exports.resetPassword = async (req, res) => {
 
     try {
+        const body = req.body || {};
 
         const member = await ArspMember.getById(req.params.id);
 
@@ -1242,7 +1243,7 @@ exports.resetPassword = async (req, res) => {
 
        let password = "";
 
-if (req.body.type === "auto") {
+if ((body.type || "auto") === "auto") {
 
     password = member.mobile;
 
@@ -1254,7 +1255,7 @@ if (req.body.type === "auto") {
 
         confirm_password
 
-    } = req.body;
+    } = body;
 
     if (!new_password || !confirm_password) {
 
@@ -1303,7 +1304,7 @@ if (req.body.type === "auto") {
 
        req.flash(
     "success",
-    req.body.type === "auto"
+    (body.type || "auto") === "auto"
         ? "Password has been reset to the member's registered mobile number. The member must change it after logging in."
         : "Password has been reset successfully."
 );
