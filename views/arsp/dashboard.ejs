@@ -1,293 +1,603 @@
-g<%- include("../partials/header") %>
+<%- include("../partials/arsp-member-top") %>
+<!-- =================================================
+     TOP GRID
+================================================== -->
+<section class="arsp-md-top-grid">
 
-<link rel="stylesheet" href="/css/arsp.css">
+    <!-- WELCOME -->
+    <article class="arsp-md-welcome-card">
 
-<%- include("../partials/navbar") %>
+                    <div class="arsp-md-welcome-content">
 
-<div class="container">
+                        <div class="arsp-md-welcome-photo">
 
-<header class="topbar">
+                            <img
+                                src="<%= member.photo
+                                    ? '/uploads/arsp-members/' + member.photo
+                                    : '/images/default-user.png' %>"
+                                alt="<%= member.full_name %>"
+                            >
 
-<div>
+                            <span class="arsp-md-online"></span>
 
-<strong>ACTIVE RURAL SOCIAL PROGRESS</strong>
+                        </div>
 
-</div>
 
-<div>
+                        <div class="arsp-md-welcome-copy">
 
-<a href="/arsp/logout">Logout</a>
+                            <div class="arsp-md-eyebrow">
+                                Welcome Back,
+                            </div>
 
-</div>
+                            <h2>
+                                <%= member.full_name %>
+                            </h2>
 
-</header>
+                            <div class="arsp-md-member-number">
+                                <%= member.member_id %>
+                            </div>
 
-<div class="container">
+                            <div class="arsp-md-active-badge">
+                                <i class="fa-solid fa-check"></i>
+                                <%= member.status || "Active Member" %>
+                            </div>
 
-<div class="profile">
+                            <p>
+                                Thank you for being a part of
+                                Active Rural Social Progress.
+                            </p>
 
-<img
-src="<%= member.photo ? '/uploads/arsp-members/' + member.photo : '/images/default-user.png' %>"
-alt="Profile">
+                        </div>
 
-<h2><%= member.full_name %></h2>
+                    </div>
 
-<p><%= member.member_id %></p>
 
-<p>
+                    <div class="arsp-md-welcome-search" id="rtseStudentSearch">
+    <div class="arsp-md-welcome-search-label">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Search a student</span>
+    </div>
 
-Status :
 
-<strong style="color:#198754;">
+                        <div class="arsp-md-search-row">
 
-<%= member.status %>
+                            <div class="arsp-md-search-input-wrap">
 
-</strong>
+                                <i class="fa-solid fa-magnifying-glass"></i>
 
-</p>
+                                <input
+                                    type="text"
+                                    id="arspAdmitRegistration"
+                                    placeholder="Enter RTSE registration number"
+                                    autocomplete="off"
+                                    aria-label="RTSE registration number"
+                                >
 
-</div>
+                            </div>
 
 
+                        </div>
 
 
+                        <div
+                            id="arspAdmitSearchStatus"
+                            class="arsp-md-search-status">
+                        </div>
 
-<h2 style="margin-top:30px;">
 
-Quick Services
+                        <div
+                            id="arspAdmitStudentResult"
+                            class="arsp-md-student-result">
+                        </div>
 
-</h2>
 
-<div class="cards">
-<div class="card">
-<h3>✏️ Edit My Profile</h3>
-<a href="/arsp/profile/edit">
-Open
-</a>
-</div>
+                        <div
+                            id="arspAdmitMobileArea"
+                            class="arsp-md-mobile-verification"
+                            style="display:none;">
 
-<div class="card">
+                            <div class="arsp-md-verification-label">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                                Please enter the registered mobile number
+                                to download the student's admit card.
+                            </div>
 
-<h3>👤 My Profile</h3>
+                            <div class="arsp-md-mobile-row">
 
-<a href="/arsp/member/<%= member.member_id %>">
+                                <input
+                                    type="tel"
+                                    id="arspAdmitMobile"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{10}"
+                                    maxlength="10"
+                                    minlength="10"
+                                    placeholder="Enter registered mobile number"
+                                    autocomplete="off"
+                                >
 
-Open
+                                <button
+                                    type="button"
+                                    id="arspAdmitDownloadBtn">
 
-</a>
+                                    <i class="fa-solid fa-download"></i>
+                                    Download Admit Card
 
-</div>
+                                </button>
 
+                            </div>
 
+                            <div
+                                id="arspAdmitDownloadStatus"
+                                class="arsp-md-download-status">
+                            </div>
 
-<div class="card">
+                        </div>
 
-<h3>📄 Membership Registration Slip</h3>
 
-<a href="/arsp/registration-slip">
+                    </div>
 
-View / Download
+                      <div class="arsp-md-welcome-art">
 
-</a>
+                        <div class="arsp-md-building-glow">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
 
-</div>
+                        <div class="arsp-md-welcome-quote">
+                            <span>“</span>
+                            Education for a<br>
+                            Brighter Rural Tomorrow
+                            <span>”</span>
+                        </div>
 
+                    </div>
 
+                </article>
 
+    <!-- DATE -->
+    <article class="arsp-md-date-card">
 
+                    <div class="arsp-md-date-icon">
+                        <i class="fa-regular fa-calendar-days"></i>
+                    </div>
 
+                    <div class="arsp-md-date-copy">
 
+                        <span>Today</span>
 
-<div class="card">
+                        <strong id="arspCurrentDate">
+                            Loading...
+                        </strong>
 
-<h3>
+                        <small id="arspCurrentDayTime">
+                            Loading...
+                        </small>
 
-📜 My Activity
+                    </div>
 
-</h3>
+                </article>
 
-<a href="/arsp/activity">
+</section>
 
-Open
+<section class="arsp-md-dashboard-grid">
 
-</a>
+    <div class="arsp-md-primary-column">
 
-</div>
+        <div class="arsp-md-lower-grid">
 
 
+                        <!-- NOTICES -->
+                        <article class="arsp-md-panel arsp-md-notices-panel">
 
-<div class="card">
+                            <div class="arsp-md-section-header">
 
-<h3>🪪 Digital ID</h3>
+                                <div class="arsp-md-section-title">
+                                    <div class="arsp-md-small-icon">
+                                        <i class="fa-solid fa-bullhorn"></i>
+                                    </div>
 
-<a href="/arsp/member/<%= member.member_id %>">
+                                    <h2>Latest Notices</h2>
+                                </div>
 
-View
+                                <a href="/notice">
+                                    View All
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </a>
 
-</a>
+                            </div>
 
-</div>
 
+                            <div class="arsp-md-list">
 
+                                <% if (typeof notices !== "undefined" &&
+                                      notices && notices.length) { %>
 
-<% if(hasAppointment){ %>
-<div class="card">
+                                    <% notices.slice(0, 3).forEach(function(notice, index) { %>
 
-<h3>📜 Appointment Letter</h3>
+                                        <div class="arsp-md-notice-item">
 
-<a href="/arsp/appointment-letter">
+                                            <div class="arsp-md-notice-marker
+                                                <%= index === 0 ? 'new' : '' %>">
+                                                <%= index === 0 ? 'New' : '' %>
+                                            </div>
 
-View / Download
+                                            <div class="arsp-md-list-copy">
 
-</a>
+                                                <strong>
+                                                    <%= notice.title %>
+                                                </strong>
 
-</div>
+                                                <p>
+                                                    <%= notice.description || "" %>
+                                                </p>
 
-<% } %>
+                                            </div>
 
+                                            <time>
+                                                <%= notice.publish_date || "" %>
+                                            </time>
 
+                                        </div>
 
+                                    <% }) %>
 
+                                <% } else { %>
 
+                                    <div class="arsp-md-empty">
+                                        <i class="fa-regular fa-bell-slash"></i>
+                                        No notices available.
+                                    </div>
 
-<div class="card">
+                                <% } %>
 
-<h3>📄 Download ID PDF</h3>
+                            </div>
 
-<a href="/arsp/id-card/pdf">
+                        </article>
 
-Download
 
-</a>
+                        <!-- ACTIVITY -->
+                        <article class="arsp-md-panel arsp-md-activity-panel">
 
-</div>
+                            <div class="arsp-md-section-header">
 
+                                <div class="arsp-md-section-title">
+                                    <div class="arsp-md-small-icon purple">
+                                        <i class="fa-solid fa-clock"></i>
+                                    </div>
 
+                                    <h2>My Activity</h2>
+                                </div>
 
+                                <a href="/arsp/activity">
+                                    View All
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </a>
 
+                            </div>
 
-<div class="card">
 
-<h3>🔐 Change Password</h3>
+                            <div class="arsp-md-activity-list">
 
-<a href="/arsp/change-password">
+                                <a href="/arsp/activity"
+                                   class="arsp-md-activity-item">
 
-Open
+                                    <div class="arsp-md-activity-icon">
+                                        <i class="fa-solid fa-user-check"></i>
+                                    </div>
 
-</a>
+                                    <div>
+                                        <strong>Member activity history</strong>
+                                        <small>
+                                            View your recent ARSP activities
+                                        </small>
+                                    </div>
 
-</div>
+                                    <i class="fa-solid fa-chevron-right"></i>
 
-<div class="card">
+                                </a>
 
-<h3>✅ Verify ID</h3>
 
-<a href="/arsp/verify/<%= member.member_id %>">
+                                <a href="/arsp/activity"
+                                   class="arsp-md-activity-item">
 
-Verify
+                                    <div class="arsp-md-activity-icon">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </div>
 
-</a>
+                                    <div>
+                                        <strong>Activity records</strong>
+                                        <small>
+                                            Open your complete activity history
+                                        </small>
+                                    </div>
 
-</div>
+                                    <i class="fa-solid fa-chevron-right"></i>
 
-<div class="card">
+                                </a>
 
-<h3>🚪 Logout</h3>
+                            </div>
 
-<a href="/arsp/logout">
+                        </article>
 
-Logout
-
-</a>
-
-</div>
-
-</div>
-
-
-<!-- =====================================
-     Student Admit Card Download Search
-     ===================================== -->
-
-<div class="arsp-admit-search" style="margin-top:40px;">
-
-    <h2>Student Admit Card Download</h2>
-
-    <div style="max-width:650px;">
-
-        <label
-            for="arspAdmitRegistration"
-            style="display:block;font-weight:600;margin-bottom:8px;"
-        >
-            Search Student by Registration Number
-        </label>
-
-        <input
-            type="text"
-            id="arspAdmitRegistration"
-            placeholder="Enter registration number"
-            autocomplete="off"
-            style="width:100%;padding:12px;border:1px solid #ced4da;border-radius:6px;"
-        >
-
-        <div
-            id="arspAdmitSearchStatus"
-            style="margin-top:10px;"
-        ></div>
-
-        <div
-            id="arspAdmitStudentResult"
-            style="margin-top:15px;"
-        ></div>
-
-        <div
-            id="arspAdmitMobileArea"
-            style="display:none;margin-top:20px;"
-        >
-
-            <label
-                for="arspAdmitMobile"
-                style="display:block;font-weight:600;margin-bottom:8px;"
-            >
-                Please enter registered mobile number to download his admit card
-            </label>
-
-            <input
-                type="tel"
-                id="arspAdmitMobile"
-                inputmode="numeric"
-                pattern="[0-9]{10}"
-                maxlength="10"
-                minlength="10"
-                placeholder="Enter registered mobile number"
-                autocomplete="off"
-                style="width:100%;padding:12px;border:1px solid #ced4da;border-radius:6px;"
-            >
-
-            <button
-                type="button"
-                id="arspAdmitDownloadBtn"
-                style="margin-top:12px;padding:11px 18px;border:0;border-radius:6px;cursor:pointer;"
-            >
-                Download Admit Card
-            </button>
-
-            <div
-                id="arspAdmitDownloadStatus"
-                style="margin-top:10px;"
-            ></div>
-
-        </div>
+                    </div>
 
     </div>
 
-</div>
+    <aside class="arsp-md-secondary-column">
 
+
+                    <!-- MEMBER INFORMATION -->
+                    <article class="arsp-md-panel arsp-md-member-info">
+
+                        <div class="arsp-md-section-title">
+
+                            <div class="arsp-md-small-icon">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+
+                            <h2>Member Information</h2>
+
+                        </div>
+
+
+
+                        <div class="arsp-md-member-info-list">
+
+                            <div class="arsp-md-info-row">
+                                <span>Name</span>
+                                <strong><%= member.full_name %></strong>
+                            </div>
+
+                            <div class="arsp-md-info-row">
+                                <span>Member ID</span>
+                                <strong><%= member.member_id %></strong>
+                            </div>
+
+                            <div class="arsp-md-info-row">
+                                <span>Status</span>
+                                <strong class="arsp-md-status">
+                                    <i class="fa-solid fa-check"></i>
+                                    <%= member.status || "Active Member" %>
+                                </strong>
+                            </div>
+
+                            <div class="arsp-md-info-row">
+                                <span>Joined On</span>
+                                <strong>
+                                    <%= member.joined_on ||
+                                        member.joined_date ||
+                                        member.created_at ||
+                                        "—" %>
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- HELP -->
+                    <article class="arsp-md-panel arsp-md-help-card">
+
+                        <div class="arsp-md-help-icon">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+
+                        <h2>Need Help?</h2>
+
+                        <p>
+                            If you need any assistance regarding RTSE
+                            or other member services, please contact
+                            our support team.
+                        </p>
+
+                        <a href="/contact"
+                           class="arsp-md-support-button">
+
+                            <i class="fa-regular fa-envelope"></i>
+                            Contact Support
+
+                        </a>
+
+                    </article>
+
+
+                    <!-- QUICK SERVICES -->
+                    <article class="arsp-md-panel arsp-md-quick-panel">
+
+                        <div class="arsp-md-section-header">
+
+                            <div class="arsp-md-section-title">
+
+                                <div class="arsp-md-small-icon">
+                                    <i class="fa-solid fa-grid-2"></i>
+                                </div>
+
+                                <h2>Quick Services</h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="arsp-md-quick-list">
+
+                            <a href="/arsp/profile/edit">
+                                <i class="fa-solid fa-user-pen"></i>
+                                <span>My Profile</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+
+                            <a href="/arsp/registration-slip">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span>My Documents</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+
+                            <a href="/arsp/id-card/pdf">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Download ID PDF</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+
+                            <a href="/arsp/activity">
+                                <i class="fa-solid fa-chart-column"></i>
+                                <span>Activity History</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </aside>
+
+            </section>
 <script>
 (function () {
 
+    "use strict";
+
+    /* =====================================================
+       MOBILE SIDEBAR
+    ====================================================== */
+
+    const sidebar = document.getElementById("arspMemberSidebar");
+    const menuToggle = document.getElementById("arspMemberMenuToggle");
+    const overlay = document.getElementById("arspMemberOverlay");
+
+    function closeSidebar() {
+
+        if (sidebar) {
+            sidebar.classList.remove("open");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("show");
+        }
+
+        if (menuToggle) {
+            menuToggle.setAttribute("aria-expanded", "false");
+        }
+
+    }
+
+    if (menuToggle && sidebar && overlay) {
+
+        menuToggle.addEventListener("click", function () {
+
+            const opened =
+                sidebar.classList.toggle("open");
+
+            overlay.classList.toggle("show", opened);
+
+            menuToggle.setAttribute(
+                "aria-expanded",
+                opened ? "true" : "false"
+            );
+
+        });
+
+        overlay.addEventListener("click", closeSidebar);
+
+        sidebar.querySelectorAll("a").forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                if (window.innerWidth <= 900) {
+                    closeSidebar();
+                }
+
+            });
+
+        });
+
+    }
+
+
+    /* =====================================================
+       CURRENT DATE / TIME
+    ====================================================== */
+
+    const dateElement =
+        document.getElementById("arspCurrentDate");
+
+    const timeElement =
+        document.getElementById("arspCurrentDayTime");
+
+    function updateDateTime() {
+
+        const now = new Date();
+
+        const dateText =
+            new Intl.DateTimeFormat("en-IN", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            }).format(now);
+
+        const dayText =
+            new Intl.DateTimeFormat("en-IN", {
+                weekday: "long"
+            }).format(now);
+
+        const timeText =
+            new Intl.DateTimeFormat("en-IN", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true
+            }).format(now);
+
+        if (dateElement) {
+            dateElement.textContent = dateText;
+        }
+
+        if (timeElement) {
+            timeElement.textContent =
+                dayText + ", " + timeText;
+        }
+
+    }
+
+    updateDateTime();
+
+    setInterval(updateDateTime, 30000);
+
+
+    /* =====================================================
+       SCROLL LINK
+    ====================================================== */
+
+    document.querySelectorAll(
+        ".arsp-md-scroll-link"
+    ).forEach(function (link) {
+
+        link.addEventListener("click", function (event) {
+
+            const target =
+                document.querySelector(this.getAttribute("href"));
+
+            if (!target) return;
+
+            event.preventDefault();
+
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        });
+
+    });
+
+
+    /* =====================================================
+       RTSE STUDENT SEARCH
+       Existing API preserved.
+    ====================================================== */
+
     const registrationInput =
         document.getElementById("arspAdmitRegistration");
+
 
     const status =
         document.getElementById("arspAdmitSearchStatus");
@@ -309,29 +619,43 @@ Logout
 
     let searchTimer = null;
 
-    mobileInput.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, "").slice(0, 10);
-    });
 
     function escapeHtml(value) {
+
         return String(value ?? "")
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+
     }
+
 
     function clearStudent() {
-        result.innerHTML = "";
-        mobileArea.style.display = "none";
-        mobileInput.value = "";
-        downloadStatus.innerHTML = "";
+
+        if (result) {
+            result.innerHTML = "";
+        }
+
+        if (mobileArea) {
+            mobileArea.style.display = "none";
+        }
+
+        if (mobileInput) {
+            mobileInput.value = "";
+        }
+
+        if (downloadStatus) {
+            downloadStatus.innerHTML = "";
+        }
+
     }
 
-    registrationInput.addEventListener("input", function () {
 
-        clearTimeout(searchTimer);
+    async function searchStudent() {
+
+        if (!registrationInput) return;
 
         const registrationNo =
             registrationInput.value.trim();
@@ -339,235 +663,332 @@ Logout
         clearStudent();
 
         if (!registrationNo) {
+
             status.innerHTML = "";
-            return;
-        }
-
-        status.innerHTML = "Searching...";
-
-        searchTimer = setTimeout(async function () {
-
-            try {
-
-                const response = await fetch(
-                    "/arsp/student/admit-card/search?registration_no=" +
-                    encodeURIComponent(registrationNo),
-                    {
-                        headers: {
-                            "Accept": "application/json"
-                        }
-                    }
-                );
-
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    status.innerHTML =
-                        '<span style="color:#dc3545;">Unable to search student.</span>';
-                    return;
-                }
-
-                if (!data.student) {
-                    status.innerHTML =
-                        '<span style="color:#dc3545;">No student found.</span>';
-                    return;
-                }
-
-                status.innerHTML =
-                    '<span style="color:#198754;">Student found.</span>';
-
-                const student = data.student;
-
-                result.innerHTML = `
-                    <div style="overflow-x:auto;">
-                        <table style="width:100%;border-collapse:collapse;">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">Student registration number</th>
-                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">Name</th>
-                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">Father Name</th>
-                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">School Name</th>
-                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">class</th>
-                                    <th style="text-align:left;padding:10px;border:1px solid #dee2e6;">section</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.registration_no)}</td>
-                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.full_name)}</td>
-                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.father_name)}</td>
-                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.school_name)}</td>
-                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.class)}</td>
-                                    <td style="padding:10px;border:1px solid #dee2e6;">${escapeHtml(student.section)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-
-                mobileArea.style.display = "block";
-
-            } catch (error) {
-
-                console.error(
-                    "ARSP admit-card search error:",
-                    error
-                );
-
-                status.innerHTML =
-                    '<span style="color:#dc3545;">Unable to search student.</span>';
-            }
-
-        }, 300);
-
-    });
-
-    downloadButton.addEventListener("click", async function () {
-
-        const registrationNo =
-            registrationInput.value.trim();
-
-        const mobile =
-            mobileInput.value.trim();
-
-        downloadStatus.innerHTML =
-            '<span style="color:#856404;">Verifying registered mobile number...</span>';
-
-        if (!registrationNo || !mobile) {
-
-            downloadStatus.innerHTML =
-                '<span style="color:#dc3545;">Please enter the registered mobile number.</span>';
 
             return;
         }
 
-        downloadButton.disabled = true;
+        status.innerHTML =
+            '<span class="arsp-md-searching">' +
+            '<i class="fa-solid fa-spinner fa-spin"></i> Searching...' +
+            '</span>';
 
         try {
 
             const response = await fetch(
-                "/arsp/student/admit-card/download",
+                "/arsp/student/admit-card/search?registration_no=" +
+                encodeURIComponent(registrationNo),
                 {
-                    method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "text/html"
-                    },
-                    body: JSON.stringify({
-                        registration_no: registrationNo,
-                        mobile: mobile
-                    })
+                        "Accept": "application/json"
+                    }
                 }
             );
 
-            if (!response.ok) {
+            const data = await response.json();
 
-                let message =
-                    "Mobile verification failed.";
+            if (!response.ok || !data.success) {
 
-                try {
-                    const data = await response.json();
-
-                    if (data && data.message) {
-                        message = data.message;
-                    }
-                } catch (_) {}
-
-                downloadStatus.innerHTML =
-                    '<span style="color:#dc3545;">' +
-                    escapeHtml(message) +
+                status.innerHTML =
+                    '<span class="arsp-md-error">' +
+                    'Unable to search student.' +
                     '</span>';
 
                 return;
             }
 
-            const html =
-                await response.text();
+            if (!data.student) {
 
-            const admitWindow =
-                window.open("", "_blank");
-
-            if (!admitWindow) {
-
-                downloadStatus.innerHTML =
-                    '<span style="color:#dc3545;">Please allow pop-ups to open the admit card.</span>';
+                status.innerHTML =
+                    '<span class="arsp-md-error">' +
+                    'No student found.' +
+                    '</span>';
 
                 return;
             }
 
-            admitWindow.document.open();
-            admitWindow.document.write(html);
-            admitWindow.document.close();
+            status.innerHTML =
+                '<span class="arsp-md-success">' +
+                '<i class="fa-solid fa-circle-check"></i> Student found.' +
+                '</span>';
 
-            downloadStatus.innerHTML =
-                '<span style="color:#198754;">Admit card verified successfully.</span>';
+            const student = data.student;
+
+            result.innerHTML = `
+                <div class="arsp-md-student-card">
+
+                    <div class="arsp-md-student-card-title">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        Student Details
+                    </div>
+
+                    <div class="arsp-md-student-grid">
+
+                        <div>
+                            <small>Registration Number</small>
+                            <strong>${escapeHtml(student.registration_no)}</strong>
+                        </div>
+
+                        <div>
+                            <small>Name</small>
+                            <strong>${escapeHtml(student.full_name)}</strong>
+                        </div>
+
+                        <div>
+                            <small>Father Name</small>
+                            <strong>${escapeHtml(student.father_name)}</strong>
+                        </div>
+
+                        <div>
+                            <small>School Name</small>
+                            <strong>${escapeHtml(student.school_name)}</strong>
+                        </div>
+
+                        <div>
+                            <small>Class</small>
+                            <strong>${escapeHtml(student.class)}</strong>
+                        </div>
+
+                        <div>
+                            <small>Section</small>
+                            <strong>${escapeHtml(student.section)}</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            mobileArea.style.display = "block";
 
         } catch (error) {
 
             console.error(
-                "ARSP admit-card download error:",
+                "ARSP admit-card search error:",
                 error
             );
 
-            downloadStatus.innerHTML =
-                '<span style="color:#dc3545;">Unable to download admit card.</span>';
-
-        } finally {
-
-            downloadButton.disabled = false;
+            status.innerHTML =
+                '<span class="arsp-md-error">' +
+                'Unable to search student.' +
+                '</span>';
 
         }
 
-    });
+    }
+
+
+    if (registrationInput) {
+
+        registrationInput.addEventListener(
+            "input",
+            function () {
+
+                clearTimeout(searchTimer);
+
+                const value =
+                    registrationInput.value.trim();
+
+                clearStudent();
+
+                if (!value) {
+
+                    status.innerHTML = "";
+
+                    return;
+                }
+
+                searchTimer =
+                    setTimeout(searchStudent, 300);
+
+            }
+        );
+
+        registrationInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    clearTimeout(searchTimer);
+
+                    searchStudent();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (mobileInput) {
+
+        mobileInput.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+
+            }
+        );
+
+    }
+
+
+    if (downloadButton) {
+
+        downloadButton.addEventListener(
+            "click",
+            async function () {
+
+                const registrationNo =
+                    registrationInput
+                        ? registrationInput.value.trim()
+                        : "";
+
+                const mobile =
+                    mobileInput
+                        ? mobileInput.value.trim()
+                        : "";
+
+                if (!registrationNo || !mobile) {
+
+                    downloadStatus.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'Please enter the registered mobile number.' +
+                        '</span>';
+
+                    return;
+
+                }
+
+                if (!/^\d{10}$/.test(mobile)) {
+
+                    downloadStatus.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'Please enter a valid 10-digit mobile number.' +
+                        '</span>';
+
+                    return;
+
+                }
+
+                downloadButton.disabled = true;
+
+                downloadStatus.innerHTML =
+                    '<span class="arsp-md-searching">' +
+                    '<i class="fa-solid fa-spinner fa-spin"></i> ' +
+                    'Verifying registered mobile number...' +
+                    '</span>';
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/arsp/student/admit-card/download",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+                                    "Accept": "text/html"
+                                },
+                                body: JSON.stringify({
+                                    registration_no:
+                                        registrationNo,
+                                    mobile:
+                                        mobile
+                                })
+                            }
+                        );
+
+                    if (!response.ok) {
+
+                        let message =
+                            "Mobile verification failed.";
+
+                        try {
+
+                            const data =
+                                await response.json();
+
+                            if (
+                                data &&
+                                data.message
+                            ) {
+                                message =
+                                    data.message;
+                            }
+
+                        } catch (_) {}
+
+                        downloadStatus.innerHTML =
+                            '<span class="arsp-md-error">' +
+                            escapeHtml(message) +
+                            '</span>';
+
+                        return;
+
+                    }
+
+                    const html =
+                        await response.text();
+
+                    const admitWindow =
+                        window.open("", "_blank");
+
+                    if (!admitWindow) {
+
+                        downloadStatus.innerHTML =
+                            '<span class="arsp-md-error">' +
+                            'Please allow pop-ups to open the admit card.' +
+                            '</span>';
+
+                        return;
+
+                    }
+
+                    admitWindow.document.open();
+                    admitWindow.document.write(html);
+                    admitWindow.document.close();
+
+                    downloadStatus.innerHTML =
+                        '<span class="arsp-md-success">' +
+                        '<i class="fa-solid fa-circle-check"></i> ' +
+                        'Admit card verified successfully.' +
+                        '</span>';
+
+                } catch (error) {
+
+                    console.error(
+                        "ARSP admit-card download error:",
+                        error
+                    );
+
+                    downloadStatus.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'Unable to download admit card.' +
+                        '</span>';
+
+                } finally {
+
+                    downloadButton.disabled = false;
+
+                }
+
+            }
+        );
+
+    }
 
 })();
 </script>
 
-
-<h2 style="margin-top:40px;">
-
-Latest Notices
-
-</h2>
-
-<% if(notices && notices.length){ %>
-
-<% notices.forEach(notice=>{ %>
-
-<div class="notice-card">
-
-<h3>
-
-<%= notice.title %>
-
-</h3>
-
-<p>
-
-<%= notice.description %>
-
-</p>
-
-<small>
-
-<%= notice.publish_date %>
-
-</small>
-
-</div>
-
-<% }) %>
-
-<% }else{ %>
-
-<div class="notice-card">
-
-No notices available.
-
-</div>
-
-<% } %>
-
-</div>
-
-<%- include("../partials/footer") %>
+<%- include("../partials/arsp-member-bottom") %>

@@ -7,6 +7,7 @@ const arspAuthController = require("../controllers/arspAuthController");
 
 const arspMemberAuth = require("../middleware/arspMemberAuth");
 const arspMemberController = require("../controllers/arspMemberController");
+const ArspMember = require("../models/ArspMember");
 
 // ======================================
 // Public ARSP Pages
@@ -195,5 +196,29 @@ router.get(
 
 
 
+
+// ======================================
+// Member Documents Index
+// ======================================
+router.get(
+    "/arsp/documents",
+    arspMemberAuth,
+    async (req, res, next) => {
+        try {
+            const member = await ArspMember.getById(req.session.arspMember.id);
+
+            if (!member) {
+                return res.redirect("/arsp/login");
+            }
+
+            res.render("arsp/documents", {
+                title: "My Documents",
+                member
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 module.exports = router;

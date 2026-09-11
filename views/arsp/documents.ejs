@@ -1,0 +1,101 @@
+<%- include("../partials/arsp-member-top") %>
+
+<section class="arsp-member-page arsp-member-documents-page">
+
+    <div class="arsp-documents-heading">
+        <div>
+            <span class="arsp-documents-eyebrow">
+                <i class="fa-solid fa-folder-open"></i>
+                MEMBER DOCUMENTS
+            </span>
+            <h2>My Documents</h2>
+            <p>
+                Access, view, print, or download your official ARSP member documents.
+            </p>
+        </div>
+
+        <a href="/arsp/dashboard" class="arsp-documents-back">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="arsp-documents-grid">
+
+        <article class="arsp-document-card">
+            <div class="arsp-document-icon">
+                <i class="fa-solid fa-file-lines"></i>
+            </div>
+
+            <div class="arsp-document-content">
+                <span class="arsp-document-type">MEMBERSHIP</span>
+                <h3>Membership Registration Slip</h3>
+                <p>
+                    View and print your official ARSP membership registration slip
+                    containing your registration and member details.
+                </p>
+
+                <a href="/arsp/registration-slip" class="arsp-document-button">
+                    <i class="fa-solid fa-eye"></i>
+                    View Registration Slip
+                </a>
+            </div>
+        </article>
+
+        <article class="arsp-document-card">
+            <div class="arsp-document-icon">
+                <i class="fa-solid fa-envelope-open-text"></i>
+            </div>
+
+            <div class="arsp-document-content">
+                <span class="arsp-document-type">APPOINTMENT</span>
+                <h3>Appointment Letter</h3>
+                <p>
+                    View and print your official ARSP appointment letter,
+                    including your appointment and reference details.
+                </p>
+
+                <a href="/arsp/appointment-letter" class="arsp-document-button">
+                    <i class="fa-solid fa-eye"></i>
+                    View Appointment Letter
+                </a>
+            </div>
+        </article>
+
+        <article class="arsp-document-card">
+            <div class="arsp-document-icon">
+                <i class="fa-solid fa-id-card"></i>
+            </div>
+
+            <div class="arsp-document-content">
+                <span class="arsp-document-type">IDENTITY</span>
+                <h3>Digital ID Card</h3>
+                <p>
+                    Generate and download your official ARSP digital member
+                    identity card in PDF format.
+                </p>
+
+                <a href="/arsp/id-card/pdf" class="arsp-document-button">
+                    <i class="fa-solid fa-download"></i>
+                    Download Digital ID
+                </a>
+            </div>
+        </article>
+
+    </div>
+
+    <div class="arsp-documents-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+            <strong>Official Member Documents</strong>
+            <p>
+                These documents are generated from your registered ARSP member
+                information. If any information is incorrect, please update
+                your profile or contact ARSP support.
+            </p>
+        </div>
+    </div>
+
+</section>
+
+<%- include("../partials/arsp-member-bottom") %>

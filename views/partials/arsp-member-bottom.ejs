@@ -1,0 +1,166 @@
+</main>
+
+<footer class="arsp-md-footer">
+
+            <div class="arsp-md-footer-main">
+
+                <div class="arsp-md-footer-brand">
+
+                    <div class="arsp-md-footer-logo">
+                        <img
+                            src="<%= siteSettings && siteSettings.logo
+                                ? '/uploads/site-settings/' + siteSettings.logo
+                                : '/images/logo.png' %>"
+                            alt="ARSP"
+                        >
+                    </div>
+
+                    <div>
+                        <h3>
+                            <%= siteSettings && siteSettings.institution_name
+                                ? siteSettings.institution_name
+                                : "Active Rural Social Progress" %>
+                        </h3>
+
+                        <p>
+                            <%= footerSettings && footerSettings.description
+                                ? footerSettings.description
+                                : "Committed to education, social welfare, youth empowerment and community development." %>
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="arsp-md-footer-column">
+
+                    <h4>QUICK LINKS</h4>
+
+                    <a href="/arsp/dashboard">Dashboard</a>
+                    <a href="/arsp/profile/edit">My Profile</a>
+                    <a href="/arsp/registration-slip">My Documents</a>
+                    <a href="/arsp/activity">Activity History</a>
+
+                </div>
+
+
+                <div class="arsp-md-footer-column">
+
+                    <h4>USEFUL LINKS</h4>
+
+                    <a href="/rtse/">RTSE Portal</a>
+                    <a href="/notice">Notices</a>
+                    <a href="/arsp/id-card/pdf">Digital ID</a>
+                    <a href="/privacy-policy">Privacy Policy</a>
+
+                </div>
+
+
+                <div class="arsp-md-footer-column">
+
+                    <h4>CONTACT US</h4>
+
+                    <% if (footerSettings && footerSettings.address) { %>
+                        <span>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <%= footerSettings.address %>
+                        </span>
+                    <% } %>
+
+                    <% if (footerSettings && footerSettings.phone) { %>
+                        <a href="tel:<%= footerSettings.phone %>">
+                            <i class="fa-solid fa-phone"></i>
+                            <%= footerSettings.phone %>
+                        </a>
+                    <% } %>
+
+                    <% if (footerSettings && footerSettings.email) { %>
+                        <a href="mailto:<%= footerSettings.email %>">
+                            <i class="fa-regular fa-envelope"></i>
+                            <%= footerSettings.email %>
+                        </a>
+                    <% } %>
+
+                </div>
+
+            </div>
+
+
+            <div class="arsp-md-footer-bottom">
+
+                <span>
+                    <%= footerSettings && footerSettings.copyright_text
+                        ? footerSettings.copyright_text
+                        : "© 2026 Active Rural Social Progress (ARSP). All Rights Reserved." %>
+                </span>
+
+                <span class="arsp-md-footer-love">
+                    <i class="fa-solid fa-heart"></i>
+                    Built for a Better Tomorrow
+                </span>
+
+            </div>
+
+        </footer>
+
+</div>
+</div>
+
+<script>
+(function () {
+    const sidebar = document.getElementById("arspMemberSidebar");
+    const toggle = document.getElementById("arspMemberMenuToggle");
+
+    if (!sidebar || !toggle) return;
+
+    let overlay = document.getElementById("arspMemberOverlay");
+
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "arspMemberOverlay";
+        overlay.className = "arsp-md-overlay";
+        document.body.appendChild(overlay);
+    }
+
+    function openMenu() {
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+        toggle.setAttribute("aria-expanded", "true");
+        document.body.classList.add("arsp-md-menu-open");
+    }
+
+    function closeMenu() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        toggle.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("arsp-md-menu-open");
+    }
+
+    toggle.addEventListener("click", function () {
+        if (sidebar.classList.contains("open")) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
+
+    overlay.addEventListener("click", closeMenu);
+
+    sidebar.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            if (window.innerWidth <= 768) {
+                closeMenu();
+            }
+        });
+    });
+
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 768) {
+            closeMenu();
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

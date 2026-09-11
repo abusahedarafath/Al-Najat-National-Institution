@@ -1,0 +1,194 @@
+<%- include("../partials/header") %>
+<link rel="stylesheet" href="/css/arsp-member-dashboard.css">
+<link rel="stylesheet" href="/css/arsp-member-shell.css">
+
+<body class="arsp-member-dashboard">
+
+<div class="arsp-md-shell">
+
+<aside class="arsp-md-sidebar" id="arspMemberSidebar">
+
+        <div class="arsp-md-brand">
+
+            <div class="arsp-md-brand-logo">
+                <img
+                    src="<%= siteSettings && siteSettings.logo
+                        ? '/uploads/site-settings/' + siteSettings.logo
+                        : '/images/logo.png' %>"
+                    alt="ARSP"
+                >
+            </div>
+
+            <div class="arsp-md-brand-text">
+                <strong>ACTIVE RURAL</strong>
+                <strong>SOCIAL PROGRESS</strong>
+                <span>ARSP Member Portal</span>
+            </div>
+
+        </div>
+
+
+        <nav class="arsp-md-side-nav" aria-label="Member navigation">
+
+            <a href="/arsp/dashboard"
+               class="arsp-md-nav-item active">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-house"></i>
+                </span>
+                <span>Dashboard</span>
+            </a>
+
+
+            <div class="arsp-md-nav-section">MY ACCOUNT</div>
+
+            <a href="/arsp/profile/edit" class="arsp-md-nav-item">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+                <span>My Profile</span>
+            </a>
+
+
+            <div class="arsp-md-nav-section">DOCUMENTS</div>
+
+            <a href="/arsp/documents" class="arsp-md-nav-item">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-file-lines"></i>
+                </span>
+                <span>My Documents</span>
+            </a>
+
+
+            <div class="arsp-md-nav-section">MY ACTIVITY</div>
+
+            <a href="/arsp/activity" class="arsp-md-nav-item">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-chart-column"></i>
+                </span>
+                <span>Activity History</span>
+            </a>
+
+
+            <div class="arsp-md-nav-section">RTSE SUPPORT</div>
+
+            <a href="#rtseStudentSearch"
+               class="arsp-md-nav-item arsp-md-scroll-link">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </span>
+                <span>Search Students</span>
+            </a>
+
+
+            <div class="arsp-md-nav-section">SECURITY</div>
+
+            <a href="/arsp/change-password" class="arsp-md-nav-item">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <span>Change Password</span>
+            </a>
+
+
+            <div class="arsp-md-nav-section">SUPPORT</div>
+
+            <a href="/contact" class="arsp-md-nav-item">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-circle-question"></i>
+                </span>
+                <span>Help &amp; Support</span>
+            </a>
+
+        </nav>
+
+
+        <div class="arsp-md-sidebar-bottom">
+
+            <a href="/arsp/logout"
+               class="arsp-md-logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+            <div class="arsp-md-sidebar-copy">
+                © 2026 Active Rural Social Progress (ARSP)<br>
+                All Rights Reserved.
+            </div>
+
+        </div>
+
+    </aside>
+
+<div class="arsp-md-main">
+
+<header class="arsp-md-header">
+
+            <div class="arsp-md-header-left">
+
+                <button
+                    type="button"
+                    class="arsp-md-menu-toggle"
+                    id="arspMemberMenuToggle"
+                    aria-label="Open member menu"
+                    aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="arsp-md-header-title">
+
+                    <h1>ARSP Member Portal</h1>
+
+                    <p>
+                        Together for Education
+                        <span>•</span>
+                        Together for a Better Tomorrow
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="arsp-md-header-right">
+
+                <button
+                    type="button"
+                    class="arsp-md-notification"
+                    aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="arsp-md-notification-badge">
+                        <%= typeof notificationCount !== "undefined"
+                            ? notificationCount
+                            : "3" %>
+                    </span>
+                </button>
+
+
+                <a
+                    href="/arsp/profile/edit"
+                    class="arsp-md-user">
+
+                    <div class="arsp-md-user-photo">
+                        <img
+                            src="<%= member.photo
+                                ? '/uploads/arsp-members/' + member.photo
+                                : '/images/default-user.png' %>"
+                            alt="<%= member.full_name %>"
+                        >
+                        <span></span>
+                    </div>
+
+                    <div class="arsp-md-user-details">
+                        <strong><%= member.full_name %></strong>
+                        <small><%= member.member_id %></small>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-down arsp-md-user-chevron"></i>
+
+                </a>
+
+            </div>
+
+        </header>
+
+<main class="arsp-md-content">
