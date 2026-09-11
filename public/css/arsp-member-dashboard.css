@@ -3289,7 +3289,7 @@ body.arsp-member-dashboard .arsp-md-welcome-search-label span{
         display: grid !important;
         grid-template-columns: 1fr !important;
         gap: 12px !important;
-        margin: 0 0 12px !important;
+        margin: 0 !important;
         padding: 0 !important;
     }
 
@@ -3362,7 +3362,7 @@ body.arsp-member-dashboard .arsp-md-welcome-search-label span{
         height: auto !important;
         min-height: 0 !important;
         gap: 12px !important;
-        margin: 12px 0 0 !important;
+        margin: 0 !important;
         padding: 0 !important;
         box-sizing: border-box !important;
     }
@@ -3499,5 +3499,54 @@ body.arsp-member-dashboard .arsp-md-welcome-search-label span{
         max-width: 100% !important;
         white-space: normal !important;
         overflow-wrap: break-word !important;
+    }
+}
+
+
+/* FINAL FIX: REDUCE SPACE BETWEEN TOP CARDS AND DASHBOARD CONTENT */
+body.arsp-member-dashboard .arsp-md-top-grid {
+    margin-bottom: 16px !important;
+}
+
+body.arsp-member-dashboard .arsp-md-dashboard-grid {
+    margin-top: 0 !important;
+}
+
+
+/* FINAL FIX: DESKTOP-SITE VERTICAL CARD SPACING - 2026-09-11 */
+@media (min-width: 769px) and (max-width: 1100px) {
+    body.arsp-member-dashboard .arsp-md-top-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-auto-rows: max-content !important;
+        align-content: start !important;
+        gap: 12px !important;
+        margin: 0 0 16px !important;
+        padding: 0 !important;
+    }
+
+    body.arsp-member-dashboard .arsp-md-welcome-card,
+    body.arsp-member-dashboard .arsp-md-date-card {
+        height: auto !important;
+        min-height: 0 !important;
+        align-self: start !important;
+        margin: 0 !important;
+    }
+
+    body.arsp-member-dashboard .arsp-md-dashboard-grid {
+        margin: 0 !important;
+        padding: 0 !important;
+        align-content: start !important;
+    }
+
+    body.arsp-member-dashboard .arsp-md-primary-column {
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 16px !important;
+    }
+
+    body.arsp-member-dashboard .arsp-md-lower-grid {
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
