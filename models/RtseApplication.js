@@ -563,6 +563,30 @@ static async getByRegistrationAndMobile(
 
 
 // =====================================
+// Get Application By Registration Only
+// Used by ARSP Full Access after member verification.
+// =====================================
+
+static async getByRegistrationOnly(
+    registrationNo
+){
+
+    const [rows] = await db.query(
+        `SELECT *
+         FROM rtse_applications
+         WHERE registration_no=?
+         AND archive=0
+         LIMIT 1`,
+        [
+            registrationNo
+        ]
+    );
+
+    return rows[0] || null;
+}
+
+
+// =====================================
 // Search Student For ARSP Admit Card
 // =====================================
 
@@ -590,6 +614,120 @@ static async searchForAdmitCardByRegistration(
     return rows[0] || null;
 }
 
+
+
+// =====================================
+// Partial Access Student Search For ARSP
+// =====================================
+
+static async searchForAdmitCardPartial(keyword) {
+
+    const value =
+        String(keyword || "").trim();
+
+    if (!value) {
+        return [];
+    }
+
+    const search =
+        `%${value}%`;
+
+    const [rows] = await db.query(
+        `SELECT
+            registration_no,
+            full_name,
+            father_name,
+            school_name,
+            class,
+            section
+         FROM rtse_applications
+         WHERE
+            archive=0
+            AND (
+                registration_no LIKE ?
+                OR full_name LIKE ?
+                OR father_name LIKE ?
+            )
+         ORDER BY
+            CASE
+                WHEN registration_no = ? THEN 0
+                WHEN full_name = ? THEN 1
+                WHEN father_name = ? THEN 2
+                ELSE 3
+            END,
+            full_name ASC,
+            registration_no ASC
+         LIMIT 50`,
+        [
+            search,
+            search,
+            search,
+            value,
+            value,
+            value
+        ]
+    );
+
+    return rows;
+}
+
+// Universal Student Search For ARSP
+// =====================================
+
+static async searchForAdmitCardUniversal(keyword) {
+
+    const value =
+        String(keyword || "").trim();
+
+    if (!value) {
+        return [];
+    }
+
+    const search =
+        `%${value}%`;
+
+    const [rows] = await db.query(
+        `SELECT
+            registration_no,
+            full_name,
+            father_name,
+            school_name,
+            class,
+            section
+         FROM rtse_applications
+         WHERE
+            archive=0
+            AND (
+                registration_no LIKE ?
+                OR full_name LIKE ?
+                OR mobile LIKE ?
+                OR father_name LIKE ?
+                OR school_name LIKE ?
+            )
+         ORDER BY
+            CASE
+                WHEN registration_no = ? THEN 0
+                WHEN mobile = ? THEN 1
+                WHEN full_name = ? THEN 2
+                ELSE 3
+            END,
+            full_name ASC,
+            registration_no ASC
+         LIMIT 50`,
+        [
+            search,
+            search,
+            search,
+            search,
+            search,
+            value,
+            value,
+            value
+        ]
+    );
+
+    return rows;
+}
 
 // =====================================
 // Get Public Verification Details

@@ -115,6 +115,9 @@ body.arsp-member-dashboard a{
 
 .arsp-md-side-nav{
     padding:18px 14px;
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
 }
 
 .arsp-md-nav-section{
@@ -159,6 +162,7 @@ body.arsp-member-dashboard a{
 .arsp-md-sidebar-bottom{
     margin-top:auto;
     padding:16px 20px 20px;
+    flex-shrink:0;
 }
 
 .arsp-md-logout{

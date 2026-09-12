@@ -320,6 +320,83 @@
 
                 </table>
 
+                <h3 style="margin-top:30px;">Admit Card Access</h3>
+
+                <div style="
+                    border:1px solid #e5e7eb;
+                    border-radius:12px;
+                    padding:20px;
+                    background:#fafafa;
+                    margin-bottom:10px;
+                ">
+
+                    <form
+                        method="POST"
+                        action="/admin/arsp/member/<%= member.id %>/admit-card-access"
+                        data-history-fix="off"
+                    >
+
+                        <div style="margin-bottom:15px;">
+
+                            <strong style="display:block;margin-bottom:6px;">
+                                Member Dashboard Access Level
+                            </strong>
+
+                            <span style="color:#666;font-size:14px;">
+                                Controls how this member can search and verify RTSE students
+                                for admit-card access.
+                            </span>
+
+                        </div>
+
+                        <div style="
+                            display:flex;
+                            gap:12px;
+                            align-items:center;
+                            flex-wrap:wrap;
+                        ">
+
+                            <select
+                                name="admit_card_access"
+                                required
+                                style="
+                                    min-width:220px;
+                                    padding:10px 12px;
+                                    border:1px solid #ccc;
+                                    border-radius:8px;
+                                    background:#fff;
+                                "
+                            >
+
+                                <option
+                                    value="Partial"
+                                    <%= String(member.admit_card_access || "Partial") === "Partial" ? "selected" : "" %>
+                                >
+                                    Partial Access
+                                </option>
+
+                                <option
+                                    value="Full"
+                                    <%= String(member.admit_card_access || "Partial") === "Full" ? "selected" : "" %>
+                                >
+                                    Full Access
+                                </option>
+
+                            </select>
+
+                            <button
+                                type="submit"
+                                class="btn-view"
+                            >
+                                Save Access
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
                 <h3 style="margin-top:30px;">Uploaded Documents</h3>
 
                 <table class="admin-table">

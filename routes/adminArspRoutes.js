@@ -155,6 +155,15 @@ router.post(
 );
 
 // ======================================
+// Member Admit Card Access
+// ======================================
+router.post(
+    "/admin/arsp/member/:id/admit-card-access",
+    authMiddleware.isLoggedIn,
+    adminArspController.updateAdmitCardAccess
+);
+
+// ======================================
 // Member Profile
 // ======================================
 

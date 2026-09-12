@@ -36,6 +36,11 @@ exports.download = async (req, res) => {
         const mobile =
             String(req.body?.mobile || "").trim();
 
+        const verificationMode =
+            String(
+                req.body?.verification_mode || ""
+            ).trim();
+
 
         if (!registrationNo || !mobile) {
 
@@ -49,14 +54,117 @@ exports.download = async (req, res) => {
 
 
         // =================================================
-        // SERVER-SIDE STUDENT VERIFICATION
+        // =================================================
+        // SERVER-SIDE ACCESS + STUDENT VERIFICATION
+        //
+        // Partial Access:
+        // Registration number + student's registered mobile.
+        //
+        // Full Access:
+        // Registration number + logged-in member's own
+        // registered mobile.
+        //
+        // Access is always read from the database.
+        // The browser is never trusted for authorization.
         // =================================================
 
-        const application =
-            await RtseApplication.getByRegistrationAndMobile(
-                registrationNo,
-                mobile
+        const authSessionMember =
+            req.session.arspMember;
+
+        const authMember =
+            await ArspMember.getById(
+                authSessionMember.id
             );
+
+        if (!authMember) {
+
+            return res.status(403).json({
+                success: false,
+                message:
+                    "ARSP member account could not be verified."
+            });
+
+        }
+
+        const access =
+            String(
+                authMember.admit_card_access || "Partial"
+            ).trim();
+
+
+        let application = null;
+
+
+        if (access === "Full") {
+
+            // Full Access can ONLY use member-mobile verification.
+            if (verificationMode !== "member") {
+                return res.status(403).json({
+                    success: false,
+                    message:
+                        "Full Access requires verification with your registered ARSP member mobile number."
+                });
+            }
+
+            // Full Access requires the mobile number
+            // registered to the logged-in ARSP member.
+
+            const memberMobile =
+                String(
+                    authMember.mobile || ""
+                ).replace(/\D/g, "");
+
+            const submittedMobile =
+                mobile.replace(/\D/g, "");
+
+
+            if (
+                !memberMobile ||
+                !submittedMobile ||
+                memberMobile !== submittedMobile
+            ) {
+
+                return res.status(403).json({
+                    success: false,
+                    message:
+                        "Your registered member mobile number does not match."
+                });
+
+            }
+
+
+            // Only after the member's own mobile has
+            // been verified do we retrieve the student.
+
+            application =
+                await RtseApplication.getByRegistrationOnly(
+                    registrationNo
+                );
+
+
+        } else {
+
+            // Partial Access preserves the existing
+            // student-mobile verification workflow.
+
+            // Partial Access can ONLY use student-mobile verification.
+            if (verificationMode !== "student") {
+                return res.status(403).json({
+                    success: false,
+                    message:
+                        "Partial Access requires verification with the selected student's registered mobile number."
+                });
+            }
+
+            // Verify the selected student's own
+            // registered mobile number.
+            application =
+                await RtseApplication.getByRegistrationAndMobile(
+                    registrationNo,
+                    mobile
+                );
+
+        }
 
 
         if (!application) {
@@ -64,7 +172,9 @@ exports.download = async (req, res) => {
             return res.status(403).json({
                 success: false,
                 message:
-                    "Registration number and registered mobile number do not match."
+                    access === "Full"
+                        ? "Student registration number could not be verified."
+                        : "The selected student registered mobile number does not match."
             });
 
         }

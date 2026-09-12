@@ -447,6 +447,32 @@ static async toggleStatus(id){
 
 }
 
+
+// ==========================
+// Update Admit Card Access
+// ==========================
+
+static async updateAdmitCardAccess(id, access) {
+
+    const normalizedAccess =
+        access === "Full"
+            ? "Full"
+            : "Partial";
+
+    const [result] = await db.query(
+        `UPDATE arsp_members
+         SET admit_card_access=?
+         WHERE id=?`,
+        [
+            normalizedAccess,
+            id
+        ]
+    );
+
+    return result;
+}
+
+
 // ==========================
 // Delete Member
 // ==========================

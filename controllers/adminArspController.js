@@ -576,6 +576,73 @@ await ArspManagementPosition.assign({
 };
 
 
+
+// =====================================
+// Update Member Admit Card Access
+// =====================================
+
+exports.updateAdmitCardAccess = async (req, res) => {
+
+    try {
+
+        const memberId = req.params.id;
+
+        const member =
+            await ArspMember.getById(memberId);
+
+        if (!member) {
+
+            req.flash(
+                "error",
+                "Member not found."
+            );
+
+            return res.redirect(
+                "/admin/arsp/members"
+            );
+        }
+
+        const submittedAccess =
+            req.body && req.body.admit_card_access;
+
+        const access =
+            submittedAccess === "Full"
+                ? "Full"
+                : "Partial";
+
+        await ArspMember.updateAdmitCardAccess(
+            memberId,
+            access
+        );
+
+        req.flash(
+            "success",
+            `Admit card access updated to ${access}.`
+        );
+
+        return res.redirect(
+            `/admin/arsp/member/${memberId}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "ARSP Admit Card Access Update Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to update admit card access."
+        );
+
+        return res.redirect(
+            `/admin/arsp/member/${req.params.id}`
+        );
+    }
+};
+
+
 // =====================================
 // Member Profile
 // =====================================

@@ -43,37 +43,100 @@ exports.dashboard = async (req, res) => {
 // =====================================
 
 exports.searchStudentForAdmitCard = async (req, res) => {
-    try {
-        const registrationNo =
-            String(req.query.registration_no || "").trim();
 
-        if (!registrationNo) {
-            return res.json({
-                success: true,
-                student: null
-            });
-        }
+  try {
 
-        const student =
-            await RtseApplication.searchForAdmitCardByRegistration(
-                registrationNo
-            );
+    if (
+      !req.session ||
+      !req.session.arspMember ||
+      !req.session.arspMember.id
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "ARSP member login required."
+      });
+    }
 
-        return res.json({
-            success: true,
-            student: student || null
-        });
-    } catch (error) {
-        console.error(
-            "ARSP admit-card student search error:",
-            error
+    const keyword =
+      String(
+        req.query.keyword ||
+        req.query.registration_no ||
+        ""
+      ).trim();
+
+    if (!keyword) {
+      return res.json({
+        success: true,
+        students: [],
+        student: null
+      });
+    }
+
+    // Always fetch the current member record.
+    // Access changes made by Admin therefore take effect immediately.
+    const member =
+      await ArspMember.getById(
+        req.session.arspMember.id
+      );
+
+    if (!member) {
+      return res.status(403).json({
+        success: false,
+        message: "ARSP member account could not be verified."
+      });
+    }
+
+    const access =
+      String(
+        member.admit_card_access || "Partial"
+      ).trim();
+
+    // Full Access: universal student search.
+    if (access === "Full") {
+
+      const students =
+        await RtseApplication.searchForAdmitCardUniversal(
+          keyword
         );
 
-        return res.status(500).json({
-            success: false,
-            message: "Unable to search student."
-        });
+      return res.json({
+        success: true,
+        access: "Full",
+        students,
+        student: students.length === 1
+          ? students[0]
+          : null
+      });
     }
+
+    // Partial Access: search by registration number,
+    // student name, or father name.
+    const students =
+      await RtseApplication.searchForAdmitCardPartial(
+        keyword
+      );
+
+    return res.json({
+      success: true,
+      access: "Partial",
+      students,
+      student: students.length === 1
+        ? students[0]
+        : null
+    });
+
+  } catch (error) {
+
+    console.error(
+      "ARSP admit-card student search error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to search student."
+    });
+  }
 };
 
 exports.editProfilePage = async (req, res) => {

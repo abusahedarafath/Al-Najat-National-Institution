@@ -68,9 +68,9 @@
                                 <input
                                     type="text"
                                     id="arspAdmitRegistration"
-                                    placeholder="Enter RTSE registration number"
+                                    placeholder="<%= String(member.admit_card_access || 'Partial') === 'Full' ? 'Search registration number, name, mobile, father name or school' : 'Search registration number, student name or father name' %>"
                                     autocomplete="off"
-                                    aria-label="RTSE registration number"
+                                    aria-label="<%= String(member.admit_card_access || 'Partial') === 'Full' ? 'Universal student search' : 'RTSE registration number' %>"
                                 >
 
                             </div>
@@ -98,8 +98,13 @@
 
                             <div class="arsp-md-verification-label">
                                 <i class="fa-solid fa-mobile-screen-button"></i>
-                                Please enter the registered mobile number
-                                to download the student's admit card.
+                                <% if (String(member.admit_card_access || "Partial") === "Full") { %>
+                                    Please enter your registered mobile number
+                                    to download the selected student's admit card.
+                                <% } else { %>
+                                    Please enter the student's registered mobile number
+                                    to download the student's admit card.
+                                <% } %>
                             </div>
 
                             <div class="arsp-md-mobile-row">
@@ -452,6 +457,292 @@
                 </aside>
 
             </section>
+
+<style id="arsp-admit-card-mobile-ui-fix">
+
+/* =====================================================
+   ADMIT CARD MOBILE VERIFICATION POPUP
+   ===================================================== */
+
+.arsp-admit-mobile-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    min-height: 100vh !important;
+
+    box-sizing: border-box !important;
+    padding: 16px !important;
+
+    background: rgba(15, 23, 42, 0.62) !important;
+}
+
+.arsp-admit-mobile-modal > div[role="dialog"] {
+    width: 100% !important;
+    max-width: 430px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 auto !important;
+    padding: 22px !important;
+
+    background: #ffffff !important;
+    border-radius: 16px !important;
+
+    box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.28) !important;
+
+    overflow: hidden !important;
+}
+
+/* Popup heading */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:first-child {
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 10px !important;
+
+    margin: 0 0 12px !important;
+}
+
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:first-child i {
+    font-size: 17px !important;
+}
+
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:first-child strong {
+    display: block !important;
+
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+}
+
+/* Popup description */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> p {
+    margin: 0 0 17px !important;
+
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+
+    color: #64748b !important;
+}
+
+/* Mobile input */
+.arsp-admit-mobile-modal
+input[type="tel"] {
+    display: block !important;
+
+    width: 100% !important;
+    height: 48px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+    padding: 0 14px !important;
+
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+
+    background: #ffffff !important;
+    color: #0f172a !important;
+
+    font-size: 16px !important;
+    line-height: 48px !important;
+
+    outline: none !important;
+}
+
+.arsp-admit-mobile-modal
+input[type="tel"]:focus {
+    border-color: #2563eb !important;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+/* Status area */
+.arsp-admit-mobile-modal
+[id*="MobileStatus"] {
+    min-height: 20px !important;
+
+    margin: 9px 0 !important;
+
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+/* Popup buttons row */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:last-child {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 9px !important;
+
+    margin-top: 14px !important;
+}
+
+/* Popup buttons */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+button {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+    padding: 9px 13px !important;
+
+    border-radius: 8px !important;
+
+    font-size: 13px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+}
+
+/* =====================================================
+   SELECT STUDENT BUTTON
+   ===================================================== */
+
+.arsp-partial-select-student,
+.arsp-full-select-student {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    width: auto !important;
+    max-width: 100% !important;
+
+    min-height: 36px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 8px 0 0 auto !important;
+    padding: 8px 12px !important;
+
+    border-radius: 7px !important;
+
+    font-size: 12px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+
+    cursor: pointer !important;
+}
+
+.arsp-partial-select-student i,
+.arsp-full-select-student i {
+    flex: 0 0 auto !important;
+    font-size: 12px !important;
+}
+
+.arsp-partial-select-student:disabled,
+.arsp-full-select-student:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+/* =====================================================
+   SMALL MOBILE DEVICES
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .arsp-admit-mobile-modal {
+        padding: 14px !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"] {
+        max-width: 430px !important;
+
+        padding: 20px !important;
+
+        border-radius: 14px !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    > div:first-child strong {
+        font-size: 17px !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    > p {
+        font-size: 13px !important;
+    }
+
+    .arsp-partial-select-student,
+    .arsp-full-select-student {
+        min-height: 35px !important;
+
+        padding: 8px 10px !important;
+
+        font-size: 12px !important;
+    }
+}
+
+/* =====================================================
+   VERY SMALL PHONES
+   ===================================================== */
+
+@media (max-width: 380px) {
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    > div:last-child {
+        flex-direction: column-reverse !important;
+        align-items: stretch !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    button {
+        width: 100% !important;
+    }
+
+    .arsp-partial-select-student,
+    .arsp-full-select-student {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+</style>
+
 <script>
 (function () {
 
@@ -618,6 +909,12 @@
         document.getElementById("arspAdmitDownloadStatus");
 
     let searchTimer = null;
+    let currentAccess =
+        "<%= String(member.admit_card_access || 'Partial') === 'Full' ? 'Full' : 'Partial' %>";
+    let selectedRegistrationNo = "";
+    let fullAccessMobileModal = null;
+    let partialAccessMobileModal = null;
+    let admitCardVerificationMode = null;
 
 
     function escapeHtml(value) {
@@ -633,6 +930,16 @@
 
 
     function clearStudent() {
+        selectedRegistrationNo = "";
+
+        if (fullAccessMobileModal) {
+            closeFullAccessMobileModal();
+        }
+
+        if (partialAccessMobileModal) {
+            closePartialAccessMobileModal();
+        }
+
 
         if (result) {
             result.innerHTML = "";
@@ -653,19 +960,418 @@
     }
 
 
-    async function searchStudent() {
+    function closeFullAccessMobileModal() {
+        if (fullAccessMobileModal) {
+            fullAccessMobileModal.remove();
+            fullAccessMobileModal = null;
+        }
+    }
 
+    function closePartialAccessMobileModal() {
+        if (partialAccessMobileModal) {
+            partialAccessMobileModal.remove();
+            partialAccessMobileModal = null;
+        }
+    }
+
+    function openPartialAccessMobileModal() {
+        closePartialAccessMobileModal();
+
+        partialAccessMobileModal =
+            document.createElement("div");
+
+        partialAccessMobileModal.className =
+            "arsp-admit-mobile-modal";
+
+        partialAccessMobileModal.style.cssText =
+            "position:fixed;inset:0;z-index:99999;" +
+            "display:flex;align-items:center;justify-content:center;" +
+            "padding:20px;background:rgba(0,0,0,.55);";
+
+        partialAccessMobileModal.innerHTML = `
+            <div role="dialog" aria-modal="true"
+                 style="width:min(430px,100%);background:#fff;
+                        border-radius:16px;padding:24px;
+                        box-shadow:0 20px 60px rgba(0,0,0,.25);">
+
+                <div style="display:flex;align-items:center;
+                            gap:10px;margin-bottom:10px;">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <strong style="font-size:18px;">
+                        Verify Student Mobile
+                    </strong>
+                </div>
+
+                <p style="margin:0 0 16px;color:#666;line-height:1.5;">
+                    Enter the selected student's registered mobile number
+                    to download the admit card.
+                </p>
+
+                <input
+                    type="tel"
+                    id="arspPartialAccessMobileInput"
+                    inputmode="numeric"
+                    maxlength="10"
+                    placeholder="Enter student's registered mobile number"
+                    autocomplete="off"
+                    style="width:100%;box-sizing:border-box;
+                           padding:12px 14px;border:1px solid #ccc;
+                           border-radius:8px;font-size:16px;"
+                >
+
+                <div id="arspPartialAccessMobileStatus"
+                     style="min-height:22px;margin:10px 0;">
+                </div>
+
+                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                    <button type="button"
+                            id="arspPartialAccessMobileCancel"
+                            class="btn-view">
+                        Cancel
+                    </button>
+
+                    <button type="button"
+                            id="arspPartialAccessMobileVerify"
+                            class="btn-view">
+                        <i class="fa-solid fa-download"></i>
+                        Verify & Download
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(partialAccessMobileModal);
+
+        const input =
+            document.getElementById(
+                "arspPartialAccessMobileInput"
+            );
+
+        const status =
+            document.getElementById(
+                "arspPartialAccessMobileStatus"
+            );
+
+        const cancel =
+            document.getElementById(
+                "arspPartialAccessMobileCancel"
+            );
+
+        const verify =
+            document.getElementById(
+                "arspPartialAccessMobileVerify"
+            );
+
+        input.addEventListener("input", function() {
+            this.value =
+                this.value.replace(/\D/g, "").slice(0, 10);
+        });
+
+        cancel.addEventListener(
+            "click",
+            closePartialAccessMobileModal
+        );
+
+        verify.addEventListener("click", function() {
+
+            const mobile = input.value.trim();
+
+            if (!/^\d{10}$/.test(mobile)) {
+                status.innerHTML =
+                    '<span class="arsp-md-error">' +
+                    'Please enter a valid 10-digit mobile number.' +
+                    '</span>';
+                return;
+            }
+
+            if (!selectedRegistrationNo) {
+                status.innerHTML =
+                    '<span class="arsp-md-error">' +
+                    'Please select a student first.' +
+                    '</span>';
+                return;
+            }
+
+            if (mobileInput) {
+                mobileInput.value = mobile;
+            }
+
+            admitCardVerificationMode = "student";
+
+            status.innerHTML =
+                '<span class="arsp-md-searching">' +
+                '<i class="fa-solid fa-spinner fa-spin"></i> ' +
+                'Verifying registered mobile number...' +
+                '</span>';
+
+            verify.disabled = true;
+            cancel.disabled = true;
+
+            if (downloadButton) {
+                downloadButton.click();
+            }
+
+            let attempts = 0;
+
+            const timer = setInterval(function() {
+
+                attempts++;
+
+                const text =
+                    downloadStatus
+                        ? downloadStatus.textContent.toLowerCase()
+                        : "";
+
+                if (
+                    text.includes(
+                        "admit card verified successfully"
+                    )
+                ) {
+                    clearInterval(timer);
+                    closePartialAccessMobileModal();
+                    return;
+                }
+
+                if (
+                    text.includes("does not match") ||
+                    text.includes("could not be verified") ||
+                    text.includes("unable to download")
+                ) {
+                    clearInterval(timer);
+
+                    status.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        escapeHtml(
+                            downloadStatus.textContent.trim()
+                        ) +
+                        '</span>';
+
+                    verify.disabled = false;
+                    cancel.disabled = false;
+                    return;
+                }
+
+                if (attempts >= 120) {
+                    clearInterval(timer);
+
+                    status.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'Verification is taking too long. Please try again.' +
+                        '</span>';
+
+                    verify.disabled = false;
+                    cancel.disabled = false;
+                }
+
+            }, 250);
+        });
+
+        input.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                verify.click();
+            }
+
+            if (event.key === "Escape") {
+                closePartialAccessMobileModal();
+            }
+        });
+
+        setTimeout(function() {
+            input.focus();
+        }, 0);
+    }
+
+    function openFullAccessMobileModal() {
+        closeFullAccessMobileModal();
+
+        fullAccessMobileModal = document.createElement("div");
+        fullAccessMobileModal.id = "arspFullAccessMobileModal";
+
+        fullAccessMobileModal.className =
+            "arsp-admit-mobile-modal";
+        fullAccessMobileModal.style.cssText =
+            "position:fixed;inset:0;z-index:99999;" +
+            "display:flex;align-items:center;justify-content:center;" +
+            "padding:20px;background:rgba(0,0,0,.55);";
+
+        fullAccessMobileModal.innerHTML = `
+            <div role="dialog" aria-modal="true"
+                 style="width:min(430px,100%);background:#fff;
+                        border-radius:16px;padding:24px;
+                        box-shadow:0 20px 60px rgba(0,0,0,.25);">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <strong style="font-size:18px;">Verify Member Mobile</strong>
+                </div>
+
+                <p style="margin:0 0 16px;color:#666;line-height:1.5;">
+                    Enter your registered ARSP member mobile number
+                    to download this student's admit card.
+                </p>
+
+                <input
+                    type="tel"
+                    id="arspFullAccessMobileInput"
+                    inputmode="numeric"
+                    maxlength="10"
+                    placeholder="Enter your registered mobile number"
+                    autocomplete="off"
+                    style="width:100%;box-sizing:border-box;padding:12px 14px;
+                           border:1px solid #ccc;border-radius:8px;font-size:16px;"
+                >
+
+                <div id="arspFullAccessMobileStatus"
+                     style="min-height:22px;margin:10px 0;"></div>
+
+                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                    <button type="button"
+                            id="arspFullAccessMobileCancel"
+                            class="btn-view">
+                        Cancel
+                    </button>
+
+                    <button type="button"
+                            id="arspFullAccessMobileVerify"
+                            class="btn-view">
+                        <i class="fa-solid fa-download"></i>
+                        Verify & Download
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(fullAccessMobileModal);
+
+        const input =
+            document.getElementById("arspFullAccessMobileInput");
+        const status =
+            document.getElementById("arspFullAccessMobileStatus");
+        const cancel =
+            document.getElementById("arspFullAccessMobileCancel");
+        const verify =
+            document.getElementById("arspFullAccessMobileVerify");
+
+        input.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, "").slice(0, 10);
+        });
+
+        cancel.addEventListener(
+            "click",
+            closeFullAccessMobileModal
+        );
+
+        verify.addEventListener("click", function () {
+            const mobile = input.value.trim();
+
+            if (!/^\d{10}$/.test(mobile)) {
+                status.innerHTML =
+                    '<span class="arsp-md-error">' +
+                    'Please enter a valid 10-digit mobile number.' +
+                    '</span>';
+                return;
+            }
+
+            if (!selectedRegistrationNo) {
+                status.innerHTML =
+                    '<span class="arsp-md-error">' +
+                    'Please select a student first.' +
+                    '</span>';
+                return;
+            }
+
+            if (mobileInput) {
+                mobileInput.value = mobile;
+            }
+
+            admitCardVerificationMode = "member";
+
+            status.innerHTML =
+                '<span class="arsp-md-searching">' +
+                '<i class="fa-solid fa-spinner fa-spin"></i> ' +
+                'Verifying registered mobile number...' +
+                '</span>';
+
+            verify.disabled = true;
+            cancel.disabled = true;
+
+            if (downloadButton) {
+                downloadButton.click();
+            }
+
+            let attempts = 0;
+
+            const timer = setInterval(function () {
+                attempts++;
+
+                const text =
+                    downloadStatus
+                        ? downloadStatus.textContent.toLowerCase()
+                        : "";
+
+                if (text.includes("admit card verified successfully")) {
+                    clearInterval(timer);
+                    closeFullAccessMobileModal();
+                    return;
+                }
+
+                if (
+                    text.includes("does not match") ||
+                    text.includes("could not be verified") ||
+                    text.includes("unable to download")
+                ) {
+                    clearInterval(timer);
+
+                    status.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        escapeHtml(downloadStatus.textContent.trim()) +
+                        '</span>';
+
+                    verify.disabled = false;
+                    cancel.disabled = false;
+                    return;
+                }
+
+                if (attempts >= 120) {
+                    clearInterval(timer);
+
+                    status.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'Verification is taking too long. Please try again.' +
+                        '</span>';
+
+                    verify.disabled = false;
+                    cancel.disabled = false;
+                }
+            }, 250);
+        });
+
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                verify.click();
+            }
+
+            if (event.key === "Escape") {
+                closeFullAccessMobileModal();
+            }
+        });
+
+        setTimeout(function () {
+            input.focus();
+        }, 0);
+    }
+
+    async function searchStudent() {
         if (!registrationInput) return;
 
-        const registrationNo =
+        const keyword =
             registrationInput.value.trim();
 
         clearStudent();
 
-        if (!registrationNo) {
-
+        if (!keyword) {
             status.innerHTML = "";
-
             return;
         }
 
@@ -675,10 +1381,9 @@
             '</span>';
 
         try {
-
             const response = await fetch(
-                "/arsp/student/admit-card/search?registration_no=" +
-                encodeURIComponent(registrationNo),
+                "/arsp/student/admit-card/search?keyword=" +
+                encodeURIComponent(keyword),
                 {
                     headers: {
                         "Accept": "application/json"
@@ -689,81 +1394,323 @@
             const data = await response.json();
 
             if (!response.ok || !data.success) {
-
                 status.innerHTML =
                     '<span class="arsp-md-error">' +
-                    'Unable to search student.' +
+                    escapeHtml(
+                        data && data.message
+                            ? data.message
+                            : "Unable to search student."
+                    ) +
                     '</span>';
+                return;
+            }
+
+            currentAccess =
+                data.access === "Full"
+                    ? "Full"
+                    : "Partial";
+
+            /*
+             * ==========================
+             * PARTIAL ACCESS
+             * ==========================
+             *
+             * Keep the existing workflow:
+             * registration number -> student
+             * -> student's registered mobile.
+             */
+            if (currentAccess !== "Full") {
+
+                const students =
+                    Array.isArray(data.students)
+                        ? data.students
+                        : (
+                            data.student
+                                ? [data.student]
+                                : []
+                        );
+
+                selectedRegistrationNo = "";
+
+                if (!students.length) {
+                    status.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'No student found.' +
+                        '</span>';
+                    return;
+                }
+
+                status.innerHTML =
+                    '<span class="arsp-md-success">' +
+                    '<i class="fa-solid fa-circle-check"></i> ' +
+                    students.length +
+                    ' student' +
+                    (students.length === 1 ? "" : "s") +
+                    ' found. Please select a student.' +
+                    '</span>';
+
+                result.innerHTML = `
+                    <div class="arsp-md-student-card">
+                        <div class="arsp-md-student-card-title">
+                            <i class="fa-solid fa-user-graduate"></i>
+                            Select Student
+                        </div>
+
+                        <div style="
+                            display:flex;
+                            flex-direction:column;
+                            gap:12px;
+                            margin-top:12px;
+                        ">
+                            ${students.map(function(student) {
+                                return `
+                                    <div
+                                        class="arsp-md-student-card"
+                                        style="
+                                            margin:0;
+                                            border:1px solid #e5e7eb;
+                                        "
+                                    >
+                                        <div class="arsp-md-student-grid">
+                                            <div>
+                                                <small>Registration Number</small>
+                                                <strong>${escapeHtml(student.registration_no)}</strong>
+                                            </div>
+
+                                            <div>
+                                                <small>Name</small>
+                                                <strong>${escapeHtml(student.full_name)}</strong>
+                                            </div>
+
+                                            <div>
+                                                <small>Father Name</small>
+                                                <strong>${escapeHtml(student.father_name)}</strong>
+                                            </div>
+
+                                            <div>
+                                                <small>School Name</small>
+                                                <strong>${escapeHtml(student.school_name)}</strong>
+                                            </div>
+
+                                            <div>
+                                                <small>Class</small>
+                                                <strong>${escapeHtml(student.class)}</strong>
+                                            </div>
+
+                                            <div>
+                                                <small>Section</small>
+                                                <strong>${escapeHtml(student.section)}</strong>
+                                            </div>
+                                        </div>
+
+                                        <div style="
+                                            margin-top:14px;
+                                            display:flex;
+                                            justify-content:flex-end;
+                                        ">
+                                            <button
+                                                type="button"
+                                                class="btn-view arsp-partial-select-student"
+                                                data-registration-no="${escapeHtml(student.registration_no)}"
+                                            >
+                                                <i class="fa-solid fa-user-check"></i>
+                                                Select Student
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join("")}
+                        </div>
+                    </div>
+                `;
+
+                if (mobileArea) {
+                    mobileArea.style.display = "none";
+                }
+
+                result
+                    .querySelectorAll(
+                        ".arsp-partial-select-student"
+                    )
+                    .forEach(function(button) {
+
+                        button.addEventListener(
+                            "click",
+                            function() {
+
+                                selectedRegistrationNo =
+                                    this.dataset.registrationNo || "";
+
+                                if (!selectedRegistrationNo) {
+                                    return;
+                                }
+
+                                result
+                                    .querySelectorAll(
+                                        ".arsp-partial-select-student"
+                                    )
+                                    .forEach(function(other) {
+                                        other.disabled = false;
+                                    });
+
+                                this.disabled = true;
+
+                                openPartialAccessMobileModal();
+                            }
+                        );
+                    });
 
                 return;
             }
 
-            if (!data.student) {
+            /*
+             * ==========================
+             * FULL ACCESS
+             * ==========================
+             *
+             * Universal search returns
+             * multiple students.
+             *
+             * The member must always select
+             * a student before verification.
+             */
+            const students =
+                Array.isArray(data.students)
+                    ? data.students
+                    : [];
 
+            selectedRegistrationNo = "";
+
+            if (!students.length) {
                 status.innerHTML =
                     '<span class="arsp-md-error">' +
                     'No student found.' +
                     '</span>';
-
                 return;
             }
 
             status.innerHTML =
                 '<span class="arsp-md-success">' +
-                '<i class="fa-solid fa-circle-check"></i> Student found.' +
+                '<i class="fa-solid fa-circle-check"></i> ' +
+                students.length +
+                ' student' +
+                (students.length === 1 ? "" : "s") +
+                ' found. Please select a student.' +
                 '</span>';
-
-            const student = data.student;
 
             result.innerHTML = `
                 <div class="arsp-md-student-card">
-
                     <div class="arsp-md-student-card-title">
-                        <i class="fa-solid fa-user-graduate"></i>
-                        Student Details
+                        <i class="fa-solid fa-users"></i>
+                        Select Student
                     </div>
 
-                    <div class="arsp-md-student-grid">
+                    <div style="
+                        display:flex;
+                        flex-direction:column;
+                        gap:12px;
+                        margin-top:12px;
+                    ">
+                        ${students.map(function(student, index) {
+                            return `
+                                <div
+                                    class="arsp-md-student-card"
+                                    style="
+                                        margin:0;
+                                        cursor:pointer;
+                                        border:1px solid #e5e7eb;
+                                    "
+                                >
+                                    <div class="arsp-md-student-grid">
+                                        <div>
+                                            <small>Registration Number</small>
+                                            <strong>${escapeHtml(student.registration_no)}</strong>
+                                        </div>
 
-                        <div>
-                            <small>Registration Number</small>
-                            <strong>${escapeHtml(student.registration_no)}</strong>
-                        </div>
+                                        <div>
+                                            <small>Name</small>
+                                            <strong>${escapeHtml(student.full_name)}</strong>
+                                        </div>
 
-                        <div>
-                            <small>Name</small>
-                            <strong>${escapeHtml(student.full_name)}</strong>
-                        </div>
+                                        <div>
+                                            <small>Father Name</small>
+                                            <strong>${escapeHtml(student.father_name)}</strong>
+                                        </div>
 
-                        <div>
-                            <small>Father Name</small>
-                            <strong>${escapeHtml(student.father_name)}</strong>
-                        </div>
+                                        <div>
+                                            <small>School Name</small>
+                                            <strong>${escapeHtml(student.school_name)}</strong>
+                                        </div>
 
-                        <div>
-                            <small>School Name</small>
-                            <strong>${escapeHtml(student.school_name)}</strong>
-                        </div>
+                                        <div>
+                                            <small>Class</small>
+                                            <strong>${escapeHtml(student.class)}</strong>
+                                        </div>
 
-                        <div>
-                            <small>Class</small>
-                            <strong>${escapeHtml(student.class)}</strong>
-                        </div>
+                                        <div>
+                                            <small>Section</small>
+                                            <strong>${escapeHtml(student.section)}</strong>
+                                        </div>
+                                    </div>
 
-                        <div>
-                            <small>Section</small>
-                            <strong>${escapeHtml(student.section)}</strong>
-                        </div>
-
+                                    <div style="
+                                        margin-top:14px;
+                                        display:flex;
+                                        justify-content:flex-end;
+                                    ">
+                                        <button
+                                            type="button"
+                                            class="btn-view arsp-full-select-student"
+                                            data-registration-no="${escapeHtml(student.registration_no)}"
+                                        >
+                                            <i class="fa-solid fa-user-check"></i>
+                                            Select Student
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join("")}
                     </div>
-
                 </div>
             `;
 
-            mobileArea.style.display = "block";
+            if (mobileArea) {
+                mobileArea.style.display = "none";
+            }
+
+            result
+                .querySelectorAll(
+                    ".arsp-full-select-student"
+                )
+                .forEach(function(button) {
+
+                    button.addEventListener(
+                        "click",
+                        function() {
+
+                            selectedRegistrationNo =
+                                this.dataset.registrationNo || "";
+
+                            if (!selectedRegistrationNo) {
+                                return;
+                            }
+
+                            result
+                                .querySelectorAll(
+                                    ".arsp-full-select-student"
+                                )
+                                .forEach(function(other) {
+                                    other.disabled = false;
+                                });
+
+                            this.disabled = true;
+
+                            openFullAccessMobileModal();
+                        }
+                    );
+                });
 
         } catch (error) {
-
             console.error(
                 "ARSP admit-card search error:",
                 error
@@ -773,11 +1720,8 @@
                 '<span class="arsp-md-error">' +
                 'Unable to search student.' +
                 '</span>';
-
         }
-
     }
-
 
     if (registrationInput) {
 
@@ -849,16 +1793,29 @@
             async function () {
 
                 const registrationNo =
-                    registrationInput
-                        ? registrationInput.value.trim()
-                        : "";
+                    selectedRegistrationNo ||
+                    (
+                        registrationInput
+                            ? registrationInput.value.trim()
+                            : ""
+                    );
 
                 const mobile =
                     mobileInput
                         ? mobileInput.value.trim()
                         : "";
 
-                if (!registrationNo || !mobile) {
+                if (!registrationNo) {
+
+                    downloadStatus.innerHTML =
+                        '<span class="arsp-md-error">' +
+                        'Please select a student first.' +
+                        '</span>';
+
+                    return;
+                }
+
+                if (!mobile) {
 
                     downloadStatus.innerHTML =
                         '<span class="arsp-md-error">' +
@@ -866,7 +1823,6 @@
                         '</span>';
 
                     return;
-
                 }
 
                 if (!/^\d{10}$/.test(mobile)) {
@@ -904,7 +1860,14 @@
                                     registration_no:
                                         registrationNo,
                                     mobile:
-                                        mobile
+                                        mobile,
+                                    verification_mode:
+                                        admitCardVerificationMode ||
+                                        (
+                                            currentAccess === "Full"
+                                                ? "member"
+                                                : "student"
+                                        )
                                 })
                             }
                         );
