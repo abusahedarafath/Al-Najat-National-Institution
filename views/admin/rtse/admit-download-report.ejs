@@ -1,0 +1,534 @@
+<style>
+    .rtse-download-report {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+
+    .rtse-download-report h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+    }
+
+    .rtse-download-report-subtitle {
+        margin: 0 0 22px;
+        color: #64748b;
+    }
+
+    .rtse-report-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .rtse-report-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 17px;
+    }
+
+    .rtse-report-card-label {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .rtse-report-card-value {
+        font-size: 26px;
+        font-weight: 800;
+    }
+
+    .rtse-report-filters {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 22px;
+    }
+
+    .rtse-report-filter-grid {
+        display: grid;
+        grid-template-columns: 150px 150px minmax(220px, 1fr) auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .rtse-report-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .rtse-report-field input,
+    .rtse-report-field select {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 42px;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        padding: 8px 10px;
+        background: #fff;
+    }
+
+    .rtse-report-button {
+        min-height: 42px;
+        border: 0;
+        border-radius: 9px;
+        padding: 0 18px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .rtse-report-section {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .rtse-report-section-header {
+        padding: 15px 18px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+
+    .rtse-report-section-title {
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .rtse-report-section-meta {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .rtse-report-table-wrap {
+        overflow-x: auto;
+    }
+
+    .rtse-report-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .rtse-report-table th,
+    .rtse-report-table td {
+        padding: 11px 13px;
+        border-bottom: 1px solid #eef2f7;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .rtse-report-table th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: #64748b;
+        background: #fff;
+    }
+
+    .rtse-report-table td {
+        font-size: 14px;
+    }
+
+    .rtse-report-count {
+        font-weight: 800;
+        text-align: center !important;
+    }
+
+    .rtse-report-zero {
+        opacity: .55;
+        font-weight: 600;
+    }
+
+    .rtse-report-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+        .rtse-report-summary {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .rtse-report-filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .rtse-download-report {
+            padding: 14px;
+        }
+
+        .rtse-report-summary {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .rtse-report-filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .rtse-report-loading {
+        opacity: .55;
+        transition: opacity .12s ease;
+    }
+</style>
+
+<div class="rtse-download-report">
+
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <h1>Admit Card Download Report</h1>
+            <p class="rtse-download-report-subtitle">
+                Section-wise student report showing how many times each admit card has been downloaded.
+            </p>
+        </div>
+
+        <a href="/admin/rtse/admit-download-history"
+           style="text-decoration:none;">
+            ← Download History
+        </a>
+    </div>
+
+    <div id="rtse-report-summary" class="rtse-report-summary">
+
+        <div class="rtse-report-card">
+            <div class="rtse-report-card-label">Total Students</div>
+            <div class="rtse-report-card-value">
+                <%= summary.totalStudents.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-report-card">
+            <div class="rtse-report-card-label">Students Downloaded</div>
+            <div class="rtse-report-card-value">
+                <%= summary.downloadedStudents.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-report-card">
+            <div class="rtse-report-card-label">Not Downloaded</div>
+            <div class="rtse-report-card-value">
+                <%= summary.notDownloaded.toLocaleString() %>
+            </div>
+        </div>
+
+        <div class="rtse-report-card">
+            <div class="rtse-report-card-label">Total Download Events</div>
+            <div class="rtse-report-card-value">
+                <%= summary.totalDownloads.toLocaleString() %>
+            </div>
+        </div>
+
+    </div>
+
+    <form method="GET"
+          action="/admin/rtse/admit-download-report"
+          class="rtse-report-filters">
+
+        <div class="rtse-report-filter-grid">
+
+            <div class="rtse-report-field">
+                <label for="report-class">Class</label>
+                <select id="report-class" name="class">
+                    <option value="">All Classes</option>
+                    <% for (const item of classes) { %>
+                        <option value="<%= item %>"
+                            <%= filters.classValue === String(item) ? "selected" : "" %>>
+                            Class <%= item %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="rtse-report-field">
+                <label for="report-section">Section</label>
+                <select id="report-section" name="section">
+                    <option value="">All Sections</option>
+                    <% for (const item of sectionOptions) { %>
+                        <option value="<%= item %>"
+                            <%= filters.section === String(item) ? "selected" : "" %>>
+                            Section <%= item %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="rtse-report-field">
+                <label for="report-search">Search Student</label>
+                <input
+                    id="report-search"
+                    name="search"
+                    value="<%= filters.search %>"
+                    placeholder="Name, registration, father name or school"
+                >
+            </div>
+
+            <div>
+                <button class="rtse-report-button" type="submit">
+                    Search
+                </button>
+                <a href="/admin/rtse/admit-download-report"
+                   style="margin-left:8px;">
+                    Clear
+                </a>
+            </div>
+
+        </div>
+    </form>
+
+    <div id="rtse-report-results">
+
+<% if (!sections || sections.length === 0) { %>
+
+        <div class="rtse-report-section">
+            <div class="rtse-report-empty">
+                No students found for the selected filters.
+            </div>
+        </div>
+
+    <% } else { %>
+
+        <% for (const group of sections) { %>
+
+            <section class="rtse-report-section">
+
+                <div class="rtse-report-section-header">
+
+                    <div class="rtse-report-section-title">
+                        Section <%= group.section %>
+                    </div>
+
+                    <div class="rtse-report-section-meta">
+                        <%= group.totalStudents.toLocaleString() %> students
+                        · <%= group.downloadedStudents.toLocaleString() %> downloaded
+                        · <%= group.notDownloaded.toLocaleString() %> not downloaded
+                        · <%= group.totalDownloads.toLocaleString() %> total downloads
+                    </div>
+
+                </div>
+
+                <div class="rtse-report-table-wrap">
+
+                    <table class="rtse-report-table">
+
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Student Name</th>
+                                <th>Registration No.</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Downloads</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <% group.students.forEach((student, index) => { %>
+
+                                <tr>
+                                    <td><%= index + 1 %></td>
+
+                                    <td>
+                                        <strong>
+                                            <%= student.full_name %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <%= student.registration_no %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.student_class %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.section %>
+                                    </td>
+
+                                    <td class="rtse-report-count
+                                        <%= student.download_count === 0
+                                            ? "rtse-report-zero"
+                                            : "" %>">
+                                        <%= student.download_count %>
+                                    </td>
+                                </tr>
+
+                            <% }) %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        <% } %>
+
+    <% } %>
+
+</div>
+</div>
+
+
+<script>
+(function () {
+    const form = document.querySelector(".rtse-report-filters");
+    const searchInput = document.getElementById("report-search");
+    const classSelect = document.getElementById("report-class");
+    const sectionSelect = document.getElementById("report-section");
+
+    if (!form || !searchInput) return;
+
+    let timer = null;
+    let controller = null;
+
+    async function liveSearch() {
+        const params = new URLSearchParams();
+
+        if (classSelect && classSelect.value) {
+            params.set("class", classSelect.value);
+        }
+
+        if (sectionSelect && sectionSelect.value) {
+            params.set("section", sectionSelect.value);
+        }
+
+        const search = searchInput.value.trim();
+
+        if (search) {
+            params.set("search", search);
+        }
+
+        if (controller) {
+            controller.abort();
+        }
+
+        controller = new AbortController();
+
+        const results = document.getElementById("rtse-report-results");
+        const summary = document.getElementById("rtse-report-summary");
+
+        if (results) {
+            results.classList.add("rtse-report-loading");
+        }
+
+        try {
+            const url =
+                form.action +
+                (params.toString() ? "?" + params.toString() : "");
+
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                signal: controller.signal
+            });
+
+            if (!response.ok) {
+                throw new Error("Live search request failed.");
+            }
+
+            const html = await response.text();
+
+            const doc = new DOMParser().parseFromString(
+                html,
+                "text/html"
+            );
+
+            const nextSummary =
+                doc.getElementById("rtse-report-summary");
+
+            const nextResults =
+                doc.getElementById("rtse-report-results");
+
+            if (!nextSummary || !nextResults) {
+                throw new Error(
+                    "Live report content was not found."
+                );
+            }
+
+            const currentSummary =
+                document.getElementById("rtse-report-summary");
+
+            const currentResults =
+                document.getElementById("rtse-report-results");
+
+            if (currentSummary) {
+                currentSummary.replaceWith(nextSummary);
+            }
+
+            if (currentResults) {
+                currentResults.replaceWith(nextResults);
+            }
+
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                console.error(
+                    "RTSE live report search error:",
+                    error
+                );
+            }
+        } finally {
+            const currentResults =
+                document.getElementById("rtse-report-results");
+
+            if (currentResults) {
+                currentResults.classList.remove(
+                    "rtse-report-loading"
+                );
+            }
+
+            controller = null;
+        }
+    }
+
+    function scheduleSearch() {
+        clearTimeout(timer);
+
+        timer = setTimeout(
+            liveSearch,
+            250
+        );
+    }
+
+    searchInput.addEventListener(
+        "input",
+        scheduleSearch
+    );
+
+    if (classSelect) {
+        classSelect.addEventListener(
+            "change",
+            liveSearch
+        );
+    }
+
+    if (sectionSelect) {
+        sectionSelect.addEventListener(
+            "change",
+            liveSearch
+        );
+    }
+
+    form.addEventListener(
+        "submit",
+        function (event) {
+            event.preventDefault();
+            clearTimeout(timer);
+            liveSearch();
+        }
+    );
+})();
+</script>

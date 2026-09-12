@@ -88,6 +88,13 @@ router.get(
     adminRtseAdmitDownloadController.arspHistoryPage
 );
 
+
+router.get(
+    "/rtse/admit-download-report",
+    auth.isAdmin,
+    adminRtseAdmitDownloadController.admitDownloadReport
+);
+
 router.get(
     "/rtse/admit-download-history",
     auth.isAdmin,

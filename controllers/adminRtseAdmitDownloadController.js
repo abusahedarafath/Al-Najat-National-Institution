@@ -2,6 +2,8 @@ const RtseAdmitDownload =
   require("../models/RtseAdmitDownload");
 const ArspAdmitDownload =
   require("../models/ArspAdmitDownload");
+const RtseAdmitDownloadReport =
+  require("../models/RtseAdmitDownloadReport");
 
 exports.historyPage = async (req, res) => {
   try {
@@ -107,4 +109,54 @@ exports.arspHistoryPage = async (req, res) => {
       "Unable to load ARSP admit card download history."
     );
   }
+};
+
+
+// =====================================================
+// RTSE — ADMIT CARD DOWNLOAD REPORT
+// Isolated aggregate report.
+// Existing download/history systems remain unchanged.
+// =====================================================
+exports.admitDownloadReport = async (req, res) => {
+    try {
+        const classValue =
+            String(req.query.class || "").trim();
+
+        const section =
+            String(req.query.section || "").trim();
+
+        const search =
+            String(req.query.search || "").trim();
+
+        const [report, classes, sectionOptions] =
+            await Promise.all([
+                RtseAdmitDownloadReport.getReport({
+                    classValue,
+                    section,
+                    search
+                }),
+                RtseAdmitDownloadReport.getClasses(),
+                RtseAdmitDownloadReport.getSections()
+            ]);
+
+        return res.render(
+            "admin/rtse/admit-download-report",
+            {
+                title: "RTSE Admit Card Download Report",
+                ...report,
+                classes,
+                sectionOptions
+            }
+        );
+
+    } catch (error) {
+        console.error(
+            "RTSE admit download report error:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to load RTSE admit card download report."
+        );
+    }
 };
