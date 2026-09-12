@@ -23,24 +23,23 @@ const generateIdCard = require("../utils/arspIdCardPdf");
 // =====================================
 
 exports.loginPage = async (req, res) => {
+    // Keep an authenticated member inside the member portal if
+    // the browser restores/navigates to the login URL.
+    if (req.session?.arspMember) {
+        return res.redirect("/arsp/dashboard");
+    }
 
     const site = await SiteSetting.get();
     const arsp = await ArspSetting.get();
+
     res.render(
-
         "arsp/login",
-
         {
-
             title: "ARSP Member Login",
-
             site,
-           arsp
-
+            arsp
         }
-
     );
-
 };
 
 // =====================================
@@ -52,8 +51,6 @@ exports.login = async (req, res) => {
     try {
 
         const { username, password } = req.body;
-       console.log("Username:", username);
-console.log("Password:", password);
         const account = await ArspAccount.login(
 
             username,

@@ -9,6 +9,33 @@ const SiteSetting = require("../models/SiteSetting");
 
 exports.showLogin = async (req, res) => {
 
+    // If the browser restores/navigates to the Admin login URL
+    // while a valid session is still active, keep the user inside
+    // their authenticated area instead of showing the login page.
+    if (req.session?.user) {
+
+        switch (req.session.user.role) {
+
+            case "admin":
+                return res.redirect("/admin/rtse");
+
+            case "super_scanner":
+                return res.redirect("/super-scanner");
+
+            case "teacher":
+                return res.redirect("/teacher");
+
+            case "student":
+                return res.redirect("/student");
+
+            case "parent":
+                return res.redirect("/parent");
+
+            default:
+                break;
+        }
+    }
+
     try {
 
         const siteSettings =
