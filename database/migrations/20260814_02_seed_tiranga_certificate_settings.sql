@@ -15,4 +15,6 @@ VALUES
     'TIRANGA CERTIFICATE',
     '80th INDEPENDENCE',
     '1947 - 2027'
-);
+)
+ON DUPLICATE KEY UPDATE
+    id = id;

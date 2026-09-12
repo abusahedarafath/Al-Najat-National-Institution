@@ -8,14 +8,22 @@
     <style>
         * { box-sizing:border-box; }
 
-        body {
+        html, body {
             margin:0;
+            padding:0;
+            width:100%;
+            min-width:0;
+        }
+
+        body {
             font-family:Arial,sans-serif;
             background:#f1f5f9;
             color:#0f172a;
+            overflow-x:hidden;
         }
 
         .topbar {
+            width:100%;
             min-height:64px;
             background:#1e3a8a;
             color:#fff;
@@ -47,11 +55,14 @@
         }
 
         .layout {
+            width:100%;
             display:flex;
+            align-items:stretch;
             min-height:calc(100vh - 64px);
         }
 
         .sidebar {
+            flex:0 0 245px;
             width:245px;
             background:#fff;
             border-right:1px solid #e2e8f0;
@@ -102,9 +113,10 @@
         }
 
         .content {
-            flex:1;
+            flex:1 1 auto;
+            min-width:0;
+            width:auto;
             padding:24px;
-            max-width:1500px;
         }
 
         .header {
@@ -114,22 +126,25 @@
         .header h1 {
             margin:0 0 6px;
             font-size:26px;
+            line-height:1.25;
         }
 
         .header p {
             margin:0;
             color:#64748b;
             font-size:13px;
+            line-height:1.5;
         }
 
         .stats {
             display:grid;
-            grid-template-columns:repeat(3,1fr);
+            grid-template-columns:repeat(3,minmax(0,1fr));
             gap:14px;
             margin-bottom:20px;
         }
 
         .stat {
+            min-width:0;
             background:#fff;
             border:1px solid #e2e8f0;
             border-radius:12px;
@@ -148,6 +163,7 @@
         }
 
         .filters {
+            width:100%;
             background:#fff;
             border:1px solid #e2e8f0;
             border-radius:12px;
@@ -157,9 +173,13 @@
 
         .filter-grid {
             display:grid;
-            grid-template-columns:minmax(220px,2fr) 1fr 1fr auto auto;
+            grid-template-columns:minmax(180px,2fr) minmax(130px,1fr) minmax(130px,1fr) auto auto;
             gap:10px;
             align-items:end;
+        }
+
+        .field {
+            min-width:0;
         }
 
         .field label {
@@ -171,7 +191,9 @@
         }
 
         .field input {
+            display:block;
             width:100%;
+            min-width:0;
             padding:10px 11px;
             border:1px solid #d1d5db;
             border-radius:8px;
@@ -182,12 +204,14 @@
             display:inline-flex;
             align-items:center;
             justify-content:center;
+            min-height:39px;
             padding:10px 15px;
             border-radius:8px;
             font-size:13px;
             font-weight:700;
             text-decoration:none;
             cursor:pointer;
+            white-space:nowrap;
         }
 
         .search-button {
@@ -203,15 +227,19 @@
         }
 
         .table-wrap {
+            width:100%;
+            max-width:100%;
             background:#fff;
             border:1px solid #e2e8f0;
             border-radius:12px;
-            overflow:auto;
+            overflow-x:auto;
+            overflow-y:hidden;
+            -webkit-overflow-scrolling:touch;
         }
 
         table {
             width:100%;
-            min-width:1150px;
+            min-width:1050px;
             border-collapse:collapse;
         }
 
@@ -312,7 +340,7 @@
             border-color:#111827;
         }
 
-        @media(max-width:1000px) {
+        @media (max-width:1000px) {
             .filter-grid {
                 grid-template-columns:1fr 1fr;
             }
@@ -322,14 +350,7 @@
             }
         }
 
-        @media(max-width:700px) {
-            html,
-            body {
-                width:100%;
-                max-width:100%;
-                overflow-x:hidden;
-            }
-
+        @media (max-width:700px) {
             .topbar {
                 min-height:58px;
                 padding:10px 12px;
@@ -355,6 +376,7 @@
             }
 
             .sidebar {
+                display:block;
                 width:100%;
                 max-width:none;
                 padding:10px;
@@ -381,38 +403,29 @@
             }
 
             .content {
+                display:block;
                 width:100%;
                 max-width:none;
                 min-width:0;
                 padding:14px 10px 24px;
             }
 
-            .header {
-                margin-bottom:14px;
-            }
-
             .header h1 {
                 font-size:21px;
-                line-height:1.25;
             }
 
             .header p {
                 font-size:12px;
-                line-height:1.5;
             }
 
-            .filter-grid,
-            .stats {
+            .stats,
+            .filter-grid {
                 grid-template-columns:1fr;
             }
 
             .filters {
                 padding:12px;
                 margin-bottom:14px;
-            }
-
-            .field input {
-                min-width:0;
             }
 
             .button {
@@ -422,26 +435,22 @@
             .table-wrap {
                 width:100%;
                 max-width:100%;
-                overflow-x:auto;
-                -webkit-overflow-scrolling:touch;
             }
 
             table {
-                min-width:900px;
+                min-width:1050px;
             }
 
             .pagination {
                 align-items:stretch;
             }
 
-            .page-info {
-                width:100%;
-            }
-
+            .page-info,
             .page-links {
                 width:100%;
             }
         }
+
     </style>
 </head>
 

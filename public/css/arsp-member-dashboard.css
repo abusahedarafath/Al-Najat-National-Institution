@@ -58,11 +58,13 @@ body.arsp-member-dashboard a{
     top:0;
     bottom:0;
     width:292px;
+    height:100vh;
+    min-height:100vh;
     background:linear-gradient(180deg,#062c57 0%,#06284d 100%);
     color:#fff;
     display:flex;
     flex-direction:column;
-    overflow-y:auto;
+    overflow:hidden;
     box-shadow:8px 0 25px rgba(5,35,69,.10);
 }
 
@@ -113,11 +115,13 @@ body.arsp-member-dashboard a{
     color:rgba(255,255,255,.68);
 }
 
+
 .arsp-md-side-nav{
     padding:18px 14px;
     flex:1 1 auto;
     min-height:0;
     overflow-y:auto;
+    overflow-x:hidden;
 }
 
 .arsp-md-nav-section{
@@ -162,6 +166,7 @@ body.arsp-member-dashboard a{
 .arsp-md-sidebar-bottom{
     margin-top:auto;
     padding:16px 20px 20px;
+    flex:0 0 auto;
     flex-shrink:0;
 }
 
