@@ -160,3 +160,47 @@ exports.admitDownloadReport = async (req, res) => {
         );
     }
 };
+
+
+exports.admitDownloadReportSection = async (req, res) => {
+    try {
+        const section =
+            String(req.params.section || "").trim().toUpperCase();
+
+        const classValue =
+            String(req.query.class || "").trim();
+
+        const search =
+            String(req.query.search || "").trim();
+
+        const [report, classes] = await Promise.all([
+            RtseAdmitDownloadReport.getSectionReport(section, {
+                classValue,
+                search
+            }),
+            RtseAdmitDownloadReport.getClasses()
+        ]);
+
+        if (!report.section) {
+            return res.status(404).send("Section not found.");
+        }
+
+        return res.render(
+            "admin/rtse/admit-download-report-section",
+            {
+                title: `Section ${report.section} - Admit Card Download Report`,
+                ...report,
+                classes
+            }
+        );
+    } catch (error) {
+        console.error(
+            "RTSE admit download section report error:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to load RTSE section admit card download report."
+        );
+    }
+};

@@ -1,185 +1,271 @@
 <style>
-    .rtse-download-report {
-        max-width: 1500px;
-        margin: 0 auto;
-        padding: 24px;
-    }
+.rtse-download-report {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px;
+}
 
-    .rtse-download-report h1 {
-        margin: 0 0 6px;
-        font-size: 28px;
-    }
+.rtse-download-report h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+}
 
-    .rtse-download-report-subtitle {
-        margin: 0 0 22px;
-        color: #64748b;
-    }
+.rtse-download-report-subtitle {
+    margin: 0 0 22px;
+    color: #64748b;
+}
 
+/* Main outer report card */
+.rtse-report-main-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+/* Summary */
+.rtse-report-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.rtse-report-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.rtse-report-card-label {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.rtse-report-card-value {
+    font-size: 25px;
+    font-weight: 800;
+}
+
+/* Filters */
+.rtse-report-filters {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 22px;
+}
+
+.rtse-report-filter-grid {
+    display: grid;
+    grid-template-columns: 150px 150px minmax(220px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.rtse-report-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.rtse-report-field input,
+.rtse-report-field select {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 42px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    padding: 8px 10px;
+    background: #fff;
+}
+
+.rtse-report-button {
+    min-height: 42px;
+    border: 0;
+    border-radius: 9px;
+    padding: 0 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Section cards */
+.rtse-report-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+.rtse-report-section-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.rtse-report-section-link:hover {
+    transform: translateY(-2px);
+    border-color: #94a3b8;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+.rtse-report-section-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 18px;
+    border-top: 1px solid #eef2f7;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rtse-report-section {
+    background: #ffffff;
+    border: 1px solid #dbe3ec;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+
+.rtse-report-section-header {
+    padding: 16px 18px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #dbe3ec;
+}
+
+.rtse-report-section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.rtse-report-section-title {
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.rtse-report-section-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.rtse-report-section-meta {
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* Student report inside section card */
+.rtse-report-table-wrap {
+    overflow-x: auto;
+}
+
+.rtse-report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rtse-report-table th,
+.rtse-report-table td {
+    padding: 11px 13px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.rtse-report-table th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #64748b;
+    background: #ffffff;
+}
+
+.rtse-report-table td {
+    font-size: 14px;
+}
+
+.rtse-report-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.rtse-report-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.rtse-report-count {
+    font-weight: 800;
+    text-align: center !important;
+}
+
+.rtse-report-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.rtse-report-loading {
+    opacity: .55;
+    pointer-events: none;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
     .rtse-report-summary {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
-        margin-bottom: 22px;
-    }
-
-    .rtse-report-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 17px;
-    }
-
-    .rtse-report-card-label {
-        color: #64748b;
-        font-size: 13px;
-        margin-bottom: 7px;
-    }
-
-    .rtse-report-card-value {
-        font-size: 26px;
-        font-weight: 800;
-    }
-
-    .rtse-report-filters {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 22px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .rtse-report-filter-grid {
-        display: grid;
-        grid-template-columns: 150px 150px minmax(220px, 1fr) auto;
-        gap: 12px;
-        align-items: end;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .rtse-download-report {
+        padding: 12px;
     }
 
-    .rtse-report-field label {
-        display: block;
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-
-    .rtse-report-field input,
-    .rtse-report-field select {
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 42px;
-        border: 1px solid #cbd5e1;
-        border-radius: 9px;
-        padding: 8px 10px;
-        background: #fff;
-    }
-
-    .rtse-report-button {
-        min-height: 42px;
-        border: 0;
-        border-radius: 9px;
-        padding: 0 18px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    .rtse-report-section {
-        background: #fff;
-        border: 1px solid #e2e8f0;
+    .rtse-report-main-card {
+        padding: 12px;
         border-radius: 14px;
-        margin-bottom: 20px;
-        overflow: hidden;
     }
 
-    .rtse-report-section-header {
-        padding: 15px 18px;
-        border-bottom: 1px solid #e2e8f0;
-        background: #f8fafc;
+    .rtse-report-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .rtse-report-card {
+        padding: 12px;
+    }
+
+    .rtse-report-card-value {
+        font-size: 21px;
+    }
+
+    .rtse-report-filter-grid {
+        grid-template-columns: 1fr;
     }
 
     .rtse-report-section-title {
-        font-size: 18px;
-        font-weight: 800;
+        font-size: 17px;
     }
-
-    .rtse-report-section-meta {
-        margin-top: 4px;
-        color: #64748b;
-        font-size: 13px;
-    }
-
-    .rtse-report-table-wrap {
-        overflow-x: auto;
-    }
-
-    .rtse-report-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .rtse-report-table th,
-    .rtse-report-table td {
-        padding: 11px 13px;
-        border-bottom: 1px solid #eef2f7;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    .rtse-report-table th {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: .03em;
-        color: #64748b;
-        background: #fff;
-    }
-
-    .rtse-report-table td {
-        font-size: 14px;
-    }
-
-    .rtse-report-count {
-        font-weight: 800;
-        text-align: center !important;
-    }
-
-    .rtse-report-zero {
-        opacity: .55;
-        font-weight: 600;
-    }
-
-    .rtse-report-empty {
-        padding: 40px 20px;
-        text-align: center;
-        color: #64748b;
-    }
-
-    @media (max-width: 900px) {
-        .rtse-report-summary {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .rtse-report-filter-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    @media (max-width: 560px) {
-        .rtse-download-report {
-            padding: 14px;
-        }
-
-        .rtse-report-summary {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .rtse-report-filter-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .rtse-report-loading {
-        opacity: .55;
-        transition: opacity .12s ease;
-    }
+}
 </style>
 
 <div class="rtse-download-report">
@@ -197,6 +283,8 @@
             ← Download History
         </a>
     </div>
+
+    <div class="rtse-report-main-card">
 
     <div id="rtse-report-summary" class="rtse-report-summary">
 
@@ -286,101 +374,47 @@
     </form>
 
     <div id="rtse-report-results">
-
-<% if (!sections || sections.length === 0) { %>
-
+    <% if (!sections || sections.length === 0) { %>
         <div class="rtse-report-section">
             <div class="rtse-report-empty">
-                No students found for the selected filters.
+                No downloaded students found for the selected filters.
             </div>
         </div>
-
     <% } else { %>
+        <div class="rtse-report-sections">
+            <% for (const group of sections) { %>
 
-        <% for (const group of sections) { %>
+                <a
+                    class="rtse-report-section rtse-report-section-link"
+                    href="/admin/rtse/admit-download-report/section/<%= encodeURIComponent(group.section) %>"
+                >
+                    <div class="rtse-report-section-header">
+                        <div class="rtse-report-section-heading">
+                            <div class="rtse-report-section-title">
+                                Section <%= group.section %>
+                            </div>
 
-            <section class="rtse-report-section">
+                            <div class="rtse-report-section-badge">
+                                <%= group.downloadedStudents.toLocaleString() %> Students
+                            </div>
+                        </div>
 
-                <div class="rtse-report-section-header">
-
-                    <div class="rtse-report-section-title">
-                        Section <%= group.section %>
+                        <div class="rtse-report-section-meta">
+                            <%= group.downloadedStudents.toLocaleString() %> students downloaded
+                            · <%= group.totalDownloads.toLocaleString() %> total download events
+                        </div>
                     </div>
 
-                    <div class="rtse-report-section-meta">
-                        <%= group.totalStudents.toLocaleString() %> students
-                        · <%= group.downloadedStudents.toLocaleString() %> downloaded
-                        · <%= group.notDownloaded.toLocaleString() %> not downloaded
-                        · <%= group.totalDownloads.toLocaleString() %> total downloads
+                    <div class="rtse-report-section-action">
+                        <span>Open Section Report</span>
+                        <span aria-hidden="true">→</span>
                     </div>
+                </a>
 
-                </div>
-
-                <div class="rtse-report-table-wrap">
-
-                    <table class="rtse-report-table">
-
-                        <thead>
-                            <tr>
-                                <th>Serial</th>
-                                <th>Student Name</th>
-                                <th>Registration No.</th>
-                                <th>Class</th>
-                                <th>Section</th>
-                                <th>Downloads</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            <% group.students.forEach((student, index) => { %>
-
-                                <tr>
-                                    <td><%= index + 1 %></td>
-
-                                    <td>
-                                        <strong>
-                                            <%= student.full_name %>
-                                        </strong>
-                                    </td>
-
-                                    <td>
-                                        <%= student.registration_no %>
-                                    </td>
-
-                                    <td>
-                                        <%= student.student_class %>
-                                    </td>
-
-                                    <td>
-                                        <%= student.section %>
-                                    </td>
-
-                                    <td class="rtse-report-count
-                                        <%= student.download_count === 0
-                                            ? "rtse-report-zero"
-                                            : "" %>">
-                                        <%= student.download_count %>
-                                    </td>
-                                </tr>
-
-                            <% }) %>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
-        <% } %>
-
+            <% } %>
+        </div>
     <% } %>
-
 </div>
-</div>
-
 
 <script>
 (function () {

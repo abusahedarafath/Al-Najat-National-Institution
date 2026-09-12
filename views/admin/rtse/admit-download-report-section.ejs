@@ -1,0 +1,343 @@
+<style>
+.rtse-section-report {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.rtse-section-report-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .05);
+}
+
+.rtse-section-report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.rtse-section-report-back {
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.rtse-section-report-title {
+    margin: 0 0 6px;
+    font-size: 27px;
+}
+
+.rtse-section-report-subtitle {
+    margin: 0;
+    color: #64748b;
+}
+
+.rtse-section-report-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.rtse-section-report-stat {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.rtse-section-report-stat-label {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.rtse-section-report-stat-value {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.rtse-section-report-filters {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.rtse-section-report-filter-grid {
+    display: grid;
+    grid-template-columns: 150px minmax(220px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.rtse-section-report-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.rtse-section-report-field select,
+.rtse-section-report-field input {
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    padding: 8px 10px;
+    background: #fff;
+}
+
+.rtse-section-report-button {
+    min-height: 42px;
+    border: 0;
+    border-radius: 9px;
+    padding: 0 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rtse-section-report-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+}
+
+.rtse-section-report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rtse-section-report-table th,
+.rtse-section-report-table td {
+    padding: 11px 13px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.rtse-section-report-table th {
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+    background: #f8fafc;
+}
+
+.rtse-section-report-table td {
+    font-size: 14px;
+}
+
+.rtse-section-report-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.rtse-section-report-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.rtse-section-report-count {
+    text-align: center !important;
+    font-weight: 800;
+}
+
+.rtse-section-report-empty {
+    padding: 45px 20px;
+    text-align: center;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+}
+
+@media (max-width: 700px) {
+    .rtse-section-report {
+        padding: 12px;
+    }
+
+    .rtse-section-report-card {
+        padding: 13px;
+        border-radius: 14px;
+    }
+
+    .rtse-section-report-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rtse-section-report-filter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="rtse-section-report">
+    <div class="rtse-section-report-card">
+
+        <div class="rtse-section-report-top">
+            <div>
+                <h1 class="rtse-section-report-title">
+                    Section <%= section %> — Admit Card Download Report
+                </h1>
+
+                <p class="rtse-section-report-subtitle">
+                    Only students whose admit card has been downloaded are shown.
+                </p>
+            </div>
+
+            <a
+                class="rtse-section-report-back"
+                href="/admin/rtse/admit-download-report"
+            >
+                ← Back to Report
+            </a>
+        </div>
+
+        <div class="rtse-section-report-summary">
+
+            <div class="rtse-section-report-stat">
+                <div class="rtse-section-report-stat-label">
+                    Total Students
+                </div>
+                <div class="rtse-section-report-stat-value">
+                    <%= totalStudents.toLocaleString() %>
+                </div>
+            </div>
+
+            <div class="rtse-section-report-stat">
+                <div class="rtse-section-report-stat-label">
+                    Downloaded
+                </div>
+                <div class="rtse-section-report-stat-value">
+                    <%= downloadedStudents.toLocaleString() %>
+                </div>
+            </div>
+
+            <div class="rtse-section-report-stat">
+                <div class="rtse-section-report-stat-label">
+                    Not Downloaded
+                </div>
+                <div class="rtse-section-report-stat-value">
+                    <%= notDownloaded.toLocaleString() %>
+                </div>
+            </div>
+
+            <div class="rtse-section-report-stat">
+                <div class="rtse-section-report-stat-label">
+                    Total Download Events
+                </div>
+                <div class="rtse-section-report-stat-value">
+                    <%= totalDownloads.toLocaleString() %>
+                </div>
+            </div>
+
+        </div>
+
+        <form
+            method="GET"
+            action="/admin/rtse/admit-download-report/section/<%= encodeURIComponent(section) %>"
+            class="rtse-section-report-filters"
+        >
+            <div class="rtse-section-report-filter-grid">
+
+                <div class="rtse-section-report-field">
+                    <label for="section-report-class">Class</label>
+                    <select id="section-report-class" name="class">
+                        <option value="">All Classes</option>
+
+                        <% for (const item of classes) { %>
+                            <option
+                                value="<%= item %>"
+                                <%= filters.classValue === String(item) ? "selected" : "" %>
+                            >
+                                Class <%= item %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <div class="rtse-section-report-field">
+                    <label for="section-report-search">Search Student</label>
+                    <input
+                        id="section-report-search"
+                        name="search"
+                        value="<%= filters.search %>"
+                        placeholder="Name, registration, father name or school"
+                    >
+                </div>
+
+                <div>
+                    <button class="rtse-section-report-button" type="submit">
+                        Search
+                    </button>
+
+                    <a
+                        href="/admin/rtse/admit-download-report/section/<%= encodeURIComponent(section) %>"
+                        style="margin-left:8px;"
+                    >
+                        Clear
+                    </a>
+                </div>
+
+            </div>
+        </form>
+
+        <% if (!students || students.length === 0) { %>
+
+            <div class="rtse-section-report-empty">
+                No downloaded students found for this section and filter.
+            </div>
+
+        <% } else { %>
+
+            <div class="rtse-section-report-table-wrap">
+                <table class="rtse-section-report-table">
+                    <thead>
+                        <tr>
+                            <th>Serial</th>
+                            <th>Student Name</th>
+                            <th>Registration No.</th>
+                            <th>Father Name</th>
+                            <th>School</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Downloads</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% students.forEach((student, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+
+                                <td>
+                                    <strong><%= student.full_name %></strong>
+                                </td>
+
+                                <td><%= student.registration_no %></td>
+
+                                <td><%= student.father_name || "-" %></td>
+
+                                <td><%= student.school_name || "-" %></td>
+
+                                <td><%= student.student_class %></td>
+
+                                <td><%= student.section %></td>
+
+                                <td class="rtse-section-report-count">
+                                    <%= student.download_count %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
+    </div>
+</div>

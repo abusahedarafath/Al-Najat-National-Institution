@@ -89,6 +89,13 @@ router.get(
 );
 
 
+
+router.get(
+    "/rtse/admit-download-report/section/:section",
+    auth.isAdmin,
+    adminRtseAdmitDownloadController.admitDownloadReportSection
+);
+
 router.get(
     "/rtse/admit-download-report",
     auth.isAdmin,
