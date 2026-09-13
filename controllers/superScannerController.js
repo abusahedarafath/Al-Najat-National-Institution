@@ -147,71 +147,39 @@ const superScannerController = {
             }
 
             // ---------------------------------
-            // AUTOMATICALLY MARK PRESENT
             // ---------------------------------
-
-            const marked =
-                await RtseExamAttendance.markPresent(
-                    attendance.application_id,
-                    req.session.user.id
-                );
-
-            if (!marked) {
-
-                return res.status(409).json({
-                    success: false,
+                // Successful verification only
+                // IMPORTANT:
+                // QR lookup MUST NOT mark PRESENT.
+                // Gate entry is confirmed separately
+                // through /super-scanner/mark-present.
+                // ---------------------------------
+                return res.json({
+                    success: true,
+                    alreadyPresent: false,
+                    autoMarked: false,
                     message:
-                        "Attendance could not be marked. Please scan again."
+                        "✓ Candidate verified successfully. Confirm gate entry.",
+                    student: {
+                        registration_no:
+                            attendance.registration_no,
+                        roll_no:
+                            attendance.roll_no,
+                        full_name:
+                            attendance.full_name,
+                        father_name:
+                            attendance.father_name,
+                        school_name:
+                            attendance.school_name,
+                        class:
+                            attendance.class,
+                        section:
+                            attendance.section,
+                        attendance_status:
+                            attendance.attendance_status || "ABSENT"
+                    }
                 });
-
-            }
-
-            // ---------------------------------
-            // Successful scan + attendance
-            // ---------------------------------
-
-            return res.json({
-
-                success: true,
-
-                alreadyPresent: false,
-
-                autoMarked: true,
-
-                message:
-                    "✓ Attendance marked PRESENT successfully.",
-
-                student: {
-
-                    registration_no:
-                        attendance.registration_no,
-
-                    roll_no:
-                        attendance.roll_no,
-
-                    full_name:
-                        attendance.full_name,
-
-                    father_name:
-                        attendance.father_name,
-
-                    school_name:
-                        attendance.school_name,
-
-                    class:
-                        attendance.class,
-
-                    section:
-                        attendance.section,
-
-                    attendance_status:
-                        "PRESENT"
-
-                }
-
-            });
-
-        } catch (error) {
+            } catch (error) {
 
             console.error(
                 "Super Scanner Lookup / Automatic Attendance Error:",

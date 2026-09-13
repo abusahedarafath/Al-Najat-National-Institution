@@ -572,7 +572,7 @@ body{
         class="mark-btn"
         onclick="markPresent()">
 
-        ✓ MARK PRESENT
+        Confirm Gate Entry
 
     </button>
 
@@ -598,6 +598,8 @@ body{
 
 let currentToken = null;
 let currentStudent = null;
+
+
 let scanner = null;
 let scannerRunning = false;
 
@@ -717,6 +719,97 @@ function startScanner(){
    SCAN TOKEN
 ===================================== */
 
+
+/* =====================================
+   SCANNER RESULT SOUNDS
+   ===================================== */
+
+let scannerAudioUnlocked = false;
+
+const successAudio = new Audio("/audio/super-scanner-success.mp3");
+const rejectionAudio = new Audio("/audio/super-scanner-rejection.mp3");
+
+successAudio.preload = "auto";
+rejectionAudio.preload = "auto";
+
+function unlockScannerAudio(){
+    if(scannerAudioUnlocked){
+        return;
+    }
+
+    try{
+        successAudio.muted = true;
+        rejectionAudio.muted = true;
+
+        const p1 = successAudio.play();
+        const p2 = rejectionAudio.play();
+
+        Promise.resolve(p1).catch(() => {});
+        Promise.resolve(p2).catch(() => {});
+
+        setTimeout(function(){
+            successAudio.pause();
+            rejectionAudio.pause();
+
+            successAudio.currentTime = 0;
+            rejectionAudio.currentTime = 0;
+
+            successAudio.muted = false;
+            rejectionAudio.muted = false;
+
+            scannerAudioUnlocked = true;
+        }, 50);
+
+    }catch(error){
+        console.warn("Scanner audio unlock unavailable:", error);
+    }
+}
+
+function playSuccessSound(){
+    try{
+        successAudio.pause();
+        successAudio.currentTime = 0;
+        successAudio.muted = false;
+
+        const playPromise = successAudio.play();
+
+        if(playPromise){
+            playPromise.catch(function(error){
+                console.warn("Success sound unavailable:", error);
+            });
+        }
+    }catch(error){
+        console.warn("Success sound unavailable:", error);
+    }
+}
+
+function playRejectionSound(){
+    try{
+        rejectionAudio.pause();
+        rejectionAudio.currentTime = 0;
+        rejectionAudio.muted = false;
+
+        const playPromise = rejectionAudio.play();
+
+        if(playPromise){
+            playPromise.catch(function(error){
+                console.warn("Rejection sound unavailable:", error);
+            });
+        }
+    }catch(error){
+        console.warn("Rejection sound unavailable:", error);
+    }
+}
+
+/*
+ * Browsers normally require user interaction before allowing
+ * audio playback. Unlock the scanner sounds on the first
+ * interaction with the page.
+ */
+document.addEventListener("click", unlockScannerAudio, { once:true });
+document.addEventListener("touchstart", unlockScannerAudio, { once:true });
+document.addEventListener("keydown", unlockScannerAudio, { once:true });
+
 async function handleScannedToken(token){
 
     token =
@@ -753,34 +846,33 @@ async function handleScannedToken(token){
 ===================================== */
 
 async function lookupToken(token){
-
     try{
-
         const response =
             await fetch(
                 "/super-scanner/lookup",
                 {
-
                     method:"POST",
-
                     headers:{
                         "Content-Type":
                             "application/json"
                     },
-
                     body:JSON.stringify({
                         qr_token:token
                     })
-
                 }
             );
 
         const data =
             await response.json();
 
+        /*
+         * Rejected / invalid QR:
+         * play the second sound and return to scanning.
+         */
         if(!response.ok || !data.success){
-
             currentToken = null;
+
+            playRejectionSound();
 
             showMessage(
                 data.message ||
@@ -789,40 +881,33 @@ async function lookupToken(token){
             );
 
             startScanner();
-
             return;
-
         }
 
         currentStudent =
             data.student;
 
-        // ---------------------------------
-        // Display scanned student
-        // ---------------------------------
+        /*
+         * Candidate successfully verified.
+         * IMPORTANT:
+         * Lookup does NOT mark attendance.
+         * Gate entry is confirmed separately by the
+         * Confirm Gate Entry button.
+         */
+        playSuccessSound();
 
         displayStudent(
             data.student,
             data.alreadyPresent
         );
 
-        // ---------------------------------
-        // Automatic attendance result
-        // ---------------------------------
-
-        if(data.autoMarked){
-
-            showMessage(
-                "✓ " +
-                data.student.full_name +
-                " (" +
-                data.student.roll_no +
-                ") — ATTENDANCE MARKED PRESENT",
-                "success"
-            );
-
-        }
-        else if(data.alreadyPresent){
+        /*
+         * If attendance was already recorded, this is not
+         * a new gate entry and the confirmation button stays
+         * disabled.
+         */
+        if(data.alreadyPresent){
+            playRejectionSound();
 
             showMessage(
                 "✓ " +
@@ -832,38 +917,26 @@ async function lookupToken(token){
                 ") — ALREADY PRESENT",
                 "info"
             );
-
+        }else{
+            showMessage(
+                "✓ " +
+                data.student.full_name +
+                " (" +
+                data.student.roll_no +
+                ") — VERIFIED. Confirm gate entry.",
+                "success"
+            );
         }
 
-        // ---------------------------------
-        // Automatically prepare for next scan
-        // ---------------------------------
-
-        setTimeout(function(){
-
-            currentToken = null;
-            currentStudent = null;
-
-            if(studentCard){
-
-                studentCard.style.display =
-                    "none";
-
-            }
-
-            startScanner();
-
-        }, 1800);
-
-    }
-    catch(error){
-
+    }catch(error){
         console.error(
-            "Automatic attendance error:",
+            "Super Scanner Lookup Error:",
             error
         );
 
         currentToken = null;
+
+        playRejectionSound();
 
         showMessage(
             "Unable to connect to the attendance server.",
@@ -871,11 +944,8 @@ async function lookupToken(token){
         );
 
         startScanner();
-
     }
-
 }
-
 
 /* =====================================
    DISPLAY STUDENT
@@ -961,7 +1031,7 @@ function displayStudent(student, alreadyPresent){
             false;
 
         markButton.textContent =
-            "✓ MARK PRESENT";
+            "Confirm Gate Entry";
 
     }
 
@@ -1018,6 +1088,12 @@ async function markPresent(){
         const data =
             await response.json();
 
+        /*
+         * Gate entry was explicitly confirmed.
+         * Play the successful confirmation sound.
+         */
+        playSuccessSound();
+
 
         if(!response.ok || !data.success){
 
@@ -1025,7 +1101,7 @@ async function markPresent(){
                 false;
 
             markButton.textContent =
-                "✓ MARK PRESENT";
+                "Confirm Gate Entry";
 
 
             showMessage(
@@ -1065,7 +1141,7 @@ async function markPresent(){
 
 
         markButton.textContent =
-            "✓ PRESENT";
+            "Gate Entry Confirmed";
 
     }catch(error){
 
@@ -1075,7 +1151,7 @@ async function markPresent(){
             false;
 
         markButton.textContent =
-            "✓ MARK PRESENT";
+            "Confirm Gate Entry";
 
 
         showMessage(
