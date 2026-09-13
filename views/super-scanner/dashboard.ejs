@@ -460,6 +460,14 @@ body{
     class="student-card">
 
     <div class="student-header">
+            <img
+                id="studentPhoto"
+                class="student-photo"
+                src=""
+                alt="Student Photo"
+                style="display:none; width:110px; height:135px; object-fit:cover; border-radius:10px; margin:0 auto 12px; border:2px solid rgba(255,255,255,.25);"
+            >
+
 
         <h2 id="studentName">
             Student
@@ -726,62 +734,105 @@ function startScanner(){
 
 let scannerAudioUnlocked = false;
 
-const successAudio = new Audio("/audio/super-scanner-success.mp3");
-const rejectionAudio = new Audio("/audio/super-scanner-rejection.mp3");
+const scanSuccessAudio =
+        new Audio("/audio/super-scanner-success.mp3");
 
-successAudio.preload = "auto";
-rejectionAudio.preload = "auto";
+    const confirmSuccessAudio =
+        new Audio("/audio/super-scanner-confirm-success.mp3");
+
+    const rejectionAudio =
+        new Audio("/audio/super-scanner-rejection.mp3");
+
+    scanSuccessAudio.preload = "auto";
+    confirmSuccessAudio.preload = "auto";
+    rejectionAudio.preload = "auto";
 
 function unlockScannerAudio(){
-    if(scannerAudioUnlocked){
-        return;
-    }
+        if(scannerAudioUnlocked){
+            return;
+        }
 
-    try{
-        successAudio.muted = true;
-        rejectionAudio.muted = true;
+        try{
+            [
+                scanSuccessAudio,
+                confirmSuccessAudio,
+                rejectionAudio
+            ].forEach(function(audio){
 
-        const p1 = successAudio.play();
-        const p2 = rejectionAudio.play();
+                audio.muted = true;
 
-        Promise.resolve(p1).catch(() => {});
-        Promise.resolve(p2).catch(() => {});
+                const promise = audio.play();
 
-        setTimeout(function(){
-            successAudio.pause();
-            rejectionAudio.pause();
+                if(promise){
+                    Promise.resolve(promise).catch(() => {});
+                }
 
-            successAudio.currentTime = 0;
-            rejectionAudio.currentTime = 0;
-
-            successAudio.muted = false;
-            rejectionAudio.muted = false;
+                audio.pause();
+                audio.currentTime = 0;
+                audio.muted = false;
+            });
 
             scannerAudioUnlocked = true;
-        }, 50);
 
-    }catch(error){
-        console.warn("Scanner audio unlock unavailable:", error);
-    }
-}
-
-function playSuccessSound(){
-    try{
-        successAudio.pause();
-        successAudio.currentTime = 0;
-        successAudio.muted = false;
-
-        const playPromise = successAudio.play();
-
-        if(playPromise){
-            playPromise.catch(function(error){
-                console.warn("Success sound unavailable:", error);
-            });
+        }catch(error){
+            console.warn(
+                "Scanner audio unlock unavailable:",
+                error
+            );
         }
-    }catch(error){
-        console.warn("Success sound unavailable:", error);
     }
-}
+
+function playScanSuccessSound(){
+        try{
+            scanSuccessAudio.pause();
+            scanSuccessAudio.currentTime = 0;
+            scanSuccessAudio.muted = false;
+
+            const playPromise =
+                scanSuccessAudio.play();
+
+            if(playPromise){
+                playPromise.catch(function(error){
+                    console.warn(
+                        "Scan success sound unavailable:",
+                        error
+                    );
+                });
+            }
+
+        }catch(error){
+            console.warn(
+                "Scan success sound unavailable:",
+                error
+            );
+        }
+    }
+
+function playConfirmSuccessSound(){
+        try{
+            confirmSuccessAudio.pause();
+            confirmSuccessAudio.currentTime = 0;
+            confirmSuccessAudio.muted = false;
+
+            const playPromise =
+                confirmSuccessAudio.play();
+
+            if(playPromise){
+                playPromise.catch(function(error){
+                    console.warn(
+                        "Confirm success sound unavailable:",
+                        error
+                    );
+                });
+            }
+
+        }catch(error){
+            console.warn(
+                "Confirm success sound unavailable:",
+                error
+            );
+        }
+    }
 
 function playRejectionSound(){
     try{
@@ -867,7 +918,9 @@ async function lookupToken(token){
 
         /*
          * Rejected / invalid QR:
-         * play the second sound and return to scanning.
+         * play the rejection sound and keep the result visible.
+         * The operator can use "Scan Another Candidate" to
+         * restart the scanner.
          */
         if(!response.ok || !data.success){
             currentToken = null;
@@ -880,8 +933,7 @@ async function lookupToken(token){
                 "error"
             );
 
-            startScanner();
-            return;
+                return;
         }
 
         currentStudent =
@@ -894,7 +946,7 @@ async function lookupToken(token){
          * Gate entry is confirmed separately by the
          * Confirm Gate Entry button.
          */
-        playSuccessSound();
+
 
         displayStudent(
             data.student,
@@ -918,7 +970,9 @@ async function lookupToken(token){
                 "info"
             );
         }else{
-            showMessage(
+                        playScanSuccessSound();
+
+showMessage(
                 "✓ " +
                 data.student.full_name +
                 " (" +
@@ -943,7 +997,6 @@ async function lookupToken(token){
             "error"
         );
 
-        startScanner();
     }
 }
 
@@ -952,6 +1005,21 @@ async function lookupToken(token){
 ===================================== */
 
 function displayStudent(student, alreadyPresent){
+
+    const photo =
+        document.getElementById("studentPhoto");
+
+    if(student.photo){
+        photo.src =
+            "/uploads/rtse/" +
+            encodeURIComponent(student.photo);
+        photo.style.display =
+            "block";
+    }else{
+        photo.removeAttribute("src");
+        photo.style.display =
+            "none";
+    }
 
     studentCard.style.display =
         "block";
@@ -1089,10 +1157,11 @@ async function markPresent(){
             await response.json();
 
         /*
-         * Gate entry was explicitly confirmed.
-         * Play the successful confirmation sound.
+         * Gate entry confirmation request received.
+         * The success sound is played only after the server
+         * confirms that attendance was marked successfully.
          */
-        playSuccessSound();
+
 
 
         if(!response.ok || !data.success){
@@ -1115,7 +1184,13 @@ async function markPresent(){
         }
 
 
-        showMessage(
+                /*
+         * Server confirmed the gate entry successfully.
+         * Play the dedicated confirmation sound only now.
+         */
+        playConfirmSuccessSound();
+
+showMessage(
             data.message ||
             "Attendance marked PRESENT successfully.",
             "success"
@@ -1248,6 +1323,15 @@ async function resetScanner(){
     currentStudent =
         null;
 
+
+    const photo =
+        document.getElementById("studentPhoto");
+
+    if(photo){
+        photo.removeAttribute("src");
+        photo.style.display =
+            "none";
+    }
 
     studentCard.style.display =
         "none";

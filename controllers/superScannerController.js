@@ -138,7 +138,8 @@ const superScannerController = {
                             "PRESENT",
 
                         scanned_at:
-                            attendance.scanned_at
+                            attendance.scanned_at,
+                        photo: attendance.photo
 
                     }
 
@@ -176,7 +177,8 @@ const superScannerController = {
                         section:
                             attendance.section,
                         attendance_status:
-                            attendance.attendance_status || "ABSENT"
+                            attendance.attendance_status || "ABSENT",
+                        photo: attendance.photo
                     }
                 });
             } catch (error) {
