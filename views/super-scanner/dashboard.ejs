@@ -201,11 +201,83 @@ body{
 
 .student-card{
     display:none;
-    margin-top:18px;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    margin:0;
+    padding:20px;
+    background:rgba(0,0,0,.58);
+    align-items:center;
+    justify-content:center;
+    overflow-y:auto;
+}
+
+.student-popup{
+    width:min(560px, 100%);
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
     background:#fff;
     border-radius:16px;
-    padding:18px;
-    box-shadow:0 4px 18px rgba(0,0,0,.08);
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.student-popup > .student-header{
+    border-radius:16px 16px 0 0;
+    padding:22px 20px 14px;
+}
+
+.student-popup > .student-details{
+    padding:0 20px 14px;
+}
+
+.student-popup > .attendance-status{
+    padding:0 20px 14px;
+    margin:0;
+}
+
+.student-popup > .mark-btn{
+    margin:0;
+    border-radius:0;
+    padding:15px 20px;
+}
+
+.student-popup > .scan-again{
+    margin:0;
+    border-radius:0 0 16px 16px;
+    padding:12px 20px;
+}
+
+.popup-icon{
+    width:64px;
+    height:64px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:36px;
+    font-weight:900;
+}
+
+.popup-icon.success{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.popup-icon.rejection{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.popup-message{
+    margin:14px 0 0;
+    font-size:15px;
+    line-height:1.5;
+    font-weight:700;
+}
+
+.popup-message.rejection{
+    color:#b91c1c;
 }
 
 .student-header{
@@ -459,7 +531,15 @@ body{
     id="studentCard"
     class="student-card">
 
+    <div class="student-popup">
+
     <div class="student-header">
+
+        <div
+            id="popupIcon"
+            class="popup-icon"
+            style="display:none;"
+        ></div>
             <img
                 id="studentPhoto"
                 class="student-photo"
@@ -473,9 +553,15 @@ body{
             Student
         </h2>
 
-        <p>
+        <p id="popupSubtitle">
             RTSE Examination Candidate
         </p>
+
+        <div
+            id="popupMessage"
+            class="popup-message"
+            style="display:none;"
+        ></div>
 
     </div>
 
@@ -586,15 +672,19 @@ body{
 
 
     <button
+        id="popupCloseButton"
         type="button"
         class="scan-again"
-        onclick="resetScanner()">
+        onclick="closeStudentPopup()"
+        style="display:none;">
 
-        Scan Another Candidate
+        Close
 
     </button>
 
-</section>
+
+
+    </div></section>
 
 
 </main>
@@ -867,28 +957,31 @@ async function handleScannedToken(token){
         String(token || "").trim();
 
     if(!token){
-
         return;
-
     }
 
+    /*
+     * Ignore additional camera detections while the current
+     * candidate popup is open or being verified.
+     */
     if(currentToken){
-
         return;
-
     }
 
-    currentToken = token;
+    currentToken =
+        token;
 
     showMessage(
         "Verifying RTSE candidate...",
         "info"
     );
 
-    await stopScanner();
-
+    /*
+     * IMPORTANT:
+     * Do NOT stop the scanner here.
+     * The camera remains active underneath the popup.
+     */
     await lookupToken(token);
-
 }
 
 
@@ -897,16 +990,20 @@ async function handleScannedToken(token){
 ===================================== */
 
 async function lookupToken(token){
+
     try{
+
         const response =
             await fetch(
                 "/super-scanner/lookup",
                 {
                     method:"POST",
+
                     headers:{
                         "Content-Type":
                             "application/json"
                     },
+
                     body:JSON.stringify({
                         qr_token:token
                     })
@@ -916,63 +1013,72 @@ async function lookupToken(token){
         const data =
             await response.json();
 
-        /*
-         * Rejected / invalid QR:
-         * play the rejection sound and keep the result visible.
-         * The operator can use "Scan Another Candidate" to
-         * restart the scanner.
-         */
         if(!response.ok || !data.success){
-            currentToken = null;
 
             playRejectionSound();
 
-            showMessage(
+            showRejectionPopup(
                 data.message ||
-                "Unable to verify QR code.",
-                "error"
+                "Unable to verify QR code."
             );
 
-                return;
+            return;
         }
 
         currentStudent =
             data.student;
-
-        /*
-         * Candidate successfully verified.
-         * IMPORTANT:
-         * Lookup does NOT mark attendance.
-         * Gate entry is confirmed separately by the
-         * Confirm Gate Entry button.
-         */
-
 
         displayStudent(
             data.student,
             data.alreadyPresent
         );
 
-        /*
-         * If attendance was already recorded, this is not
-         * a new gate entry and the confirmation button stays
-         * disabled.
-         */
         if(data.alreadyPresent){
+
             playRejectionSound();
 
-            showMessage(
-                "✓ " +
+            const popupMessage =
+                document.getElementById("popupMessage");
+
+            const closeButton =
+                document.getElementById("popupCloseButton");
+
+            popupMessage.textContent =
                 data.student.full_name +
                 " (" +
                 data.student.roll_no +
-                ") — ALREADY PRESENT",
+                ") — ALREADY PRESENT";
+
+            popupMessage.className =
+                "popup-message rejection";
+
+            popupMessage.style.display =
+                "block";
+
+            closeButton.style.display =
+                "block";
+
+            closeButton.textContent =
+                "Close";
+
+            markButton.style.display =
+                "none";
+
+            showPopupIcon(
+                "rejection",
+                "❌"
+            );
+
+            showMessage(
+                "Candidate already has a recorded gate entry.",
                 "info"
             );
-        }else{
-                        playScanSuccessSound();
 
-showMessage(
+        }else{
+
+            playScanSuccessSound();
+
+            showMessage(
                 "✓ " +
                 data.student.full_name +
                 " (" +
@@ -983,20 +1089,17 @@ showMessage(
         }
 
     }catch(error){
+
         console.error(
             "Super Scanner Lookup Error:",
             error
         );
 
-        currentToken = null;
-
         playRejectionSound();
 
-        showMessage(
-            "Unable to connect to the attendance server.",
-            "error"
+        showRejectionPopup(
+            "Unable to connect to the attendance server."
         );
-
     }
 }
 
@@ -1004,74 +1107,265 @@ showMessage(
    DISPLAY STUDENT
 ===================================== */
 
+function showPopupIcon(type, symbol){
+
+    const icon =
+        document.getElementById("popupIcon");
+
+    icon.className =
+        "popup-icon " + type;
+
+    icon.textContent =
+        symbol;
+
+    icon.style.display =
+        "flex";
+}
+
+
+function showRejectionPopup(message){
+
+    const photo =
+        document.getElementById("studentPhoto");
+
+    const details =
+        document.querySelector(".student-details");
+
+    const status =
+        document.getElementById("attendanceStatus");
+
+    const popupMessage =
+        document.getElementById("popupMessage");
+
+    const closeButton =
+        document.getElementById("popupCloseButton");
+
+    const subtitle =
+        document.getElementById("popupSubtitle");
+
+    if(photo){
+        photo.removeAttribute("src");
+        photo.style.display =
+            "none";
+    }
+
+    details.style.display =
+        "none";
+
+    status.style.display =
+        "none";
+
+    markButton.style.display =
+        "none";
+
+    document.getElementById("studentName").textContent =
+        "Verification Rejected";
+
+    subtitle.textContent =
+        "RTSE Candidate Verification";
+
+    popupMessage.textContent =
+        message;
+
+    popupMessage.className =
+        "popup-message rejection";
+
+    popupMessage.style.display =
+        "block";
+
+    closeButton.style.display =
+        "block";
+
+    closeButton.textContent =
+        "Close";
+
+    showPopupIcon(
+        "rejection",
+        "❌"
+    );
+
+    studentCard.style.display =
+        "flex";
+}
+
+
+function closeStudentPopup(){
+
+    currentToken =
+        null;
+
+    currentStudent =
+        null;
+
+    const photo =
+        document.getElementById("studentPhoto");
+
+    const details =
+        document.querySelector(".student-details");
+
+    const status =
+        document.getElementById("attendanceStatus");
+
+    const popupMessage =
+        document.getElementById("popupMessage");
+
+    const closeButton =
+        document.getElementById("popupCloseButton");
+
+    const icon =
+        document.getElementById("popupIcon");
+
+    const subtitle =
+        document.getElementById("popupSubtitle");
+
+    if(photo){
+        photo.removeAttribute("src");
+        photo.style.display =
+            "none";
+    }
+
+    details.style.display =
+        "";
+
+    status.style.display =
+        "";
+
+    markButton.style.display =
+        "";
+
+    markButton.disabled =
+        false;
+
+    markButton.textContent =
+        "Confirm Gate Entry";
+
+    popupMessage.textContent =
+        "";
+
+    popupMessage.style.display =
+        "none";
+
+    popupMessage.className =
+        "popup-message";
+
+    closeButton.style.display =
+        "none";
+
+    icon.style.display =
+        "none";
+
+    subtitle.textContent =
+        "RTSE Examination Candidate";
+
+    studentCard.style.display =
+        "none";
+
+    showMessage(
+        "Ready to scan another candidate.",
+        "info"
+    );
+}
+
+
 function displayStudent(student, alreadyPresent){
 
     const photo =
         document.getElementById("studentPhoto");
 
     if(student.photo){
+
         photo.src =
             "/uploads/rtse/" +
             encodeURIComponent(student.photo);
+
         photo.style.display =
             "block";
+
     }else{
+
         photo.removeAttribute("src");
+
         photo.style.display =
             "none";
     }
-
-    studentCard.style.display =
-        "block";
-
 
     document.getElementById(
         "studentName"
     ).textContent =
         student.full_name || "-";
 
-
     document.getElementById(
         "registrationNo"
     ).textContent =
         student.registration_no || "-";
-
 
     document.getElementById(
         "rollNo"
     ).textContent =
         student.roll_no || "-";
 
-
     document.getElementById(
         "fatherName"
     ).textContent =
         student.father_name || "-";
-
 
     document.getElementById(
         "schoolName"
     ).textContent =
         student.school_name || "-";
 
-
     document.getElementById(
         "studentClass"
     ).textContent =
         student.class || "-";
-
 
     document.getElementById(
         "section"
     ).textContent =
         student.section || "-";
 
-
     const status =
         document.getElementById(
             "attendanceStatus"
         );
 
+    const popupMessage =
+        document.getElementById(
+            "popupMessage"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "popupCloseButton"
+        );
+
+    const subtitle =
+        document.getElementById(
+            "popupSubtitle"
+        );
+
+    status.style.display =
+        "";
+
+    markButton.style.display =
+        "";
+
+    popupMessage.style.display =
+        "none";
+
+    popupMessage.textContent =
+        "";
+
+    closeButton.style.display =
+        "none";
+
+    subtitle.textContent =
+        "RTSE Examination Candidate";
+
+    showPopupIcon(
+        alreadyPresent ? "rejection" : "success",
+        alreadyPresent ? "❌" : "✓"
+    );
 
     if(alreadyPresent){
 
@@ -1100,9 +1394,10 @@ function displayStudent(student, alreadyPresent){
 
         markButton.textContent =
             "Confirm Gate Entry";
-
     }
 
+    studentCard.style.display =
+        "flex";
 }
 
 
@@ -1218,6 +1513,13 @@ showMessage(
         markButton.textContent =
             "Gate Entry Confirmed";
 
+        /*
+         * Server has confirmed the gate entry.
+         * Close the popup immediately. The scanner has
+         * remained active underneath it.
+         */
+        closeStudentPopup();
+
     }catch(error){
 
         console.error(error);
@@ -1271,9 +1573,6 @@ function lookupManualToken(){
         token;
 
 
-    stopScanner();
-
-
     lookupToken(token);
 
 }
@@ -1317,41 +1616,7 @@ async function stopScanner(){
 
 async function resetScanner(){
 
-    currentToken =
-        null;
-
-    currentStudent =
-        null;
-
-
-    const photo =
-        document.getElementById("studentPhoto");
-
-    if(photo){
-        photo.removeAttribute("src");
-        photo.style.display =
-            "none";
-    }
-
-    studentCard.style.display =
-        "none";
-
-
-    document.getElementById(
-        "manualToken"
-    ).value =
-        "";
-
-
-    showMessage(
-        "Ready to scan another candidate.",
-        "info"
-    );
-
-
-    await stopScanner();
-
-    startScanner();
+    closeStudentPopup();
 
 }
 
