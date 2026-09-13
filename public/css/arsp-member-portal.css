@@ -1,0 +1,3104 @@
+
+/* =========================================================
+   ARSP MEMBER PORTAL
+   Unified Member Dashboard / Profile / Documents / Activity
+   / Change Password
+   ========================================================= */
+
+:root {
+    --arsp-green-950: #08261c;
+    --arsp-green-900: #0d3829;
+    --arsp-green-800: #12543d;
+    --arsp-green-700: #176b4d;
+    --arsp-green-600: #21845f;
+    --arsp-green-500: #2fa875;
+
+    --arsp-gold-500: #d5a928;
+    --arsp-gold-400: #e6c45a;
+
+    --arsp-bg: #f4f7f5;
+    --arsp-surface: #ffffff;
+    --arsp-surface-soft: #f8faf9;
+    --arsp-border: #e3eae6;
+
+    --arsp-text: #14221c;
+    --arsp-text-soft: #607069;
+    --arsp-text-muted: #84918b;
+
+    --arsp-danger: #c84646;
+    --arsp-success: #21845f;
+
+    --arsp-sidebar-width: 274px;
+    --arsp-header-height: 78px;
+
+    --arsp-radius-sm: 10px;
+    --arsp-radius-md: 16px;
+    --arsp-radius-lg: 22px;
+
+    --arsp-shadow-sm: 0 3px 12px rgba(12, 48, 34, .06);
+    --arsp-shadow-md: 0 10px 32px rgba(12, 48, 34, .09);
+}
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+body.arsp-member-dashboard {
+    margin: 0;
+    background: var(--arsp-bg);
+    color: var(--arsp-text);
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+body.arsp-member-dashboard *,
+body.arsp-member-dashboard *::before,
+body.arsp-member-dashboard *::after {
+    box-sizing: border-box;
+}
+
+body.arsp-member-dashboard a {
+    color: inherit;
+}
+
+body.arsp-md-menu-open {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   PORTAL SHELL
+   ========================================================= */
+
+.arsp-md-shell {
+    min-height: 100vh;
+    display: flex;
+    width: 100%;
+}
+
+.arsp-md-main {
+    min-width: 0;
+    width: calc(100% - var(--arsp-sidebar-width));
+    margin-left: var(--arsp-sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left .25s ease, width .25s ease;
+}
+
+.arsp-md-content {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 34px 46px;
+    flex: 1;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.arsp-md-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1000;
+    width: var(--arsp-sidebar-width);
+    height: 100vh;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--arsp-green-950) 0%,
+            var(--arsp-green-900) 58%,
+            #0a3024 100%
+        );
+
+    color: #fff;
+    box-shadow: 8px 0 30px rgba(4, 28, 19, .12);
+    transition: transform .25s ease, width .25s ease;
+}
+
+.arsp-md-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.arsp-md-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.18);
+    border-radius: 99px;
+}
+
+
+/* Brand */
+
+.arsp-md-brand {
+    min-height: 104px;
+    padding: 20px 18px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.arsp-md-brand-logo {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 13px;
+    padding: 5px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.arsp-md-brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.arsp-md-brand-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.arsp-md-brand-text strong {
+    font-size: 12px;
+    letter-spacing: .08em;
+}
+
+.arsp-md-brand-text span {
+    margin-top: 7px;
+    font-size: 10px;
+    color: rgba(255,255,255,.58);
+    letter-spacing: .04em;
+}
+
+
+/* Navigation */
+
+.arsp-md-side-nav {
+    padding: 17px 12px;
+    flex: 1;
+}
+
+.arsp-md-nav-section {
+    margin: 18px 10px 7px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .13em;
+    color: rgba(255,255,255,.40);
+}
+
+.arsp-md-nav-item {
+    min-height: 44px;
+    margin: 3px 0;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border-radius: 11px;
+    text-decoration: none;
+    color: rgba(255,255,255,.70);
+    font-size: 13px;
+    font-weight: 600;
+    transition:
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+.arsp-md-nav-item:hover {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    transform: translateX(2px);
+}
+
+.arsp-md-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(47,168,117,.28),
+        rgba(47,168,117,.10)
+    );
+    color: #fff;
+    box-shadow: inset 3px 0 0 var(--arsp-gold-400);
+}
+
+.arsp-md-nav-icon {
+    width: 24px;
+    text-align: center;
+    flex: 0 0 24px;
+    color: rgba(255,255,255,.56);
+}
+
+.arsp-md-nav-item.active .arsp-md-nav-icon,
+.arsp-md-nav-item:hover .arsp-md-nav-icon {
+    color: var(--arsp-gold-400);
+}
+
+.arsp-md-logout {
+    margin-top: 8px;
+    color: #ffb1b1;
+}
+
+.arsp-md-logout:hover {
+    color: #fff;
+    background: rgba(200,70,70,.15);
+}
+
+.arsp-md-sidebar-bottom {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.arsp-md-sidebar-copy {
+    font-size: 9px;
+    line-height: 1.7;
+    color: rgba(255,255,255,.38);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.arsp-md-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    min-height: var(--arsp-header-height);
+
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    background: rgba(255,255,255,.96);
+    border-bottom: 1px solid var(--arsp-border);
+    backdrop-filter: blur(12px);
+}
+
+.arsp-md-header-left,
+.arsp-md-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.arsp-md-header-left {
+    gap: 14px;
+}
+
+.arsp-md-header-right {
+    gap: 18px;
+}
+
+.arsp-md-menu-toggle {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--arsp-border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--arsp-green-800);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+
+.arsp-md-header-title h1 {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.arsp-md-header-title p {
+    margin: 4px 0 0;
+    color: var(--arsp-text-soft);
+    font-size: 10px;
+}
+
+.arsp-md-header-title p span {
+    margin: 0 5px;
+    color: var(--arsp-gold-500);
+}
+
+.arsp-md-notification {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--arsp-text-soft);
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.arsp-md-notification-badge {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    display: grid;
+    place-items: center;
+    border-radius: 99px;
+    background: var(--arsp-gold-500);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.arsp-md-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.arsp-md-user-photo {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.arsp-md-user-photo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px var(--arsp-border);
+}
+
+.arsp-md-user-photo > span {
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #35b879;
+    border: 2px solid #fff;
+}
+
+.arsp-md-user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.arsp-md-user-details strong {
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.arsp-md-user-details small {
+    margin-top: 2px;
+    color: var(--arsp-text-muted);
+    font-size: 9px;
+}
+
+.arsp-md-user-chevron {
+    color: var(--arsp-text-muted);
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   GENERIC PANELS
+   ========================================================= */
+
+.arsp-md-panel,
+.arsp-md-welcome-card,
+.arsp-md-date-card,
+.arsp-md-help-card,
+.arsp-md-student-card,
+.notice-card,
+.arsp-document-card,
+.form-card {
+    background: var(--arsp-surface);
+    border: 1px solid var(--arsp-border);
+    border-radius: var(--arsp-radius-md);
+    box-shadow: var(--arsp-shadow-sm);
+}
+
+.arsp-md-panel {
+    padding: 22px;
+}
+
+.arsp-md-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.arsp-md-section-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.arsp-md-small-icon {
+    color: var(--arsp-green-600);
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.arsp-md-top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 20px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.arsp-md-welcome-card {
+    position: relative;
+    min-height: 310px;
+    overflow: hidden;
+    padding: 27px;
+    background:
+        linear-gradient(135deg, #fff 0%, #f5faf7 100%);
+}
+
+.arsp-md-welcome-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+}
+
+.arsp-md-welcome-designation {
+    margin-bottom: 14px;
+}
+
+.arsp-md-welcome-designation-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--arsp-text-muted);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.arsp-md-eyebrow,
+.arsp-md-documents-eyebrow {
+    color: var(--arsp-green-600);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.arsp-md-member-number {
+    color: var(--arsp-text-soft);
+    font-size: 11px;
+}
+
+.arsp-md-active-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-radius: 99px;
+    background: #e7f6ef;
+    color: var(--arsp-success);
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.arsp-md-welcome-photo {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 15px;
+}
+
+.arsp-md-welcome-photo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    object-fit: cover;
+    box-shadow: var(--arsp-shadow-md);
+}
+
+.arsp-md-online {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #35b879;
+    border: 3px solid #fff;
+}
+
+.arsp-md-welcome-copy h2 {
+    margin: 4px 0 7px;
+    font-size: clamp(24px, 3vw, 34px);
+    line-height: 1.1;
+    font-weight: 850;
+}
+
+.arsp-md-welcome-copy p {
+    max-width: 580px;
+    margin: 0;
+    color: var(--arsp-text-soft);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.arsp-md-welcome-search {
+    position: relative;
+    z-index: 3;
+    margin-top: 22px;
+    max-width: 600px;
+}
+
+.arsp-md-welcome-search-label,
+.arsp-md-verification-label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--arsp-text-soft);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.arsp-md-search-row {
+    display: flex;
+    gap: 8px;
+}
+
+.arsp-md-search-input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.arsp-md-search-input-wrap input,
+.arsp-md-mobile-row input,
+.arsp-md-welcome-search input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 13px;
+    border: 1px solid var(--arsp-border);
+    border-radius: 10px;
+    outline: none;
+    background: #fff;
+    color: var(--arsp-text);
+    font-size: 12px;
+    transition: border-color .18s, box-shadow .18s;
+}
+
+.arsp-md-search-input-wrap input:focus,
+.arsp-md-mobile-row input:focus {
+    border-color: var(--arsp-green-500);
+    box-shadow: 0 0 0 3px rgba(47,168,117,.10);
+}
+
+.arsp-md-search-status,
+.arsp-md-download-status {
+    margin-top: 6px;
+    font-size: 10px;
+}
+
+.arsp-md-student-result {
+    margin-top: 12px;
+}
+
+.arsp-md-mobile-verification {
+    margin-top: 12px;
+    padding: 13px;
+    border: 1px solid var(--arsp-border);
+    border-radius: 12px;
+    background: var(--arsp-surface-soft);
+}
+
+.arsp-md-mobile-row {
+    display: flex;
+    gap: 8px;
+}
+
+.arsp-md-mobile-row input {
+    flex: 1;
+}
+
+.arsp-md-download-status {
+    color: var(--arsp-text-soft);
+}
+
+.arsp-md-welcome-art {
+    position: absolute;
+    right: -40px;
+    bottom: -50px;
+    width: 300px;
+    height: 220px;
+    opacity: .08;
+    pointer-events: none;
+}
+
+.arsp-md-building-glow {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    right: 30px;
+    bottom: -120px;
+    border-radius: 50%;
+    background: var(--arsp-green-500);
+    filter: blur(50px);
+}
+
+.arsp-md-welcome-quote {
+    margin-top: 14px;
+    color: var(--arsp-text-muted);
+    font-size: 10px;
+    font-style: italic;
+}
+
+.arsp-md-date-card {
+    padding: 22px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.arsp-md-date-icon {
+    width: 45px;
+    height: 45px;
+    flex: 0 0 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: #eaf7f0;
+    color: var(--arsp-green-600);
+}
+
+.arsp-md-date-copy strong {
+    display: block;
+    font-size: 15px;
+}
+
+.arsp-md-date-copy span {
+    display: block;
+    margin-top: 4px;
+    color: var(--arsp-text-soft);
+    font-size: 10px;
+}
+
+
+/* Dashboard grids */
+
+.arsp-md-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 20px;
+}
+
+.arsp-md-primary-column,
+.arsp-md-secondary-column {
+    min-width: 0;
+}
+
+.arsp-md-lower-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+
+/* Notices */
+
+.arsp-md-notices-panel,
+.arsp-md-activity-panel,
+.arsp-md-member-info,
+.arsp-md-help-card,
+.arsp-md-quick-panel {
+    padding: 20px;
+}
+
+.arsp-md-list,
+.arsp-md-activity-list,
+.arsp-md-quick-list,
+.arsp-md-member-info-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.arsp-md-notice-item {
+    display: flex;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--arsp-border);
+}
+
+.arsp-md-notice-item:last-child {
+    border-bottom: 0;
+}
+
+.arsp-md-notice-marker {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--arsp-gold-500);
+}
+
+.arsp-md-list-copy {
+    min-width: 0;
+}
+
+.arsp-md-list-copy strong {
+    display: block;
+    font-size: 11px;
+}
+
+.arsp-md-list-copy span,
+.arsp-md-empty {
+    color: var(--arsp-text-muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.arsp-md-empty {
+    padding: 20px 0;
+    text-align: center;
+}
+
+
+/* Activity */
+
+.arsp-md-activity-item {
+    display: flex;
+    gap: 11px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--arsp-border);
+}
+
+.arsp-md-activity-item:last-child {
+    border-bottom: 0;
+}
+
+.arsp-md-activity-icon {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: #edf7f2;
+    color: var(--arsp-green-600);
+    font-size: 11px;
+}
+
+
+/* Member information */
+
+.arsp-md-info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--arsp-border);
+}
+
+.arsp-md-info-row:last-child {
+    border-bottom: 0;
+}
+
+.arsp-md-info-row span {
+    color: var(--arsp-text-muted);
+    font-size: 10px;
+}
+
+.arsp-md-info-row strong {
+    font-size: 10px;
+    text-align: right;
+}
+
+.arsp-md-status {
+    display: inline-flex;
+    padding: 4px 8px;
+    border-radius: 99px;
+    background: #e7f6ef;
+    color: var(--arsp-success);
+    font-size: 9px;
+    font-weight: 800;
+}
+
+
+/* Help / support */
+
+.arsp-md-help-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #103e2d, #176b4d);
+    color: #fff;
+    border-color: transparent;
+}
+
+.arsp-md-help-icon {
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,.12);
+}
+
+.arsp-md-help-card h3 {
+    margin: 0 0 4px;
+    font-size: 13px;
+}
+
+.arsp-md-help-card p {
+    margin: 0;
+    color: rgba(255,255,255,.68);
+    font-size: 9px;
+}
+
+.arsp-md-support-button {
+    margin-left: auto;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--arsp-green-800);
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+
+/* Quick links */
+
+.arsp-md-quick-list {
+    display: grid;
+    gap: 7px;
+}
+
+.arsp-md-quick-list a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px;
+    border-radius: 9px;
+    background: var(--arsp-surface-soft);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.arsp-md-quick-list a:hover {
+    background: #edf7f2;
+    color: var(--arsp-green-700);
+}
+
+
+/* Student card */
+
+.arsp-md-student-card {
+    margin-top: 14px;
+    padding: 17px;
+}
+
+.arsp-md-student-card-title {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.arsp-md-student-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+
+/* =========================================================
+   DOCUMENTS
+   ========================================================= */
+
+.arsp-member-documents-page {
+    padding-top: 35px;
+}
+
+.arsp-documents-heading {
+    margin-bottom: 25px;
+}
+
+.arsp-documents-heading h1 {
+    margin: 5px 0 7px;
+    font-size: clamp(25px, 4vw, 36px);
+    font-weight: 850;
+}
+
+.arsp-documents-heading p {
+    margin: 0;
+    max-width: 680px;
+    color: var(--arsp-text-soft);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.arsp-documents-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 15px;
+    color: var(--arsp-green-700);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.arsp-documents-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.arsp-document-card {
+    padding: 20px;
+    display: flex;
+    gap: 13px;
+}
+
+.arsp-document-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #edf7f2;
+    color: var(--arsp-green-700);
+}
+
+.arsp-document-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.arsp-document-type {
+    color: var(--arsp-text-muted);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.arsp-document-content h3 {
+    margin: 4px 0 5px;
+    font-size: 13px;
+}
+
+.arsp-document-content p {
+    margin: 0 0 13px;
+    color: var(--arsp-text-soft);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.arsp-document-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 11px;
+    border-radius: 8px;
+    background: var(--arsp-green-700);
+    color: #fff;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 750;
+}
+
+.arsp-document-button:hover {
+    background: var(--arsp-green-800);
+}
+
+.arsp-documents-note {
+    margin-top: 18px;
+    padding: 13px 15px;
+    border: 1px solid #e8dfbd;
+    border-radius: 10px;
+    background: #fffaf0;
+    color: #75642c;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   PROFILE / ACTIVITY / CHANGE PASSWORD
+   ========================================================= */
+
+.arsp-member-page {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.arsp-member-page-edit-profile,
+.arsp-member-page-activity,
+.arsp-member-page-change-password {
+    padding-top: 15px;
+}
+
+.arsp-member-page h1 {
+    margin: 0 0 7px;
+    font-size: 25px;
+    font-weight: 850;
+}
+
+.arsp-member-page > p {
+    color: var(--arsp-text-soft);
+    font-size: 11px;
+}
+
+.form-card {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--arsp-text);
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid var(--arsp-border);
+    border-radius: 9px;
+    outline: none;
+    background: #fff;
+    color: var(--arsp-text);
+    font: inherit;
+    font-size: 11px;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--arsp-green-500);
+    box-shadow: 0 0 0 3px rgba(47,168,117,.10);
+}
+
+.btn,
+.profile-btn {
+    min-height: 40px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--arsp-green-700);
+    color: #fff;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.btn:hover,
+.profile-btn:hover {
+    background: var(--arsp-green-800);
+}
+
+.notice-section {
+    margin-bottom: 18px;
+}
+
+.notice-card {
+    padding: 17px;
+    margin-bottom: 10px;
+}
+
+.notice-card h3,
+.notice-card h4 {
+    margin-top: 0;
+}
+
+
+/* =========================================================
+   ACTIVE / STATUS / SEARCH STATES
+   ========================================================= */
+
+.arsp-md-error {
+    color: var(--arsp-danger);
+}
+
+.arsp-md-searching {
+    color: var(--arsp-text-muted);
+}
+
+.arsp-md-success {
+    color: var(--arsp-success);
+}
+
+.arsp-md-scroll-link {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   MOBILE MODALS
+   ========================================================= */
+
+.arsp-admit-mobile-modal {
+    z-index: 3000;
+}
+
+.arsp-partial-select-student,
+.arsp-full-select-student {
+    width: 100%;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.arsp-md-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: none;
+    background: rgba(3, 21, 14, .48);
+    backdrop-filter: blur(2px);
+}
+
+.arsp-md-overlay.show {
+    display: block;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.arsp-md-footer {
+    margin-top: auto;
+    background: #0a2d21;
+    color: rgba(255,255,255,.72);
+}
+
+.arsp-md-footer-main {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 38px 34px 30px;
+    display: grid;
+    grid-template-columns: minmax(240px, 1.5fr) repeat(3, 1fr);
+    gap: 30px;
+}
+
+.arsp-md-footer-brand {
+    display: flex;
+    gap: 12px;
+}
+
+.arsp-md-footer-logo {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    padding: 4px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.arsp-md-footer-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.arsp-md-footer-brand h3 {
+    margin: 0 0 7px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.arsp-md-footer-brand p {
+    max-width: 320px;
+    margin: 0;
+    font-size: 9px;
+    line-height: 1.7;
+    color: rgba(255,255,255,.48);
+}
+
+.arsp-md-footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.arsp-md-footer-column h4 {
+    margin: 0 0 6px;
+    color: var(--arsp-gold-400);
+    font-size: 9px;
+    letter-spacing: .10em;
+}
+
+.arsp-md-footer-column a,
+.arsp-md-footer-column span {
+    color: rgba(255,255,255,.58);
+    text-decoration: none;
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.arsp-md-footer-column a:hover {
+    color: #fff;
+}
+
+.arsp-md-footer-column i {
+    width: 15px;
+    margin-right: 3px;
+    text-align: center;
+}
+
+.arsp-md-footer-bottom {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 13px 34px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: rgba(255,255,255,.38);
+    font-size: 8px;
+}
+
+.arsp-md-footer-love {
+    color: rgba(255,255,255,.52);
+}
+
+.arsp-md-footer-love i {
+    color: #dc6a6a;
+    margin-right: 4px;
+}
+
+
+/* =========================================================
+   DESKTOP COLLAPSE
+   ========================================================= */
+
+.arsp-md-sidebar.desktop-collapsed {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    transform: translateX(-100%) !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+}
+
+/*
+ * Desktop collapse is controlled by the sidebar state itself.
+ * Mobile/tablet drawer state remains controlled by .open.
+ */
+body.arsp-mobile-device .arsp-md-sidebar.desktop-collapsed {
+    width: var(--arsp-sidebar-width) !important;
+    min-width: var(--arsp-sidebar-width) !important;
+    max-width: var(--arsp-sidebar-width) !important;
+    transform: translateX(-100%) !important;
+    pointer-events: none !important;
+}
+
+body.arsp-mobile-device .arsp-md-sidebar.open {
+    width: var(--arsp-sidebar-width) !important;
+    min-width: var(--arsp-sidebar-width) !important;
+    max-width: var(--arsp-sidebar-width) !important;
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+    overflow-y: auto !important;
+}
+
+.arsp-md-main {
+    transition:
+        margin-left .25s ease,
+        width .25s ease;
+}
+
+/*
+ * When the desktop sidebar is collapsed, reclaim the
+ * sidebar space so the application uses the full viewport.
+ */
+body.arsp-real-desktop .arsp-md-sidebar.desktop-collapsed ~ .arsp-md-main {
+    width: 100% !important;
+    margin-left: 0 !important;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    :root {
+        --arsp-sidebar-width: 245px;
+    }
+
+    .arsp-md-content {
+        padding: 0 22px 38px;
+    }
+
+    .arsp-md-top-grid,
+    .arsp-md-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .arsp-documents-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .arsp-md-footer-main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+    :root {
+        --arsp-sidebar-width: 274px;
+    }
+
+    .arsp-md-sidebar {
+        transform: translateX(-100%);
+        box-shadow: 12px 0 35px rgba(0,0,0,.20);
+    }
+
+    .arsp-md-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .arsp-md-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+
+
+    .arsp-md-header {
+        min-height: 68px;
+        padding: 0 15px;
+    }
+
+    .arsp-md-header-title p {
+        display: none;
+    }
+
+    .arsp-md-header-title h1 {
+        font-size: 14px;
+    }
+
+    .arsp-md-header-right {
+        gap: 8px;
+    }
+
+    .arsp-md-user-details,
+    .arsp-md-user-chevron {
+        display: none;
+    }
+
+    .arsp-md-content {
+        padding: 0 14px 30px;
+    }
+
+    .arsp-md-top-grid,
+    .arsp-md-dashboard-grid,
+    .arsp-md-lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .arsp-md-welcome-card {
+        min-height: 0;
+        padding: 20px;
+    }
+
+    .arsp-md-welcome-copy h2 {
+        font-size: 25px;
+    }
+
+    .arsp-md-search-row,
+    .arsp-md-mobile-row {
+        flex-direction: column;
+    }
+
+    .arsp-md-student-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .arsp-documents-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .arsp-document-card {
+        padding: 17px;
+    }
+
+    .arsp-md-help-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .arsp-md-support-button {
+        width: 100%;
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .arsp-md-footer-main {
+        grid-template-columns: 1fr;
+        padding: 30px 18px;
+    }
+
+    .arsp-md-footer-bottom {
+        padding: 13px 18px;
+        flex-direction: column;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONE
+   ========================================================= */
+
+@media (max-width: 430px) {
+    .arsp-md-header {
+        padding: 0 11px;
+    }
+
+    .arsp-md-header-left {
+        gap: 8px;
+    }
+
+    .arsp-md-menu-toggle {
+        width: 36px;
+        height: 36px;
+    }
+
+    .arsp-md-notification {
+        width: 34px;
+    }
+
+    .arsp-md-user-photo,
+    .arsp-md-user-photo img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .arsp-md-welcome-card {
+        padding: 17px;
+    }
+
+    .arsp-md-panel,
+    .arsp-md-notices-panel,
+    .arsp-md-activity-panel,
+    .arsp-md-member-info,
+    .arsp-md-help-card,
+    .arsp-md-quick-panel {
+        padding: 16px;
+    }
+
+    .form-card {
+        padding: 18px;
+    }
+}
+
+/* ============================================================
+   DASHBOARD — ADMIT CARD MOBILE VERIFICATION
+   Migrated from dashboard.ejs
+   ============================================================ */
+
+/* =====================================================
+   ADMIT CARD MOBILE VERIFICATION POPUP
+   ===================================================== */
+
+.arsp-admit-mobile-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    min-height: 100vh !important;
+
+    box-sizing: border-box !important;
+    padding: 16px !important;
+
+    background: rgba(15, 23, 42, 0.62) !important;
+}
+
+.arsp-admit-mobile-modal > div[role="dialog"] {
+    width: 100% !important;
+    max-width: 430px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 auto !important;
+    padding: 22px !important;
+
+    background: #ffffff !important;
+    border-radius: 16px !important;
+
+    box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.28) !important;
+
+    overflow: hidden !important;
+}
+
+/* Popup heading */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:first-child {
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 10px !important;
+
+    margin: 0 0 12px !important;
+}
+
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:first-child i {
+    font-size: 17px !important;
+}
+
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:first-child strong {
+    display: block !important;
+
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+}
+
+/* Popup description */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> p {
+    margin: 0 0 17px !important;
+
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+
+    color: #64748b !important;
+}
+
+/* Mobile input */
+.arsp-admit-mobile-modal
+input[type="tel"] {
+    display: block !important;
+
+    width: 100% !important;
+    height: 48px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+    padding: 0 14px !important;
+
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+
+    background: #ffffff !important;
+    color: #0f172a !important;
+
+    font-size: 16px !important;
+    line-height: 48px !important;
+
+    outline: none !important;
+}
+
+.arsp-admit-mobile-modal
+input[type="tel"]:focus {
+    border-color: #2563eb !important;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+/* Status area */
+.arsp-admit-mobile-modal
+[id*="MobileStatus"] {
+    min-height: 20px !important;
+
+    margin: 9px 0 !important;
+
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+/* Popup buttons row */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+> div:last-child {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 9px !important;
+
+    margin-top: 14px !important;
+}
+
+/* Popup buttons */
+.arsp-admit-mobile-modal
+> div[role="dialog"]
+button {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+    padding: 9px 13px !important;
+
+    border-radius: 8px !important;
+
+    font-size: 13px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+}
+
+/* =====================================================
+   SELECT STUDENT BUTTON
+   ===================================================== */
+
+.arsp-partial-select-student,
+.arsp-full-select-student {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    width: auto !important;
+    max-width: 100% !important;
+
+    min-height: 36px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 8px 0 0 auto !important;
+    padding: 8px 12px !important;
+
+    border-radius: 7px !important;
+
+    font-size: 12px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+
+    cursor: pointer !important;
+}
+
+.arsp-partial-select-student i,
+.arsp-full-select-student i {
+    flex: 0 0 auto !important;
+    font-size: 12px !important;
+}
+
+.arsp-partial-select-student:disabled,
+.arsp-full-select-student:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+/* =====================================================
+   SMALL MOBILE DEVICES
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .arsp-admit-mobile-modal {
+        padding: 14px !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"] {
+        max-width: 430px !important;
+
+        padding: 20px !important;
+
+        border-radius: 14px !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    > div:first-child strong {
+        font-size: 17px !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    > p {
+        font-size: 13px !important;
+    }
+
+    .arsp-partial-select-student,
+    .arsp-full-select-student {
+        min-height: 35px !important;
+
+        padding: 8px 10px !important;
+
+        font-size: 12px !important;
+    }
+}
+
+/* =====================================================
+   VERY SMALL PHONES
+   ===================================================== */
+
+@media (max-width: 380px) {
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    > div:last-child {
+        flex-direction: column-reverse !important;
+        align-items: stretch !important;
+    }
+
+    .arsp-admit-mobile-modal
+    > div[role="dialog"]
+    button {
+        width: 100% !important;
+    }
+
+    .arsp-partial-select-student,
+    .arsp-full-select-student {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+
+/* ============================================================
+   MEMBER PORTAL — EDIT PROFILE
+   Fully scoped to .arsp-member-page-edit-profile
+   ============================================================ */
+
+.arsp-member-page-edit-profile {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 8px 0 36px;
+    box-sizing: border-box;
+}
+
+/* Main page heading area */
+.arsp-member-page-edit-profile .notice-section {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.arsp-member-page-edit-profile .notice-section > h2 {
+    margin: 0 0 20px;
+    color: #0f172a;
+    font-size: 26px;
+    font-weight: 750;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+}
+
+/* Main profile card */
+.arsp-member-page-edit-profile .notice-card {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+}
+
+/* Profile photo section */
+.arsp-member-page-edit-profile .notice-card form > div:first-child {
+    padding: 4px 0 26px;
+    margin: 0 0 28px;
+    text-align: center;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.arsp-member-page-edit-profile .notice-card form > div:first-child img {
+    display: block;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 15px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #dfe5e9;
+    background: #f8fafc;
+    box-sizing: border-box;
+}
+
+.arsp-member-page-edit-profile .notice-card form > div:first-child label {
+    display: block;
+    margin: 0 0 8px;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.arsp-member-page-edit-profile .notice-card form > div:first-child input[type="file"] {
+    display: block;
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 9px 10px;
+    box-sizing: border-box;
+
+    color: #475569;
+    font-size: 13px;
+
+    background: #f8fafc;
+    border: 1px solid #dbe2e8;
+    border-radius: 9px;
+}
+
+.arsp-member-page-edit-profile .notice-card form > div:first-child small {
+    display: block;
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Section headings */
+.arsp-member-page-edit-profile .notice-card form > h3 {
+    margin: 30px 0 18px;
+    padding-bottom: 10px;
+
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.3;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.arsp-member-page-edit-profile .notice-card form > h3:first-of-type {
+    margin-top: 0;
+}
+
+/* Form group */
+.arsp-member-page-edit-profile .form-group {
+    width: 100%;
+    margin: 0 0 18px;
+    box-sizing: border-box;
+}
+
+/* Labels */
+.arsp-member-page-edit-profile .form-group label {
+    display: block;
+    margin: 0 0 8px;
+
+    color: #334155;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+/* Inputs and select */
+.arsp-member-page-edit-profile .form-group input,
+.arsp-member-page-edit-profile .form-group select,
+.arsp-member-page-edit-profile .form-group textarea {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 13px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #cfd8e3;
+    border-radius: 9px;
+
+    color: #0f172a;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+
+    outline: none;
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+}
+
+.arsp-member-page-edit-profile .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Readonly Member ID */
+.arsp-member-page-edit-profile .form-group input[readonly] {
+    background: #f8fafc;
+    color: #64748b;
+    cursor: default;
+}
+
+/* Focus */
+.arsp-member-page-edit-profile .form-group input:not([readonly]):focus,
+.arsp-member-page-edit-profile .form-group select:focus,
+.arsp-member-page-edit-profile .form-group textarea:focus {
+    border-color: #0b7a3e;
+    box-shadow: 0 0 0 3px rgba(11, 122, 62, 0.10);
+}
+
+/* File input focus */
+.arsp-member-page-edit-profile input[type="file"]:focus {
+    outline: 2px solid rgba(11, 122, 62, 0.16);
+    outline-offset: 1px;
+}
+
+/* Action buttons */
+.arsp-member-page-edit-profile .notice-card form > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #eef2f7;
+}
+
+/* Save / Cancel */
+.arsp-member-page-edit-profile .profile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #0b7a3e;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.arsp-member-page-edit-profile .profile-btn:hover {
+    background: #086b36;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.arsp-member-page-edit-profile .profile-btn:active {
+    transform: translateY(1px);
+}
+
+.arsp-member-page-edit-profile .profile-btn:focus-visible {
+    outline: 3px solid rgba(11, 122, 62, 0.18);
+    outline-offset: 2px;
+}
+
+/* Cancel button is the second action */
+.arsp-member-page-edit-profile .notice-card form > div:last-child a.profile-btn {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #d8e0e8;
+}
+
+.arsp-member-page-edit-profile .notice-card form > div:last-child a.profile-btn:hover {
+    background: #e8edf3;
+    color: #1e293b;
+}
+
+/* ============================================================
+   EDIT PROFILE — TABLET
+   ============================================================ */
+
+@media (max-width: 900px) {
+    .arsp-member-page-edit-profile {
+        padding: 4px 0 30px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card {
+        max-width: 100%;
+        padding: 26px;
+    }
+}
+
+/* ============================================================
+   EDIT PROFILE — MOBILE
+   ============================================================ */
+
+@media (max-width: 600px) {
+    .arsp-member-page-edit-profile {
+        padding: 0 0 24px;
+    }
+
+    .arsp-member-page-edit-profile .notice-section > h2 {
+        margin-bottom: 15px;
+        font-size: 22px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card form > div:first-child {
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card form > div:first-child img {
+        width: 116px;
+        height: 116px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card form > h3 {
+        margin-top: 25px;
+        margin-bottom: 15px;
+        font-size: 17px;
+    }
+
+    .arsp-member-page-edit-profile .form-group {
+        margin-bottom: 15px;
+    }
+
+    .arsp-member-page-edit-profile .form-group input,
+    .arsp-member-page-edit-profile .form-group select,
+    .arsp-member-page-edit-profile .form-group textarea {
+        font-size: 16px;
+        min-height: 48px;
+    }
+
+    .arsp-member-page-edit-profile .form-group textarea {
+        min-height: 105px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card form > div:last-child {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .arsp-member-page-edit-profile .profile-btn {
+        width: 100%;
+        min-height: 46px;
+    }
+}
+
+/* ============================================================
+   EDIT PROFILE — SMALL PHONES
+   ============================================================ */
+
+@media (max-width: 380px) {
+    .arsp-member-page-edit-profile .notice-card {
+        padding: 18px 13px;
+    }
+
+    .arsp-member-page-edit-profile .notice-card form > div:first-child img {
+        width: 105px;
+        height: 105px;
+    }
+
+    .arsp-member-page-edit-profile .notice-section > h2 {
+        font-size: 20px;
+    }
+}
+
+
+/* ============================================================
+   MOBILE SHELL AUTHORITY FIX
+   The JavaScript device detector adds .arsp-mobile-device.
+   That class must always override desktop shell dimensions.
+   ============================================================ */
+
+@media (max-width: 768px) {
+    html,
+    body {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    body.arsp-mobile-device {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-shell {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+
+        width: 274px !important;
+        max-width: 274px !important;
+        margin: 0 !important;
+
+        transform: translateX(-100%) !important;
+        z-index: 1000 !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-sidebar.open {
+        transform: translateX(0) !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-main {
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow-x: hidden !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-header {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+        margin: 0 !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-content {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 0 14px 30px !important;
+
+        overflow-x: hidden !important;
+    }
+
+    body.arsp-mobile-device .arsp-member-page {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+    }
+
+    body.arsp-mobile-device .arsp-member-page-edit-profile {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.arsp-mobile-device .arsp-member-page-edit-profile .notice-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.arsp-mobile-device .arsp-member-page-edit-profile .notice-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-footer-main,
+    body.arsp-mobile-device .arsp-md-footer-bottom {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.arsp-mobile-device .arsp-md-footer-main {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Extra protection for phones whose reported viewport is unusual. */
+body.arsp-mobile-device .arsp-md-main {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-left: 0;
+}
+
+body.arsp-mobile-device .arsp-md-content {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+body.arsp-mobile-device .arsp-md-footer {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FINAL RESPONSIVE SIDEBAR AUTHORITY
+   ========================================================= */
+
+/*
+ * The effective CSS viewport controls navigation mode.
+ *
+ * This means browser zoom automatically changes the layout:
+ *
+ *   > 1100px  = desktop sidebar
+ *   <= 1100px = drawer sidebar
+ *
+ * This also works when Chrome Desktop Site is enabled.
+ */
+
+/* ---------------------------------------------------------
+   DRAWER MODE — 1100px AND BELOW
+   --------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+
+    .arsp-md-shell {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .arsp-md-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+
+        width: var(--arsp-sidebar-width) !important;
+        min-width: var(--arsp-sidebar-width) !important;
+        max-width: var(--arsp-sidebar-width) !important;
+
+        transform: translateX(-100%) !important;
+
+        z-index: 1000 !important;
+        pointer-events: none !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        transition: transform .25s ease !important;
+    }
+
+    /*
+     * Sidebar becomes visible ONLY when JavaScript adds .open.
+     */
+    .arsp-md-sidebar.open {
+        width: var(--arsp-sidebar-width) !important;
+        min-width: var(--arsp-sidebar-width) !important;
+        max-width: var(--arsp-sidebar-width) !important;
+
+        transform: translateX(0) !important;
+        pointer-events: auto !important;
+    }
+
+    /*
+     * desktop-collapsed must never create a visible sidebar
+     * in drawer mode.
+     */
+    .arsp-md-sidebar.desktop-collapsed {
+        transform: translateX(-100%) !important;
+        pointer-events: none !important;
+    }
+
+    .arsp-md-main {
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .arsp-md-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .arsp-md-header {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .arsp-md-footer {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
+
+/* ---------------------------------------------------------
+   TRUE DESKTOP MODE — ABOVE 1100px
+   --------------------------------------------------------- */
+
+@media (min-width: 1101px) {
+
+    .arsp-md-sidebar {
+        position: fixed;
+        width: var(--arsp-sidebar-width);
+        min-width: var(--arsp-sidebar-width);
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    /*
+     * Desktop menu button can collapse the sidebar.
+     */
+    .arsp-md-sidebar.desktop-collapsed {
+        width: 0 !important;
+        min-width: 0 !important;
+        max-width: 0 !important;
+
+        transform: translateX(-100%) !important;
+        pointer-events: none !important;
+        overflow: hidden !important;
+    }
+
+    /*
+     * When collapsed, reclaim the sidebar's horizontal space.
+     */
+    body.arsp-real-desktop .arsp-md-sidebar.desktop-collapsed ~ .arsp-md-main {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+
+/* =========================================================
+   LATEST NOTICES — POLISHED RESPONSIVE DESIGN
+   ========================================================= */
+
+.arsp-md-notices-panel {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+
+    background: #fff;
+    border: 1px solid rgba(15, 76, 58, .10);
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 28px rgba(15, 76, 58, .065),
+        0 2px 8px rgba(15, 23, 42, .035);
+}
+
+/* Elegant green top accent */
+.arsp-md-notices-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 3px;
+
+    background: linear-gradient(
+        90deg,
+        #087f5b 0%,
+        #21a879 55%,
+        rgba(33, 168, 121, 0) 100%
+    );
+}
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+.arsp-md-notices-panel .arsp-md-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    min-height: 70px;
+    padding: 19px 24px 16px;
+
+    border-bottom: 1px solid rgba(15, 76, 58, .09);
+}
+
+.arsp-md-notices-panel .arsp-md-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 0;
+    margin: 0;
+}
+
+.arsp-md-notices-panel .arsp-md-section-title h2 {
+    margin: 0;
+
+    color: #173b31;
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+}
+
+.arsp-md-notices-panel .arsp-md-small-icon {
+    display: grid;
+    place-items: center;
+
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+
+    color: #087f5b;
+    background: #eaf7f1;
+    border-radius: 11px;
+}
+
+.arsp-md-notices-panel .arsp-md-small-icon i {
+    font-size: 14px;
+}
+
+.arsp-md-notices-panel .arsp-md-section-header > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    flex: 0 0 auto;
+
+    color: #3f514b;
+    font-size: 12px;
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition:
+        color .2s ease,
+        transform .2s ease;
+}
+
+.arsp-md-notices-panel .arsp-md-section-header > a:hover {
+    color: #087f5b;
+    transform: translateX(2px);
+}
+
+.arsp-md-notices-panel .arsp-md-section-header > a i {
+    color: #087f5b;
+    font-size: 11px;
+}
+
+/* ---------------------------------------------------------
+   NOTICE LIST
+   --------------------------------------------------------- */
+
+.arsp-md-notices-panel .arsp-md-list {
+    width: 100%;
+    margin: 0;
+    padding: 4px 24px 12px;
+
+    box-sizing: border-box;
+}
+
+/*
+ * IMPORTANT:
+ * Each notice has three children:
+ *
+ *   1. marker
+ *   2. list-copy
+ *   3. time
+ *
+ * The time therefore explicitly occupies the content column.
+ */
+.arsp-md-notices-panel .arsp-md-notice-item {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    column-gap: 13px;
+    row-gap: 7px;
+
+    width: 100%;
+    min-width: 0;
+
+    margin: 0;
+    padding: 19px 0;
+
+    border-bottom: 1px solid rgba(15, 23, 42, .075);
+
+    box-sizing: border-box;
+}
+
+.arsp-md-notices-panel .arsp-md-notice-item:last-child {
+    border-bottom: 0;
+    padding-bottom: 16px;
+}
+
+/* ---------------------------------------------------------
+   MARKER
+   --------------------------------------------------------- */
+
+.arsp-md-notices-panel .arsp-md-notice-marker {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    width: 38px;
+    min-width: 38px;
+    height: 30px;
+
+    margin: 1px 0 0;
+
+    color: transparent;
+    font-size: 0;
+    line-height: 1;
+
+    box-sizing: border-box;
+}
+
+/* Normal notice dot */
+.arsp-md-notices-panel .arsp-md-notice-marker::before {
+    content: "";
+
+    display: block;
+
+    width: 9px;
+    height: 9px;
+
+    margin-top: 5px;
+
+    border-radius: 50%;
+    background: #18a574;
+
+    box-shadow:
+        0 0 0 5px #e8f7f1;
+}
+
+/* NEW badge */
+.arsp-md-notices-panel .arsp-md-notice-marker.new {
+    align-items: flex-start;
+    justify-content: center;
+
+    width: 38px;
+    min-width: 38px;
+    height: 24px;
+
+    margin-top: 0;
+
+    color: #087f5b;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+/*
+ * Hide the original "New" text visually through font-size
+ * inheritance while displaying a clean badge using ::after.
+ */
+.arsp-md-notices-panel .arsp-md-notice-marker.new::before {
+    display: none;
+}
+
+.arsp-md-notices-panel .arsp-md-notice-marker.new::after {
+    content: "NEW";
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 36px;
+    height: 22px;
+    padding: 0 7px;
+
+    color: #087f5b;
+    background: #e7f7f0;
+
+    border: 1px solid rgba(8, 127, 91, .12);
+    border-radius: 999px;
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    line-height: 1;
+}
+
+/* Timeline connector */
+.arsp-md-notices-panel .arsp-md-notice-item:not(:last-child)
+.arsp-md-notice-marker::after {
+    content: "";
+
+    position: absolute;
+
+    top: 18px;
+    left: 18px;
+
+    width: 1px;
+    height: calc(100% + 20px);
+
+    background: linear-gradient(
+        to bottom,
+        rgba(24, 165, 116, .24),
+        rgba(24, 165, 116, .06)
+    );
+}
+
+/*
+ * The NEW badge needs its connector separately because
+ * ::after is already used by the badge itself.
+ */
+.arsp-md-notices-panel .arsp-md-notice-item:not(:last-child)
+.arsp-md-notice-marker.new::after {
+    content: "NEW";
+
+    /* badge remains visible */
+}
+
+/* ---------------------------------------------------------
+   NOTICE CONTENT
+   --------------------------------------------------------- */
+
+.arsp-md-notices-panel .arsp-md-list-copy {
+    min-width: 0;
+    width: 100%;
+}
+
+.arsp-md-notices-panel .arsp-md-list-copy strong {
+    display: block;
+
+    margin: 0 0 5px;
+
+    color: #173b31;
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+.arsp-md-notices-panel .arsp-md-list-copy p {
+    margin: 0;
+
+    color: #65756f;
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 1.65;
+
+    overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------
+   DATE / TIME
+   --------------------------------------------------------- */
+
+.arsp-md-notices-panel .arsp-md-notice-item > time {
+    grid-column: 2;
+    grid-row: 2;
+
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+
+    margin: 0;
+
+    color: #8a9893;
+    font-size: 10px;
+    font-weight: 550;
+    line-height: 1.5;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    .arsp-md-notices-panel {
+        border-radius: 17px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-section-header {
+        min-height: 66px;
+        padding: 17px 17px 15px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-section-title {
+        gap: 9px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-section-title h2 {
+        font-size: 17px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-small-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+        border-radius: 10px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-section-header > a {
+        font-size: 11px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-list {
+        padding: 2px 17px 10px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-notice-item {
+        grid-template-columns: 38px minmax(0, 1fr);
+
+        column-gap: 10px;
+        row-gap: 7px;
+
+        padding: 17px 0;
+    }
+
+    .arsp-md-notices-panel .arsp-md-list-copy strong {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .arsp-md-notices-panel .arsp-md-list-copy p {
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .arsp-md-notices-panel .arsp-md-notice-item > time {
+        font-size: 10px;
+        line-height: 1.5;
+    }
+}
+
+/* ---------------------------------------------------------
+   SMALL PHONES
+   --------------------------------------------------------- */
+
+@media (max-width: 420px) {
+
+    .arsp-md-notices-panel .arsp-md-section-header {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-section-title h2 {
+        font-size: 16px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-section-header > a {
+        font-size: 10px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-list {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-notice-item {
+        grid-template-columns: 36px minmax(0, 1fr);
+        column-gap: 8px;
+    }
+
+    .arsp-md-notices-panel .arsp-md-notice-marker,
+    .arsp-md-notices-panel .arsp-md-notice-marker.new {
+        width: 36px;
+        min-width: 36px;
+    }
+}
+
+
+/* =========================================================
+   LATEST NOTICES — FINAL MARKER OVERRIDE
+   ========================================================= */
+
+/*
+ * The notice marker is isolated from all legacy `.new` styles.
+ * This prevents old dashboard/status CSS from creating the
+ * large yellow/gold marker seen on mobile.
+ */
+
+/* Normal notice marker */
+.arsp-md-notices-panel
+.arsp-md-notice-item
+.arsp-md-notice-marker {
+    position: relative !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 28px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+
+    box-shadow: none !important;
+}
+
+/* Normal green dot */
+.arsp-md-notices-panel
+.arsp-md-notice-item
+.arsp-md-notice-marker:not(.new)::before {
+    content: "" !important;
+
+    display: block !important;
+
+    width: 9px !important;
+    height: 9px !important;
+
+    margin-top: 6px !important;
+
+    background: #18a574 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    box-shadow: 0 0 0 5px #e8f7f1 !important;
+}
+
+/* NEW marker */
+.arsp-md-notices-panel
+.arsp-md-notice-item
+.arsp-md-notice-marker.new {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 25px !important;
+
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/*
+ * Hide the literal "New" text that exists inside the EJS.
+ */
+.arsp-md-notices-panel
+.arsp-md-notice-item
+.arsp-md-notice-marker.new {
+    font-size: 0 !important;
+    color: transparent !important;
+}
+
+/* One and only one NEW badge */
+.arsp-md-notices-panel
+.arsp-md-notice-item
+.arsp-md-notice-marker.new::before {
+    content: "NEW" !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 36px !important;
+    height: 21px !important;
+
+    margin: 0 !important;
+    padding: 0 7px !important;
+
+    box-sizing: border-box !important;
+
+    color: #087f5b !important;
+    background: #e8f7f1 !important;
+
+    border: 1px solid rgba(8, 127, 91, .13) !important;
+    border-radius: 999px !important;
+
+    font-size: 8px !important;
+    font-weight: 800 !important;
+    letter-spacing: .06em !important;
+    line-height: 1 !important;
+
+    box-shadow: none !important;
+}
+
+/*
+ * No second pseudo-element on the NEW marker.
+ */
+.arsp-md-notices-panel
+.arsp-md-notice-item
+.arsp-md-notice-marker.new::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Timeline connector for normal markers */
+.arsp-md-notices-panel
+.arsp-md-notice-item:not(:last-child)
+.arsp-md-notice-marker:not(.new)::after {
+    content: "" !important;
+
+    position: absolute !important;
+
+    top: 19px !important;
+    left: 18px !important;
+
+    width: 1px !important;
+    height: calc(100% + 18px) !important;
+
+    background: rgba(24, 165, 116, .16) !important;
+
+    display: block !important;
+}
+
+/* Timeline connector for NEW marker */
+.arsp-md-notices-panel
+.arsp-md-notice-item:not(:last-child)
+.arsp-md-notice-marker.new {
+    background-image: linear-gradient(
+        to bottom,
+        transparent 21px,
+        rgba(24, 165, 116, .16) 21px,
+        rgba(24, 165, 116, .16) calc(100% + 18px),
+        transparent calc(100% + 18px)
+    ) !important;
+
+    background-position: 18px 0 !important;
+    background-size: 1px 100% !important;
+    background-repeat: no-repeat !important;
+}
+
+/* Mobile marker sizing */
+@media (max-width: 768px) {
+    .arsp-md-notices-panel
+    .arsp-md-notice-item
+    .arsp-md-notice-marker,
+    .arsp-md-notices-panel
+    .arsp-md-notice-item
+    .arsp-md-notice-marker.new {
+        width: 38px !important;
+        min-width: 38px !important;
+    }
+}
+
+
+
+/* Mobile / Desktop-site view */
+@media (max-width: 1100px) {
+    .arsp-member-dashboard .arsp-md-content {
+        padding-top: 0 !important;
+    }
+
+    .arsp-member-dashboard .arsp-md-welcome-card {
+        margin-top: 0 !important;
+    }
+}

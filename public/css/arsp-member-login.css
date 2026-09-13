@@ -1,0 +1,336 @@
+/* ============================================================
+   ARSP MEMBER LOGIN
+   Clean centered login layout
+   ============================================================ */
+
+:root {
+    --arsp-login-green: #08783d;
+    --arsp-login-green-dark: #066a36;
+    --arsp-login-text: #252525;
+    --arsp-login-muted: #666666;
+    --arsp-login-border: #d8d8d8;
+    --arsp-login-page: #f4f7f6;
+    --arsp-login-white: #ffffff;
+    --arsp-login-alert: #f7d7dc;
+}
+
+/* Page */
+body {
+    margin: 0 !important;
+    min-height: 100vh !important;
+    background: var(--arsp-login-page) !important;
+    color: var(--arsp-login-text);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif !important;
+}
+
+/* Main centered area */
+.container {
+    width: 100% !important;
+    max-width: 580px !important;
+    margin: 0 auto !important;
+    padding: 198px 16px 80px !important;
+    box-sizing: border-box !important;
+}
+
+/* Login card */
+.form-card {
+    width: 100% !important;
+    max-width: 580px !important;
+    margin: 0 auto !important;
+    padding: 54px 48px 54px !important;
+    box-sizing: border-box !important;
+
+    background: var(--arsp-login-white) !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.09) !important;
+}
+
+/* Header / branding */
+.form-card > div:first-child {
+    text-align: center !important;
+    margin-bottom: 25px !important;
+}
+
+.form-card img {
+    display: block !important;
+    width: 90px !important;
+    height: 90px !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+}
+
+.form-card h1,
+.form-card h2 {
+    margin: 15px 0 0 !important;
+    color: var(--arsp-login-green) !important;
+    font-size: 32px !important;
+    font-weight: 750 !important;
+    line-height: 1.3 !important;
+    letter-spacing: -0.5px !important;
+    text-align: center !important;
+}
+
+.form-card h3 {
+    margin: 0 !important;
+}
+
+.form-card p {
+    color: var(--arsp-login-muted) !important;
+    font-size: 20px !important;
+    line-height: 1.45 !important;
+    text-align: center !important;
+}
+
+/* Existing empty/error message area */
+.form-card .alert,
+.form-card .error,
+.form-card .message,
+.form-card .login-message {
+    display: block !important;
+    width: 100% !important;
+    min-height: 36px !important;
+    margin: 38px 0 32px !important;
+    padding: 8px 14px !important;
+    box-sizing: border-box !important;
+
+    background: var(--arsp-login-alert) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+
+    color: #8a303b !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+}
+
+/* If the existing alert container is empty, preserve its visible bar */
+.form-card > .alert:empty,
+.form-card > .error:empty,
+.form-card > .message:empty,
+.form-card > .login-message:empty {
+    min-height: 36px !important;
+}
+
+/* Form groups */
+.form-group {
+    margin: 0 0 29px !important;
+}
+
+.form-group label {
+    display: block !important;
+    margin: 0 0 14px !important;
+    color: #333333 !important;
+    font-size: 18px !important;
+    font-weight: 650 !important;
+    line-height: 1.25 !important;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    display: block !important;
+    width: 100% !important;
+    height: 65px !important;
+    padding: 0 17px !important;
+    box-sizing: border-box !important;
+
+    background: #ffffff !important;
+    border: 1.5px solid var(--arsp-login-border) !important;
+    border-radius: 11px !important;
+
+    color: #222222 !important;
+    font-family: inherit !important;
+    font-size: 18px !important;
+    line-height: 65px !important;
+    outline: none !important;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--arsp-login-green) !important;
+    box-shadow: 0 0 0 3px rgba(8, 120, 61, 0.10) !important;
+}
+
+.form-group input::placeholder {
+    color: #999999;
+}
+
+/* Login button */
+.btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    min-height: 65px !important;
+    margin: 27px 0 0 !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+
+    background: var(--arsp-login-green) !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+
+    color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 21px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+
+    cursor: pointer !important;
+    text-decoration: none !important;
+
+    transition:
+        background-color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease !important;
+}
+
+.btn:hover {
+    background: var(--arsp-login-green-dark) !important;
+}
+
+.btn:active {
+    transform: translateY(1px) !important;
+}
+
+.btn:focus-visible {
+    outline: 3px solid rgba(8, 120, 61, 0.20) !important;
+    outline-offset: 2px !important;
+}
+
+/* Links below the form */
+.form-card a {
+    color: var(--arsp-login-green);
+    text-decoration: none;
+}
+
+.form-card a:hover {
+    text-decoration: underline;
+}
+
+/* Supporting links / footer area */
+.form-card small {
+    display: block !important;
+    margin-top: 8px !important;
+    color: #777777 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+}
+
+.form-card > div:last-child {
+    text-align: center;
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 700px) {
+    .container {
+        max-width: 580px !important;
+        padding: 100px 16px 60px !important;
+    }
+
+    .form-card {
+        padding: 48px 42px 48px !important;
+    }
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 600px) {
+    .container {
+        padding: 48px 16px 48px !important;
+    }
+
+    .form-card {
+        padding: 42px 32px 42px !important;
+        border-radius: 20px !important;
+    }
+
+    .form-card h1,
+    .form-card h2 {
+        font-size: 29px !important;
+    }
+
+    .form-card p {
+        font-size: 18px !important;
+    }
+
+    .form-group label {
+        font-size: 17px !important;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        height: 62px !important;
+        font-size: 17px !important;
+    }
+
+    .btn {
+        min-height: 62px !important;
+        font-size: 20px !important;
+    }
+}
+
+/* ============================================================
+   SMALL PHONES
+   ============================================================ */
+
+@media (max-width: 420px) {
+    .container {
+        padding: 24px 12px 40px !important;
+    }
+
+    .form-card {
+        padding: 34px 24px 36px !important;
+        border-radius: 18px !important;
+    }
+
+    .form-card img {
+        width: 88px !important;
+        height: 88px !important;
+    }
+
+    .form-card h1,
+    .form-card h2 {
+        font-size: 27px !important;
+        line-height: 1.28 !important;
+    }
+
+    .form-card p {
+        font-size: 17px !important;
+    }
+
+    .form-group {
+        margin-bottom: 25px !important;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        height: 60px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    .btn {
+        min-height: 60px !important;
+    }
+}

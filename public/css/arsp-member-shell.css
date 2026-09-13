@@ -281,3 +281,291 @@ body.arsp-member-dashboard .arsp-md-menu-open {
         padding: 20px;
     }
 }
+
+/* ==========================================================================
+   ARSP MEMBER PORTAL — MOBILE SHELL FINAL FIX
+   Fixes stuck overlay + Android Chrome Desktop Site rendering.
+   ========================================================================== */
+
+/* Overlay must be completely invisible until JavaScript explicitly adds
+   .show. This prevents a stale/incorrect cascade from dimming the page. */
+
+body.arsp-member-dashboard .arsp-md-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99990 !important;
+
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+
+    width: 100vw !important;
+    height: 100vh !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: rgba(10, 22, 40, .42) !important;
+
+    pointer-events: none !important;
+}
+
+body.arsp-member-dashboard .arsp-md-overlay.show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* --------------------------------------------------------------------------
+   DETECTED MOBILE DEVICE
+   Works even when Chrome Android is using "Desktop site".
+   -------------------------------------------------------------------------- */
+
+body.arsp-member-dashboard.arsp-mobile-device {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+body.arsp-member-dashboard.arsp-mobile-device .arsp-md-shell {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+body.arsp-member-dashboard.arsp-mobile-device .arsp-md-main {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+body.arsp-member-dashboard.arsp-mobile-device .arsp-md-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Prevent wide children from creating a desktop-width layout. */
+
+body.arsp-member-dashboard.arsp-mobile-device .arsp-md-content,
+body.arsp-member-dashboard.arsp-mobile-device .arsp-md-content > *,
+body.arsp-member-dashboard.arsp-mobile-device .arsp-member-page {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Images and controls must never establish a wider layout. */
+
+body.arsp-member-dashboard.arsp-mobile-device img {
+    max-width: 100% !important;
+}
+
+body.arsp-member-dashboard.arsp-mobile-device input,
+body.arsp-member-dashboard.arsp-mobile-device select,
+body.arsp-member-dashboard.arsp-mobile-device textarea,
+body.arsp-member-dashboard.arsp-mobile-device button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE SIDEBAR
+   -------------------------------------------------------------------------- */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    z-index: 100000 !important;
+
+    width: min(310px, 86vw) !important;
+    max-width: 310px !important;
+    min-width: 0 !important;
+
+    transform: translateX(-105%) !important;
+
+    transition: transform .22s ease !important;
+}
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-sidebar.open {
+    transform: translateX(0) !important;
+}
+
+/* Main content always remains full-width on mobile. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-main {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Header stays above normal content but below an open drawer. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-header {
+    position: relative !important;
+    z-index: 20 !important;
+}
+
+/* Menu button must remain reachable. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-menu-toggle {
+    position: relative !important;
+    z-index: 100001 !important;
+}
+
+/* --------------------------------------------------------------------------
+   WHEN MENU IS OPEN
+   -------------------------------------------------------------------------- */
+
+body.arsp-member-dashboard.arsp-mobile-device.arsp-md-menu-open {
+    overflow: hidden !important;
+}
+
+/* --------------------------------------------------------------------------
+   SMALL PHONES
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 430px) {
+    body.arsp-member-dashboard.arsp-mobile-device
+    .arsp-md-sidebar {
+        width: min(300px, 88vw) !important;
+    }
+
+    body.arsp-member-dashboard.arsp-mobile-device
+    .arsp-md-content {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+
+/* ============================================================
+   MEMBER NAV — LOGOUT ACTION
+   Logout now lives with the main navigation items.
+   ============================================================ */
+
+body.arsp-member-dashboard
+.arsp-md-side-nav .arsp-md-nav-item.arsp-md-logout {
+    color: #c62828 !important;
+}
+
+body.arsp-member-dashboard
+.arsp-md-side-nav .arsp-md-nav-item.arsp-md-logout
+.arsp-md-nav-icon {
+    color: #c62828 !important;
+    background: rgba(198, 40, 40, .08) !important;
+}
+
+body.arsp-member-dashboard
+.arsp-md-side-nav .arsp-md-nav-item.arsp-md-logout:hover {
+    color: #b71c1c !important;
+    background: rgba(198, 40, 40, .07) !important;
+}
+
+body.arsp-member-dashboard
+.arsp-md-side-nav .arsp-md-nav-item.arsp-md-logout:hover
+.arsp-md-nav-icon {
+    color: #b71c1c !important;
+    background: rgba(198, 40, 40, .13) !important;
+}
+
+/* ============================================================
+   ARSP MEMBER PORTAL — MOBILE SIDEBAR COMPACT LAYOUT
+   Keeps every navigation section accessible on phone screens.
+   ============================================================ */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+}
+
+/* Brand remains compact and fixed at the top. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-brand {
+    flex: 0 0 auto !important;
+}
+
+/* Navigation becomes the scrollable area. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-side-nav {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding-bottom: 12px !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Compact navigation spacing on phones. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-nav-section {
+    margin-top: 14px !important;
+    margin-bottom: 4px !important;
+    padding-left: 14px !important;
+}
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-nav-item {
+    min-height: 46px !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+}
+
+/* Logout remains visually distinct but uses the same compact
+   navigation height as the other buttons. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-nav-item.arsp-md-logout {
+    min-height: 46px !important;
+    margin-top: 2px !important;
+}
+
+/* Keep sidebar copyright from consuming the navigation area. */
+
+body.arsp-member-dashboard.arsp-mobile-device
+.arsp-md-sidebar-bottom {
+    flex: 0 0 auto !important;
+    padding-top: 8px !important;
+}
+
+/* Small phones need slightly tighter spacing. */
+
+@media (max-width: 430px) {
+    body.arsp-member-dashboard.arsp-mobile-device
+    .arsp-md-nav-section {
+        margin-top: 11px !important;
+    }
+
+    body.arsp-member-dashboard.arsp-mobile-device
+    .arsp-md-nav-item {
+        min-height: 43px !important;
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
+    }
+
+    body.arsp-member-dashboard.arsp-mobile-device
+    .arsp-md-nav-item.arsp-md-logout {
+        min-height: 43px !important;
+    }
+}
