@@ -4612,6 +4612,11 @@ const students =
                 "",
                 applicationYear
             );
+
+        const attendanceStats =
+            await RtseExamAttendance.getResultDashboardStatistics(
+                applicationYear
+            );
         const total =
             students.length;
 
@@ -4642,7 +4647,8 @@ const students =
                     total,
                     entered,
                     pending
-                }
+                },
+                attendanceStats
             }
         );
 
@@ -4668,6 +4674,142 @@ const students =
 // Result Entry Page
 // =====================================
 
+exports.resultAbsentStudents = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const students =
+            await RtseExamAttendance.getAbsentStudents(
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/result-absent-students",
+            {
+                title: "RTSE Absent Students",
+                applicationYear,
+                students,
+                setting
+            }
+        );
+
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load absent students."
+        );
+
+        return res.redirect("/admin/rtse/results");
+    }
+};
+
+exports.resultPresentStudents = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const students =
+            await RtseResult.getDashboardResults(
+                "",
+                "",
+                "",
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/result-present-students",
+            {
+                title: "RTSE Present Students",
+                applicationYear,
+                students,
+                setting
+            }
+        );
+
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load present students."
+        );
+
+        return res.redirect("/admin/rtse/results");
+    }
+};
+
+exports.resultSectionStudents = async (req, res) => {
+    try {
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const allowedSections = ["A", "B", "C", "D", "E"];
+
+        if (!allowedSections.includes(section)) {
+            throw new Error("Invalid RTSE section.");
+        }
+
+        const students =
+            await RtseExamAttendance.getPresentStudentsBySection(
+                section,
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/result-section-students",
+            {
+                title: `Section ${section} - Present Students`,
+                section,
+                applicationYear,
+                students,
+                setting
+            }
+        );
+
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load section students."
+        );
+
+        return res.redirect("/admin/rtse/results");
+    }
+};
+
 exports.resultEntryPage = async (req, res) => {
 
     try {
@@ -4682,6 +4824,17 @@ exports.resultEntryPage = async (req, res) => {
                 req.params.id
             );
 
+        if (String(req.query.popup || "") === "1") {
+            return res.render(
+                "admin/rtse/result-entry-popup",
+                {
+                    title: "Enter Result",
+                    student,
+                    result
+                }
+            );
+        }
+
         res.render(
 
             "admin/rtse/result-entry",
@@ -4692,7 +4845,8 @@ exports.resultEntryPage = async (req, res) => {
 
                 student,
 
-                result
+                result,
+                popup: String(req.query.popup || "") === "1"
 
             }
 
@@ -4751,6 +4905,7 @@ exports.saveResult = async (req, res) => {
             req.body && typeof req.body === "object"
                 ? req.body
                 : {};
+
 
         const resultStatus =
             String(

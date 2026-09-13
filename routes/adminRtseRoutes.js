@@ -867,6 +867,24 @@ router.get(
 );
 
 router.get(
+    "/rtse/results/absent",
+    auth.isAdmin,
+    adminRtseController.resultAbsentStudents
+);
+
+router.get(
+    "/rtse/results/present",
+    auth.isAdmin,
+    adminRtseController.resultPresentStudents
+);
+
+router.get(
+    "/rtse/results/section/:section",
+    auth.isAdmin,
+    adminRtseController.resultSectionStudents
+);
+
+router.get(
 
     "/rtse/result/:id",
 

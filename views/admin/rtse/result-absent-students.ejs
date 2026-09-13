@@ -1,0 +1,213 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+                    RTSE — Absent / Not Scanned Students
+                </h1>
+
+                <a
+                    href="/admin/rtse/results"
+                    class="btn-cancel"
+                >
+                    ← Back
+                </a>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <h2>
+                    Gate Entry Not Completed
+                </h2>
+
+                <p>
+                    RTSE <%= applicationYear %>
+                    · All Sections
+                </p>
+
+                <p>
+                    <strong><%= students.length %></strong>
+                    eligible student(s) have not completed confirmed
+                    gate entry through Super Scanner.
+                </p>
+
+
+                <% if (!students || students.length === 0) { %>
+
+                    <div style="text-align:center;padding:30px;">
+
+                        <h3>
+                            No Absent Students
+                        </h3>
+
+                        <p>
+                            All eligible RTSE students have completed
+                            confirmed gate entry.
+                        </p>
+
+                    </div>
+
+                <% } else { %>
+
+                    <div style="overflow-x:auto;">
+
+                        <table class="admin-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Roll No.
+                                    </th>
+
+                                    <th>
+                                        Registration
+                                    </th>
+
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Section
+                                    </th>
+
+                                    <th>
+                                        Attendance
+                                    </th>
+
+                                    <th>
+                                        Result
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <% students.forEach(function(student, index) { %>
+
+                                    <tr>
+
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                <%= student.roll_no || "-" %>
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <%= student.registration_no || "-" %>
+                                        </td>
+
+                                        <td>
+
+                                            <strong>
+                                                <%= student.full_name || "-" %>
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+                                                <%= student.school_name || "-" %>
+                                            </small>
+
+                                        </td>
+
+                                        <td>
+                                            <%= student.section || "-" %>
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-warning">
+                                                <%= student.attendance_status || "NOT SCANNED" %>
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+
+                                            <% if (student.result_id) { %>
+
+                                                <span class="badge badge-success">
+                                                    <%= student.result_status || "Entered" %>
+                                                </span>
+
+                                                <% if (student.marks !== null && student.marks !== undefined) { %>
+
+                                                    <br>
+
+                                                    <small>
+                                                        Marks:
+                                                        <%= student.marks %>
+
+                                                        <% if (student.percentage !== null && student.percentage !== undefined) { %>
+                                                            · <%= student.percentage %>%
+                                                        <% } %>
+
+                                                        <% if (student.grade) { %>
+                                                            · Grade <%= student.grade %>
+                                                        <% } %>
+                                                    </small>
+
+                                                <% } %>
+
+                                            <% } else { %>
+
+                                                <span class="badge badge-warning">
+                                                    Pending
+                                                </span>
+
+                                            <% } %>
+
+                                        </td>
+
+
+
+                                    </tr>
+
+                                <% }); %>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<%- include("../partials/footer") %>

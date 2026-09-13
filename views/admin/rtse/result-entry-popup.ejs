@@ -1,0 +1,359 @@
+<div class="rtse-popup-result">
+
+    <div class="rtse-popup-student">
+        <div class="rtse-popup-section-title">
+            <span>👤</span>
+            <strong>Student Information</strong>
+        </div>
+
+        <div class="rtse-popup-student-grid">
+
+            <div class="rtse-popup-info">
+                <span>Roll Number</span>
+                <strong><%= student.roll_no %></strong>
+            </div>
+
+            <div class="rtse-popup-info">
+                <span>Registration No.</span>
+                <strong><%= student.registration_no %></strong>
+            </div>
+
+            <div class="rtse-popup-info">
+                <span>Student Name</span>
+                <strong><%= student.full_name %></strong>
+            </div>
+
+            <div class="rtse-popup-info">
+                <span>School</span>
+                <strong><%= student.school_name %></strong>
+            </div>
+
+            <div class="rtse-popup-info">
+                <span>Section</span>
+                <strong><%= student.section %></strong>
+            </div>
+
+        </div>
+    </div>
+
+
+    <form
+        id="rtseResultForm"
+        action="/admin/rtse/result/<%= student.id %>"
+        method="POST"
+        data-history-fix="off"
+    >
+
+        <div class="rtse-popup-result-box">
+
+            <div class="rtse-popup-section-title">
+                <span>📊</span>
+                <strong>Result Details</strong>
+            </div>
+
+            <div class="rtse-popup-form-grid">
+
+                <div class="rtse-popup-field">
+                    <label for="full_marks">Full Marks</label>
+                    <input
+                        type="number"
+                        name="full_marks"
+                        id="full_marks"
+                        value="100"
+                        min="1"
+                        required
+                    >
+                </div>
+
+                <div class="rtse-popup-field">
+                    <label for="marks">Obtained Marks</label>
+                    <input
+                        type="number"
+                        name="marks"
+                        id="marks"
+                        value="<%= result ? result.marks : '' %>"
+                        min="0"
+                        required
+                    >
+                </div>
+
+                <div class="rtse-popup-field">
+                    <label for="percentage">Percentage</label>
+                    <input
+                        type="number"
+                        name="percentage"
+                        id="percentage"
+                        value="<%= result ? result.percentage : '' %>"
+                        readonly
+                    >
+                </div>
+
+                <div class="rtse-popup-field">
+                    <label for="grade">Grade</label>
+                    <input
+                        type="text"
+                        name="grade"
+                        id="grade"
+                        value="<%= result ? result.grade : '' %>"
+                        readonly
+                    >
+                </div>
+
+            </div>
+
+            <input
+                type="hidden"
+                name="result_status"
+                value="Entered"
+            >
+
+        </div>
+
+    </form>
+
+
+    <% if (result) { %>
+
+    <form
+        id="rtseResetResultForm"
+        action="/admin/rtse/result/<%= student.id %>/reset-pending"
+        method="POST"
+        data-history-fix="off"
+        style="display:none;"
+    ></form>
+
+    <% } %>
+
+
+    <form
+        id="rtseAttendanceResetForm"
+        action="/admin/rtse/attendance/reset/<%= student.id %>"
+        method="POST"
+        data-history-fix="off"
+        style="display:none;"
+    ></form>
+
+
+    <div class="rtse-popup-actions">
+
+        <button
+            type="button"
+            id="rtseSaveResultButton"
+            class="rtse-popup-btn rtse-popup-btn-save"
+        >
+            💾 Save Result
+        </button>
+
+
+        <% if (result) { %>
+
+        <button
+            type="submit"
+            form="rtseResetResultForm"
+            class="rtse-popup-btn rtse-popup-btn-pending"
+        >
+            ↩ Reset to Pending
+        </button>
+
+        <% } %>
+
+
+        <button
+            type="submit"
+            form="rtseAttendanceResetForm"
+            class="rtse-popup-btn rtse-popup-btn-attendance"
+        >
+            ↻ Attendance Reset
+        </button>
+
+
+        <button
+            type="button"
+            class="rtse-popup-btn rtse-popup-btn-close"
+            data-rtse-popup-close
+        >
+            × Close
+        </button>
+
+    </div>
+
+</div>
+
+<style>
+
+.rtse-popup-result {
+    width:100%;
+    box-sizing:border-box;
+    font-family:inherit;
+}
+
+.rtse-popup-student,
+.rtse-popup-result-box {
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    background:#f8fafc;
+    padding:12px;
+    margin-bottom:10px;
+}
+
+.rtse-popup-section-title {
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin-bottom:9px;
+    font-size:14px;
+    color:#172033;
+}
+
+.rtse-popup-student-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+}
+
+.rtse-popup-info {
+    min-width:0;
+    padding:7px 9px;
+    border-radius:7px;
+    background:#fff;
+    border:1px solid #edf0f3;
+}
+
+.rtse-popup-info span {
+    display:block;
+    margin-bottom:2px;
+    font-size:10px;
+    color:#6b7280;
+}
+
+.rtse-popup-info strong {
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:12px;
+    color:#1f2937;
+}
+
+.rtse-popup-form-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+}
+
+.rtse-popup-field label {
+    display:block;
+    margin-bottom:3px;
+    font-size:11px;
+    font-weight:600;
+    color:#374151;
+}
+
+.rtse-popup-field input {
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    height:34px;
+    padding:5px 8px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    background:#fff;
+    color:#111827;
+    font-size:13px;
+    outline:none;
+}
+
+.rtse-popup-field input:focus {
+    border-color:#16a34a;
+    box-shadow:0 0 0 2px rgba(22,163,74,.10);
+}
+
+.rtse-popup-field input[readonly] {
+    background:#f1f5f9;
+    color:#4b5563;
+}
+
+.rtse-popup-actions {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+    padding-top:2px;
+}
+
+.rtse-popup-btn {
+    width:100%;
+    min-height:36px;
+    padding:7px 9px;
+    border:0;
+    border-radius:7px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+}
+
+.rtse-popup-btn-save {
+    background:#16a34a;
+    color:#fff;
+}
+
+.rtse-popup-btn-pending {
+    background:#f59e0b;
+    color:#fff;
+}
+
+.rtse-popup-btn-attendance {
+    background:#dc2626;
+    color:#fff;
+}
+
+.rtse-popup-btn-close {
+    background:#e5e7eb;
+    color:#374151;
+}
+
+@media (max-width:600px) {
+
+    .rtse-popup-student,
+    .rtse-popup-result-box {
+        padding:9px;
+        margin-bottom:7px;
+    }
+
+    .rtse-popup-student-grid {
+        gap:4px;
+    }
+
+    .rtse-popup-info {
+        padding:6px 7px;
+    }
+
+    .rtse-popup-info span {
+        font-size:9px;
+    }
+
+    .rtse-popup-info strong {
+        font-size:11px;
+    }
+
+    .rtse-popup-form-grid {
+        gap:6px;
+    }
+
+    .rtse-popup-field input {
+        height:32px;
+        font-size:12px;
+    }
+
+    .rtse-popup-actions {
+        gap:5px;
+    }
+
+    .rtse-popup-btn {
+        min-height:34px;
+        padding:6px 5px;
+        font-size:10px;
+    }
+}
+
+</style>

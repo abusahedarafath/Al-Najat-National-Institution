@@ -221,331 +221,105 @@ Certificate PDF Downloads
 
             </div>
 
-            <!-- Result Statistics -->
+            <!-- Attendance Statistics -->
 
-            <div
-                style="
-                    display:grid;
-                    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-                    gap:15px;
-                    margin-bottom:20px;
-                ">
-
-                <div class="profile-card">
-
-                    <h3>
-                        <%= stats.total %>
-                    </h3>
-
-                    <p>
-                        Total Students
-                    </p>
-
-                </div>
-
-                <div class="profile-card">
-
-                    <h3>
-                        <%= stats.entered %>
-                    </h3>
-
-                    <p>
-                        Results Entered
-                    </p>
-
-                </div>
-
-                <div class="profile-card">
-
-                    <h3>
-                        <%= stats.pending %>
-                    </h3>
-
-                    <p>
-                        Pending
-                    </p>
-
-                </div>
-
-
-
-
-
-
-
-            </div>
-
-            <!-- Search -->
-
-            <div class="profile-card">
-
-                <form
-                    method="GET"
-                    action="/admin/rtse/results">
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Search Student
-
-                            </label>
-
-                            <input
-                                type="text"
-                                name="search"
-                                placeholder="Registration No / Roll No / Name / School">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>
-
-                                Section
-
-                            </label>
-
-                            <select name="section">
-
-                                <option value="">
-
-                                    All Sections
-
-                                </option>
-
-                                <option value="A">
-
-                                    Section A
-
-                                </option>
-
-                                <option value="B">
-
-                                    Section B
-
-                                </option>
-
-                                <option value="C">
-
-                                    Section C
-
-                                </option>
-
-                                <option value="D">
-
-                                    Section D
-
-                                </option>
-
-                                <option value="E">
-
-                                    Section E
-
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-                    <button
-                        class="btn-save">
-
-                        Search
-
-                    </button>
-
-                </form>
-
-            </div>
-
-            <!-- Student List -->
-
-            <div class="profile-card">
-
-                <table class="admin-table">
-
-                    <thead>
-
-    <tr>
-
-        <th>
-            Roll No.
-        </th>
-
-        <th>
-            Registration
-        </th>
-
-        <th>
-            Student
-        </th>
-
-        <th>
-            Section
-        </th>
-
-        <th>
-            Marks
-        </th>
-
-        <th>
-            Percentage
-        </th>
-
-        <th>
-            Grade
-        </th>
-
-        <th>
-            Result
-        </th>
-
-        <th>
-            Section Rank
-        </th>
-
-        <th>
-            Overall Rank
-        </th>
-
-        <th>
-            Action
-        </th>
-
-    </tr>
-
-</thead>
-
-<tbody>
-
-<% students.forEach(student => { %>
-
-    <tr>
-
-        <td>
-            <strong>
-                <%= student.roll_no || "-" %>
-            </strong>
-        </td>
-
-        <td>
-            <%= student.registration_no || "-" %>
-        </td>
-
-        <td>
-
-            <strong>
-                <%= student.full_name %>
-            </strong>
-
-            <br>
-
-            <small>
-                <%= student.school_name || "-" %>
-            </small>
-
-        </td>
-
-        <td>
-            <%= student.section || "-" %>
-        </td>
-
-        <td>
-            <%= student.marks != null
-                ? student.marks
-                : "-" %>
-        </td>
-
-        <td>
-            <%= student.percentage != null
-                ? student.percentage + "%"
-                : "-" %>
-        </td>
-
-        <td>
-            <%= student.grade || "-" %>
-        </td>
-
-        <td>
-
-    <% if (!student.result_id) { %>
-
-        <span class="badge badge-warning">
-            Pending
-        </span>
-
-    <% } else { %>
-
-        <span class="badge badge-success">
-            Entered
-        </span>
-
-    <% } %>
-
-</td>
-
-        <td>
-            <%= student.section_rank || "-" %>
-        </td>
-
-        <td>
-            <%= student.overall_rank || "-" %>
-        </td>
-
-        <td>
-
-            <a
-                href="/admin/rtse/result/<%= student.application_id %>"
-                class="btn-save">
-
-                <%= student.result_id
-                    ? "Edit Result"
-                    : "Enter Result" %>
-
-            </a>
-
-            <% if (student.result_id) { %>
+            <div class="rtse-statistics-grid">
 
                 <a
-                    href="/admin/rtse/certificate/<%= student.application_id %>"
-                    class="btn-view">
+                    href="/admin/rtse/results/present"
+                    style="display:block;text-decoration:none;color:inherit;"
+                >
+                    <div class="rtse-stat-card">
 
-                    Certificate
+                        <h3>PRESENT</h3>
 
+                        <h1 class="rtse-stat-approved">
+                            <%= Number(attendanceStats?.overall?.present || 0) %>
+                        </h1>
+
+                        <p>
+                            Gate Entry Confirmed
+                        </p>
+
+                    </div>
                 </a>
 
-            <% } %>
+                <a
+                    href="/admin/rtse/results/absent"
+                    style="display:block;text-decoration:none;color:inherit;"
+                >
+                    <div class="rtse-stat-card">
 
-        </td>
+                        <h3>ABSENT</h3>
 
-    </tr>
+                        <h1 class="rtse-stat-pending">
+                            <%= Number(attendanceStats?.overall?.absent || 0) %>
+                        </h1>
 
-<% }) %>
+                        <p>
+                            Gate Entry Not Completed
+                        </p>
 
-<% if (!students.length) { %>
+                    </div>
+                </a>
 
-    <tr>
+            </div>
 
-        <td
-            colspan="11"
-            style="text-align:center;padding:30px;">
+            <!-- Section-wise Attendance -->
 
-            No students found.
+            <div class="profile-card rtse-management-card">
 
-        </td>
+                <h2>
+                    Section-wise Attendance
+                </h2>
 
-    </tr>
+                <div class="rtse-section-grid">
 
-<% } %>
+                    <% (attendanceStats?.sections || []).forEach(function(sectionData) { %>
 
-</tbody>
+                        <div class="rtse-section-card">
 
-                </table>
+                            <h3>
+                                SECTION <%= sectionData.section %>
+                            </h3>
+
+                            <hr>
+
+                            <p>
+                                Eligible :
+                                <strong>
+                                    <%= Number(sectionData.eligible || 0) %>
+                                </strong>
+                            </p>
+
+                            <p>
+                                Present :
+                                <strong class="rtse-stat-approved">
+                                    <%= Number(sectionData.present || 0) %>
+                                </strong>
+                            </p>
+
+                            <p>
+                                Absent :
+                                <strong class="rtse-stat-pending">
+                                    <%= Number(sectionData.absent || 0) %>
+                                </strong>
+                            </p>
+
+                            <div style="margin-top:15px;">
+                                <a
+                                    href="/admin/rtse/results/section/<%= encodeURIComponent(sectionData.section) %>"
+                                    class="btn-view"
+                                >
+                                    See Present Students
+                                </a>
+                            </div>
+
+                        </div>
+
+                    <% }) %>
+
+                </div>
 
             </div>
 

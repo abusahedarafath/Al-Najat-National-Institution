@@ -1,0 +1,741 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+                    RTSE Section <%= section %> — Present Students
+                </h1>
+
+                <a
+                    href="/admin/rtse/results"
+                    class="btn-cancel"
+                >
+                    ← Back
+                </a>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <h2>
+                    Section <%= section %> — PRESENT Students
+                </h2>
+
+                <p>
+                    RTSE <%= applicationYear %>
+                    · Gate Entry Confirmed
+                </p>
+
+                <p>
+                    <strong><%= students.length %></strong>
+                    student(s) successfully confirmed through Super Scanner.
+                </p>
+
+
+                <% if (!students || students.length === 0) { %>
+
+                    <div style="text-align:center;padding:30px;">
+
+                        <h3>
+                            No Present Students
+                        </h3>
+
+                        <p>
+                            No student in Section <%= section %>
+                            has completed confirmed gate entry yet.
+                        </p>
+
+                    </div>
+
+                <% } else { %>
+
+                    <div style="overflow-x:auto;">
+
+                        <table class="admin-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Roll No.
+                                    </th>
+
+                                    <th>
+                                        Registration
+                                    </th>
+
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Section
+                                    </th>
+
+                                    <th>
+                                        Attendance
+                                    </th>
+
+                                    <th>
+                                        Result
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <% students.forEach(function(student, index) { %>
+
+                                    <tr>
+
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+
+
+                                        <td>
+                                            <strong>
+                                                <%= student.roll_no || "-" %>
+                                            </strong>
+                                        </td>
+
+
+                                        <td>
+                                            <%= student.registration_no || "-" %>
+                                        </td>
+
+
+                                        <td>
+
+                                            <strong>
+                                                <%= student.full_name || "-" %>
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+                                                <%= student.school_name || "-" %>
+                                            </small>
+
+                                        </td>
+
+
+                                        <td>
+                                            <%= student.section || section || "-" %>
+                                        </td>
+
+
+                                        <td>
+
+                                            <span class="badge badge-success">
+                                                PRESENT
+                                            </span>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <% if (student.result_id) { %>
+
+                                                <span class="badge badge-success">
+                                                    <%= student.result_status || "Entered" %>
+                                                </span>
+
+                                                <% if (student.marks !== null && student.marks !== undefined) { %>
+
+                                                    <br>
+
+                                                    <small>
+                                                        Marks:
+                                                        <%= student.marks %>
+
+                                                        <% if (student.percentage !== null && student.percentage !== undefined) { %>
+                                                            · <%= student.percentage %>%
+                                                        <% } %>
+
+                                                        <% if (student.grade) { %>
+                                                            · Grade <%= student.grade %>
+                                                        <% } %>
+                                                    </small>
+
+                                                <% } %>
+
+                                            <% } else { %>
+
+                                                <span class="badge badge-warning">
+                                                    Pending
+                                                </span>
+
+                                            <% } %>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <a
+                                                href="/admin/rtse/result/<%= student.id %>"
+                                                class="btn-save rtse-result-popup-trigger"
+                                                data-result-url="/admin/rtse/result/<%= student.id %>?popup=1"
+                                            >
+                                                <%= student.result_id
+                                                    ? "Edit Result"
+                                                    : "Enter Result" %>
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                <% }); %>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- RTSE Result Entry Modal -->
+<div id="rtseResultPopup" class="rtse-result-modal">
+
+    <div class="rtse-result-modal-card">
+
+        <div class="rtse-result-modal-header">
+
+            <div>
+                <div class="rtse-result-modal-title">
+                    Enter Result
+                </div>
+
+                <div class="rtse-result-modal-subtitle">
+                    RTSE Student Result
+                </div>
+            </div>
+
+            <button
+                type="button"
+                id="rtseResultPopupClose"
+                class="rtse-result-modal-close"
+                aria-label="Close"
+            >×</button>
+
+        </div>
+
+
+        <div
+            id="rtseResultPopupContent"
+            class="rtse-result-modal-content"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.rtse-result-modal {
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    box-sizing:border-box;
+    padding:12px;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:rgba(15,23,42,.58);
+    backdrop-filter:blur(3px);
+}
+
+.rtse-result-modal.is-open {
+    display:flex;
+}
+
+.rtse-result-modal-card {
+    width:min(500px,94vw);
+    max-height:min(560px,88vh);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-sizing:border-box;
+    background:#fff;
+    border-radius:13px;
+    box-shadow:0 18px 55px rgba(0,0,0,.30);
+}
+
+.rtse-result-modal-header {
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:11px 14px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.rtse-result-modal-title {
+    font-size:17px;
+    line-height:1.2;
+    font-weight:700;
+    color:#172033;
+}
+
+.rtse-result-modal-subtitle {
+    margin-top:2px;
+    font-size:10px;
+    color:#6b7280;
+}
+
+.rtse-result-modal-close {
+    width:30px;
+    height:30px;
+    flex:0 0 30px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:#f1f3f5;
+    color:#374151;
+    font-size:20px;
+    line-height:30px;
+    cursor:pointer;
+}
+
+.rtse-result-modal-content {
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:11px 12px 12px;
+    box-sizing:border-box;
+}
+
+@media (max-width:600px) {
+
+    .rtse-result-modal {
+        padding:8px;
+    }
+
+    .rtse-result-modal-card {
+        width:94vw;
+        max-height:82vh;
+        border-radius:11px;
+    }
+
+    .rtse-result-modal-header {
+        padding:9px 11px;
+    }
+
+    .rtse-result-modal-title {
+        font-size:15px;
+    }
+
+    .rtse-result-modal-content {
+        padding:9px;
+    }
+}
+
+</style>
+
+
+<script>
+(function () {
+
+    const popup =
+        document.getElementById("rtseResultPopup");
+
+    const content =
+        document.getElementById("rtseResultPopupContent");
+
+    const closeButton =
+        document.getElementById("rtseResultPopupClose");
+
+
+    if (!popup || !content || !closeButton) {
+        return;
+    }
+
+
+    function closePopup() {
+
+        popup.classList.remove("is-open");
+
+        content.innerHTML = "";
+
+        document.body.style.overflow = "";
+
+    }
+
+
+    function calculateResult() {
+
+        const fullMarks =
+            content.querySelector("#full_marks");
+
+        const marks =
+            content.querySelector("#marks");
+
+        const percentage =
+            content.querySelector("#percentage");
+
+        const grade =
+            content.querySelector("#grade");
+
+
+        if (!fullMarks || !marks || !percentage || !grade) {
+            return;
+        }
+
+
+        function calculate() {
+
+            const total =
+                parseFloat(fullMarks.value) || 100;
+
+            const obtained =
+                parseFloat(marks.value) || 0;
+
+            const per =
+                ((obtained / total) * 100).toFixed(2);
+
+
+            percentage.value = per;
+
+
+            if (per >= 90) {
+                grade.value = "A+";
+            } else if (per >= 80) {
+                grade.value = "A";
+            } else if (per >= 70) {
+                grade.value = "B+";
+            } else if (per >= 60) {
+                grade.value = "B";
+            } else if (per >= 50) {
+                grade.value = "C";
+            } else if (per >= 40) {
+                grade.value = "D";
+            } else {
+                grade.value = "F";
+            }
+
+        }
+
+
+        marks.addEventListener("input", calculate);
+        fullMarks.addEventListener("input", calculate);
+
+        calculate();
+
+    }
+
+
+    function initializeForms() {
+
+        calculateResult();
+
+
+        content
+            .querySelectorAll("form")
+            .forEach(function (form) {
+
+                form.addEventListener(
+                    "submit",
+                    async function (event) {
+
+                        event.preventDefault();
+
+
+                        const submitter =
+                            event.submitter;
+
+
+                        let action =
+                            form.getAttribute("action");
+
+                        if (
+                            submitter &&
+                            submitter.hasAttribute("formaction")
+                        ) {
+                            action =
+                                submitter.getAttribute("formaction");
+                        }
+
+
+                        if (!action) {
+                            return;
+                        }
+
+
+                        if (
+                            form.id ===
+                            "rtseResetResultForm"
+                        ) {
+
+                            if (
+                                !confirm(
+                                    "Reset this result to Pending? The student will remain PRESENT and stay in the Result Dashboard."
+                                )
+                            ) {
+                                return;
+                            }
+
+                        }
+
+
+                        if (
+                            form.id ===
+                            "rtseAttendanceResetForm"
+                        ) {
+
+                            if (
+                                !confirm(
+                                    "Reset Attendance Status?\n\nThe student will become NOT SCANNED, leave the Result Dashboard, have the existing result removed, and can be scanned again using the same admit card QR."
+                                )
+                            ) {
+                                return;
+                            }
+
+                        }
+
+
+                        const formData =
+                            new FormData(form);
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    action,
+                                    {
+                                        method:"POST",
+                                        body:new URLSearchParams(formData),
+                                        credentials:"same-origin",
+                                        redirect:"follow",
+                                        headers:{
+                                            "X-Requested-With":
+                                                "XMLHttpRequest"
+                                        }
+                                    }
+                                );
+
+
+                            if (!response.ok) {
+                                throw new Error(
+                                    "Request failed."
+                                );
+                            }
+
+
+                            closePopup();
+
+                            window.location.reload();
+
+
+                        } catch (error) {
+
+                            console.error(error);
+
+                            alert(
+                                "Unable to save the result. Please try again."
+                            );
+
+                        }
+
+                    }
+                );
+
+            });
+
+
+        const saveResultButton =
+            content.querySelector("#rtseSaveResultButton");
+
+        const resultForm =
+            content.querySelector("#rtseResultForm");
+
+        if (saveResultButton && resultForm) {
+            saveResultButton.addEventListener(
+                "click",
+                function () {
+                    if (typeof resultForm.requestSubmit === "function") {
+                        resultForm.requestSubmit();
+                    } else {
+                        resultForm.submit();
+                    }
+                }
+            );
+        }
+
+        content
+            .querySelectorAll("[data-rtse-popup-close]")
+            .forEach(function (button) {
+
+                button.addEventListener(
+                    "click",
+                    closePopup
+                );
+
+            });
+
+    }
+
+
+    async function openPopup(url) {
+
+        if (!url) {
+            return;
+        }
+
+
+        popup.classList.add("is-open");
+
+        document.body.style.overflow = "hidden";
+
+
+        content.innerHTML =
+            '<div style="padding:35px;text-align:center;font-size:13px;color:#6b7280;">Loading...</div>';
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        credentials:"same-origin",
+                        headers:{
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load Result Entry."
+                );
+            }
+
+
+            content.innerHTML =
+                await response.text();
+
+
+            initializeForms();
+
+
+            content.scrollTop = 0;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            content.innerHTML =
+                '<div style="padding:35px;text-align:center;color:#dc2626;font-size:13px;">Unable to load Result Entry.</div>';
+
+        }
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".rtse-result-popup-trigger"
+        )
+        .forEach(function (link) {
+
+            link.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    const url =
+                        this.getAttribute(
+                            "data-result-url"
+                        ) ||
+                        this.getAttribute("href");
+
+
+                    openPopup(url);
+
+                }
+            );
+
+        });
+
+
+    closeButton.addEventListener(
+        "click",
+        closePopup
+    );
+
+
+    popup.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === popup) {
+                closePopup();
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                popup.classList.contains("is-open")
+            ) {
+                closePopup();
+            }
+
+        }
+    );
+
+})();
+</script>
+
+
+<%- include("../partials/footer") %>
