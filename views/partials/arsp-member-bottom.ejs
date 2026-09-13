@@ -38,7 +38,7 @@
 
                     <a href="/arsp/dashboard">Dashboard</a>
                     <a href="/arsp/profile/edit">My Profile</a>
-                    <a href="/arsp/registration-slip">My Documents</a>
+                    <a href="/arsp/documents">My Documents</a>
                     <a href="/arsp/activity">Activity History</a>
 
                 </div>
@@ -108,10 +108,81 @@
 
 <script>
 (function () {
+    "use strict";
+
     const sidebar = document.getElementById("arspMemberSidebar");
     const toggle = document.getElementById("arspMemberMenuToggle");
 
     if (!sidebar || !toggle) return;
+
+    /*
+     * ARSP MEMBER MENU
+     *
+     * Desktop computer:
+     *   - sidebar open initially
+     *   - menu button collapses/restores it
+     *
+     * Phone/tablet:
+     *   - sidebar hidden initially
+     *   - menu button opens it as an overlay
+     *   - content always remains 100% width
+     *
+     * The important point is that CSS viewport width alone is
+     * NOT used to decide whether a touch device is a phone.
+     * This also handles Android Chrome "Desktop site".
+     */
+
+    /*
+     * RESPONSIVE MEMBER PORTAL MODE
+     *
+     * Navigation is determined by the EFFECTIVE CSS viewport
+     * width. This naturally responds to:
+     *
+     *   - browser window resizing
+     *   - browser zoom in/out
+     *   - Chrome Desktop Site
+     *   - portrait/landscape rotation
+     *   - desktop/tablet/mobile widths
+     *
+     * No User-Agent or touch-device detection is used.
+     */
+    function getMode() {
+        const viewportWidth =
+            document.documentElement.clientWidth ||
+            window.innerWidth ||
+            0;
+
+        /*
+         * At 1100px and below, use drawer navigation.
+         * Above 1100px, use the normal desktop sidebar.
+         */
+        return viewportWidth <= 1100 ? "mobile" : "desktop";
+    }
+
+    let mode = getMode();
+
+    /*
+     * Keep CSS and JavaScript mode detection synchronized.
+     *
+     * This is essential for Android Chrome "Desktop site":
+     * the browser may report a desktop-sized viewport, while
+     * JavaScript can still identify the physical device as mobile.
+     */
+    function syncDeviceClass() {
+        mode = getMode();
+
+        document.body.classList.toggle(
+            "arsp-mobile-device",
+            mode === "mobile"
+        );
+
+        document.body.classList.toggle(
+            "arsp-real-desktop",
+            mode === "desktop"
+        );
+    }
+
+    syncDeviceClass();
 
     let overlay = document.getElementById("arspMemberOverlay");
 
@@ -122,43 +193,120 @@
         document.body.appendChild(overlay);
     }
 
-    function openMenu() {
-        sidebar.classList.add("open");
-        overlay.classList.add("show");
-        toggle.setAttribute("aria-expanded", "true");
-        document.body.classList.add("arsp-md-menu-open");
+    function setDesktopClosed(closed) {
+        /*
+         * Desktop has one simple state:
+         * desktop-collapsed = hidden
+         * no desktop-collapsed = visible
+         */
+        sidebar.classList.toggle("desktop-collapsed", closed);
+        sidebar.classList.toggle("open", !closed);
+
+        overlay.classList.remove("show");
+        document.body.classList.remove("arsp-md-menu-open");
+
+        toggle.setAttribute(
+            "aria-expanded",
+            closed ? "false" : "true"
+        );
     }
 
-    function closeMenu() {
-        sidebar.classList.remove("open");
-        overlay.classList.remove("show");
-        toggle.setAttribute("aria-expanded", "false");
-        document.body.classList.remove("arsp-md-menu-open");
+    function setMobileOpen(open) {
+        /*
+         * Mobile/tablet drawer state is completely independent
+         * from desktop collapse state.
+         */
+        sidebar.classList.remove("desktop-collapsed");
+        sidebar.classList.toggle("open", open);
+
+        overlay.classList.toggle("show", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+
+        document.body.classList.toggle("arsp-md-menu-open", open);
     }
+
+    function applyInitialState() {
+        mode = getMode();
+
+        if (mode === "mobile") {
+            /*
+             * NEVER open automatically on a phone,
+             * including Chrome Desktop-site mode.
+             */
+            setMobileOpen(false);
+        } else {
+            /*
+             * Real desktop computer starts with sidebar open.
+             */
+            setDesktopClosed(false);
+        }
+    }
+
+    applyInitialState();
 
     toggle.addEventListener("click", function () {
-        if (sidebar.classList.contains("open")) {
-            closeMenu();
-        } else {
-            openMenu();
+        mode = getMode();
+
+        if (mode === "mobile") {
+            setMobileOpen(!sidebar.classList.contains("open"));
+            return;
+        }
+
+        setDesktopClosed(
+            !sidebar.classList.contains("desktop-collapsed")
+        );
+    });
+
+    overlay.addEventListener("click", function () {
+        if (getMode() === "mobile") {
+            setMobileOpen(false);
         }
     });
 
-    overlay.addEventListener("click", closeMenu);
-
     sidebar.querySelectorAll("a").forEach(function (link) {
         link.addEventListener("click", function () {
-            if (window.innerWidth <= 768) {
-                closeMenu();
+            if (getMode() === "mobile") {
+                setMobileOpen(false);
             }
         });
     });
 
+    /*
+     * Re-evaluate mode after orientation changes or switching
+     * Chrome rendering modes.
+     *
+     * A mobile device is NEVER automatically opened.
+     */
+    let resizeTimer = null;
+
     window.addEventListener("resize", function () {
-        if (window.innerWidth > 768) {
-            closeMenu();
-        }
+        clearTimeout(resizeTimer);
+
+        resizeTimer = setTimeout(function () {
+            const newMode = getMode();
+
+            if (newMode !== mode) {
+                mode = newMode;
+                syncDeviceClass();
+                applyInitialState();
+                return;
+            }
+
+            syncDeviceClass();
+
+            if (mode === "mobile") {
+                /*
+                 * Keep mobile drawer closed unless the user
+                 * explicitly opened it.
+                 */
+                if (!sidebar.classList.contains("open")) {
+                    overlay.classList.remove("show");
+                    toggle.setAttribute("aria-expanded", "false");
+                }
+            }
+        }, 80);
     });
+
 })();
 </script>
 

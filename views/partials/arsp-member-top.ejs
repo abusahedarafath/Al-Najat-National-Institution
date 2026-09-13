@@ -1,6 +1,7 @@
 <%- include("../partials/header") %>
-<link rel="stylesheet" href="/css/arsp-member-dashboard.css">
-<link rel="stylesheet" href="/css/arsp-member-shell.css">
+<link rel="stylesheet" href="/css/arsp-member-portal.css">
+
+
 
 <body class="arsp-member-dashboard">
 
@@ -31,7 +32,7 @@
         <nav class="arsp-md-side-nav" aria-label="Member navigation">
 
             <a href="/arsp/dashboard"
-               class="arsp-md-nav-item active">
+               class="arsp-md-nav-item <%= (typeof activeMemberPage !== "undefined" && activeMemberPage === "dashboard") ? "active" : "" %>">
                 <span class="arsp-md-nav-icon">
                     <i class="fa-solid fa-house"></i>
                 </span>
@@ -41,7 +42,7 @@
 
             <div class="arsp-md-nav-section">MY ACCOUNT</div>
 
-            <a href="/arsp/profile/edit" class="arsp-md-nav-item">
+            <a href="/arsp/profile/edit" class="arsp-md-nav-item <%= (typeof activeMemberPage !== "undefined" && activeMemberPage === "profile") ? "active" : "" %>">
                 <span class="arsp-md-nav-icon">
                     <i class="fa-solid fa-user"></i>
                 </span>
@@ -51,7 +52,7 @@
 
             <div class="arsp-md-nav-section">DOCUMENTS</div>
 
-            <a href="/arsp/documents" class="arsp-md-nav-item">
+            <a href="/arsp/documents" class="arsp-md-nav-item <%= (typeof activeMemberPage !== "undefined" && activeMemberPage === "documents") ? "active" : "" %>">
                 <span class="arsp-md-nav-icon">
                     <i class="fa-solid fa-file-lines"></i>
                 </span>
@@ -61,12 +62,20 @@
 
             <div class="arsp-md-nav-section">MY ACTIVITY</div>
 
-            <a href="/arsp/activity" class="arsp-md-nav-item">
+            <a href="/arsp/activity" class="arsp-md-nav-item <%= (typeof activeMemberPage !== "undefined" && activeMemberPage === "activity") ? "active" : "" %>">
                 <span class="arsp-md-nav-icon">
                     <i class="fa-solid fa-chart-column"></i>
                 </span>
                 <span>Activity History</span>
             </a>
+            <a href="/arsp/logout"
+               class="arsp-md-nav-item arsp-md-logout">
+                <span class="arsp-md-nav-icon">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </span>
+                <span>Logout</span>
+            </a>
+
 
 
             <div class="arsp-md-nav-section">RTSE SUPPORT</div>
@@ -82,7 +91,7 @@
 
             <div class="arsp-md-nav-section">SECURITY</div>
 
-            <a href="/arsp/change-password" class="arsp-md-nav-item">
+            <a href="/arsp/change-password" class="arsp-md-nav-item <%= (typeof activeMemberPage !== "undefined" && activeMemberPage === "change-password") ? "active" : "" %>">
                 <span class="arsp-md-nav-icon">
                     <i class="fa-solid fa-lock"></i>
                 </span>
@@ -104,11 +113,6 @@
 
         <div class="arsp-md-sidebar-bottom">
 
-            <a href="/arsp/logout"
-               class="arsp-md-logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
-            </a>
 
             <div class="arsp-md-sidebar-copy">
                 © 2026 Active Rural Social Progress (ARSP)<br>

@@ -6,6 +6,10 @@
 
     <!-- WELCOME -->
     <article class="arsp-md-welcome-card">
+        <div class="arsp-md-welcome-designation">
+            <span class="arsp-md-welcome-designation-label">DESIGNATION</span>
+            <strong><%= member.designation || "ARSP Member" %></strong>
+        </div>
 
                     <div class="arsp-md-welcome-content">
 
@@ -68,7 +72,7 @@
                                 <input
                                     type="text"
                                     id="arspAdmitRegistration"
-                                    placeholder="<%= String(member.admit_card_access || 'Partial') === 'Full' ? 'Search registration number, name, mobile, father name or school' : 'Search registration number, student name or father name' %>"
+                                    placeholder="<%= String(member.admit_card_access || 'Partial') === 'Full' ? 'Search registration number, name, or mobile name or school' : 'Search registration number, student name or father name' %>"
                                     autocomplete="off"
                                     aria-label="<%= String(member.admit_card_access || 'Partial') === 'Full' ? 'Universal student search' : 'RTSE registration number' %>"
                                 >
@@ -458,290 +462,7 @@
 
             </section>
 
-<style id="arsp-admit-card-mobile-ui-fix">
 
-/* =====================================================
-   ADMIT CARD MOBILE VERIFICATION POPUP
-   ===================================================== */
-
-.arsp-admit-mobile-modal {
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 99999 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: 100% !important;
-    min-height: 100vh !important;
-
-    box-sizing: border-box !important;
-    padding: 16px !important;
-
-    background: rgba(15, 23, 42, 0.62) !important;
-}
-
-.arsp-admit-mobile-modal > div[role="dialog"] {
-    width: 100% !important;
-    max-width: 430px !important;
-
-    box-sizing: border-box !important;
-
-    margin: 0 auto !important;
-    padding: 22px !important;
-
-    background: #ffffff !important;
-    border-radius: 16px !important;
-
-    box-shadow:
-        0 20px 55px rgba(0, 0, 0, 0.28) !important;
-
-    overflow: hidden !important;
-}
-
-/* Popup heading */
-.arsp-admit-mobile-modal
-> div[role="dialog"]
-> div:first-child {
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 10px !important;
-
-    margin: 0 0 12px !important;
-}
-
-.arsp-admit-mobile-modal
-> div[role="dialog"]
-> div:first-child i {
-    font-size: 17px !important;
-}
-
-.arsp-admit-mobile-modal
-> div[role="dialog"]
-> div:first-child strong {
-    display: block !important;
-
-    font-size: 18px !important;
-    line-height: 1.3 !important;
-}
-
-/* Popup description */
-.arsp-admit-mobile-modal
-> div[role="dialog"]
-> p {
-    margin: 0 0 17px !important;
-
-    font-size: 14px !important;
-    line-height: 1.55 !important;
-
-    color: #64748b !important;
-}
-
-/* Mobile input */
-.arsp-admit-mobile-modal
-input[type="tel"] {
-    display: block !important;
-
-    width: 100% !important;
-    height: 48px !important;
-
-    box-sizing: border-box !important;
-
-    margin: 0 !important;
-    padding: 0 14px !important;
-
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 10px !important;
-
-    background: #ffffff !important;
-    color: #0f172a !important;
-
-    font-size: 16px !important;
-    line-height: 48px !important;
-
-    outline: none !important;
-}
-
-.arsp-admit-mobile-modal
-input[type="tel"]:focus {
-    border-color: #2563eb !important;
-
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.12) !important;
-}
-
-/* Status area */
-.arsp-admit-mobile-modal
-[id*="MobileStatus"] {
-    min-height: 20px !important;
-
-    margin: 9px 0 !important;
-
-    font-size: 13px !important;
-    line-height: 1.4 !important;
-}
-
-/* Popup buttons row */
-.arsp-admit-mobile-modal
-> div[role="dialog"]
-> div:last-child {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-
-    gap: 9px !important;
-
-    margin-top: 14px !important;
-}
-
-/* Popup buttons */
-.arsp-admit-mobile-modal
-> div[role="dialog"]
-button {
-    display: inline-flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    gap: 6px !important;
-
-    width: auto !important;
-    min-width: 0 !important;
-    min-height: 42px !important;
-
-    box-sizing: border-box !important;
-
-    margin: 0 !important;
-    padding: 9px 13px !important;
-
-    border-radius: 8px !important;
-
-    font-size: 13px !important;
-    font-weight: 600 !important;
-
-    line-height: 1.2 !important;
-
-    white-space: nowrap !important;
-}
-
-/* =====================================================
-   SELECT STUDENT BUTTON
-   ===================================================== */
-
-.arsp-partial-select-student,
-.arsp-full-select-student {
-    display: inline-flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    gap: 6px !important;
-
-    width: auto !important;
-    max-width: 100% !important;
-
-    min-height: 36px !important;
-
-    box-sizing: border-box !important;
-
-    margin: 8px 0 0 auto !important;
-    padding: 8px 12px !important;
-
-    border-radius: 7px !important;
-
-    font-size: 12px !important;
-    font-weight: 600 !important;
-
-    line-height: 1.2 !important;
-
-    white-space: nowrap !important;
-
-    cursor: pointer !important;
-}
-
-.arsp-partial-select-student i,
-.arsp-full-select-student i {
-    flex: 0 0 auto !important;
-    font-size: 12px !important;
-}
-
-.arsp-partial-select-student:disabled,
-.arsp-full-select-student:disabled {
-    opacity: 0.6 !important;
-    cursor: not-allowed !important;
-}
-
-/* =====================================================
-   SMALL MOBILE DEVICES
-   ===================================================== */
-
-@media (max-width: 600px) {
-
-    .arsp-admit-mobile-modal {
-        padding: 14px !important;
-    }
-
-    .arsp-admit-mobile-modal
-    > div[role="dialog"] {
-        max-width: 430px !important;
-
-        padding: 20px !important;
-
-        border-radius: 14px !important;
-    }
-
-    .arsp-admit-mobile-modal
-    > div[role="dialog"]
-    > div:first-child strong {
-        font-size: 17px !important;
-    }
-
-    .arsp-admit-mobile-modal
-    > div[role="dialog"]
-    > p {
-        font-size: 13px !important;
-    }
-
-    .arsp-partial-select-student,
-    .arsp-full-select-student {
-        min-height: 35px !important;
-
-        padding: 8px 10px !important;
-
-        font-size: 12px !important;
-    }
-}
-
-/* =====================================================
-   VERY SMALL PHONES
-   ===================================================== */
-
-@media (max-width: 380px) {
-
-    .arsp-admit-mobile-modal
-    > div[role="dialog"]
-    > div:last-child {
-        flex-direction: column-reverse !important;
-        align-items: stretch !important;
-    }
-
-    .arsp-admit-mobile-modal
-    > div[role="dialog"]
-    button {
-        width: 100% !important;
-    }
-
-    .arsp-partial-select-student,
-    .arsp-full-select-student {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-}
-
-</style>
 
 <script>
 (function () {
@@ -929,7 +650,17 @@ button {
     }
 
 
+    function restoreSearchScrollPosition(scrollY) {
+        requestAnimationFrame(function () {
+            window.scrollTo(0, scrollY);
+            requestAnimationFrame(function () {
+                window.scrollTo(0, scrollY);
+            });
+        });
+    }
+
     function clearStudent() {
+        const preservedScrollY = window.scrollY;
         selectedRegistrationNo = "";
 
         if (fullAccessMobileModal) {
@@ -957,6 +688,7 @@ button {
             downloadStatus.innerHTML = "";
         }
 
+            restoreSearchScrollPosition(preservedScrollY);
     }
 
 
