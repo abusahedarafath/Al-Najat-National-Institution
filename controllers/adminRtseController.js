@@ -5020,13 +5020,18 @@ exports.saveResult = async (req, res) => {
                 ? rankValue
                 : null;
 
+        const savedResultStatus =
+            percentage >= 40
+                ? "Pass"
+                : "Fail";
+
         const resultData = {
             application_id: applicationId,
             marks,
             percentage,
             grade,
             rank_no: rankNo,
-            result_status: "Entered"
+            result_status: savedResultStatus
         };
 
         // =====================================

@@ -32,7 +32,7 @@ class RtseResult {
                 data.percentage,
                 data.grade,
                 data.rank_no,
-                'Entered'
+                data.result_status
 
             ]
 
@@ -69,7 +69,7 @@ class RtseResult {
                 data.percentage,
                 data.grade,
                 data.rank_no,
-                'Entered',
+                data.result_status,
 
                 id
 
