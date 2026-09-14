@@ -73,6 +73,33 @@ class RtseCountedOmr {
     }
 
     // =====================================
+    // Delete Counted OMR Record
+    // =====================================
+    static async deleteByApplication(applicationId) {
+        const id = Number(applicationId);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return null;
+        }
+
+        const existing = await this.getByApplication(id);
+
+        if (!existing) {
+            return null;
+        }
+
+        await db.query(
+            `
+            DELETE FROM rtse_counted_omr
+            WHERE application_id = ?
+            `,
+            [id]
+        );
+
+        return existing;
+    }
+
+    // =====================================
     // Create Counted OMR Record
     // =====================================
     static async create(data) {

@@ -4570,6 +4570,12 @@ exports.resetAttendanceStatus = async (req, res) => {
             applicationId
         );
 
+        // Delete ONLY the Counted OMR associated with this
+        // application. The original/generated OMR is untouched.
+        await RtseCountedOmr.deleteByApplication(
+            applicationId
+        );
+
         req.flash(
             "success",
             "Attendance Status Reset successfully. Student is now NOT SCANNED and can be scanned again."

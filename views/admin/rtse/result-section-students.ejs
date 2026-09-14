@@ -227,6 +227,14 @@
                                                 >
                                                     See Counted OMR
                                                 </a>
+                                                <button
+                                                    type="button"
+                                                    class="btn-save rtse-counted-omr-delete-btn"
+                                                    style="margin-left:6px;"
+                                                    data-application-id="<%= student.application_id || student.id %>"
+                                                >
+                                                    Delete Counted OMR
+                                                </button>
                                             <% } %>
 </td>
 
@@ -792,3 +800,52 @@
 
 
 <%- include("../partials/footer") %>
+
+
+<script>
+document.addEventListener("click", async function (event) {
+    const button = event.target.closest(".rtse-counted-omr-delete-btn");
+    if (!button) return;
+
+    const applicationId = button.dataset.applicationId;
+
+    if (!confirm(
+        "Delete this student's Counted OMR?\n\n" +
+        "This will delete only the Counted OMR. " +
+        "The original/generated OMR and other student files will not be affected."
+    )) {
+        return;
+    }
+
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = "Deleting...";
+
+    try {
+        const response = await fetch(
+            "/admin/rtse/counted-omr/" + encodeURIComponent(applicationId) + "/delete",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to delete Counted OMR."
+            );
+        }
+
+        window.location.reload();
+    } catch (error) {
+        alert(error.message || "Unable to delete Counted OMR.");
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+});
+</script>

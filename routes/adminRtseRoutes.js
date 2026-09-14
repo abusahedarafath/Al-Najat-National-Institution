@@ -900,6 +900,13 @@ router.get(
     rtseCountedOmrController.view
 );
 
+router.post(
+    "/rtse/counted-omr/:id/delete",
+    auth.isAdmin,
+    rtseCountedOmrController.delete
+);
+
+
 // =====================================
 // Result Management
 // =====================================

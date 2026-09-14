@@ -184,6 +184,80 @@ const controller = {
     },
 
     // =====================================
+    // Delete Counted OMR
+    // =====================================
+    async delete(req, res) {
+        try {
+            const applicationId = Number(req.params.id);
+
+            if (!Number.isInteger(applicationId) || applicationId < 1) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid student ID."
+                });
+            }
+
+            const record =
+                await RtseCountedOmr.getByApplication(applicationId);
+
+            if (!record) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Counted OMR not found."
+                });
+            }
+
+            const safeFileName = path.basename(record.file_name);
+            const filePath = path.join(
+                STORAGE_DIR,
+                safeFileName
+            );
+
+            /*
+             * Delete only the Counted OMR database record.
+             * Never touch the original/generated OMR
+             * or any other student upload.
+             */
+            const deletedRecord =
+                await RtseCountedOmr.deleteByApplication(
+                    applicationId
+                );
+
+            /*
+             * Delete only the physical Counted OMR file
+             * belonging to the deleted database record.
+             */
+            if (deletedRecord) {
+                try {
+                    fs.unlinkSync(filePath);
+                } catch (fileError) {
+                    if (fileError.code !== "ENOENT") {
+                        console.error(
+                            "RTSE Counted OMR file cleanup warning:",
+                            fileError
+                        );
+                    }
+                }
+            }
+
+            return res.json({
+                success: true,
+                message: "Counted OMR deleted successfully."
+            });
+        } catch (error) {
+            console.error(
+                "RTSE Counted OMR Delete Error:",
+                error
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: "Unable to delete counted OMR."
+            });
+        }
+    },
+
+    // =====================================
     // View Counted OMR
     // =====================================
     async view(req, res) {

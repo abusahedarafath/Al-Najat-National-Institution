@@ -39,7 +39,14 @@ window.initializeRtseCountedOmr = function (
 
     root.__rtseCountedOmrState = scannerState;
 
-    if (scannerState.initialized) {
+    const currentCameraButton =
+        root.querySelector("#rtseOmrCameraButton");
+
+    if (
+        scannerState.initialized &&
+        scannerState.cameraButton === currentCameraButton &&
+        currentCameraButton
+    ) {
         const existingBox =
             root.querySelector("#rtseOmrExisting");
 
@@ -76,8 +83,10 @@ window.initializeRtseCountedOmr = function (
 
     scannerState.initialized = true;
 
-    const cameraButton = root.querySelector("#rtseOmrCameraButton");
+    const cameraButton = currentCameraButton;
     const chooseButton = root.querySelector("#rtseOmrChooseButton");
+
+    scannerState.cameraButton = cameraButton;
     const cameraInput = root.querySelector("#rtseOmrCameraInput");
     const chooseInput = root.querySelector("#rtseOmrChooseInput");
     const editor = root.querySelector("#rtseOmrEditor");
@@ -129,6 +138,7 @@ window.initializeRtseCountedOmr = function (
     let sourceFile = null;
     let croppedBlob = null;
     let objectUrl = null;
+    let enhancingPreview = false;
 
     let crop = {
         x: 0,
@@ -207,7 +217,16 @@ window.initializeRtseCountedOmr = function (
         objectUrl = URL.createObjectURL(file);
 
         previewImage.onload = async function () {
-            try {
+            /*
+         * createEnhancedPreview() changes previewImage.src,
+         * which fires onload again. Prevent recursive enhancement.
+         */
+        if (enhancingPreview) {
+            return;
+        }
+
+        try {
+            enhancingPreview = true;
                 uploadStatus.textContent =
                     "Enhancing image like a scanner...";
 
@@ -234,8 +253,10 @@ window.initializeRtseCountedOmr = function (
                 openOmrModal();
                 uploadStatus.textContent =
                     "Original preview loaded. Crop and continue.";
-            }
-        };
+        } finally {
+            enhancingPreview = false;
+        }
+    };
 
         previewImage.src = objectUrl;
     }
