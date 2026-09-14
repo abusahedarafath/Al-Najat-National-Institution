@@ -46,7 +46,8 @@
                         <a
                             href="/admin/rtse/close-applications"
                             class="btn-danger"
-                            onclick="return confirm('Close RTSE Applications?');"
+                            data-rtse-confirm-title="Close RTSE Applications"
+                            data-rtse-confirm-message="Close RTSE Applications?\n\nApplicants will no longer be able to submit applications."
                         >
                             🔒 Close Applications
                         </a>
@@ -56,7 +57,8 @@
                         <a
                             href="/admin/rtse/open-applications"
                             class="btn-save"
-                            onclick="return confirm('Open RTSE Applications?');"
+                            data-rtse-confirm-title="Open RTSE Applications"
+                            data-rtse-confirm-message="Open RTSE Applications?\n\nApplicants will be able to submit applications again."
                         >
                             🔓 Open Applications
                         </a>
@@ -80,7 +82,8 @@
                             <a
                                 href="/admin/rtse/hide-admit"
                                 class="btn-warning"
-                                onclick="return confirm('Hide Admit Cards?');"
+                                data-rtse-confirm-title="Hide Admit Cards"
+                            data-rtse-confirm-message="Hide Admit Cards?\n\nPublished Admit Cards will no longer be visible to students."
                             >
                                 🙈 Hide Admit Cards
                             </a>
@@ -90,7 +93,8 @@
                             <a
                                 href="/admin/rtse/publish-admit"
                                 class="btn-save"
-                                onclick="return confirm('Publish Admit Cards?');"
+                                data-rtse-confirm-title="Publish Admit Cards"
+                            data-rtse-confirm-message="Publish Admit Cards?\n\nThe generated Admit Cards will become available to students."
                             >
                                 📢 Publish Admit Cards
                             </a>
@@ -383,13 +387,14 @@
 
                             <!-- INDEPENDENT OMR LIFECYCLE -->
 <div class="rtse-generation-action">
-    <% if(Number(data.admit_generated || 0) > 0){ %>
+    <% if(Number(data.admit_generated || 0) > 0 && !setting.admit_publish){ %>
         <% if(Number(data.omr_generated || 0) === 0){ %>
             <form
                 method="POST"
                 action="/admin/rtse/omr/generate/<%= section %>"
                 style="display:inline;"
-                onsubmit="return confirm('Generate OMR sheets for Section <%= section %>?\\n\\nThis will refresh each student Result QR token. Attendance and PRESENT status will not be changed. Continue?')"
+                data-rtse-confirm-title="Generate OMR Sheets"
+                data-rtse-confirm-message="Generate OMR sheets for Section <%= section %>?\n\nThis will refresh each student Result QR token. Attendance and PRESENT status will not be changed."
             >
                 <button type="submit" class="btn-save">
                     📝 Generate OMR
@@ -403,7 +408,8 @@
                 method="POST"
                 action="/admin/rtse/omr/reset/<%= section %>"
                 style="display:inline;"
-                onsubmit="return confirm('Reset OMR generation for Section <%= section %>?\\n\\nAdmit Cards, Roll Numbers, Attendance and PRESENT status will remain unchanged. Continue?')"
+                data-rtse-confirm-title="Reset OMR Generation"
+                data-rtse-confirm-message="Reset OMR generation for Section <%= section %>?\n\nAdmit Cards, Roll Numbers, Attendance and PRESENT status will remain unchanged."
             >
                 <button type="submit" class="btn-warning">
                     ↩ Reset OMR
@@ -433,7 +439,8 @@
                                         <a
                                             href="/admin/rtse/generate-roll/<%= section %>"
                                             class="btn-save"
-                                            onclick="return confirm('Generate Roll Numbers for Section <%= section %>?')"
+                                            data-rtse-confirm-title="Generate Roll Numbers"
+                                        data-rtse-confirm-message="Generate Roll Numbers for Section <%= section %>?"
                                         >
                                             Generate Roll Number
                                         </a>
@@ -453,7 +460,8 @@
                                                 method="POST"
                                                 action="/admin/rtse/reset-roll/<%= section %>"
                                                 style="display:inline;"
-                                                onsubmit="return confirm('Reset Roll No. for Section <%= section %>?\\n\\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected. Continue?')"
+                                                data-rtse-confirm-title="Reset Roll Number & Admit"
+                                                data-rtse-confirm-message="Reset Roll No. for Section <%= section %>?\n\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected."
                                             >
                                                 <button
                                                     type="submit"
@@ -476,7 +484,8 @@
                                                 method="POST"
                                                 action="/admin/rtse/reset-roll/<%= section %>"
                                                 style="display:inline;"
-                                                onsubmit="return confirm('Reset Roll No. for Section <%= section %>?\\n\\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected. Continue?')"
+                                                data-rtse-confirm-title="Reset Roll Number & Admit"
+                                                data-rtse-confirm-message="Reset Roll No. for Section <%= section %>?\n\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected."
                                             >
                                                 <button
                                                     type="submit"
@@ -543,6 +552,501 @@
         </div>
 
 
+
+<!-- =========================================================
+     RTSE RESET CONFIRMATION MODAL
+     ========================================================= -->
+<div
+    id="rtseConfirmOverlay"
+    class="rtse-confirm-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rtseConfirmTitle"
+    aria-describedby="rtseConfirmMessage"
+>
+    <div class="rtse-confirm-modal">
+        <div class="rtse-confirm-header">
+            <div class="rtse-confirm-icon" aria-hidden="true">!</div>
+            <h3 id="rtseConfirmTitle" class="rtse-confirm-title">
+                Confirm Action
+            </h3>
+        </div>
+
+        <div class="rtse-confirm-body">
+            <p id="rtseConfirmMessage" class="rtse-confirm-message"></p>
+
+            <div class="rtse-confirm-warning">
+                Please confirm before continuing. Choosing Cancel will leave
+                the current RTSE state completely unchanged.
+            </div>
+        </div>
+
+        <div class="rtse-confirm-actions">
+            <button
+                type="button"
+                id="rtseConfirmCancel"
+                class="rtse-confirm-btn rtse-confirm-cancel"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="rtseConfirmContinue"
+                class="rtse-confirm-btn rtse-confirm-continue"
+            >
+                OK, Continue
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<style>
+/* =========================================================
+   RTSE CONFIRMATION MODAL
+   Isolated from the existing RTSE dashboard components.
+   ========================================================= */
+
+.rtse-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.68);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.rtse-confirm-overlay.is-visible {
+    display: flex;
+}
+
+.rtse-confirm-modal {
+    width: min(460px, 100%);
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.28),
+        0 8px 24px rgba(0, 0, 0, 0.14);
+    overflow: hidden;
+    animation: rtseConfirmModalIn 0.18s ease-out;
+}
+
+@keyframes rtseConfirmModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.rtse-confirm-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rtse-confirm-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff7ed;
+    color: #c2410c;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.rtse-confirm-title {
+    margin: 0;
+    color: #111827;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.rtse-confirm-body {
+    padding: 20px 22px 8px;
+}
+
+.rtse-confirm-message {
+    margin: 0;
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-line;
+}
+
+.rtse-confirm-warning {
+    margin-top: 15px;
+    padding: 11px 13px;
+    border-left: 4px solid #f59e0b;
+    border-radius: 7px;
+    background: #fffbeb;
+    color: #92400e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.rtse-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 22px 22px;
+}
+
+.rtse-confirm-btn {
+    min-width: 105px;
+    min-height: 42px;
+    padding: 9px 17px;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        opacity 0.12s ease;
+}
+
+.rtse-confirm-btn:hover {
+    transform: translateY(-1px);
+}
+
+.rtse-confirm-btn:active {
+    transform: translateY(0);
+}
+
+.rtse-confirm-cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.rtse-confirm-cancel:hover {
+    background: #e5e7eb;
+}
+
+.rtse-confirm-continue {
+    background: #b91c1c;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.22);
+}
+
+.rtse-confirm-continue:hover {
+    background: #991b1b;
+}
+
+.rtse-confirm-overlay.rtse-confirm-omr .rtse-confirm-icon {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.rtse-confirm-overlay.rtse-confirm-omr .rtse-confirm-continue {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.22);
+}
+
+.rtse-confirm-overlay.rtse-confirm-omr .rtse-confirm-continue:hover {
+    background: #1e40af;
+}
+
+@media (max-width: 520px) {
+    .rtse-confirm-overlay {
+        padding: 14px;
+    }
+
+    .rtse-confirm-modal {
+        border-radius: 15px;
+    }
+
+    .rtse-confirm-header {
+        padding: 18px 18px 14px;
+    }
+
+    .rtse-confirm-body {
+        padding: 18px 18px 6px;
+    }
+
+    .rtse-confirm-actions {
+        padding: 16px 18px 18px;
+    }
+
+    .rtse-confirm-btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+</style>
+
+<script>
+(function () {
+    "use strict";
+
+    const overlay = document.getElementById("rtseConfirmOverlay");
+    const title = document.getElementById("rtseConfirmTitle");
+    const message = document.getElementById("rtseConfirmMessage");
+    const cancelButton = document.getElementById("rtseConfirmCancel");
+    const continueButton = document.getElementById("rtseConfirmContinue");
+
+    if (!overlay || !title || !message || !cancelButton || !continueButton) {
+        console.warn("RTSE confirmation modal could not be initialized.");
+        return;
+    }
+
+    let pendingForm = null;
+    let pendingTrigger = null;
+    let pendingResolve = null;
+
+    function closeRtseConfirmModal(result) {
+        const resolve = pendingResolve;
+
+        pendingForm = null;
+        pendingTrigger = null;
+        pendingResolve = null;
+
+        overlay.classList.remove("is-visible");
+        overlay.classList.remove("rtse-confirm-omr");
+        overlay.classList.remove("rtse-confirm-danger");
+        overlay.classList.remove("rtse-confirm-action");
+        document.body.style.overflow = "";
+
+        if (typeof resolve === "function") {
+            resolve(Boolean(result));
+        }
+    }
+
+    function openRtseConfirmModal(form, trigger) {
+        pendingForm = form || null;
+        pendingTrigger = trigger || null;
+
+        const source = form || trigger;
+
+        const confirmTitle =
+            source.getAttribute("data-rtse-confirm-title") ||
+            "Confirm Action";
+
+        const confirmMessage = (
+            source.getAttribute("data-rtse-confirm-message") ||
+            "Are you sure you want to continue?"
+        ).replace(/\\n/g, "\n");
+
+        title.textContent = confirmTitle;
+        message.textContent = confirmMessage;
+
+        const action = String(source.getAttribute("action") || "")
+            .toLowerCase();
+
+        const titleText = confirmTitle.toLowerCase();
+
+        const isOmr =
+            action.includes("/admin/rtse/omr/") ||
+            titleText.includes("omr");
+
+        const isDanger =
+            titleText.includes("reset") ||
+            titleText.includes("close") ||
+            titleText.includes("hide");
+
+        overlay.classList.toggle("rtse-confirm-omr", isOmr);
+        overlay.classList.toggle("rtse-confirm-danger", isDanger);
+        overlay.classList.toggle("rtse-confirm-action", !isDanger);
+
+        overlay.classList.add("is-visible");
+        document.body.style.overflow = "hidden";
+
+        window.setTimeout(function () {
+            continueButton.focus();
+        }, 0);
+    }
+
+    function requestRtseConfirmation(source) {
+        return new Promise(function (resolve) {
+            pendingForm = source instanceof HTMLFormElement ? source : null;
+            pendingTrigger = source instanceof HTMLElement ? source : null;
+            pendingResolve = resolve;
+
+            openRtseConfirmModal(
+                pendingForm,
+                pendingTrigger
+            );
+        });
+    }
+
+    // --------------------------------------------------------
+    // Forms: stop submission BEFORE the browser can submit.
+    // --------------------------------------------------------
+    document.addEventListener("click", function (event) {
+        const button = event.target.closest(
+            'form[data-rtse-confirm-title] button[type="submit"]'
+        );
+
+        if (!button) {
+            return;
+        }
+
+        const form = button.form;
+
+        if (!form) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        pendingForm = form;
+        pendingTrigger = button;
+        pendingResolve = null;
+
+        openRtseConfirmModal(form, button);
+    }, true);
+
+    // --------------------------------------------------------
+    // Links: intercept all dashboard confirmation links.
+    // --------------------------------------------------------
+    document.addEventListener("click", function (event) {
+        const link = event.target.closest(
+            'a[data-rtse-confirm-title]'
+        );
+
+        if (!link) {
+            return;
+        }
+
+        if (
+            event.defaultPrevented ||
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+        ) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        pendingForm = null;
+        pendingTrigger = link;
+        pendingResolve = null;
+
+        openRtseConfirmModal(null, link);
+    }, true);
+
+    cancelButton.addEventListener("click", function () {
+        closeRtseConfirmModal(false);
+    });
+
+    continueButton.addEventListener("click", function () {
+        const form = pendingForm;
+        const link = pendingTrigger;
+        const resolve = pendingResolve;
+
+        if (typeof resolve === "function") {
+            closeRtseConfirmModal(true);
+            return;
+        }
+
+        closeRtseConfirmModal(false);
+
+        if (form) {
+            if (typeof form.requestSubmit === "function") {
+                form.requestSubmit();
+            } else {
+                HTMLFormElement.prototype.submit.call(form);
+            }
+            return;
+        }
+
+        if (link) {
+            window.location.href = link.href;
+        }
+    });
+
+    overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) {
+            closeRtseConfirmModal(false);
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (!overlay.classList.contains("is-visible")) {
+            return;
+        }
+
+        if (event.key === "Escape") {
+            event.preventDefault();
+            closeRtseConfirmModal(false);
+            return;
+        }
+
+        if (event.key === "Enter") {
+            if (
+                document.activeElement === cancelButton ||
+                document.activeElement === continueButton
+            ) {
+                event.preventDefault();
+                continueButton.click();
+            }
+        }
+    });
+
+    // --------------------------------------------------------
+    // Public helper for async JavaScript actions.
+    // --------------------------------------------------------
+    window.rtseConfirm = function (titleText, messageText, options) {
+        options = options || {};
+
+        return new Promise(function (resolve) {
+            pendingForm = null;
+            pendingTrigger = null;
+            pendingResolve = resolve;
+
+            title.textContent = titleText || "Confirm Action";
+            message.textContent = String(
+                messageText || "Are you sure you want to continue?"
+            ).replace(/\\n/g, "\n");
+
+            const lowerTitle = String(titleText || "").toLowerCase();
+
+            const isOmr =
+                lowerTitle.includes("omr") ||
+                options.omr === true;
+
+            const isDanger =
+                lowerTitle.includes("reset") ||
+                lowerTitle.includes("close") ||
+                lowerTitle.includes("hide") ||
+                options.danger === true;
+
+            overlay.classList.toggle("rtse-confirm-omr", isOmr);
+            overlay.classList.toggle("rtse-confirm-danger", isDanger);
+            overlay.classList.toggle("rtse-confirm-action", !isDanger);
+
+            overlay.classList.add("is-visible");
+            document.body.style.overflow = "hidden";
+
+            window.setTimeout(function () {
+                continueButton.focus();
+            }, 0);
+        });
+    };
+})();
+</script>>
 <script>
 (function () {
     const RTSE_DASHBOARD_SCROLL_POSITION_KEY =
@@ -740,11 +1244,12 @@ async function refreshRtseLoginInformationPdfStatus(section) {
 async function prepareRtseLoginInformationPdf(section, button) {
     if (!section || !button) return;
 
-    if (!confirm(
+    if (!await window.rtseConfirm(
+        "Prepare Login Information PDFs",
         "Prepare Login Information PDFs for Section " +
         section +
-        "?\n\n" +
-        "The saved Login Information PDF settings will be used.\n" +
+        "?\\n\\n" +
+        "The saved Login Information PDF settings will be used.\\n" +
         "Roll numbers, admit cards, applications, and uploaded files will not be changed."
     )) {
         return;
@@ -811,12 +1316,14 @@ async function prepareRtseLoginInformationPdf(section, button) {
 async function resetRtseLoginInformationPdf(section, button) {
     if (!section || !button) return;
 
-    if (!confirm(
+    if (!await window.rtseConfirm(
+        "Reset Login Information PDFs",
         "Reset Login Information PDF preparation for Section " +
         section +
-        "?\n\n" +
-        "Only the generated Login Information PDFs will be removed.\n" +
-        "Applications, uploaded files, roll numbers, and admit cards will not be changed."
+        "?\\n\\n" +
+        "Only the generated Login Information PDFs will be removed.\\n" +
+        "Applications, uploaded files, roll numbers, and admit cards will not be changed.",
+        { danger: true }
     )) {
         return;
     }
