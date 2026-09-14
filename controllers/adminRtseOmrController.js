@@ -355,6 +355,14 @@ exports.downloadStudentOmrPdf = async (req, res) => {
             return res.redirect(`/admin/rtse/application/${id}`);
         }
 
+        if (Number(student.omr_generated || 0) !== 1) {
+            req.flash(
+                "error",
+                "OMR has not been generated for this student."
+            );
+            return res.redirect(`/admin/rtse/application/${id}`);
+        }
+
         const section = normalizeSection(student.section);
 
         if (!VALID_SECTIONS.includes(section)) {
