@@ -1,3 +1,5 @@
 node_modules/
 .env
 public/uploads/applications/
+# RTSE Counted OMR runtime files
+uploads/rtse-counted-omr/

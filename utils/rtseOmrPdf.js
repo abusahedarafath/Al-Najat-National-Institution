@@ -783,9 +783,12 @@ async function drawPhotoPanel(doc, data) {
     }
 
     // ==============================
-    // RESERVED QR SPACE
+    // RESULT QR
     // ==============================
-    // QR functionality will be connected here later.
+    // The Result QR is generated for the exact student
+    // during admit-card generation and is only rendered
+    // here. The QR token itself is never regenerated while
+    // producing/reprinting an OMR.
     const qrSize = 48;
     const qrX = x + (w - qrSize) / 2;
     const qrY = photoY + photoH + 10;
@@ -795,19 +798,66 @@ async function drawPhotoPanel(doc, data) {
         .lineWidth(0.8)
         .stroke(COLORS.line);
 
-    doc
-        .font("Times-Bold")
-        .fontSize(7)
-        .fillColor(COLORS.grey)
-        .text(
-            "QR",
-            qrX,
-            qrY + qrSize / 2 - 4,
-            {
-                width: qrSize,
-                align: "center"
-            }
-        );
+    if (data.resultQrBuffer) {
+        try {
+            doc.image(
+                data.resultQrBuffer,
+                qrX + 2,
+                qrY + 2,
+                {
+                    width: qrSize - 4,
+                    height: qrSize - 4
+                }
+            );
+
+            doc
+                .font("Times-Bold")
+                .fontSize(5.5)
+                .fillColor(COLORS.grey)
+                .text(
+                    "RESULT QR",
+                    qrX,
+                    qrY + qrSize + 2,
+                    {
+                        width: qrSize,
+                        align: "center"
+                    }
+                );
+        } catch (error) {
+            console.error(
+                "RTSE OMR Result QR rendering error:",
+                error
+            );
+
+            doc
+                .font("Times-Bold")
+                .fontSize(7)
+                .fillColor(COLORS.grey)
+                .text(
+                    "QR",
+                    qrX,
+                    qrY + qrSize / 2 - 4,
+                    {
+                        width: qrSize,
+                        align: "center"
+                    }
+                );
+        }
+    } else {
+        doc
+            .font("Times-Bold")
+            .fontSize(7)
+            .fillColor(COLORS.grey)
+            .text(
+                "QR",
+                qrX,
+                qrY + qrSize / 2 - 4,
+                {
+                    width: qrSize,
+                    align: "center"
+                }
+            );
+    }
 }
 
 function drawBarcode(doc, value, x, y, w, h) {

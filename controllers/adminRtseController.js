@@ -30,6 +30,9 @@ const ExcelJS = require("exceljs");
 const RtseExcel = require("../utils/rtseExcel");
 const QRCode = require("qrcode");
 const RtseExamAttendance = require("../models/RtseExamAttendance");
+const RtseResultQr = require("../models/RtseResultQr");
+const RtseCountedOmr = require("../models/RtseCountedOmr");
+const { saveRtseResult } = require("../utils/rtseResultService");
 
 const RtseExamSetting = require("../models/RtseExamSetting");
 const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
@@ -1214,6 +1217,20 @@ exports.generateAdmitCards = async (req, res) => {
         console.log(
             "RTSE QR attendance records created:",
             qrCreated
+        );
+
+        // Create Result QR records at the same time as
+        // admit-card generation. This is isolated from
+        // the existing gate/admit QR attendance records.
+        const resultQrCreated =
+            await RtseResultQr.ensureForSection(
+                section,
+                applicationYear
+            );
+
+        console.log(
+            "RTSE Result QR records created:",
+            resultQrCreated
         );
 
         req.flash(
@@ -4735,12 +4752,32 @@ exports.resultPresentStudents = async (req, res) => {
                 applicationYear
             );
 
+        const presentApplicationIds = students
+            .map(student =>
+                Number(student.application_id || student.id)
+            )
+            .filter(id => Number.isInteger(id) && id > 0);
+
+        const countedOmrRows =
+            await RtseCountedOmr.getByApplications(
+                presentApplicationIds
+            );
+
+        const countedOmrByApplication = {};
+
+        countedOmrRows.forEach(row => {
+            countedOmrByApplication[
+                Number(row.application_id)
+            ] = row;
+        });
+
         res.render(
             "admin/rtse/result-present-students",
             {
                 title: "RTSE Present Students",
                 applicationYear,
                 students,
+                countedOmrByApplication,
                 setting
             }
         );
@@ -4787,6 +4824,25 @@ exports.resultSectionStudents = async (req, res) => {
                 applicationYear
             );
 
+        const sectionApplicationIds = students
+            .map(student =>
+                Number(student.application_id || student.id)
+            )
+            .filter(id => Number.isInteger(id) && id > 0);
+
+        const countedOmrRows =
+            await RtseCountedOmr.getByApplications(
+                sectionApplicationIds
+            );
+
+        const countedOmrByApplication = {};
+
+        countedOmrRows.forEach(row => {
+            countedOmrByApplication[
+                Number(row.application_id)
+            ] = row;
+        });
+
         res.render(
             "admin/rtse/result-section-students",
             {
@@ -4794,6 +4850,7 @@ exports.resultSectionStudents = async (req, res) => {
                 section,
                 applicationYear,
                 students,
+                countedOmrByApplication,
                 setting
             }
         );
@@ -4878,204 +4935,41 @@ exports.resultEntryPage = async (req, res) => {
 // =====================================
 
 exports.saveResult = async (req, res) => {
-
     try {
-
         const applicationId =
             String(req.params.id || "").trim();
 
         if (!applicationId) {
-
-            req.flash(
-                "error",
-                "Invalid student application."
-            );
-
-            return res.redirect(
-                "/admin/rtse/results"
-            );
+            req.flash("error", "Invalid student application.");
+            return res.redirect("/admin/rtse/results");
         }
 
-        /*
-         * Express body-parser is configured globally in server.js,
-         * but normalize the body here so this controller never crashes
-         * merely because a malformed/empty request reaches the route.
-         */
         const body =
             req.body && typeof req.body === "object"
                 ? req.body
                 : {};
 
-
         const resultStatus =
-            String(
-                body.result_status || ""
-            ).trim();
-
-        // =====================================
-        // Reset Result to Pending
-        // =====================================
+            String(body.result_status || "").trim();
 
         if (resultStatus === "Pending") {
-
-            await RtseResult.deleteByApplication(
-                applicationId
-            );
-
-            req.flash(
-                "success",
-                "Result reset to Pending successfully."
-            );
-
-            return res.redirect(
-                "/admin/rtse/results"
-            );
+            await RtseResult.deleteByApplication(applicationId);
+            req.flash("success", "Result reset to Pending successfully.");
+            return res.redirect("/admin/rtse/results");
         }
 
-        // =====================================
-        // Validate Result Input
-        // =====================================
+        await saveRtseResult(applicationId, body);
 
-        const fullMarks =
-            Number(body.full_marks);
-
-        const marks =
-            Number(body.marks);
-
-        if (
-            !Number.isFinite(fullMarks) ||
-            fullMarks <= 0
-        ) {
-
-            req.flash(
-                "error",
-                "Invalid full marks."
-            );
-
-            return res.redirect(
-                `/admin/rtse/result/${encodeURIComponent(applicationId)}`
-            );
-        }
-
-        if (
-            !Number.isFinite(marks) ||
-            marks < 0 ||
-            marks > fullMarks
-        ) {
-
-            req.flash(
-                "error",
-                "Invalid obtained marks."
-            );
-
-            return res.redirect(
-                `/admin/rtse/result/${encodeURIComponent(applicationId)}`
-            );
-        }
-
-        // =====================================
-        // Calculate Percentage Server-side
-        // =====================================
-
-        const percentage =
-            Number(
-                ((marks / fullMarks) * 100).toFixed(2)
-            );
-
-        // =====================================
-        // Calculate Grade Server-side
-        // =====================================
-
-        let grade;
-
-        if (percentage >= 90) {
-            grade = "A+";
-        } else if (percentage >= 80) {
-            grade = "A";
-        } else if (percentage >= 70) {
-            grade = "B+";
-        } else if (percentage >= 60) {
-            grade = "B";
-        } else if (percentage >= 50) {
-            grade = "C+";
-        } else if (percentage >= 40) {
-            grade = "C";
-        } else {
-            grade = "F";
-        }
-
-        // =====================================
-        // Preserve Rank Number
-        // =====================================
-
-        const rankValue =
-            body.rank_no === undefined ||
-            body.rank_no === null ||
-            String(body.rank_no).trim() === ""
-                ? null
-                : Number(body.rank_no);
-
-        const rankNo =
-            Number.isFinite(rankValue)
-                ? rankValue
-                : null;
-
-        const savedResultStatus =
-            percentage >= 40
-                ? "Pass"
-                : "Fail";
-
-        const resultData = {
-            application_id: applicationId,
-            marks,
-            percentage,
-            grade,
-            rank_no: rankNo,
-            result_status: savedResultStatus
-        };
-
-        // =====================================
-        // Save / Update Result
-        // =====================================
-
-        const old =
-            await RtseResult.getByApplication(
-                applicationId
-            );
-
-        if (old) {
-
-            await RtseResult.update(
-                applicationId,
-                resultData
-            );
-
-        } else {
-
-            await RtseResult.save(
-                resultData
-            );
-        }
-
-        req.flash(
-            "success",
-            "Result saved successfully."
-        );
-
-        return res.redirect(
-            "/admin/rtse/results"
-        );
-
+        req.flash("success", "Result saved successfully.");
+        return res.redirect("/admin/rtse/results");
     } catch (err) {
-
-        console.error(
-            "Save Result Error:",
-            err
-        );
+        console.error("Save Result Error:", err);
 
         req.flash(
             "error",
-            "Unable to save result."
+            err && err.message
+                ? err.message
+                : "Unable to save result."
         );
 
         return res.redirect(
@@ -5083,10 +4977,6 @@ exports.saveResult = async (req, res) => {
         );
     }
 };
-
-// =====================================
-// Reset Result to Pending
-// =====================================
 
 exports.resetResultPending = async (req, res) => {
 

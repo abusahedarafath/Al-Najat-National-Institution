@@ -2,6 +2,8 @@ const RtseSetting = require("../models/RtseSetting");
 const RtseApplication = require("../models/RtseApplication");
 const RtseCentre = require("../models/RtseCentre");
 const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseResultQr = require("../models/RtseResultQr");
+const QRCode = require("qrcode");
 const { createOmrPdf } = require("../utils/rtseOmrPdf");
 
 const VALID_SECTIONS = ["A", "B", "C", "D", "E"];
@@ -31,16 +33,43 @@ async function prepareStudent(student, examSetting, centreCache) {
                     centre?.examination_centre ||
                     centre?.centre ||
                     "";
-
             } catch (error) {
-                console.error("RTSE OMR centre lookup error:", error);
+                console.error(
+                    "RTSE OMR centre lookup error:",
+                    error
+                );
             }
 
             centreCache.set(cacheKey, centreName);
         }
     }
 
+    let resultQrBuffer = null;
+
+    try {
+        const resultQr =
+            await RtseResultQr.getByApplication(student.id);
+
+        if (resultQr?.qr_token) {
+            resultQrBuffer = await QRCode.toBuffer(
+                resultQr.qr_token,
+                {
+                    width: 220,
+                    margin: 2,
+                    errorCorrectionLevel: "M",
+                    type: "png"
+                }
+            );
+        }
+    } catch (error) {
+        console.error(
+            `Unable to create Result QR for RTSE application ${student.id}:`,
+            error
+        );
+    }
+
     return {
+        id: student.id,
         full_name: student.full_name,
         father_name: student.father_name,
         registration_no: student.registration_no,
@@ -55,10 +84,10 @@ async function prepareStudent(student, examSetting, centreCache) {
         exam_name: examSetting?.exam_name || "RTSE EXAMINATION",
         exam_date: examSetting?.exam_date || "",
         centre_name: centreName || "Not Assigned",
-        photo: student.photo
+        photo: student.photo,
+        resultQrBuffer
     };
 }
-
 async function beginPdfResponse(res, filename, students) {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(

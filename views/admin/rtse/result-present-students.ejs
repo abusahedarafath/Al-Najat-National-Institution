@@ -1,4 +1,5 @@
 <%- include("../partials/header") %>
+<script src="/js/rtse-counted-omr.js"></script>
 
 <div class="admin-layout">
 
@@ -198,7 +199,29 @@
                                                     : "Enter Result" %>
                                             </a>
 
-                                        </td>
+
+                                            <%
+                                            const countedOmr =
+                                                countedOmrByApplication &&
+                                                countedOmrByApplication[
+                                                    Number(
+                                                        student.application_id
+                                                    )
+                                                ];
+                                            %>
+
+                                            <% if (countedOmr) { %>
+                                                <a
+                                                    href="/admin/rtse/counted-omr/<%= student.application_id %>"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="btn-save rtse-counted-omr-view-btn"
+                                                    style="margin-left:6px;"
+                                                >
+                                                    See Counted OMR
+                                                </a>
+                                            <% } %>
+</td>
 
                                     </tr>
 
@@ -649,7 +672,37 @@
                 await response.text();
 
 
-            initializeForms();
+
+                            if (
+                                typeof window.initializeRtseCountedOmr ===
+                                "function"
+                            ) {
+                                const resultForm =
+                                    content.querySelector("#rtseResultForm");
+
+                                const resultAction =
+                                    resultForm
+                                        ? resultForm.getAttribute("action")
+                                        : "";
+
+                                const match =
+                                    resultAction.match(/\/result\/(\d+)(?:$|[?#])/);
+
+                                const applicationId =
+                                    match
+                                        ? Number(match[1])
+                                        : 0;
+
+                                if (applicationId > 0) {
+                                    window.initializeRtseCountedOmr(
+                                        content,
+                                        applicationId
+                                    );
+                                }
+                            }
+
+                            initializeForms();
+
 
 
             content.scrollTop = 0;

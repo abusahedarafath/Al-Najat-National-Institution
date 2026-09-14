@@ -27,6 +27,35 @@ const rtseAdminPhotoUpload = multer({
     }
 });
 
+
+// =====================================
+// RTSE Counted OMR Upload
+// Isolated from existing student uploads.
+// =====================================
+const rtseCountedOmrUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 12 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedMime = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (allowedMime.includes(file.mimetype)) {
+            return cb(null, true);
+        }
+
+        return cb(
+            new Error(
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            )
+        );
+    }
+});
+
 const auth = require("../middleware/auth");
 
 const adminRtseController =
@@ -35,6 +64,8 @@ const adminRtseOmrController =
 require("../controllers/adminRtseOmrController");
 const adminRtseAdmitDownloadController =
 require("../controllers/adminRtseAdmitDownloadController");
+const rtseCountedOmrController =
+    require("../controllers/rtseCountedOmrController");
 
 
 
@@ -851,6 +882,23 @@ router.post(
     adminRtseController.resetAttendanceStatus
 );
 
+
+// =====================================
+// RTSE Counted OMR
+// =====================================
+
+router.post(
+    "/rtse/counted-omr/:id",
+    auth.isAdmin,
+    rtseCountedOmrUpload.single("counted_omr"),
+    rtseCountedOmrController.upload
+);
+
+router.get(
+    "/rtse/counted-omr/:id",
+    auth.isAdmin,
+    rtseCountedOmrController.view
+);
 
 // =====================================
 // Result Management

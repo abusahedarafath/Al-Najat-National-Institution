@@ -177,6 +177,698 @@
 
 </div>
 
+
+<!-- =====================================
+     Optional Counted OMR
+     ===================================== -->
+<div class="rtse-counted-omr-box">
+    <div class="rtse-popup-section-title">
+        <span>📄</span>
+        <strong>Counted OMR</strong>
+    </div>
+
+    <div class="rtse-counted-omr-note">
+        Optional — capture or choose the counted OMR and save it as supporting evidence for this student's result.
+    </div>
+
+    <div class="rtse-counted-omr-actions">
+        <button
+            type="button"
+            id="rtseOmrCameraButton"
+            class="rtse-omr-btn rtse-omr-btn-camera"
+        >
+            📷 Take Photo
+        </button>
+
+        <button
+            type="button"
+            id="rtseOmrChooseButton"
+            class="rtse-omr-btn rtse-omr-btn-choose"
+        >
+            🖼️ Choose Photo
+        </button>
+    </div>
+
+    <input
+        type="file"
+        id="rtseOmrCameraInput"
+        accept="image/jpeg,image/png,image/webp"
+        capture="environment"
+        hidden
+    >
+
+    <input
+        type="file"
+        id="rtseOmrChooseInput"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+    >
+
+    <div
+        id="rtseOmrExisting"
+        class="rtse-omr-existing"
+        hidden
+    >
+        <span>✓ Counted OMR is already uploaded.</span>
+
+        <a
+            id="rtseOmrExistingView"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            class="rtse-omr-see-button"
+        >
+            👁 See Counted OMR
+        </a>
+    </div>
+</div>
+
+<!-- Separate Counted OMR capture/crop popup -->
+<div
+    id="rtseOmrModal"
+    class="rtse-omr-modal"
+    hidden
+    aria-hidden="true"
+>
+    <div
+        class="rtse-omr-modal-backdrop"
+        data-rtse-omr-close
+    ></div>
+
+    <div
+        class="rtse-omr-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rtseOmrModalTitle"
+    >
+        <div class="rtse-omr-modal-header">
+            <div>
+                <strong id="rtseOmrModalTitle">
+                    📄 Counted OMR
+                </strong>
+                <small>
+                    Enhance, crop and optionally upload the counted OMR
+                </small>
+            </div>
+
+            <button
+                type="button"
+                class="rtse-omr-modal-close"
+                data-rtse-omr-close
+                aria-label="Close Counted OMR"
+            >
+                ×
+            </button>
+        </div>
+
+        <div class="rtse-omr-modal-body">
+
+            <div
+                id="rtseOmrEditor"
+                class="rtse-omr-editor"
+                hidden
+            >
+                <div class="rtse-omr-editor-title">
+                    <span>✨ Scanner Preview</span>
+                    <small>Brightened &amp; clearer preview</small>
+                </div>
+
+                <div
+                    class="rtse-omr-crop-stage"
+                    id="rtseOmrCropStage"
+                >
+                    <img
+                        id="rtseOmrPreviewImage"
+                        alt="Counted OMR preview"
+                        draggable="false"
+                    >
+
+                    <div
+                        id="rtseOmrCropBox"
+                        class="rtse-omr-crop-box"
+                    >
+                        <span class="rtse-omr-crop-label">
+                            OMR CROP
+                        </span>
+
+                        <span class="rtse-omr-handle rtse-omr-handle-nw"></span>
+                        <span class="rtse-omr-handle rtse-omr-handle-ne"></span>
+                        <span class="rtse-omr-handle rtse-omr-handle-sw"></span>
+                        <span class="rtse-omr-handle rtse-omr-handle-se"></span>
+                    </div>
+                </div>
+
+                <div class="rtse-omr-editor-help">
+                    Drag the box over the OMR page. Use the corner handles to fit the page.
+                </div>
+
+                <div class="rtse-omr-editor-actions">
+                    <button
+                        type="button"
+                        id="rtseOmrCropButton"
+                        class="rtse-omr-btn rtse-omr-btn-crop"
+                    >
+                        ✂️ Crop OMR
+                    </button>
+
+                    <button
+                        type="button"
+                        id="rtseOmrCancelButton"
+                        class="rtse-omr-btn rtse-omr-btn-cancel"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <div
+                id="rtseOmrCroppedPreview"
+                class="rtse-omr-cropped-preview"
+                hidden
+            >
+                <div class="rtse-omr-cropped-title">
+                    <span>✓ Cropped OMR Ready</span>
+                </div>
+
+                <img
+                    id="rtseOmrCroppedImage"
+                    alt="Cropped counted OMR"
+                >
+
+                <div class="rtse-omr-upload-actions">
+                    <button
+                        type="button"
+                        id="rtseOmrUploadButton"
+                        class="rtse-omr-btn rtse-omr-btn-upload"
+                    >
+                        ⬆️ Upload Counted OMR
+                    </button>
+
+                    <button
+                        type="button"
+                        id="rtseOmrRetakeButton"
+                        class="rtse-omr-btn rtse-omr-btn-cancel"
+                    >
+                        🔄 Choose Again
+                    </button>
+                </div>
+
+                <div
+                    id="rtseOmrUploadStatus"
+                    class="rtse-omr-upload-status"
+                ></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+/* ============================================================
+   Separate Counted OMR Popup
+   ============================================================ */
+
+.rtse-counted-omr-box {
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid #dbe3ea;
+    border-radius: 14px;
+    background: #f8fafc;
+    box-sizing: border-box;
+}
+
+.rtse-counted-omr-note {
+    margin: 8px 0 12px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.rtse-counted-omr-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rtse-omr-existing {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 9px 11px;
+    border-radius: 10px;
+    background: #ecfdf5;
+    color: #166534;
+    font-size: 13px;
+}
+
+.rtse-omr-modal[hidden] {
+    display: none !important;
+}
+
+.rtse-omr-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 100000 !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.rtse-omr-modal-backdrop {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(3px);
+}
+
+.rtse-omr-modal-card {
+    position: relative;
+    z-index: 1;
+
+    width: min(960px, 96vw);
+    max-width: 960px;
+    max-height: 94vh;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+    background: #ffffff;
+
+    box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.30);
+
+    box-sizing: border-box;
+}
+
+.rtse-omr-modal-header {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 13px 16px;
+
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.rtse-omr-modal-header strong {
+    display: block;
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.rtse-omr-modal-header small {
+    display: block;
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.rtse-omr-modal-close {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+
+    flex: 0 0 34px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: #e2e8f0;
+    color: #334155;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.rtse-omr-modal-close:hover {
+    background: #cbd5e1;
+}
+
+.rtse-omr-modal-body {
+    min-height: 0;
+
+    overflow: auto;
+
+    padding: 14px;
+    box-sizing: border-box;
+}
+
+.rtse-omr-modal-body .rtse-omr-editor,
+.rtse-omr-modal-body .rtse-omr-cropped-preview {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body.rtse-omr-modal-open {
+    overflow: hidden !important;
+}
+
+@media (max-width: 640px) {
+
+    .rtse-omr-modal {
+        padding: 7px;
+    }
+
+    .rtse-omr-modal-card {
+        width: 100%;
+        max-width: 100%;
+        max-height: 96vh;
+        border-radius: 14px;
+    }
+
+    .rtse-omr-modal-header {
+        padding: 11px 12px;
+    }
+
+    .rtse-omr-modal-body {
+        padding: 9px;
+    }
+
+    .rtse-counted-omr-actions {
+        flex-direction: column;
+    }
+
+    .rtse-counted-omr-actions .rtse-omr-btn {
+        width: 100%;
+    }
+}
+</style>
+
+<style>
+/* =========================================
+   RTSE Counted OMR
+   ========================================= */
+
+.rtse-counted-omr-box {
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    background:#fff;
+    padding:12px;
+    margin-bottom:10px;
+    box-sizing:border-box;
+}
+
+.rtse-counted-omr-note {
+    font-size:11px;
+    line-height:1.5;
+    color:#6b7280;
+    margin:-3px 0 9px;
+}
+
+.rtse-counted-omr-actions,
+.rtse-omr-editor-actions,
+.rtse-omr-upload-actions {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+}
+
+.rtse-omr-btn {
+    width:100%;
+    min-height:36px;
+    border:0;
+    border-radius:7px;
+    padding:7px 9px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    box-sizing:border-box;
+}
+
+.rtse-omr-btn:disabled {
+    opacity:.65;
+    cursor:not-allowed;
+}
+
+.rtse-omr-btn-camera {
+    background:#2563eb;
+    color:#fff;
+}
+
+.rtse-omr-btn-choose {
+    background:#475569;
+    color:#fff;
+}
+
+.rtse-omr-btn-crop {
+    background:#16a34a;
+    color:#fff;
+}
+
+.rtse-omr-btn-upload {
+    background:#16a34a;
+    color:#fff;
+}
+
+.rtse-omr-btn-cancel {
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.rtse-omr-editor {
+    margin-top:9px;
+    border:1px solid #e2e8f0;
+    border-radius:9px;
+    background:#f8fafc;
+    padding:9px;
+}
+
+.rtse-omr-editor-title {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    margin-bottom:7px;
+    font-size:12px;
+    font-weight:700;
+    color:#172033;
+}
+
+.rtse-omr-editor-title small {
+    font-size:9px;
+    font-weight:500;
+    color:#16a34a;
+}
+
+.rtse-omr-crop-stage {
+    position:relative;
+    width:100%;
+    max-height:62vh;
+    min-height:180px;
+    overflow:hidden;
+    border-radius:7px;
+    background:#111827;
+    touch-action:none;
+    user-select:none;
+}
+
+.rtse-omr-crop-stage > img {
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:62vh;
+    object-fit:contain;
+    margin:0 auto;
+    user-select:none;
+    pointer-events:none;
+}
+
+.rtse-omr-crop-box {
+    position:absolute;
+    box-sizing:border-box;
+    border:2px solid #16a34a;
+    background:rgba(22,163,74,.08);
+    box-shadow:0 0 0 9999px rgba(0,0,0,.42);
+    touch-action:none;
+    cursor:move;
+}
+
+.rtse-omr-crop-label {
+    position:absolute;
+    top:5px;
+    left:5px;
+    padding:2px 5px;
+    border-radius:4px;
+    background:#16a34a;
+    color:#fff;
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:.3px;
+    pointer-events:none;
+}
+
+.rtse-omr-handle {
+    position:absolute;
+    width:15px;
+    height:15px;
+    border:2px solid #fff;
+    background:#16a34a;
+    border-radius:3px;
+    box-sizing:border-box;
+}
+
+.rtse-omr-handle-nw {
+    top:-7px;
+    left:-7px;
+    cursor:nwse-resize;
+}
+
+.rtse-omr-handle-ne {
+    top:-7px;
+    right:-7px;
+    cursor:nesw-resize;
+}
+
+.rtse-omr-handle-sw {
+    bottom:-7px;
+    left:-7px;
+    cursor:nesw-resize;
+}
+
+.rtse-omr-handle-se {
+    bottom:-7px;
+    right:-7px;
+    cursor:nwse-resize;
+}
+
+.rtse-omr-editor-help {
+    padding:7px 2px;
+    color:#64748b;
+    font-size:10px;
+    line-height:1.4;
+}
+
+.rtse-omr-cropped-preview {
+    margin-top:9px;
+    padding:9px;
+    border:1px solid #bbf7d0;
+    border-radius:9px;
+    background:#f0fdf4;
+}
+
+.rtse-omr-cropped-title {
+    margin-bottom:7px;
+    font-size:11px;
+    font-weight:700;
+    color:#15803d;
+}
+
+.rtse-omr-cropped-preview img {
+    display:block;
+    width:100%;
+    max-height:55vh;
+    object-fit:contain;
+    border:1px solid #d1d5db;
+    border-radius:6px;
+    background:#fff;
+    margin-bottom:8px;
+}
+
+.rtse-omr-upload-status {
+    margin-top:7px;
+    min-height:16px;
+    font-size:10px;
+    line-height:1.4;
+    color:#475569;
+}
+
+.rtse-omr-existing {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-top:9px;
+    padding:8px 9px;
+    border:1px solid #bbf7d0;
+    border-radius:7px;
+    background:#f0fdf4;
+    color:#15803d;
+    font-size:10px;
+    font-weight:600;
+}
+
+.rtse-omr-see-button {
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:30px;
+    padding:5px 8px;
+    border-radius:6px;
+    background:#16a34a;
+    color:#fff;
+    text-decoration:none;
+    font-size:10px;
+    font-weight:700;
+}
+
+@media (max-width:600px) {
+
+    .rtse-counted-omr-box {
+        padding:9px;
+    }
+
+    .rtse-counted-omr-actions,
+    .rtse-omr-editor-actions,
+    .rtse-omr-upload-actions {
+        gap:5px;
+    }
+
+    .rtse-omr-btn {
+        min-height:34px;
+        padding:6px 5px;
+        font-size:10px;
+    }
+
+    .rtse-omr-editor-title {
+        font-size:11px;
+    }
+
+    .rtse-omr-editor-title small {
+        font-size:8px;
+    }
+
+    .rtse-omr-crop-stage {
+        max-height:55vh;
+    }
+
+    .rtse-omr-crop-stage > img {
+        max-height:55vh;
+    }
+
+    .rtse-omr-existing {
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .rtse-omr-see-button {
+        width:100%;
+    }
+}
+</style>
+
 <style>
 
 .rtse-popup-result {
