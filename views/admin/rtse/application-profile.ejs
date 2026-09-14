@@ -482,18 +482,21 @@
 
                         </form>
 
-                        <% if(application.roll_no && application.admit_generated == 1 && application.omr_generated == 1){ %>
+                        <% if(application.roll_no && application.admit_generated == 1){ %>
 
                             <a
                                 href="/admin/rtse/application/<%= application.id %>/admit-card"
                                 class="btn-view">
                                 Admit Card
                             </a>
-                            <a
-                                href="/admin/rtse/application/<%= application.id %>/omr"
-                                class="btn-save">
-                                📝 OMR Sheet
-                            </a>
+
+                            <% if(application.omr_generated == 1){ %>
+                                <a
+                                    href="/admin/rtse/application/<%= application.id %>/omr"
+                                    class="btn-save">
+                                    📝 OMR Sheet
+                                </a>
+                            <% } %>
 
                         <% } %>
 
