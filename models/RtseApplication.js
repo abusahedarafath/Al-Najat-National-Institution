@@ -1697,7 +1697,8 @@ static async getSectionStatistics(){
 
             SUM(status='Approved' AND roll_no IS NOT NULL) roll_generated,
 
-            SUM(status='Approved' AND admit_generated=1) admit_generated
+            SUM(status='Approved' AND admit_generated=1) admit_generated,
+            SUM(status='Approved' AND admit_generated=1 AND omr_generated=1) omr_generated
 
         FROM rtse_applications
 
@@ -1716,6 +1717,67 @@ static async getSectionStatistics(){
 
 
 // =====================================
+
+    // =====================================
+    // Independent OMR Generation State
+    // =====================================
+
+    static async getSectionOmrStatus(section, applicationYear) {
+        const normalizedSection = String(section || "").trim().toUpperCase();
+        const year = Number(applicationYear);
+
+        const [rows] = await db.query(
+            `SELECT
+                COUNT(*) AS eligible,
+                COALESCE(SUM(omr_generated = 1), 0) AS omr_generated
+             FROM rtse_applications
+             WHERE archive = 0
+               AND status = 'Approved'
+               AND application_year = ?
+               AND section = ?
+               AND roll_no IS NOT NULL
+               AND admit_generated = 1`,
+            [year, normalizedSection]
+        );
+
+        return rows[0] || {
+            eligible: 0,
+            omr_generated: 0
+        };
+    }
+
+    static async markOmrGeneratedForSection(section, applicationYear) {
+        const normalizedSection = String(section || "").trim().toUpperCase();
+        const year = Number(applicationYear);
+
+        await db.query(
+            `UPDATE rtse_applications
+             SET omr_generated = 1
+             WHERE archive = 0
+               AND status = 'Approved'
+               AND application_year = ?
+               AND section = ?
+               AND roll_no IS NOT NULL
+               AND admit_generated = 1`,
+            [year, normalizedSection]
+        );
+    }
+
+    static async resetOmrForSection(section, applicationYear) {
+        const normalizedSection = String(section || "").trim().toUpperCase();
+        const year = Number(applicationYear);
+
+        await db.query(
+            `UPDATE rtse_applications
+             SET omr_generated = 0
+             WHERE archive = 0
+               AND status = 'Approved'
+               AND application_year = ?
+               AND section = ?`,
+            [year, normalizedSection]
+        );
+    }
+
 // Update Application
 // =====================================
     static async update(id, data, photoFilename = null) {

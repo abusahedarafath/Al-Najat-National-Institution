@@ -463,6 +463,18 @@ router.post(
  // RTSE OMR — Section & Individual
  // =====================================
 
+router.post(
+    "/rtse/omr/generate/:section",
+    auth.isAdmin,
+    adminRtseOmrController.generateSectionOmr
+);
+
+router.post(
+    "/rtse/omr/reset/:section",
+    auth.isAdmin,
+    adminRtseOmrController.resetSectionOmr
+);
+
 router.get(
     "/rtse/omr/pdf/:section",
     auth.isAdmin,

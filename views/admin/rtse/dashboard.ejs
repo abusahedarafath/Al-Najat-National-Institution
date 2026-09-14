@@ -20,7 +20,8 @@
             section: section,
             application_open: false,
             roll_generated: 0,
-            admit_generated: 0
+            admit_generated: 0,
+              omr_generated: 0
         };
     });
 %>
@@ -330,6 +331,10 @@
                                     <%= Number(data.admit_generated || 0) %>
                                 </strong>
                             </p>
+            <p>
+                OMR Generated :
+                <strong><%= Number(data.omr_generated || 0) %></strong>
+            </p>
 
 
                             <!-- SECTION ACTIONS -->
@@ -358,11 +363,13 @@
                                     >
                                         🖨️ Print / Save All Admit Cards
                                     </a>
+                                      <% if(Number(data.omr_generated || 0) > 0){ %>
                             <a
                                 href="/admin/rtse/omr/pdf/<%= section %>"
                                 class="btn-save">
                                 📝 Download Section OMR
                             </a>
+                                      <% } %>
                                 <a
                                     href="/admin/rtse/attendance-sheet/<%= section %>"
                                     class="btn-view"
@@ -374,7 +381,39 @@
                             </div>
 
 
-                            <!-- GENERATION ACTION -->
+                            <!-- INDEPENDENT OMR LIFECYCLE -->
+<div class="rtse-generation-action">
+    <% if(Number(data.admit_generated || 0) > 0){ %>
+        <% if(Number(data.omr_generated || 0) === 0){ %>
+            <form
+                method="POST"
+                action="/admin/rtse/omr/generate/<%= section %>"
+                style="display:inline;"
+                onsubmit="return confirm('Generate OMR sheets for Section <%= section %>?\\n\\nThis will refresh each student Result QR token. Attendance and PRESENT status will not be changed. Continue?')"
+            >
+                <button type="submit" class="btn-save">
+                    📝 Generate OMR
+                </button>
+            </form>
+        <% } else { %>
+            <span class="badge badge-success">
+                ✔ OMR Generated
+            </span>
+            <form
+                method="POST"
+                action="/admin/rtse/omr/reset/<%= section %>"
+                style="display:inline;"
+                onsubmit="return confirm('Reset OMR generation for Section <%= section %>?\\n\\nAdmit Cards, Roll Numbers, Attendance and PRESENT status will remain unchanged. Continue?')"
+            >
+                <button type="submit" class="btn-warning">
+                    ↩ Reset OMR
+                </button>
+            </form>
+        <% } %>
+    <% } %>
+</div>
+
+<!-- GENERATION ACTION -->
 
                             <div class="rtse-generation-action">
 

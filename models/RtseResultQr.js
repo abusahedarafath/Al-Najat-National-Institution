@@ -165,7 +165,75 @@ class RtseResultQr {
     // =====================================
     // Get Result QR by token
     // =====================================
-    static async getByToken(token) {
+
+    // =====================================
+    // Regenerate Result QR for OMR
+    // =====================================
+    //
+    // This only replaces the QR token.
+    // It does NOT create/change attendance and does NOT
+    // make result entry active. Super Scanner continues to
+    // require RtseExamAttendance.attendance_status === PRESENT.
+    //
+    static async regenerateForApplication(applicationId) {
+        const id = Number(applicationId);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new Error("Invalid RTSE application ID.");
+        }
+
+        const [applications] = await db.query(
+            `SELECT id
+             FROM rtse_applications
+             WHERE id = ?
+               AND archive = 0
+               AND status = 'Approved'
+               AND admit_generated = 1
+               AND roll_no IS NOT NULL
+             LIMIT 1`,
+            [id]
+        );
+
+        if (!applications.length) {
+            throw new Error(
+                "Result QR can only be regenerated after the admit card is generated."
+            );
+        }
+
+        const token = this.generateToken();
+
+        const [existing] = await db.query(
+            `SELECT id
+             FROM rtse_result_qr
+             WHERE application_id = ?
+             LIMIT 1`,
+            [id]
+        );
+
+        if (existing.length) {
+            await db.query(
+                `UPDATE rtse_result_qr
+                 SET qr_token = ?,
+                     created_at = CURRENT_TIMESTAMP
+                 WHERE id = ?`,
+                [token, existing[0].id]
+            );
+        } else {
+            await db.query(
+                `INSERT INTO rtse_result_qr
+                    (application_id, qr_token)
+                 VALUES (?, ?)`,
+                [id, token]
+            );
+        }
+
+        return {
+            application_id: id,
+            qr_token: token
+        };
+    }
+
+static async getByToken(token) {
         const normalizedToken =
             String(token || "").trim();
 
