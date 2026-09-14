@@ -39,6 +39,33 @@ window.initializeRtseCountedOmr = function (
 
     root.__rtseCountedOmrState = scannerState;
 
+    /*
+     * IMPORTANT:
+     * The Super Scanner Result Entry popup is reused for
+     * continuous Result QR scans.
+     *
+     * Always reset the previous student's Counted OMR UI
+     * before checking the current student's record.
+     */
+    const resetExistingCountedOmr = function () {
+        const existingBox =
+            root.querySelector("#rtseOmrExisting");
+
+        const existingView =
+            root.querySelector("#rtseOmrExistingView");
+
+        if (existingBox) {
+            existingBox.hidden = true;
+            existingBox.style.display = "none";
+        }
+
+        if (existingView) {
+            existingView.href = "#";
+        }
+    };
+
+    resetExistingCountedOmr();
+
     const currentCameraButton =
         root.querySelector("#rtseOmrCameraButton");
 
@@ -69,14 +96,39 @@ window.initializeRtseCountedOmr = function (
             }
         )
         .then(function (response) {
-            if (response.ok && existingBox && existingView) {
+            if (!existingBox || !existingView) {
+                return;
+            }
+
+            if (response.ok) {
                 existingView.href =
                     scannerState.viewUrl;
 
                 existingBox.hidden = false;
+                existingBox.style.display = "";
+            } else {
+                /*
+                 * The Counted OMR may have been deleted externally
+                 * (for example from the Admin Result Dashboard).
+                 * Hide the stale link when the server reports that
+                 * the current student's Counted OMR no longer exists.
+                 */
+                existingView.href = "#";
+                existingBox.hidden = true;
+                existingBox.style.display = "none";
             }
         })
-        .catch(function () {});
+        .catch(function () {
+            /*
+             * Do not leave a stale Counted OMR link visible if the
+             * existence check cannot be completed.
+             */
+            if (existingBox && existingView) {
+                existingView.href = "#";
+                existingBox.hidden = true;
+                existingBox.style.display = "none";
+            }
+        });
 
         return;
     }
@@ -158,6 +210,7 @@ window.initializeRtseCountedOmr = function (
 
         existingView.href = url;
         existingBox.hidden = false;
+        existingBox.style.display = "";
     }
 
     fetch(

@@ -523,6 +523,10 @@ body{
     gap: 8px;
 }
 
+.rtse-omr-existing[hidden] {
+    display: none !important;
+}
+
 .rtse-omr-existing {
     margin-top: 10px;
     display: flex;
@@ -1326,6 +1330,7 @@ body.rtse-omr-modal-open {
             id="rtseOmrExisting"
             class="rtse-omr-existing"
             hidden
+            style="display:none;"
         >
             <span>✓ Counted OMR is already uploaded.</span>
 
