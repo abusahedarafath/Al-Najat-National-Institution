@@ -583,6 +583,7 @@
                         </span>
                     </a>
 
+<% if (rtseSetting && Number(rtseSetting.result_publish) === 1) { %>
                     <a
                         href="/rtse/student/result"
                         class="rtse-service-card"
@@ -596,6 +597,8 @@
                         </span>
                     </a>
 
+<% } %>
+<% if (rtseSetting && Number(rtseSetting.certificate_publish) === 1) { %>
                     <a
                         href="/rtse/student/certificate"
                         class="rtse-service-card"
@@ -609,6 +612,7 @@
                         </span>
                     </a>
 
+<% } %>
                     <% if (rtseSetting && Number(rtseSetting.admit_publish) === 1) { %>
                     <a
                         href="/rtse/student/admit-card"

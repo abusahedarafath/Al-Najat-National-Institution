@@ -363,6 +363,20 @@ exports.result = async (req, res) => {
         const applicationId =
             req.session.rtseStudent.id;
 
+        const rtseSetting = await RtseSetting.get();
+
+        if (!rtseSetting || Number(rtseSetting.result_publish) !== 1) {
+            return res.render(
+                "rtse/student-result",
+                {
+                    title: "RTSE Result",
+                    examSetting: await RtseExamSetting.get(),
+                    student: null,
+                    error: "Results have not been published yet."
+                }
+            );
+        }
+
         const student =
             await RtseResult.getByApplication(applicationId);
 
