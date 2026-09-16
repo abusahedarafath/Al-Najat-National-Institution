@@ -1243,23 +1243,61 @@ body.rtse-omr-modal-open {
     <div class="result-form-grid">
 
         <div class="result-field">
-            <label for="resultFullMarks">Full Marks</label>
+            <label for="resultFullMarks">OMR Full Marks</label>
             <input
                 type="number"
                 id="resultFullMarks"
-                min="1"
+                min="100"
+                max="100"
                 step="0.01"
-                value="100">
+                value="100"
+                readonly>
         </div>
 
         <div class="result-field">
-            <label for="resultMarks">Obtained Marks</label>
+            <label for="resultMarks">OMR Obtained Marks</label>
             <input
                 type="number"
                 id="resultMarks"
                 min="0"
+                max="100"
                 step="0.01"
-                placeholder="Enter marks">
+                placeholder="Enter OMR marks">
+        </div>
+
+        <% (markComponents || []).forEach(function(component) { %>
+            <div class="result-field">
+                <label for="resultComponent_<%= component.id %>">
+                    <%= component.name %>
+                    (<%= component.maximum_marks %>)
+                </label>
+                <input
+                    type="number"
+                    id="resultComponent_<%= component.id %>"
+                    data-rtse-component-mark
+                    data-component-id="<%= component.id %>"
+                    data-component-max="<%= component.maximum_marks %>"
+                    min="0"
+                    max="<%= component.maximum_marks %>"
+                    step="0.01"
+                    placeholder="Enter marks">
+            </div>
+        <% }); %>
+
+        <div class="result-field">
+            <label for="resultTotalMarks">Total Obtained Marks</label>
+            <input
+                type="text"
+                id="resultTotalMarks"
+                readonly>
+        </div>
+
+        <div class="result-field">
+            <label for="resultTotalFullMarks">Total Full Marks</label>
+            <input
+                type="text"
+                id="resultTotalFullMarks"
+                readonly>
         </div>
 
         <div class="result-field">
@@ -1564,6 +1602,17 @@ const resultFullMarks =
 const resultMarks =
     document.getElementById("resultMarks");
 
+const resultComponentInputs =
+    document.querySelectorAll(
+        "[data-rtse-component-mark]"
+    );
+
+const resultTotalMarks =
+    document.getElementById("resultTotalMarks");
+
+const resultTotalFullMarks =
+    document.getElementById("resultTotalFullMarks");
+
 const resultPercentage =
     document.getElementById("resultPercentage");
 
@@ -1572,6 +1621,7 @@ const resultGrade =
 
 const resultSaveButton =
     document.getElementById("resultSaveButton");
+
 
 
 /* =====================================
@@ -1892,7 +1942,8 @@ async function lookupToken(token){
 
             displayResultStudent(
                 data.student,
-                data.result
+                data.result,
+                data.resultComponentMarks
             );
 
             showMessage(
@@ -2133,6 +2184,12 @@ function closeStudentPopup(){
 
     resultMarks.value =
         "";
+    resultComponentInputs.forEach(
+        function(input){
+            input.value = "";
+        }
+    );
+
 
     resultPercentage.value =
         "";
@@ -2372,7 +2429,7 @@ function initializeScannerCountedOmr(student){
 }
 
 
-function displayResultStudent(student, result){
+function displayResultStudent(student, result, resultComponentMarks){
 
     const photo =
         document.getElementById("studentPhoto");
@@ -2475,6 +2532,33 @@ function displayResultStudent(student, result){
             ? result.marks
             : "";
 
+    const savedComponentMarks =
+        Array.isArray(resultComponentMarks)
+            ? resultComponentMarks
+            : [];
+
+    resultComponentInputs.forEach(
+        function(input){
+            const componentId =
+                Number(input.dataset.componentId);
+
+            const saved =
+                savedComponentMarks.find(
+                    function(item){
+                        return Number(item.component_id) ===
+                            componentId;
+                    }
+                );
+
+            input.value =
+                saved &&
+                saved.marks !== null &&
+                saved.marks !== undefined
+                    ? saved.marks
+                    : "";
+        }
+    );
+
     resultPercentage.value =
         result &&
         result.percentage !== null &&
@@ -2504,19 +2588,20 @@ function displayResultStudent(student, result){
 
 function calculateScannerResult(){
 
-    const fullMarks =
-        Number(resultFullMarks.value);
-
-    const marks =
+    const omrMarks =
         Number(resultMarks.value);
 
     if(
-        !Number.isFinite(fullMarks) ||
-        fullMarks <= 0 ||
-        !Number.isFinite(marks) ||
-        marks < 0 ||
-        marks > fullMarks
+        !Number.isFinite(omrMarks) ||
+        omrMarks < 0 ||
+        omrMarks > 100
     ){
+
+        resultTotalMarks.value =
+            "";
+
+        resultTotalFullMarks.value =
+            "";
 
         resultPercentage.value =
             "";
@@ -2527,10 +2612,71 @@ function calculateScannerResult(){
         return;
     }
 
+    let configuredObtained = 0;
+    let configuredFullMarks = 0;
+    let invalidComponent = false;
+
+    resultComponentInputs.forEach(
+        function(input){
+
+            const maximum =
+                Number(input.dataset.componentMax);
+
+            const obtained =
+                input.value === ""
+                    ? 0
+                    : Number(input.value);
+
+            if(
+                !Number.isFinite(maximum) ||
+                maximum < 0 ||
+                !Number.isFinite(obtained) ||
+                obtained < 0 ||
+                obtained > maximum
+            ){
+                invalidComponent = true;
+                return;
+            }
+
+            configuredObtained +=
+                obtained;
+
+            configuredFullMarks +=
+                maximum;
+        }
+    );
+
+    if(invalidComponent){
+
+        resultTotalMarks.value =
+            "";
+
+        resultTotalFullMarks.value =
+            "";
+
+        resultPercentage.value =
+            "";
+
+        resultGrade.value =
+            "";
+
+        return;
+    }
+
+    const totalMarks =
+        omrMarks +
+        configuredObtained;
+
+    const totalFullMarks =
+        100 +
+        configuredFullMarks;
+
     const percentage =
         Number(
-            ((marks / fullMarks) * 100)
-                .toFixed(2)
+            (
+                (totalMarks / totalFullMarks) *
+                100
+            ).toFixed(2)
         );
 
     let grade;
@@ -2550,12 +2696,46 @@ function calculateScannerResult(){
     else
         grade = "F";
 
+    resultTotalMarks.value =
+        totalMarks.toFixed(2);
+
+    resultTotalFullMarks.value =
+        totalFullMarks.toFixed(2);
+
     resultPercentage.value =
-        percentage;
+        percentage.toFixed(2);
 
     resultGrade.value =
         grade;
 }
+
+if(resultMarks){
+
+    resultMarks.addEventListener(
+        "input",
+        calculateScannerResult
+    );
+
+    resultMarks.addEventListener(
+        "change",
+        calculateScannerResult
+    );
+}
+
+resultComponentInputs.forEach(
+    function(input){
+
+        input.addEventListener(
+            "input",
+            calculateScannerResult
+        );
+
+        input.addEventListener(
+            "change",
+            calculateScannerResult
+        );
+    }
+);
 
 
 /* =====================================
@@ -2578,38 +2758,68 @@ async function saveScannerResult(){
         return;
     }
 
-    const fullMarks =
-        Number(resultFullMarks.value);
+const omrMarks = Number(resultMarks.value);
 
-    const marks =
-        Number(resultMarks.value);
+if(
+    !Number.isFinite(omrMarks) ||
+    omrMarks < 0 ||
+    omrMarks > 100
+){
 
-    if(
-        !Number.isFinite(fullMarks) ||
-        fullMarks <= 0
-    ){
+          showMessage(
+              "Enter valid OMR obtained marks.",
+              "error"
+          );
 
-        showMessage(
-            "Enter valid full marks.",
-            "error"
-        );
+          return;
+      }
 
-        return;
-    }
+      const componentMarks = {};
 
-    if(
-        !Number.isFinite(marks) ||
-        marks < 0 ||
-        marks > fullMarks
-    ){
+      let invalidComponent = false;
 
-        showMessage(
-            "Enter valid obtained marks.",
-            "error"
-        );
+      resultComponentInputs.forEach(
+          function(input){
 
-        return;
-    }
+              const componentId =
+                  Number(input.dataset.componentId);
+
+              const maximum =
+                  Number(input.dataset.componentMax);
+
+              const obtained =
+                  input.value === ""
+                      ? 0
+                      : Number(input.value);
+
+              if(
+                  !Number.isInteger(componentId) ||
+                  componentId <= 0 ||
+                  !Number.isFinite(maximum) ||
+                  maximum < 0 ||
+                  !Number.isFinite(obtained) ||
+                  obtained < 0 ||
+                  obtained > maximum
+              ){
+                  invalidComponent = true;
+                  return;
+              }
+
+              componentMarks[componentId] =
+                  obtained;
+          }
+      );
+
+      if(invalidComponent){
+
+          showMessage(
+              "Enter valid marks for all configured components.",
+              "error"
+          );
+
+          return;
+      }
+
 
     resultSaveButton.disabled =
         true;
@@ -2636,17 +2846,16 @@ async function saveScannerResult(){
                     credentials:
                         "same-origin",
 
-                    body:
-                        JSON.stringify({
-                            qr_token:
-                                currentToken,
+                      body:
+                          JSON.stringify({
+                              qr_token:
+                                  currentToken,
 
-                            full_marks:
-                                fullMarks,
-
-                            marks:
-                                marks
-                        })
+                              marks:
+    omrMarks,
+                              component_marks:
+                                  componentMarks
+                          })
                 }
             );
 

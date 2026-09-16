@@ -35,6 +35,7 @@ const RtseCountedOmr = require("../models/RtseCountedOmr");
 const { saveRtseResult } = require("../utils/rtseResultService");
 
 const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseMarkComponent = require("../models/RtseMarkComponent");
 const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
 const RtseCentre = require("../models/RtseCentre");
 const { generateRoomTokenPdfs } =
@@ -2141,6 +2142,327 @@ function normalizeExamShifts(body) {
     });
 }
 
+
+// =====================================
+// RTSE Result Mark Components
+// =====================================
+
+// -------------------------------------
+// Mark Components Configuration
+// -------------------------------------
+
+exports.resultMarkComponentsPage = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+
+        if (!setting || !setting.exam_year) {
+            req.flash(
+                "error",
+                "No active RTSE application year is configured."
+            );
+
+            return res.redirect("/admin/rtse/results");
+        }
+
+        const applicationYear =
+            Number(setting.exam_year);
+
+        const components =
+            await RtseMarkComponent.getByYear(
+                applicationYear
+            );
+
+        const enabledComponents =
+            components.filter(function(component) {
+                return Number(component.enabled) === 1;
+            });
+
+        const configuredExtraMarks =
+            enabledComponents.reduce(
+                function(total, component) {
+                    return total +
+                        Number(component.maximum_marks || 0);
+                },
+                0
+            );
+
+        res.render(
+            "admin/rtse/result-mark-components",
+            {
+                title: "RTSE Result Mark Components",
+                setting,
+                applicationYear,
+                components,
+                configuredExtraMarks
+            }
+        );
+
+    } catch (err) {
+        console.error(
+            "RTSE Mark Components Page Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load RTSE mark components."
+        );
+
+        res.redirect("/admin/rtse/results");
+    }
+};
+
+
+// -------------------------------------
+// Create Mark Component
+// -------------------------------------
+
+exports.createResultMarkComponent = async (req, res) => {
+    try {
+        const setting = await RtseSetting.get();
+
+        if (!setting || !setting.exam_year) {
+            throw new Error(
+                "No active RTSE application year is configured."
+            );
+        }
+
+        const applicationYear =
+            Number(setting.exam_year);
+
+        const name =
+            String(req.body.name || "").trim();
+
+        const maximumMarks =
+            Number(req.body.maximum_marks);
+
+        const displayOrder =
+            req.body.display_order === undefined ||
+            String(req.body.display_order).trim() === ""
+                ? 0
+                : Number(req.body.display_order);
+
+        const enabled =
+            String(req.body.enabled || "1") === "1"
+                ? 1
+                : 0;
+
+        if (!name) {
+            throw new Error(
+                "Mark component name is required."
+            );
+        }
+
+        if (
+            !Number.isFinite(maximumMarks) ||
+            maximumMarks <= 0
+        ) {
+            throw new Error(
+                "Maximum marks must be greater than 0."
+            );
+        }
+
+        if (
+            !Number.isInteger(displayOrder) ||
+            displayOrder < 0
+        ) {
+            throw new Error(
+                "Display order must be a non-negative whole number."
+            );
+        }
+
+        await RtseMarkComponent.create({
+            application_year: applicationYear,
+            name,
+            maximum_marks: maximumMarks,
+            enabled,
+            display_order: displayOrder
+        });
+
+        req.flash(
+            "success",
+            `Mark component "${name}" added successfully.`
+        );
+
+    } catch (err) {
+        console.error(
+            "Create RTSE Mark Component Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to add mark component."
+        );
+    }
+
+    res.redirect(
+        "/admin/rtse/results/mark-components"
+    );
+};
+
+
+// -------------------------------------
+// Update Mark Component
+// -------------------------------------
+
+exports.updateResultMarkComponent = async (req, res) => {
+    try {
+        const component =
+            await RtseMarkComponent.getById(
+                req.params.id
+            );
+
+        if (!component) {
+            throw new Error(
+                "Mark component not found."
+            );
+        }
+
+        const setting = await RtseSetting.get();
+
+        if (
+            !setting ||
+            Number(setting.exam_year) !==
+                Number(component.application_year)
+        ) {
+            throw new Error(
+                "This mark component does not belong to the active RTSE year."
+            );
+        }
+
+        const name =
+            String(req.body.name || "").trim();
+
+        const maximumMarks =
+            Number(req.body.maximum_marks);
+
+        const displayOrder =
+            req.body.display_order === undefined ||
+            String(req.body.display_order).trim() === ""
+                ? 0
+                : Number(req.body.display_order);
+
+        const enabled =
+            String(req.body.enabled || "0") === "1"
+                ? 1
+                : 0;
+
+        if (!name) {
+            throw new Error(
+                "Mark component name is required."
+            );
+        }
+
+        if (
+            !Number.isFinite(maximumMarks) ||
+            maximumMarks <= 0
+        ) {
+            throw new Error(
+                "Maximum marks must be greater than 0."
+            );
+        }
+
+        if (
+            !Number.isInteger(displayOrder) ||
+            displayOrder < 0
+        ) {
+            throw new Error(
+                "Display order must be a non-negative whole number."
+            );
+        }
+
+        await RtseMarkComponent.update(
+            req.params.id,
+            {
+                name,
+                maximum_marks: maximumMarks,
+                enabled,
+                display_order: displayOrder
+            }
+        );
+
+        req.flash(
+            "success",
+            `Mark component "${name}" updated successfully.`
+        );
+
+    } catch (err) {
+        console.error(
+            "Update RTSE Mark Component Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to update mark component."
+        );
+    }
+
+    res.redirect(
+        "/admin/rtse/results/mark-components"
+    );
+};
+
+
+// -------------------------------------
+// Delete Mark Component
+// -------------------------------------
+
+exports.deleteResultMarkComponent = async (req, res) => {
+    try {
+        const component =
+            await RtseMarkComponent.getById(
+                req.params.id
+            );
+
+        if (!component) {
+            throw new Error(
+                "Mark component not found."
+            );
+        }
+
+        const setting = await RtseSetting.get();
+
+        if (
+            !setting ||
+            Number(setting.exam_year) !==
+                Number(component.application_year)
+        ) {
+            throw new Error(
+                "This mark component does not belong to the active RTSE year."
+            );
+        }
+
+        await RtseMarkComponent.delete(
+            req.params.id
+        );
+
+        req.flash(
+            "success",
+            `Mark component "${component.name}" deleted successfully.`
+        );
+
+    } catch (err) {
+        console.error(
+            "Delete RTSE Mark Component Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to delete mark component."
+        );
+    }
+
+    res.redirect(
+        "/admin/rtse/results/mark-components"
+    );
+};
+
 // =====================================
 // RTSE Examination Control Centre
 // =====================================
@@ -3670,6 +3992,9 @@ exports.addSeatPlanShift = async (req, res) => {
                 ? req.body
                 : {};
 
+         console.log("ADMIN RTSE RESULT BODY:", body);
+
+
         const shiftName = String(
             body.shift_name || ""
         ).trim();
@@ -4636,6 +4961,58 @@ const students =
                 applicationYear
             );
 
+
+        const rankingsGenerated =
+            await RtseResult.hasGeneratedRankings(
+                applicationYear
+            );
+
+        let rankingGeneration = null;
+
+        if (
+            String(req.query.rankings_generated || "") === "1"
+        ) {
+
+            const meritList =
+                await RtseResult.getOverallMeritList(
+                    applicationYear
+                );
+
+            rankingGeneration = {
+                type: "generated",
+
+                top3: meritList
+                    .filter(student =>
+                        Number(student.overall_rank) <= 3
+                    )
+                    .map(student => ({
+                        rank:
+                            Number(student.overall_rank),
+
+                        name:
+                            student.full_name,
+
+                        section:
+                            student.section,
+
+                        percentage:
+                            Number(student.percentage || 0)
+                    }))
+            };
+
+        }
+
+        if (
+            String(req.query.rankings_reset || "") === "1"
+        ) {
+
+            rankingGeneration = {
+                type: "reset",
+                top3: []
+            };
+
+        }
+
         const attendanceStats =
             await RtseExamAttendance.getResultDashboardStatistics(
                 applicationYear
@@ -4659,6 +5036,10 @@ const students =
                 title: "RTSE Result Dashboard",
 
                 students,
+
+                rankingsGenerated,
+
+                rankingGeneration,
 
                 setting,
 
@@ -4693,6 +5074,52 @@ const students =
 };
 
 
+
+// =====================================
+// Reset RTSE Rankings Only
+// =====================================
+
+exports.resetRankings = async (req, res) => {
+    try {
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        await RtseResult.resetRankings(
+            applicationYear
+        );
+
+        return res.redirect(
+            "/admin/rtse/results?rankings_reset=1"
+        );
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to reset rankings."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    }
+};
+
+
 // =====================================
 // Result Entry Page
 // =====================================
@@ -4715,11 +5142,17 @@ exports.resultAbsentStudents = async (req, res) => {
                 applicationYear
             );
 
+
+          const markComponents =
+              await RtseMarkComponent.getEnabledByYear(
+                  applicationYear
+              );
         res.render(
             "admin/rtse/result-absent-students",
             {
                 title: "RTSE Absent Students",
                 applicationYear,
+                  markComponents,
                 students,
                 setting
             }
@@ -4758,7 +5191,28 @@ exports.resultPresentStudents = async (req, res) => {
                 applicationYear
             );
 
-        const presentApplicationIds = students
+
+          const markComponents =
+              await RtseMarkComponent.getEnabledByYear(
+                  applicationYear
+              );
+        const presentResultIds = students
+              .map(student => Number(student.result_id))
+              .filter(id => Number.isInteger(id) && id > 0);
+
+          const presentComponentMarksByResult =
+              await RtseMarkComponent.getResultMarksByResultIds(
+                  presentResultIds
+              );
+
+          students.forEach(student => {
+              const resultId = Number(student.result_id);
+
+              student.component_marks =
+                  presentComponentMarksByResult[resultId] || {};
+          });
+
+          const presentApplicationIds = students
             .map(student =>
                 Number(student.application_id || student.id)
             )
@@ -4782,6 +5236,7 @@ exports.resultPresentStudents = async (req, res) => {
             {
                 title: "RTSE Present Students",
                 applicationYear,
+                  markComponents,
                 students,
                 countedOmrByApplication,
                 setting
@@ -4830,7 +5285,28 @@ exports.resultSectionStudents = async (req, res) => {
                 applicationYear
             );
 
-        const sectionApplicationIds = students
+
+          const markComponents =
+              await RtseMarkComponent.getEnabledByYear(
+                  applicationYear
+              );
+        const sectionResultIds = students
+              .map(student => Number(student.result_id))
+              .filter(id => Number.isInteger(id) && id > 0);
+
+          const sectionComponentMarksByResult =
+              await RtseMarkComponent.getResultMarksByResultIds(
+                  sectionResultIds
+              );
+
+          students.forEach(student => {
+              const resultId = Number(student.result_id);
+
+              student.component_marks =
+                  sectionComponentMarksByResult[resultId] || {};
+          });
+
+          const sectionApplicationIds = students
             .map(student =>
                 Number(student.application_id || student.id)
             )
@@ -4855,6 +5331,7 @@ exports.resultSectionStudents = async (req, res) => {
                 title: `Section ${section} - Present Students`,
                 section,
                 applicationYear,
+                  markComponents,
                 students,
                 countedOmrByApplication,
                 setting
@@ -4874,9 +5351,7 @@ exports.resultSectionStudents = async (req, res) => {
 };
 
 exports.resultEntryPage = async (req, res) => {
-
     try {
-
         const student =
             await RtseApplication.getById(
                 req.params.id
@@ -4887,34 +5362,43 @@ exports.resultEntryPage = async (req, res) => {
                 req.params.id
             );
 
+        const applicationYear =
+            Number(student.application_year);
+
+        const markComponents =
+            Number.isInteger(applicationYear) && applicationYear > 0
+                ? await RtseMarkComponent.getEnabledByYear(applicationYear)
+                : [];
+
+        const resultComponentMarks =
+            result
+                ? await RtseMarkComponent.getResultMarks(result.id)
+                : [];
+
         if (String(req.query.popup || "") === "1") {
             return res.render(
                 "admin/rtse/result-entry-popup",
                 {
                     title: "Enter Result",
                     student,
-                    result
+                    result,
+                    markComponents,
+                    resultComponentMarks
                 }
             );
         }
 
         res.render(
-
             "admin/rtse/result-entry",
-
             {
-
                 title:"Enter Result",
-
                 student,
-
                 result,
+                markComponents,
+                resultComponentMarks,
                 popup: String(req.query.popup || "") === "1"
-
             }
-
         );
-
     }
 
     catch(err){
@@ -4954,6 +5438,11 @@ exports.saveResult = async (req, res) => {
             req.body && typeof req.body === "object"
                 ? req.body
                 : {};
+
+        console.log(
+            "ADMIN RTSE SAVE BODY:",
+            JSON.stringify(body)
+        );
 
         const resultStatus =
             String(body.result_status || "").trim();
@@ -5097,7 +5586,7 @@ const sections = [
 
         return res.redirect(
 
-            "/admin/rtse/results"
+            "/admin/rtse/results?rankings_generated=1"
 
         );
 
@@ -5155,6 +5644,11 @@ const students=
               applicationYear
           );
 
+        const markComponents =
+            await RtseMarkComponent.getEnabledByYear(
+                applicationYear
+            );
+
         res.render(
 
             "admin/rtse/overall-merit-list",
@@ -5163,7 +5657,9 @@ const students=
 
                 title:"Overall Merit List",
 
-                students
+                students,
+
+                markComponents
 
             }
 
@@ -5219,6 +5715,11 @@ const students=
               applicationYear
           );
 
+        const markComponents =
+            await RtseMarkComponent.getEnabledByYear(
+                applicationYear
+            );
+
         res.render(
 
             "admin/rtse/section-merit-list",
@@ -5229,7 +5730,9 @@ const students=
 
                 section:req.params.section,
 
-                students
+                students,
+
+                markComponents
 
             }
 

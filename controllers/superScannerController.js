@@ -7,6 +7,12 @@ const RtseResultQr =
 const RtseResult =
     require("../models/RtseResult");
 
+const RtseSetting =
+    require("../models/RtseSetting");
+
+const RtseMarkComponent =
+    require("../models/RtseMarkComponent");
+
 const { saveRtseResult } =
     require("../utils/rtseResultService");
 
@@ -15,12 +21,44 @@ const superScannerController = {
     // =====================================
     // Super Scanner Dashboard
     // =====================================
-    dashboard(req, res) {
+    async dashboard(req, res) {
 
-        res.render("super-scanner/dashboard", {
-            title: "Super Scanner Dashboard",
-            user: req.session.user
-        });
+        try {
+
+            const setting =
+                await RtseSetting.get();
+
+            const applicationYear =
+                setting && setting.exam_year
+                    ? Number(setting.exam_year)
+                    : null;
+
+            const markComponents =
+                Number.isInteger(applicationYear) &&
+                applicationYear > 0
+                    ? await RtseMarkComponent.getEnabledByYear(
+                        applicationYear
+                    )
+                    : [];
+
+            res.render("super-scanner/dashboard", {
+                title: "Super Scanner Dashboard",
+                user: req.session.user,
+                markComponents
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Super Scanner Dashboard Error:",
+                error
+            );
+
+            return res.status(500).send(
+                "Unable to load Super Scanner Dashboard."
+            );
+
+        }
 
     },
 
@@ -229,6 +267,13 @@ const superScannerController = {
                     resultQr.application_id
                 );
 
+            const resultComponentMarks =
+                existingResult
+                    ? await RtseMarkComponent.getResultMarks(
+                        existingResult.id
+                    )
+                    : [];
+
             return res.json({
                 success: true,
                 scanType: "RESULT",
@@ -259,7 +304,9 @@ const superScannerController = {
                         resultQr.photo
                 },
                 result:
-                    existingResult
+                    existingResult,
+                resultComponentMarks:
+                    resultComponentMarks
             });
 
         } catch (error) {

@@ -81,6 +81,30 @@ class RtseResult {
 
 
     // =====================================
+    // Student Result using transaction connection
+    // =====================================
+    static async getByApplicationWithConnection(connection, id){
+        const [rows] = await connection.query(
+            `SELECT
+                r.*,
+                a.registration_no,
+                a.roll_no,
+                a.full_name,
+                a.school_name,
+                a.section,
+                a.class,
+                a.application_year
+             FROM rtse_results r
+             JOIN rtse_applications a
+             ON r.application_id=a.id
+             WHERE r.application_id=?`,
+            [id]
+        );
+
+        return rows[0];
+    }
+
+    // =====================================
     // Delete / Reset Result to Pending
     // =====================================
 
@@ -203,13 +227,33 @@ static async getDashboardResults(
             a.roll_no,
             a.full_name,
             a.school_name,
+            a.father_name,
+            a.mother_name,
+            a.gender,
+            a.dob,
+            a.mobile,
+            a.email,
+            a.school_id,
+            a.district,
+            a.state,
             a.section,
             a.class,
+            a.shift_id,
+            a.room_id,
+            a.seat_id,
+            a.roll_number,
+            a.room_no,
+            a.seat_no,
+            a.application_year,
+            a.pincode,
+            a.address,
             a.status AS application_status,
             a.admit_generated,
 
             r.id AS result_id,
             r.marks,
+            r.total_marks,
+            r.total_full_marks,
             r.percentage,
             r.grade,
             r.result_status,
@@ -309,7 +353,12 @@ static async generateSectionRanks(section, applicationYear){
         `SELECT
 
             r.id,
-            r.marks
+
+            CASE
+                WHEN r.total_marks IS NULL
+                    THEN r.marks
+                ELSE r.total_marks
+            END AS ranking_marks
 
         FROM rtse_results r
 
@@ -326,8 +375,7 @@ static async generateSectionRanks(section, applicationYear){
 
         ORDER BY
 
-            r.marks DESC,
-
+            ranking_marks DESC,
             a.full_name ASC`,
 
         [
@@ -338,36 +386,98 @@ static async generateSectionRanks(section, applicationYear){
     );
 
     let rank=1;
+    let previousMarks=null;
 
-    for(const student of students){
+    for(let index=0; index<students.length; index++){
+
+        const student=students[index];
+
+        if(
+            index===0
+        ){
+            rank=1;
+        }else if(
+            Number(student.ranking_marks)!==
+            Number(previousMarks)
+        ){
+            rank++;
+        }
 
         await db.query(
-
             `UPDATE rtse_results
-
              SET section_rank=?
-
              WHERE id=?`,
-
             [
-
                 rank,
-
                 student.id
-
             ]
-
         );
 
-        rank++;
-
+        previousMarks=student.ranking_marks;
     }
 
 }
 
 
-
 // =====================================
+// Ranking State Helpers
+// =====================================
+
+static async hasGeneratedRankings(applicationYear){
+
+    const [rows] = await db.query(
+
+        `SELECT COUNT(*) AS total
+
+         FROM rtse_results r
+
+         INNER JOIN rtse_applications a
+
+             ON a.id=r.application_id
+
+         WHERE a.application_year=?
+
+           AND r.id IS NOT NULL
+
+           AND (
+               r.overall_rank IS NOT NULL
+               OR r.section_rank IS NOT NULL
+           )`,
+
+        [applicationYear]
+
+    );
+
+    return Number(rows?.[0]?.total || 0) > 0;
+
+}
+
+
+static async resetRankings(applicationYear){
+
+    await db.query(
+
+        `UPDATE rtse_results r
+
+         INNER JOIN rtse_applications a
+
+             ON a.id=r.application_id
+
+         SET
+             r.section_rank=NULL,
+             r.overall_rank=NULL
+
+         WHERE a.application_year=?
+
+           AND r.id IS NOT NULL`,
+
+        [applicationYear]
+
+    );
+
+}
+
+
 // Generate Overall Rank
 // =====================================
 
@@ -378,7 +488,12 @@ static async generateOverallRank(applicationYear){
         `SELECT
 
             r.id,
-            r.marks
+
+            CASE
+                WHEN r.total_marks IS NULL
+                    THEN r.marks
+                ELSE r.total_marks
+            END AS ranking_marks
 
         FROM rtse_results r
 
@@ -391,38 +506,44 @@ static async generateOverallRank(applicationYear){
 
         ORDER BY
 
-            r.marks DESC,
-
+            ranking_marks DESC,
             a.full_name ASC`
 
     ,
+
           [applicationYear]
+
       );
 
     let rank=1;
+    let previousMarks=null;
 
-    for(const student of students){
+    for(let index=0; index<students.length; index++){
+
+        const student=students[index];
+
+        if(
+            index===0
+        ){
+            rank=1;
+        }else if(
+            Number(student.ranking_marks)!==
+            Number(previousMarks)
+        ){
+            rank++;
+        }
 
         await db.query(
-
             `UPDATE rtse_results
-
              SET overall_rank=?
-
              WHERE id=?`,
-
             [
-
                 rank,
-
                 student.id
-
             ]
-
         );
 
-        rank++;
-
+        previousMarks=student.ranking_marks;
     }
 
 }
@@ -461,13 +582,78 @@ static async getOverallMeritList(applicationYear){
             r.overall_rank ASC`
 
     ,
+
           [applicationYear]
+
       );
+
+    if(!rows.length){
+        return rows;
+    }
+
+    const resultIds = rows
+        .map(row => Number(row.id))
+        .filter(id => Number.isInteger(id) && id > 0);
+
+    if(!resultIds.length){
+        return rows;
+    }
+
+    const placeholders = resultIds.map(() => "?").join(",");
+
+    const [componentRows] = await db.query(
+
+        `SELECT
+
+            rcm.result_id,
+            rcm.component_id,
+            rcm.marks
+
+        FROM rtse_result_component_marks rcm
+
+        INNER JOIN rtse_mark_components mc
+
+            ON mc.id=rcm.component_id
+
+        WHERE rcm.result_id IN (${placeholders})
+          AND mc.application_year=?
+          AND mc.enabled=1
+
+        ORDER BY
+
+            mc.display_order ASC,
+            mc.id ASC`,
+
+        [...resultIds, applicationYear]
+
+    );
+
+    const componentMap = new Map();
+
+    componentRows.forEach(row => {
+
+        const resultId = Number(row.result_id);
+
+        if(!componentMap.has(resultId)){
+            componentMap.set(resultId, {});
+        }
+
+        componentMap.get(resultId)[
+            Number(row.component_id)
+        ] = row.marks;
+
+    });
+
+    rows.forEach(row => {
+
+        row.component_marks =
+            componentMap.get(Number(row.id)) || {};
+
+    });
 
     return rows;
 
 }
-
 
 
 // =====================================
@@ -514,14 +700,74 @@ static async getSectionMeritList(section, applicationYear){
 
     );
 
+    if(!rows.length){
+        return rows;
+    }
+
+    const resultIds = rows
+        .map(row => Number(row.id))
+        .filter(id => Number.isInteger(id) && id > 0);
+
+    if(!resultIds.length){
+        return rows;
+    }
+
+    const placeholders = resultIds.map(() => "?").join(",");
+
+    const [componentRows] = await db.query(
+
+        `SELECT
+
+            rcm.result_id,
+            rcm.component_id,
+            rcm.marks
+
+        FROM rtse_result_component_marks rcm
+
+        INNER JOIN rtse_mark_components mc
+
+            ON mc.id=rcm.component_id
+
+        WHERE rcm.result_id IN (${placeholders})
+          AND mc.application_year=?
+          AND mc.enabled=1
+
+        ORDER BY
+
+            mc.display_order ASC,
+            mc.id ASC`,
+
+        [...resultIds, applicationYear]
+
+    );
+
+    const componentMap = new Map();
+
+    componentRows.forEach(row => {
+
+        const resultId = Number(row.result_id);
+
+        if(!componentMap.has(resultId)){
+            componentMap.set(resultId, {});
+        }
+
+        componentMap.get(resultId)[
+            Number(row.component_id)
+        ] = row.marks;
+
+    });
+
+    rows.forEach(row => {
+
+        row.component_marks =
+            componentMap.get(Number(row.id)) || {};
+
+    });
+
     return rows;
 
 }
 
-
-// =====================================
-// Search Result
-// =====================================
 
 static async searchResult(keyword){
 

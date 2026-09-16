@@ -42,6 +42,46 @@
                 </p>
 
 
+
+                <div
+                    class="rtse-live-search"
+                    style="margin:20px 0;"
+                >
+                    <div
+                        style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"
+                    >
+                        <div style="flex:1;min-width:240px;">
+                            <label
+                                for="rtseStudentLiveSearch"
+                                style="display:block;font-weight:600;margin-bottom:7px;"
+                            >
+                                🔎 Search Students
+                            </label>
+
+                            <input
+                                type="search"
+                                id="rtseStudentLiveSearch"
+                                placeholder="Search by name, registration, roll, mobile, father, school, district, address, marks, grade, etc."
+                                autocomplete="off"
+                                style="width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;"
+                            >
+                        </div>
+
+                        <button
+                            type="button"
+                            id="rtseStudentLiveSearchClear"
+                            style="padding:11px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;"
+                        >
+                            Clear
+                        </button>
+                    </div>
+
+                    <div
+                        id="rtseStudentLiveSearchCount"
+                        style="margin-top:8px;font-size:13px;color:#6b7280;"
+                    ></div>
+                </div>
+
                 <% if (!students || students.length === 0) { %>
 
                     <div style="text-align:center;padding:30px;">
@@ -108,7 +148,7 @@
 
                                 <% students.forEach(function(student, index) { %>
 
-                                    <tr>
+                                    <tr data-rtse-search-row="<%= JSON.stringify(student) %>">
 
                                         <td>
                                             <%= index + 1 %>
@@ -163,8 +203,23 @@
                                                     <br>
 
                                                     <small>
-                                                        Marks:
-                                                        <%= student.marks %>
+                                                        OMR:
+                                                        <%= student.marks %> / 100
+
+                                                        <% (markComponents || []).forEach(function(component) { %>
+                                                            · <%= component.name %>:
+                                                            <%= student.component_marks && student.component_marks[component.id] != null
+                                                                ? student.component_marks[component.id]
+                                                                : 0 %> / <%= component.maximum_marks %>
+                                                        <% }); %>
+
+                                                        <% if (student.total_marks !== null && student.total_marks !== undefined) { %>
+                                                            · Total:
+                                                            <%= student.total_marks %> / <%= student.total_full_marks %>
+                                                        <% } else { %>
+                                                            · Total:
+                                                            <%= student.marks %> / 100
+                                                        <% } %>
 
                                                         <% if (student.percentage !== null && student.percentage !== undefined) { %>
                                                             · <%= student.percentage %>%
@@ -177,8 +232,9 @@
 
                                                 <% } %>
 
-                                            <% } else { %>
 
+
+                                            <% } else { %>
                                                 <span class="badge badge-warning">
                                                     Pending
                                                 </span>
@@ -425,12 +481,14 @@
 
 
     function calculateResult() {
-
-        const fullMarks =
-            content.querySelector("#full_marks");
-
         const marks =
             content.querySelector("#marks");
+
+        const totalMarks =
+            content.querySelector("#total_marks");
+
+        const totalFullMarks =
+            content.querySelector("#total_full_marks");
 
         const percentage =
             content.querySelector("#percentage");
@@ -438,51 +496,92 @@
         const grade =
             content.querySelector("#grade");
 
+        const componentInputs =
+            content.querySelectorAll("[data-rtse-component-mark]");
 
-        if (!fullMarks || !marks || !percentage || !grade) {
+
+        if (
+            !marks ||
+            !totalMarks ||
+            !totalFullMarks ||
+            !percentage ||
+            !grade
+        ) {
             return;
         }
 
 
         function calculate() {
-
-            const total =
-                parseFloat(fullMarks.value) || 100;
-
-            const obtained =
+            const omrObtained =
                 parseFloat(marks.value) || 0;
 
-            const per =
-                ((obtained / total) * 100).toFixed(2);
+            let configuredObtained = 0;
+            let configuredFullMarks = 0;
 
+
+            componentInputs.forEach(function (input) {
+                const maximum =
+                    parseFloat(input.dataset.componentMax) || 0;
+
+                const obtained =
+                    parseFloat(input.value) || 0;
+
+                configuredObtained += obtained;
+                configuredFullMarks += maximum;
+            });
+
+
+            const total =
+                omrObtained + configuredObtained;
+
+            const totalFull =
+                100 + configuredFullMarks;
+
+            const per =
+                totalFull > 0
+                    ? ((total / totalFull) * 100).toFixed(2)
+                    : "0.00";
+
+
+            totalMarks.value =
+                Number(total.toFixed(2));
+
+            totalFullMarks.value =
+                Number(totalFull.toFixed(2));
 
             percentage.value = per;
 
 
-            if (per >= 90) {
+            const percentageNumber =
+                parseFloat(per) || 0;
+
+
+            if (percentageNumber >= 90) {
                 grade.value = "A+";
-            } else if (per >= 80) {
+            } else if (percentageNumber >= 80) {
                 grade.value = "A";
-            } else if (per >= 70) {
+            } else if (percentageNumber >= 70) {
                 grade.value = "B+";
-            } else if (per >= 60) {
+            } else if (percentageNumber >= 60) {
                 grade.value = "B";
-            } else if (per >= 50) {
+            } else if (percentageNumber >= 50) {
                 grade.value = "C";
-            } else if (per >= 40) {
+            } else if (percentageNumber >= 40) {
                 grade.value = "D";
             } else {
                 grade.value = "F";
             }
-
         }
 
 
         marks.addEventListener("input", calculate);
-        fullMarks.addEventListener("input", calculate);
+
+        componentInputs.forEach(function (input) {
+            input.addEventListener("input", calculate);
+        });
+
 
         calculate();
-
     }
 
 
@@ -555,27 +654,76 @@
                         }
 
 
-                        const formData =
-                            new FormData(form);
+                        let requestOptions = {
+                            method:"POST",
+                            credentials:"same-origin",
+                            redirect:"follow",
+                            headers:{
+                                "X-Requested-With":
+                                    "XMLHttpRequest"
+                            }
+                        };
 
+                        if (form.id === "rtseResultForm") {
+                            const marksInput =
+                                form.querySelector("#marks");
+
+                            const componentInputs =
+                                form.querySelectorAll(
+                                    "[data-rtse-component-mark]"
+                                );
+
+                            const omrMarks =
+                                Number(
+                                    marksInput
+                                        ? marksInput.value
+                                        : NaN
+                                );
+
+                            const componentMarks = {};
+
+                            componentInputs.forEach(
+                                function(input) {
+                                    const componentId =
+                                        Number(
+                                            input.dataset.componentId
+                                        );
+
+                                    if (
+                                        Number.isInteger(componentId) &&
+                                        componentId > 0
+                                    ) {
+                                        componentMarks[componentId] =
+                                            input.value === ""
+                                                ? 0
+                                                : Number(input.value);
+                                    }
+                                }
+                            );
+
+                            requestOptions.headers["Content-Type"] =
+                                "application/json";
+
+                            requestOptions.body =
+                                JSON.stringify({
+                                    marks: omrMarks,
+                                    component_marks: componentMarks
+                                });
+                        } else {
+                            const formData =
+                                new FormData(form);
+
+                            requestOptions.body =
+                                new URLSearchParams(formData);
+                        }
 
                         try {
 
                             const response =
                                 await fetch(
                                     action,
-                                    {
-                                        method:"POST",
-                                        body:new URLSearchParams(formData),
-                                        credentials:"same-origin",
-                                        redirect:"follow",
-                                        headers:{
-                                            "X-Requested-With":
-                                                "XMLHttpRequest"
-                                        }
-                                    }
+                                    requestOptions
                                 );
-
 
                             if (!response.ok) {
                                 throw new Error(
@@ -840,4 +988,120 @@ document.addEventListener("click", async function (event) {
         button.textContent = originalText;
     }
 });
+</script>
+
+<script>
+(function () {
+    const searchInput =
+        document.getElementById("rtseStudentLiveSearch");
+
+    const clearButton =
+        document.getElementById("rtseStudentLiveSearchClear");
+
+    const countElement =
+        document.getElementById("rtseStudentLiveSearchCount");
+
+    if (!searchInput || !clearButton || !countElement) {
+        return;
+    }
+
+    const rows = Array.from(
+        document.querySelectorAll(
+            "tr[data-rtse-search-row]"
+        )
+    );
+
+    const searchableRows = rows.map(function (row) {
+        let searchableText = "";
+
+        try {
+            const student =
+                JSON.parse(
+                    row.getAttribute(
+                        "data-rtse-search-row"
+                    ) || "{}"
+                );
+
+            searchableText =
+                Object.keys(student)
+                    .map(function (key) {
+                        const value = student[key];
+
+                        if (
+                            value &&
+                            typeof value === "object"
+                        ) {
+                            return JSON.stringify(value);
+                        }
+
+                        return String(
+                            value == null ? "" : value
+                        );
+                    })
+                    .join(" ");
+        } catch (error) {
+            console.error(
+                "Unable to prepare RTSE student search data.",
+                error
+            );
+        }
+
+        return {
+            row: row,
+            text: searchableText.toLowerCase()
+        };
+    });
+
+    function updateSearch() {
+        const query =
+            String(searchInput.value || "")
+                .trim()
+                .toLowerCase();
+
+        const terms =
+            query
+                ? query.split(/\s+/).filter(Boolean)
+                : [];
+
+        let visibleCount = 0;
+
+        searchableRows.forEach(function (item) {
+            const matches =
+                terms.length === 0 ||
+                terms.every(function (term) {
+                    return item.text.includes(term);
+                });
+
+            item.row.style.display =
+                matches ? "" : "none";
+
+            if (matches) {
+                visibleCount++;
+            }
+        });
+
+        countElement.textContent =
+            "Showing " +
+            visibleCount +
+            " of " +
+            searchableRows.length +
+            " student(s)";
+    }
+
+    searchInput.addEventListener(
+        "input",
+        updateSearch
+    );
+
+    clearButton.addEventListener(
+        "click",
+        function () {
+            searchInput.value = "";
+            searchInput.focus();
+            updateSearch();
+        }
+    );
+
+    updateSearch();
+})();
 </script>

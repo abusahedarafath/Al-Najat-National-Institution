@@ -589,6 +589,37 @@ router.get(
     adminRtseController.studentsNotSentToCentrePage
 );
 
+
+// =====================================
+// RTSE Result Mark Components
+// =====================================
+
+router.get(
+    "/rtse/results/mark-components",
+    auth.isAdmin,
+    adminRtseController.resultMarkComponentsPage
+);
+
+router.post(
+    "/rtse/results/mark-components",
+    auth.isAdmin,
+    multer().none(),
+    adminRtseController.createResultMarkComponent
+);
+
+router.post(
+    "/rtse/results/mark-components/:id/edit",
+    auth.isAdmin,
+    multer().none(),
+    adminRtseController.updateResultMarkComponent
+);
+
+router.post(
+    "/rtse/results/mark-components/:id/delete",
+    auth.isAdmin,
+    adminRtseController.deleteResultMarkComponent
+);
+
 // RTSE Examination Control Centre
 // =====================================
 
@@ -930,6 +961,16 @@ router.get(
     auth.isAdmin,
 
     adminRtseController.resultDashboard
+
+);
+
+router.post(
+
+    "/rtse/results/reset-rankings",
+
+    auth.isAdmin,
+
+    adminRtseController.resetRankings
 
 );
 

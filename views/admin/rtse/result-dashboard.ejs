@@ -27,6 +27,26 @@
 
     </a>
 
+    <% if (rankingsGenerated) { %>
+
+    <form
+        method="POST"
+        action="/admin/rtse/results/reset-rankings"
+        style="display:inline;"
+        onsubmit="return confirm('Reset rankings only? Student results, marks, percentages and grades will NOT be deleted.');">
+
+        <button
+            type="submit"
+            class="btn-warning">
+
+            🔄 Reset Rankings
+
+        </button>
+
+    </form>
+
+<% } else { %>
+
     <a
         href="/admin/rtse/results/generate-rankings"
         class="btn-save">
@@ -35,6 +55,8 @@
 
     </a>
 
+<% } %>
+
     <a
         href="/admin/rtse/results/merit-list"
         class="btn-view">
@@ -42,6 +64,12 @@
         📋 Merit List
 
     </a>
+                                <a
+                                    href="/admin/rtse/results/mark-components"
+                                    class="btn-save">
+                                    ⚙️ Configure Result Marks
+                                </a>
+
 
     <% if(setting.result_publish){ %>
 
@@ -313,6 +341,13 @@ Certificate PDF Downloads
                                 >
                                     See Present Students
                                 </a>
+
+                                <a
+                                    href="/admin/rtse/results/merit-list/<%= encodeURIComponent(sectionData.section) %>"
+                                    class="btn-view"
+                                >
+                                    🏆 Section Merit List
+                                </a>
                             </div>
 
                         </div>
@@ -328,5 +363,420 @@ Certificate PDF Downloads
     </main>
 
 </div>
+
+
+<%
+    const rankingPopupType =
+        rankingGeneration?.type || "";
+
+    const rankingTop3 =
+        rankingGeneration?.top3 || [];
+%>
+
+<% if (rankingPopupType === "generated") { %>
+
+    <div
+        id="rtse-ranking-result-popup"
+        class="rtse-ranking-popup-overlay">
+
+        <div class="rtse-ranking-popup">
+
+            <div class="rtse-ranking-success-icon">
+                <span>✓</span>
+            </div>
+
+            <h2>
+                Rankings Generated Successfully
+            </h2>
+
+            <p class="rtse-ranking-popup-subtitle">
+                Top 3 Overall Students
+            </p>
+
+            <div class="rtse-ranking-top3">
+
+                <% [1, 2, 3].forEach(function(rankNumber) { %>
+
+                    <%
+                        const rankStudents =
+                            rankingTop3.filter(function(student) {
+                                return Number(student.rank) === rankNumber;
+                            });
+                    %>
+
+                    <% if (rankStudents.length) { %>
+
+                        <div class="rtse-ranking-group">
+
+                            <div class="rtse-ranking-group-title">
+                                <%= rankNumber === 1
+                                    ? "1st Rank"
+                                    : rankNumber === 2
+                                        ? "2nd Rank"
+                                        : "3rd Rank" %>
+                            </div>
+
+                            <% rankStudents.forEach(function(student) { %>
+
+                                <div class="rtse-ranking-student">
+
+                                    <div class="rtse-ranking-student-line">
+                                        Name:
+                                        <strong>
+                                            <%= student.name || "Student" %>
+                                        </strong>,
+                                        Section:
+                                        <strong>
+                                            <%= student.section || "—" %>
+                                        </strong>,
+                                        Percentage:
+                                        <strong>
+                                            <%= Number(
+                                                student.percentage || 0
+                                            ).toFixed(2) %>%
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            <% }) %>
+
+                        </div>
+
+                    <% } %>
+
+                <% }) %>
+
+                <% if (!rankingTop3.length) { %>
+
+                    <div class="rtse-ranking-empty">
+                        Rankings were generated, but no Top 3 students were found.
+                    </div>
+
+                <% } %>
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-save rtse-ranking-done"
+                onclick="closeRtseRankingPopup()">
+
+                Done
+
+            </button>
+
+        </div>
+
+    </div>
+
+<% } else if (rankingPopupType === "reset") { %>
+
+    <div
+        id="rtse-ranking-result-popup"
+        class="rtse-ranking-popup-overlay">
+
+        <div class="rtse-ranking-popup">
+
+            <div class="rtse-ranking-success-icon">
+                <span>✓</span>
+            </div>
+
+            <h2>
+                Rankings Reset Successfully
+            </h2>
+
+            <p class="rtse-ranking-reset-message">
+                Ranking positions have been reset.
+            </p>
+
+            <div class="rtse-ranking-safe-note">
+                <strong>Student result data was not deleted.</strong>
+
+                <br>
+
+                Marks, percentages, grades, attendance and student records
+                remain unchanged.
+            </div>
+
+            <button
+                type="button"
+                class="btn-save rtse-ranking-done"
+                onclick="closeRtseRankingPopup()">
+
+                Done
+
+            </button>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+
+<style>
+    .rtse-ranking-popup-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100vw;
+        max-width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        padding: 14px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.55);
+        animation: rtseRankingOverlayIn 0.25s ease-out;
+    }
+
+    .rtse-ranking-popup {
+        flex: 0 1 560px;
+        width: 100%;
+        max-width: 560px;
+        min-width: 0;
+        max-height: 90vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        box-sizing: border-box;
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+        animation: rtseRankingPopupIn 0.3s ease-out;
+    }
+
+    .rtse-ranking-success-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dcfce7;
+        border: 4px solid #22c55e;
+        animation: rtseRankingCheckPop 0.55s ease-out;
+    }
+
+    .rtse-ranking-success-icon span {
+        color: #16a34a;
+        font-size: 46px;
+        font-weight: 800;
+        line-height: 1;
+        animation: rtseRankingCheckDraw 0.45s ease-out;
+    }
+
+    .rtse-ranking-popup h2 {
+        margin: 0 0 8px;
+        color: #166534;
+        font-size: 24px;
+    }
+
+    .rtse-ranking-popup-subtitle {
+        margin: 0 0 20px;
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .rtse-ranking-top3 {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        gap: 8px;
+        margin: 20px 0;
+        text-align: left;
+    }
+
+    .rtse-ranking-group {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .rtse-ranking-student {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 9px 11px;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        background: #f0fdf4;
+        overflow: hidden;
+    }
+
+    .rtse-ranking-student-rank {
+        color: #15803d;
+        font-weight: 800;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .rtse-ranking-student-line {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        overflow: hidden;
+    }
+
+    .rtse-ranking-student-line strong {
+        color: #166534;
+        font-weight: 700;
+    }
+
+    .rtse-ranking-empty {
+        padding: 16px;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #475569;
+        text-align: center;
+    }
+
+    .rtse-ranking-reset-message {
+        color: #334155;
+        margin: 8px 0 18px;
+    }
+
+    .rtse-ranking-safe-note {
+        padding: 16px;
+        margin: 0 0 20px;
+        border-radius: 12px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+        line-height: 1.6;
+    }
+
+    .rtse-ranking-done {
+        min-width: 130px;
+        border: 0;
+        cursor: pointer;
+    }
+
+    @keyframes rtseRankingOverlayIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes rtseRankingPopupIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes rtseRankingCheckPop {
+        0% {
+            opacity: 0;
+            transform: scale(0.4);
+        }
+
+        70% {
+            transform: scale(1.12);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes rtseRankingCheckDraw {
+        from {
+            opacity: 0;
+            transform: scale(0.5) rotate(-15deg);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) rotate(0);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .rtse-ranking-popup-overlay {
+            padding: 10px;
+        }
+
+        .rtse-ranking-popup {
+            flex: 0 1 auto;
+            width: 100%;
+            max-width: 100%;
+            max-height: 88vh;
+            padding: 18px 12px;
+            border-radius: 14px;
+        }
+
+        .rtse-ranking-popup h2 {
+            font-size: 21px;
+        }
+
+        .rtse-ranking-popup-subtitle {
+            margin-bottom: 14px;
+        }
+
+        .rtse-ranking-student-line {
+            font-size: 12px;
+            line-height: 1.45;
+        }
+    }
+</style>
+
+<script>
+    function closeRtseRankingPopup() {
+
+        const popup =
+            document.getElementById("rtse-ranking-result-popup");
+
+        if (popup) {
+            popup.remove();
+        }
+
+        const url =
+            new URL(window.location.href);
+
+        url.searchParams.delete("rankings_generated");
+        url.searchParams.delete("rankings_reset");
+
+        window.history.replaceState(
+            {},
+            document.title,
+            url.pathname +
+            (url.search ? url.search : "") +
+            (url.hash ? url.hash : "")
+        );
+    }
+</script>
 
 <%- include("../partials/footer") %>

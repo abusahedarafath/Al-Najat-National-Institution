@@ -45,67 +45,128 @@
     >
 
         <div class="rtse-popup-result-box">
+    <div class="rtse-popup-section-title">
+        <span>📊</span>
+        <strong>Result Details</strong>
+    </div>
 
-            <div class="rtse-popup-section-title">
-                <span>📊</span>
-                <strong>Result Details</strong>
-            </div>
+    <div class="rtse-popup-form-grid">
 
-            <div class="rtse-popup-form-grid">
-
-                <div class="rtse-popup-field">
-                    <label for="full_marks">Full Marks</label>
-                    <input
-                        type="number"
-                        name="full_marks"
-                        id="full_marks"
-                        value="100"
-                        min="1"
-                        required
-                    >
-                </div>
-
-                <div class="rtse-popup-field">
-                    <label for="marks">Obtained Marks</label>
-                    <input
-                        type="number"
-                        name="marks"
-                        id="marks"
-                        value="<%= result ? result.marks : '' %>"
-                        min="0"
-                        required
-                    >
-                </div>
-
-                <div class="rtse-popup-field">
-                    <label for="percentage">Percentage</label>
-                    <input
-                        type="number"
-                        name="percentage"
-                        id="percentage"
-                        value="<%= result ? result.percentage : '' %>"
-                        readonly
-                    >
-                </div>
-
-                <div class="rtse-popup-field">
-                    <label for="grade">Grade</label>
-                    <input
-                        type="text"
-                        name="grade"
-                        id="grade"
-                        value="<%= result ? result.grade : '' %>"
-                        readonly
-                    >
-                </div>
-
-            </div>
-
+        <div class="rtse-popup-field">
+            <label for="full_marks">OMR Full Marks</label>
             <input
-                type="hidden"
+                type="number"
+                name="full_marks"
+                id="full_marks"
+                value="100"
+                min="100"
+                max="100"
+                readonly
             >
-
         </div>
+
+        <div class="rtse-popup-field">
+            <label for="marks">OMR Obtained Marks</label>
+            <input
+                type="number"
+                name="marks"
+                id="marks"
+                value="<%= result ? result.marks : '' %>"
+                min="0"
+                max="100"
+                step="0.01"
+                required
+            >
+        </div>
+
+        <% (markComponents || []).forEach(function(component) { %>
+            <%
+
+                const savedComponent =
+                    (resultComponentMarks || []).find(function(item) {
+                        return Number(item.component_id) === Number(component.id);
+                    });
+
+                const savedMarks =
+                    savedComponent &&
+                    Number(savedComponent.marks) !== 0
+                        ? savedComponent.marks
+                        : "";
+            %>
+
+            <div class="rtse-popup-field">
+                <label for="component_marks_<%= component.id %>">
+                    <%= component.name %>
+                    <span class="rtse-popup-field-limit">
+                        / <%= component.maximum_marks %>
+                    </span>
+                </label>
+
+                <input
+                    type="number"
+                    name="component_marks[<%= component.id %>]"
+                    id="component_marks_<%= component.id %>"
+                    value="<%= savedMarks %>"
+                    min="0"
+                    max="<%= component.maximum_marks %>"
+                    step="0.01"
+                    data-rtse-component-mark
+                    data-component-id="<%= component.id %>"
+                    data-component-max="<%= component.maximum_marks %>"
+                >
+            </div>
+        <% }); %>
+
+        <div class="rtse-popup-field">
+            <label for="total_marks">Total Obtained Marks</label>
+            <input
+                type="number"
+                id="total_marks"
+                value="<%= result && result.total_marks !== null && result.total_marks !== undefined
+                    ? result.total_marks
+                    : (result ? result.marks : '') %>"
+                readonly
+            >
+        </div>
+
+        <div class="rtse-popup-field">
+            <label for="total_full_marks">Total Full Marks</label>
+            <input
+                type="number"
+                id="total_full_marks"
+                value="<%= result && result.total_full_marks !== null && result.total_full_marks !== undefined
+                    ? result.total_full_marks
+                    : (100 + (markComponents || []).reduce(function(total, component) {
+                        return total + Number(component.maximum_marks || 0);
+                    }, 0)) %>"
+                readonly
+            >
+        </div>
+
+        <div class="rtse-popup-field">
+            <label for="percentage">Percentage</label>
+            <input
+                type="number"
+                name="percentage"
+                id="percentage"
+                value="<%= result ? result.percentage : '' %>"
+                readonly
+            >
+        </div>
+
+        <div class="rtse-popup-field">
+            <label for="grade">Grade</label>
+            <input
+                type="text"
+                name="grade"
+                id="grade"
+                value="<%= result ? result.grade : '' %>"
+                readonly
+            >
+        </div>
+
+    </div>
+</div>
 
     </form>
 

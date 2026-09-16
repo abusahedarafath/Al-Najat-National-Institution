@@ -74,17 +74,7 @@ td{
 
 }
 
-.photo{
 
-    width:55px;
-
-    height:55px;
-
-    object-fit:cover;
-
-    border-radius:50%;
-
-}
 
 .rank{
 
@@ -170,11 +160,7 @@ Section Rank
 
 </th>
 
-<th>
 
-Photo
-
-</th>
 
 <th>
 
@@ -189,34 +175,31 @@ Registration No.
 </th>
 
 <th>
+  OMR Obtained Mark
 
-Student Name
+  </th>
 
-</th>
+  <% (markComponents || []).forEach(component=>{ %>
 
-<th>
+  <th>
 
-School
+  <%= component.name %> (<%= component.maximum_marks %>)
 
-</th>
+  </th>
 
-<th>
+  <% }) %>
 
-District
+  <th>
 
-</th>
+  Total Mark
 
-<th>
+  </th>
 
-Marks
+  <th>
 
-</th>
+  Percentage
 
-<th>
-
-Percentage
-
-</th>
+  </th>
 
 <th>
 
@@ -240,19 +223,7 @@ Grade
 
 </td>
 
-<td>
 
-<% if(student.photo){ %>
-
-<img
-
-src="/uploads/rtse/<%= student.photo %>"
-
-class="photo">
-
-<% } %>
-
-</td>
 
 <td>
 
@@ -268,41 +239,45 @@ class="photo">
 
 <td>
 
-<strong>
+  <strong>
 
-<%= student.full_name %>
+  <%= student.marks %>
 
-</strong>
+  </strong>
 
-</td>
+  </td>
 
-<td>
+  <% (markComponents || []).forEach(component=>{ %>
 
-<%= student.school_name %>
+  <td>
 
-</td>
+  <%= student.component_marks && student.component_marks[component.id] != null
+      ? student.component_marks[component.id]
+      : 0 %>
 
-<td>
+  </td>
 
-<%= student.district %>
+  <% }) %>
 
-</td>
+  <td>
 
-<td>
+  <strong>
 
-<strong>
+  <% if (student.total_marks != null) { %>
+  <%= student.total_marks %> / <%= student.total_full_marks %>
+  <% } else { %>
+  <%= student.marks %> / 100
+  <% } %>
 
-<%= student.marks %>
+  </strong>
 
-</strong>
+  </td>
 
-</td>
+  <td>
 
-<td>
+  <%= student.percentage %>
 
-<%= student.percentage %>
-
-</td>
+  </td>
 
 <td>
 
