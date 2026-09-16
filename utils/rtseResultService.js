@@ -1,5 +1,6 @@
 const db = require("../config/database");
 const RtseResult = require("../models/RtseResult");
+const RtseApplication = require("../models/RtseApplication");
 const RtseMarkComponent = require("../models/RtseMarkComponent");
 
 /**
@@ -61,12 +62,12 @@ async function saveRtseResult(applicationId, body) {
      * component configuration.
      */
     const student =
-        await RtseResult.getByApplication(
+        await RtseApplication.getById(
             normalizedApplicationId
         );
 
     if (!student) {
-        throw new Error("Student result record not found.");
+        throw new Error("Student application record not found.");
     }
 
     const applicationYear =
