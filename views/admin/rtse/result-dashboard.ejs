@@ -33,7 +33,7 @@
         method="POST"
         action="/admin/rtse/results/reset-rankings"
         style="display:inline;"
-        onsubmit="return confirm('Reset rankings only? Student results, marks, percentages and grades will NOT be deleted.');">
+        data-rtse-confirm="Reset rankings only? Student results, marks, percentages and grades will NOT be deleted.">
 
         <button
             type="submit"
@@ -95,151 +95,54 @@
 
 
 
-<% if(setting.certificate_publish){ %>
+<div class="certificate-controls-card">
+    <div class="certificate-controls-actions">
 
-<a
+        <% if (!allCertificatesGenerated) { %>
 
-    href="/admin/rtse/certificates/hide"
+            <a
+                href="/admin/rtse/certificates/generate-all"
+                class="btn-save"
+                data-rtse-confirm="Generate certificates for all eligible students?">
+                🎓 Generate All Certificates
+            </a>
 
-    class="btn-warning">
+        <% } else if (!setting.certificate_publish) { %>
 
-    🙈 Hide Certificates
+            <a
+                href="/admin/rtse/certificates/reset-all"
+                class="btn-warning"
+                data-rtse-confirm="Reset ALL generated RTSE certificates? This will not delete results, marks, applications, attendance, or uploaded files.">
+                ♻️ Reset All Certificates
+            </a>
 
-</a>
+            <a
+                href="/admin/rtse/certificates/publish"
+                class="btn-save">
+                📢 Publish Certificates
+            </a>
 
-<% } else { %>
+        <% } else { %>
 
-<a
+            <a
+                href="/admin/rtse/certificates/hide"
+                class="btn-warning">
+                🙈 Hide Certificates
+            </a>
 
-    href="/admin/rtse/certificates/publish"
+        <% } %>
 
-    class="btn-save">
-
-    🎓 Publish Certificates
-
-</a>
-
-<% } %>
-
-
-<a
-    href="/admin/rtse/certificates/generate-all"
-    class="btn-save"
-    onclick="return confirm('Generate certificates for all eligible students?')">
-
-    🎓 Generate All Certificates
-
-</a>
-
-<hr>
-
-<h3>
-
-Certificate PDF Downloads
-
-</h3>
-
-<div
-    style="display:flex;gap:10px;flex-wrap:wrap;">
-
-    <a
-        href="/admin/rtse/certificates/section/A"
-        class="btn-view">
-
-        📄 Section A PDF
-
-    </a>
-
-    <a
-        href="/admin/rtse/certificates/section/B"
-        class="btn-view">
-
-        📄 Section B PDF
-
-    </a>
-
-    <a
-        href="/admin/rtse/certificates/section/C"
-        class="btn-view">
-
-        📄 Section C PDF
-
-    </a>
-
-    <a
-        href="/admin/rtse/certificates/section/D"
-        class="btn-view">
-
-        📄 Section D PDF
-
-    </a>
-
-    <a
-        href="/admin/rtse/certificates/section/E"
-        class="btn-view">
-
-        📄 Section E PDF
-
-    </a>
-
-</div>
-
-<br>
-
-<div
-    style="display:flex;gap:10px;flex-wrap:wrap;">
-
-    <a
+          <a
         href="/admin/rtse/certificates/all"
         class="btn-save">
-
-        📦 All Certificates
-
-    </a>
-
+        🖨️ Print All Certificates
+        </a>
+    </div>
 </div>
 
 
 
-<a
-    href="/admin/rtse/certificates/generate/A"
-    class="btn-view">
 
-    Section A
-
-</a>
-
-<a
-    href="/admin/rtse/certificates/generate/B"
-    class="btn-view">
-
-    Section B
-
-</a>
-
-<a
-    href="/admin/rtse/certificates/generate/C"
-    class="btn-view">
-
-    Section C
-
-</a>
-
-<a
-    href="/admin/rtse/certificates/generate/D"
-    class="btn-view">
-
-    Section D
-
-</a>
-
-<a
-    href="/admin/rtse/certificates/generate/E"
-    class="btn-view">
-
-    Section E
-
-</a>
 
 
 </div>
@@ -348,6 +251,37 @@ Certificate PDF Downloads
                                 >
                                     🏆 Section Merit List
                                 </a>
+
+
+                                <% if (certificateSections?.[sectionData.section]) { %>
+
+                                    <a
+                                        href="/admin/rtse/certificates/section/<%= encodeURIComponent(sectionData.section) %>"
+                                        class="btn-view"
+                                    >
+                                        📄 Section <%= sectionData.section %> Certificates
+                                    </a>
+
+
+                                    <a
+                                        href="/admin/rtse/certificates/reset/<%= encodeURIComponent(sectionData.section) %>"
+                                        class="btn-warning"
+                                        data-rtse-confirm="Reset certificates for Section <%= sectionData.section %>? Results, marks, attendance and uploaded files will NOT be deleted."
+                                    >
+                                        ♻️ Reset Section <%= sectionData.section %> Certificates
+                                    </a>
+
+                                <% } else { %>
+
+                                    <a
+                                        href="/admin/rtse/certificates/generate/<%= encodeURIComponent(sectionData.section) %>"
+                                        class="btn-save"
+                                        data-rtse-confirm="Generate certificates for Section <%= sectionData.section %>?"
+                                    >
+                                        🎓 Generate Section <%= sectionData.section %> Certificate
+                                    </a>
+
+                                <% } %>
                             </div>
 
                         </div>
@@ -753,7 +687,216 @@ Certificate PDF Downloads
     }
 </style>
 
+<div id="rtse-confirm-modal"
+     class="rtse-confirm-overlay"
+     hidden
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="rtse-confirm-title"
+     aria-describedby="rtse-confirm-message">
+    <div class="rtse-confirm-dialog" role="document">
+
+        <div class="rtse-confirm-icon" aria-hidden="true">!</div>
+
+        <div class="rtse-confirm-body">
+            <h2 id="rtse-confirm-title">Please Confirm</h2>
+            <p id="rtse-confirm-message"></p>
+        </div>
+
+        <div class="rtse-confirm-actions">
+
+            <button
+                type="button"
+                id="rtse-confirm-cancel"
+                class="rtse-confirm-btn rtse-confirm-cancel">
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="rtse-confirm-proceed"
+                class="rtse-confirm-btn rtse-confirm-proceed">
+                Proceed
+            </button>
+
+        </div>
+    </div>
+</div>
+
 <script>
+(function () {
+    const modal = document.getElementById("rtse-confirm-modal");
+    const message = document.getElementById("rtse-confirm-message");
+    const cancelButton = document.getElementById("rtse-confirm-cancel");
+    const proceedButton = document.getElementById("rtse-confirm-proceed");
+
+    if (!modal || !message || !cancelButton || !proceedButton) {
+        return;
+    }
+
+    let pendingAction = null;
+    let lastFocusedElement = null;
+    let isProcessing = false;
+
+    function closeConfirmation() {
+        modal.hidden = true;
+        document.body.classList.remove("rtse-confirm-open");
+
+        pendingAction = null;
+        isProcessing = false;
+
+        cancelButton.disabled = false;
+        proceedButton.disabled = false;
+
+        if (
+            lastFocusedElement &&
+            typeof lastFocusedElement.focus === "function"
+        ) {
+            lastFocusedElement.focus();
+        }
+
+        lastFocusedElement = null;
+    }
+
+    function openConfirmation(text, action) {
+        if (isProcessing) {
+            return;
+        }
+
+        pendingAction = action;
+        lastFocusedElement = document.activeElement;
+
+        message.textContent = text;
+
+        modal.hidden = false;
+        document.body.classList.add("rtse-confirm-open");
+
+        cancelButton.disabled = false;
+        proceedButton.disabled = false;
+
+        requestAnimationFrame(function () {
+            proceedButton.focus();
+        });
+    }
+
+    function proceedConfirmation() {
+        if (isProcessing || !pendingAction) {
+            return;
+        }
+
+        isProcessing = true;
+
+        const action = pendingAction;
+        pendingAction = null;
+
+        cancelButton.disabled = true;
+        proceedButton.disabled = true;
+
+        modal.hidden = true;
+        document.body.classList.remove("rtse-confirm-open");
+
+        try {
+            action();
+        } catch (error) {
+            console.error(
+                "RTSE confirmation action failed:",
+                error
+            );
+
+            isProcessing = false;
+            pendingAction = action;
+
+            modal.hidden = false;
+            document.body.classList.add("rtse-confirm-open");
+
+            cancelButton.disabled = false;
+            proceedButton.disabled = false;
+
+            proceedButton.focus();
+        }
+    }
+
+    cancelButton.addEventListener(
+        "click",
+        closeConfirmation
+    );
+
+    proceedButton.addEventListener(
+        "click",
+        proceedConfirmation
+    );
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeConfirmation();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (modal.hidden) {
+            return;
+        }
+
+        if (event.key === "Escape") {
+            event.preventDefault();
+            closeConfirmation();
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+        const link = event.target.closest(
+            "a[data-rtse-confirm]"
+        );
+
+        if (!link) {
+            return;
+        }
+
+        if (
+            link.target &&
+            link.target !== "_self"
+        ) {
+            return;
+        }
+
+        const href = link.getAttribute("href");
+
+        if (!href) {
+            return;
+        }
+
+        event.preventDefault();
+
+        openConfirmation(
+            link.getAttribute("data-rtse-confirm") ||
+            "Are you sure you want to continue?",
+            function () {
+                window.location.href = href;
+            }
+        );
+    });
+
+    document.addEventListener("submit", function (event) {
+        const form = event.target.closest(
+            "form[data-rtse-confirm]"
+        );
+
+        if (!form) {
+            return;
+        }
+
+        event.preventDefault();
+
+        openConfirmation(
+            form.getAttribute("data-rtse-confirm") ||
+            "Are you sure you want to continue?",
+            function () {
+                HTMLFormElement.prototype.submit.call(form);
+            }
+        );
+    });
+})();
+
     function closeRtseRankingPopup() {
 
         const popup =

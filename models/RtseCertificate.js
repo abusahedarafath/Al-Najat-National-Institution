@@ -321,6 +321,60 @@ static async getPendingStudents(section = null, applicationYear = null){
 // Get Certificates by Section
 // =====================================
 
+// =====================================
+// Reset Certificates by Section
+// =====================================
+
+static async resetBySection(section, applicationYear){
+
+    await db.query(
+
+        `DELETE c
+         FROM rtse_certificates c
+         INNER JOIN rtse_applications a
+             ON a.id=c.application_id
+         WHERE
+             a.section=?
+             AND a.application_year=?`,
+
+        [
+            section,
+            applicationYear
+        ]
+
+    );
+
+}
+
+
+// =====================================
+// Reset All Certificates
+// =====================================
+
+static async resetAll(applicationYear){
+
+    await db.query(
+
+        `DELETE c
+         FROM rtse_certificates c
+         INNER JOIN rtse_applications a
+             ON a.id=c.application_id
+         WHERE
+             a.application_year=?`,
+
+        [
+            applicationYear
+        ]
+
+    );
+
+}
+
+
+// =====================================
+// Get Certificates by Section
+// =====================================
+
 static async getBySection(section, applicationYear){
 
     const [rows] = await db.query(

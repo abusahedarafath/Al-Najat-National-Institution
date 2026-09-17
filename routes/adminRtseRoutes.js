@@ -1147,6 +1147,23 @@ router.get(
 
 
 // =====================================
+// Certificate Reset
+// =====================================
+
+router.get(
+    "/rtse/certificates/reset-all",
+    auth.isAdmin,
+    adminRtseController.resetAllCertificates
+);
+
+router.get(
+    "/rtse/certificates/reset/:section",
+    auth.isAdmin,
+    adminRtseController.resetSectionCertificates
+);
+
+
+// =====================================
 // Bulk Certificate Generation
 // =====================================
 

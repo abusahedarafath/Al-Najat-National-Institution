@@ -5017,6 +5017,26 @@ const students =
             await RtseExamAttendance.getResultDashboardStatistics(
                 applicationYear
             );
+
+        const certificateSections = {};
+
+        for (const sectionData of (attendanceStats?.sections || [])) {
+            const certificates =
+                await RtseCertificate.getBySection(
+                    sectionData.section,
+                    applicationYear
+                );
+
+            certificateSections[sectionData.section] =
+                certificates.length > 0;
+        }
+
+        const allCertificates =
+            await RtseCertificate.getAll(applicationYear);
+
+        const allCertificatesGenerated =
+            allCertificates.length > 0;
+
         const total =
             students.length;
 
@@ -5052,7 +5072,9 @@ const students =
                     entered,
                     pending
                 },
-                attendanceStats
+                attendanceStats,
+                certificateSections,
+                allCertificatesGenerated
             }
         );
 
@@ -6042,6 +6064,118 @@ exports.hideCertificates = async (req,res)=>{
 
 };
 
+
+
+// =====================================
+// Reset All Certificates
+// =====================================
+
+exports.resetAllCertificates = async (req,res)=>{
+
+    try{
+
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if(!applicationYear){
+
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+
+        }
+
+        await RtseCertificate.resetAll(
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            "All RTSE certificates have been reset successfully."
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to reset certificates."
+        );
+
+    }
+
+    res.redirect(
+        "/admin/rtse/results"
+    );
+
+};
+
+
+// =====================================
+// Reset Section Certificates
+// =====================================
+
+exports.resetSectionCertificates = async (req,res)=>{
+
+    try{
+
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if(!applicationYear){
+
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+
+        }
+
+        const section =
+            req.params.section;
+
+        if(!section){
+
+            throw new Error(
+                "RTSE section is required."
+            );
+
+        }
+
+        await RtseCertificate.resetBySection(
+            section,
+            applicationYear
+        );
+
+        req.flash(
+            "success",
+            `Section ${section} certificates have been reset successfully.`
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to reset section certificates."
+        );
+
+    }
+
+    res.redirect(
+        "/admin/rtse/results"
+    );
+
+};
 
 
 // =====================================

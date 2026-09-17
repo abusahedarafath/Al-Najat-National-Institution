@@ -1,6 +1,7 @@
 <%- include("../partials/arsp-member-top") %>
 
-<link rel="stylesheet" href="/css/arsp.css">
+
+
 
 <section class="arsp-member-page arsp-member-page-edit-profile">
 <div class="notice-section">
@@ -17,22 +18,14 @@
 
                 <!-- PROFILE PHOTO -->
 
-                <div style="text-align:center; margin-bottom:25px;">
+                <div>
 
                     <img
                         src="<%= member.photo
                             ? '/uploads/arsp-members/' + member.photo
                             : '/images/default-user.png' %>"
                         alt="Profile Photo"
-                        style="
-                            width:130px;
-                            height:130px;
-                            object-fit:cover;
-                            border-radius:50%;
-                            border:3px solid #ddd;
-                            display:block;
-                            margin:0 auto 15px;
-                        "
+
                     >
 
                     <label for="photo">
@@ -48,7 +41,7 @@
                         accept="image/jpeg,image/png,image/webp"
                     >
 
-                    <small style="display:block; margin-top:8px;">
+                    <small>
                         JPG, JPEG, PNG or WEBP only.
                     </small>
 
@@ -74,7 +67,7 @@
 
                 <!-- PERSONAL INFORMATION -->
 
-                <h3 style="margin-top:25px;">
+                <h3>
                     Personal Information
                 </h3>
 
@@ -180,7 +173,7 @@
 
                 <!-- CONTACT -->
 
-                <h3 style="margin-top:25px;">
+                <h3>
                     Contact Information
                 </h3>
 
@@ -258,7 +251,7 @@
 
                 <!-- EMERGENCY CONTACT -->
 
-                <h3 style="margin-top:25px;">
+                <h3>
                     Emergency Contact
                 </h3>
 
@@ -301,7 +294,7 @@
 
                 <!-- BUTTONS -->
 
-                <div style="margin-top:30px;">
+                <div>
 
                     <button
                         type="submit"
@@ -313,7 +306,7 @@
                     <a
                         href="/arsp/dashboard"
                         class="profile-btn"
-                        style="margin-left:10px;"
+
                     >
                         Cancel
                     </a>

@@ -748,3 +748,31 @@ body{
     }
 
 }
+
+
+/* === TARGETED MOBILE FIX FOR EDIT PROFILE PAGE === */
+@media screen and (max-width: 768px) {
+  html, body {
+  }
+
+  /* Reset main edit profile section */
+  .arsp-member-page.arsp-member-page-edit-profile,
+  .arsp-member-page-edit-profile .notice-section,
+  .arsp-member-page-edit-profile .notice-card {
+  }
+
+  /* Force multi-column form grids into a single vertical stack */
+  .arsp-member-page-edit-profile form,
+  .arsp-member-page-edit-profile .form-group,
+  .arsp-member-page-edit-profile .form-row,
+  .arsp-member-page-edit-profile .row,
+  .arsp-member-page-edit-profile .grid {
+  }
+
+  /* Input fields fluid scaling */
+  .arsp-member-page-edit-profile input,
+  .arsp-member-page-edit-profile select,
+  .arsp-member-page-edit-profile textarea,
+  .arsp-member-page-edit-profile button {
+  }
+}

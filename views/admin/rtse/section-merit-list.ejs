@@ -56,23 +56,47 @@ body{
 
 table{
 
-    width:100%;
+      width:100%;
 
-    border-collapse:collapse;
+      border-collapse:collapse;
 
-}
+      table-layout:auto;
 
-th,
+  }
 
-td{
+  th,
 
-    border:1px solid #000;
+  td{
 
-    padding:8px;
+      border:1px solid #000;
 
-    text-align:center;
+      padding:8px;
 
-}
+      text-align:center;
+
+      vertical-align:middle;
+
+      white-space:normal;
+
+      overflow-wrap:anywhere;
+
+  }
+
+  .table-wrapper{
+
+      width:100%;
+
+      overflow-x:auto;
+
+      -webkit-overflow-scrolling:touch;
+
+  }
+
+  .table-wrapper table{
+
+      min-width:max-content;
+
+  }
 
 
 
@@ -148,7 +172,8 @@ Merit List
 
 </div>
 
-<table>
+<div class="table-wrapper">
+  <table>
 
 <thead>
 
@@ -156,7 +181,7 @@ Merit List
 
 <th>
 
-Section Rank
+Rank
 
 </th>
 
@@ -170,7 +195,7 @@ Roll No.
 
 <th>
 
-Registration No.
+Registration
 
 </th>
 
@@ -197,7 +222,7 @@ Registration No.
 
   <th>
 
-  Percentage
+  %
 
   </th>
 
@@ -292,6 +317,7 @@ Grade
 </tbody>
 
 </table>
+  </div>
 
 </div>
 
