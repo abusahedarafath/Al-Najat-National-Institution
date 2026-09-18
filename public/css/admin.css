@@ -396,6 +396,47 @@ img{
 }
 
 /* =====================================================
+   RTSE EXAMINATION DASHBOARD HEADER
+===================================================== */
+
+.page-header.rtse-examination-page-header {
+    display: block;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.page-header.rtse-examination-page-header h1 {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 14px 18px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 30px;
+    line-height: 1.25;
+    text-align: left;
+    border-radius: 10px;
+}
+
+.page-header.rtse-examination-page-header > .rtse-header-actions {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .page-header.rtse-examination-page-header h1 {
+        font-size: 24px;
+        padding: 12px 15px;
+    }
+}
+
+/* =====================================================
    BUTTONS
 ===================================================== */
 
