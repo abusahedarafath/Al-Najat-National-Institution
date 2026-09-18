@@ -1,4 +1,5 @@
 const ArspSchool = require("../models/ArspSchool");
+const adminRtseController = require("./adminRtseController");
 const ArspSchoolAccount = require("../models/ArspSchoolAccount");
 const RtseApplication = require("../models/RtseApplication");
 const RtseAdmitDownload = require("../models/RtseAdmitDownload");
@@ -373,6 +374,66 @@ exports.rtseRegister = async (req, res) => {
 // =====================================
 // View RTSE Student
 // =====================================
+
+
+// =====================================
+// School RTSE Admit Card
+// Uses the existing admit-card renderer.
+// Access is restricted to the logged-in school.
+// =====================================
+exports.schoolRtseAdmitCard = async (req, res) => {
+    try {
+        const schoolId = req.session?.arspSchool?.school_id;
+
+        if (!schoolId) {
+            return res.redirect("/arsp/school/login");
+        }
+
+        const school = await ArspSchool.getById(schoolId);
+
+        if (!school) {
+            req.session.arspSchool = null;
+            return res.redirect("/arsp/school/login");
+        }
+
+        const student = await RtseApplication.getById(req.params.id);
+
+        if (!student) {
+            return res.status(404).send("Student not found.");
+        }
+
+        const studentSchoolId = Number(student.school_id);
+        const loggedInSchoolId = Number(schoolId);
+
+        const sameSchoolId =
+            Number.isFinite(studentSchoolId) &&
+            studentSchoolId === loggedInSchoolId;
+
+        const sameSchoolName =
+            !student.school_id &&
+            String(student.school_name || "").trim().toLowerCase() ===
+            String(school.school_name || "").trim().toLowerCase();
+
+        if (!sameSchoolId && !sameSchoolName) {
+            return res.status(403).send("You are not authorized to view this admit card.");
+        }
+
+        if (
+            Number(student.admit_generated) !== 1 ||
+            String(student.status || "") !== "Approved" ||
+            !student.roll_no
+        ) {
+            return res.status(404).send("Admit card is not available for this student.");
+        }
+
+        // Reuse the exact existing admit-card controller/rendering.
+        return adminRtseController.viewAdmitCard(req, res);
+
+    } catch (err) {
+        console.error("School RTSE Admit Card Error:", err);
+        return res.status(500).send("Unable to load admit card.");
+    }
+};
 
 exports.rtseStudentView = async (req, res) => {
 

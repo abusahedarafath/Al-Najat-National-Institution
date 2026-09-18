@@ -95,6 +95,16 @@ router.post(
 );
 
 // =====================================
+// School RTSE Admit Card
+// =====================================
+router.get(
+    "/arsp/school/rtse-students/:id/admit-card",
+    schoolAuth.isSchoolLoggedIn,
+    schoolAuth.requirePasswordChanged,
+    authController.schoolRtseAdmitCard
+);
+
+// =====================================
 // School RTSE Student View
 // =====================================
 
