@@ -981,6 +981,12 @@ router.get(
 );
 
 router.get(
+    "/rtse/results/absent/:section",
+    auth.isAdmin,
+    adminRtseController.resultSectionAbsentStudents
+);
+
+router.get(
     "/rtse/results/present",
     auth.isAdmin,
     adminRtseController.resultPresentStudents

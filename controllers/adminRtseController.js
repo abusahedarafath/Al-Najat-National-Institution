@@ -5192,6 +5192,65 @@ exports.resultAbsentStudents = async (req, res) => {
     }
 };
 
+exports.resultSectionAbsentStudents = async (req, res) => {
+    try {
+        const section =
+            String(req.params.section || "")
+                .trim()
+                .toUpperCase();
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const allowedSections = ["A", "B", "C", "D", "E"];
+
+        if (!allowedSections.includes(section)) {
+            throw new Error("Invalid RTSE section.");
+        }
+
+        const students =
+            await RtseExamAttendance.getAbsentStudentsBySection(
+                section,
+                applicationYear
+            );
+
+        const markComponents =
+            await RtseMarkComponent.getEnabledByYear(
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/result-section-absent-students",
+            {
+                title: `Section ${section} - Absent Students`,
+                section,
+                applicationYear,
+                markComponents,
+                students,
+                setting
+            }
+        );
+
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load section absent students."
+        );
+
+        return res.redirect("/admin/rtse/results");
+    }
+};
+
 exports.resultPresentStudents = async (req, res) => {
     try {
         const setting = await RtseSetting.get();

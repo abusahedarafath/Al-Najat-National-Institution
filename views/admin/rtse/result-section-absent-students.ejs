@@ -1,0 +1,369 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="container">
+
+            <div class="page-header">
+
+                <h1>
+                    RTSE — Section <%= section %> — Absent / Not Scanned Students
+                </h1>
+
+                <a
+                    href="/admin/rtse/results"
+                    class="btn-cancel"
+                >
+                    ← Back
+                </a>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <h2>
+                    Section <%= section %> — Gate Entry Not Completed
+                </h2>
+
+                <p>
+                    RTSE <%= applicationYear %>
+                    · Section <%= section %>
+                </p>
+
+                <p>
+                    <strong><%= students.length %></strong>
+                    eligible student(s) have not completed confirmed
+                    gate entry through Super Scanner.
+                </p>
+
+
+
+                <div
+                    class="rtse-live-search"
+                    style="margin:20px 0;"
+                >
+                    <div
+                        style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"
+                    >
+                        <div style="flex:1;min-width:240px;">
+                            <label
+                                for="rtseStudentLiveSearch"
+                                style="display:block;font-weight:600;margin-bottom:7px;"
+                            >
+                                🔎 Search Students
+                            </label>
+
+                            <input
+                                type="search"
+                                id="rtseStudentLiveSearch"
+                                placeholder="Search by name, registration, roll, mobile, father, school, district, address, DOB, etc."
+                                autocomplete="off"
+                                style="width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;"
+                            >
+                        </div>
+
+                        <button
+                            type="button"
+                            id="rtseStudentLiveSearchClear"
+                            style="padding:11px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;"
+                        >
+                            Clear
+                        </button>
+                    </div>
+
+                    <div
+                        id="rtseStudentLiveSearchCount"
+                        style="margin-top:8px;font-size:13px;color:#6b7280;"
+                    ></div>
+                </div>
+
+                <% if (!students || students.length === 0) { %>
+
+                    <div style="text-align:center;padding:30px;">
+
+                        <h3>
+                            No Absent Students
+                        </h3>
+
+                        <p>
+                            All eligible RTSE students in Section <%= section %> have completed
+                            confirmed gate entry.
+                        </p>
+
+                    </div>
+
+                <% } else { %>
+
+                    <div style="overflow-x:auto;">
+
+                        <table class="admin-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Roll No.
+                                    </th>
+
+                                    <th>
+                                        Registration
+                                    </th>
+
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Section
+                                    </th>
+
+                                    <th>
+                                        Attendance
+                                    </th>
+
+                                    <th>
+                                        Result
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <% students.forEach(function(student, index) { %>
+
+                                    <tr data-rtse-search-row="<%= JSON.stringify(student) %>">
+
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                <%= student.roll_no || "-" %>
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <%= student.registration_no || "-" %>
+                                        </td>
+
+                                        <td>
+
+                                            <strong>
+                                                <%= student.full_name || "-" %>
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+                                                <%= student.school_name || "-" %>
+                                            </small>
+
+                                        </td>
+
+                                        <td>
+                                            <%= student.section || "-" %>
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-warning">
+                                                <%= student.attendance_status || "NOT SCANNED" %>
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+
+                                            <% if (student.result_id) { %>
+
+                                                <span class="badge badge-success">
+                                                    <%= student.result_status || "Entered" %>
+                                                </span>
+
+                                                <% if (student.marks !== null && student.marks !== undefined) { %>
+
+                                                    <br>
+
+                                                    <small>
+                                                        Marks:
+                                                        <%= student.marks %>
+
+                                                        <% if (student.percentage !== null && student.percentage !== undefined) { %>
+                                                            · <%= student.percentage %>%
+                                                        <% } %>
+
+                                                        <% if (student.grade) { %>
+                                                            · Grade <%= student.grade %>
+                                                        <% } %>
+                                                    </small>
+
+                                                <% } %>
+
+                                            <% } else { %>
+
+                                                <span class="badge badge-warning">
+                                                    Pending
+                                                </span>
+
+                                            <% } %>
+
+                                        </td>
+
+
+
+                                    </tr>
+
+                                <% }); %>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<%- include("../partials/footer") %>
+
+<script>
+(function () {
+    const searchInput =
+        document.getElementById("rtseStudentLiveSearch");
+
+    const clearButton =
+        document.getElementById("rtseStudentLiveSearchClear");
+
+    const countElement =
+        document.getElementById("rtseStudentLiveSearchCount");
+
+    if (!searchInput || !clearButton || !countElement) {
+        return;
+    }
+
+    const rows = Array.from(
+        document.querySelectorAll(
+            "tr[data-rtse-search-row]"
+        )
+    );
+
+    const searchableRows = rows.map(function (row) {
+        let searchableText = "";
+
+        try {
+            const student =
+                JSON.parse(
+                    row.getAttribute(
+                        "data-rtse-search-row"
+                    ) || "{}"
+                );
+
+            searchableText =
+                Object.keys(student)
+                    .map(function (key) {
+                        const value = student[key];
+
+                        if (
+                            value &&
+                            typeof value === "object"
+                        ) {
+                            return JSON.stringify(value);
+                        }
+
+                        return String(
+                            value == null ? "" : value
+                        );
+                    })
+                    .join(" ");
+        } catch (error) {
+            console.error(
+                "Unable to prepare RTSE student search data.",
+                error
+            );
+        }
+
+        return {
+            row: row,
+            text: searchableText.toLowerCase()
+        };
+    });
+
+    function updateSearch() {
+        const query =
+            String(searchInput.value || "")
+                .trim()
+                .toLowerCase();
+
+        const terms =
+            query
+                ? query.split(/\s+/).filter(Boolean)
+                : [];
+
+        let visibleCount = 0;
+
+        searchableRows.forEach(function (item) {
+            const matches =
+                terms.length === 0 ||
+                terms.every(function (term) {
+                    return item.text.includes(term);
+                });
+
+            item.row.style.display =
+                matches ? "" : "none";
+
+            if (matches) {
+                visibleCount++;
+            }
+        });
+
+        countElement.textContent =
+            "Showing " +
+            visibleCount +
+            " of " +
+            searchableRows.length +
+            " student(s)";
+    }
+
+    searchInput.addEventListener(
+        "input",
+        updateSearch
+    );
+
+    clearButton.addEventListener(
+        "click",
+        function () {
+            searchInput.value = "";
+            searchInput.focus();
+            updateSearch();
+        }
+    );
+
+    updateSearch();
+})();
+</script>

@@ -552,6 +552,93 @@ class RtseExamAttendance {
     }
 
     // =====================================
+    // Get ABSENT / NOT SCANNED Students by Section
+    // Read-only result-dashboard student list.
+    // Uses the same attendance rule as the
+    // all-section absent-students page.
+    // =====================================
+    static async getAbsentStudentsBySection(section, applicationYear) {
+        const normalizedSection =
+            String(section || "").trim().toUpperCase();
+
+        const normalizedYear =
+            Number(applicationYear);
+
+        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+            throw new Error("Invalid RTSE section.");
+        }
+
+        if (!Number.isInteger(normalizedYear) || normalizedYear < 1) {
+            throw new Error("Invalid RTSE application year.");
+        }
+
+        const [rows] = await db.query(
+            `
+            SELECT
+                a.id,
+                a.roll_no,
+                a.registration_no,
+                a.full_name,
+                a.school_name,
+                a.father_name,
+                a.mother_name,
+                a.gender,
+                a.dob,
+                a.mobile,
+                a.email,
+                a.school_id,
+                a.district,
+                a.state,
+                a.section,
+                a.class,
+                a.shift_id,
+                a.room_id,
+                a.seat_id,
+                a.status AS application_status,
+                a.roll_number,
+                a.admit_generated,
+                a.room_no,
+                a.seat_no,
+                a.application_year,
+                a.pincode,
+                a.address,
+                ea.attendance_status,
+                ea.scanned_at,
+                r.id AS result_id,
+                r.marks,
+                r.percentage,
+                r.grade,
+                r.result_status
+            FROM rtse_applications a
+            LEFT JOIN rtse_exam_attendance ea
+                ON ea.application_id = a.id
+            LEFT JOIN rtse_results r
+                ON r.application_id = a.id
+            WHERE
+                a.archive = 0
+                AND a.status = 'Approved'
+                AND a.application_year = ?
+                AND a.roll_no IS NOT NULL
+                AND a.admit_generated = 1
+                AND a.section = ?
+                AND (
+                    ea.application_id IS NULL
+                    OR ea.attendance_status IS NULL
+                    OR ea.attendance_status <> 'PRESENT'
+                )
+            ORDER BY
+                a.roll_no ASC,
+                a.full_name ASC
+            `,
+            [
+                normalizedYear,
+                normalizedSection
+            ]
+        );
+
+        return rows;
+    }
+
     // Get PRESENT Students by Section
     // Read-only result-entry student list.
     // Only successfully confirmed gate-entry
