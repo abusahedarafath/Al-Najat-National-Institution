@@ -330,6 +330,72 @@ img{
 }
 
 /* =====================================================
+   RTSE RESULT DASHBOARD HEADER
+===================================================== */
+
+.rtse-result-page-header {
+    display: block;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.rtse-result-page-header h1 {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 14px 18px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 30px;
+    line-height: 1.25;
+    text-align: left;
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .rtse-result-page-header h1 {
+        font-size: 24px;
+        padding: 12px 15px;
+    }
+}
+
+/* =====================================================
+   RTSE RESULT DASHBOARD — FINAL HEADER OVERRIDE
+===================================================== */
+
+.page-header.rtse-result-page-header {
+    display: block;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.page-header.rtse-result-page-header h1 {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 14px 18px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 30px;
+    line-height: 1.25;
+    text-align: left;
+    border-radius: 10px;
+}
+
+.page-header.rtse-result-page-header > div {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .page-header.rtse-result-page-header h1 {
+        font-size: 24px;
+        padding: 12px 15px;
+    }
+}
+
+/* =====================================================
    BUTTONS
 ===================================================== */
 
