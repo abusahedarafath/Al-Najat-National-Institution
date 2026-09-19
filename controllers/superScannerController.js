@@ -146,6 +146,8 @@ const superScannerController = {
                                 attendance.class,
                             section:
                                 attendance.section,
+                            room_no:
+                                attendance.room_no,
                             attendance_status:
                                 "PRESENT",
                             scanned_at:
@@ -183,6 +185,8 @@ const superScannerController = {
                             attendance.class,
                         section:
                             attendance.section,
+                        room_no:
+                            attendance.room_no,
                         attendance_status:
                             attendance.attendance_status ||
                             "ABSENT",

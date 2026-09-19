@@ -356,6 +356,7 @@ class RtseExamAttendance {
                 application.school_name,
                 application.class,
                 application.section,
+                application.room_no,
                 application.photo,
                 application.status,
                 application.admit_generated,

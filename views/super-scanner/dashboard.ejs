@@ -14,6 +14,69 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
 <style>
+.section-room-card,
+.locked-room-badge{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-height:76px;
+    margin:0;
+    padding:12px 10px;
+    box-sizing:border-box;
+    text-align:center;
+    border-radius:10px;
+}
+
+.class-full-row{
+    grid-column:1 / -1;
+}
+
+.section-room-card{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#0057d9 !important;
+    color:#ffffff !important;
+    min-height:76px !important;
+    text-align:center !important;
+}
+
+.section-room-card .detail-label,
+.section-room-card .detail-value{
+    color:#ffffff !important;
+    text-align:center !important;
+}
+
+.locked-room-badge{
+    grid-column:auto;
+    justify-self:stretch;
+    background:#d00000;
+    color:#ffffff;
+}
+
+.locked-room-label,
+.section-room-card .detail-label{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    color:#ffffff;
+}
+
+.locked-room-number,
+.section-room-card .detail-value{
+    margin-top:3px;
+    font-size:24px;
+    font-weight:900;
+    line-height:1.1;
+    color:#ffffff;
+}
+
+</style>
+
+<style>
 
 *{
     box-sizing:border-box;
@@ -1191,7 +1254,7 @@ body.rtse-omr-modal-open {
         </div>
 
 
-        <div class="detail">
+        <div class="detail class-full-row">
 
             <span class="detail-label">
                 Class
@@ -1205,10 +1268,10 @@ body.rtse-omr-modal-open {
         </div>
 
 
-        <div class="detail">
+        <div class="detail section-room-card">
 
             <span class="detail-label">
-                Section
+                SECTION
             </span>
 
             <span
@@ -1216,6 +1279,21 @@ body.rtse-omr-modal-open {
                 class="detail-value">
             </span>
 
+        </div>
+
+        <div
+            id="lockedRoomBadge"
+            class="locked-room-badge"
+            style="display:none;"
+        >
+            <span class="locked-room-label">
+                ROOM NO.
+            </span>
+
+            <span
+                id="lockedRoomNumber"
+                class="locked-room-number">
+            </span>
         </div>
 
     </div>
@@ -2322,6 +2400,32 @@ function displayStudent(student, alreadyPresent){
         "section"
     ).textContent =
         student.section || "-";
+
+    const lockedRoomBadge =
+        document.getElementById(
+            "lockedRoomBadge"
+        );
+
+    const lockedRoomNumber =
+        document.getElementById(
+            "lockedRoomNumber"
+        );
+
+    if(lockedRoomBadge && lockedRoomNumber){
+        if(student.room_no){
+            lockedRoomNumber.textContent =
+                "ROOM " + student.room_no;
+
+            lockedRoomBadge.style.display =
+                "flex";
+        }else{
+            lockedRoomNumber.textContent =
+                "";
+
+            lockedRoomBadge.style.display =
+                "none";
+        }
+    }
 
     const status =
         document.getElementById(
