@@ -167,6 +167,60 @@ class RtseResult {
     }
 
 
+
+    // =====================================
+    // Student Result Popup Data
+    // Read-only student-facing result data
+    // =====================================
+    static async getStudentPopupResult(applicationId) {
+        const [rows] = await db.query(
+            `SELECT
+                r.*,
+                a.registration_no,
+                a.roll_no,
+                a.full_name,
+                a.school_name,
+                a.section,
+                a.class,
+                a.application_year,
+                a.photo
+             FROM rtse_results r
+             INNER JOIN rtse_applications a
+                ON a.id=r.application_id
+             WHERE r.application_id=?
+             LIMIT 1`,
+            [applicationId]
+        );
+
+        const result = rows[0] || null;
+
+        if (!result) {
+            return null;
+        }
+
+        const [componentRows] = await db.query(
+            `SELECT
+                rcm.component_id,
+                rcm.marks,
+                mc.name,
+                mc.maximum_marks,
+                mc.enabled,
+                mc.display_order
+             FROM rtse_result_component_marks rcm
+             INNER JOIN rtse_mark_components mc
+                ON mc.id=rcm.component_id
+             WHERE rcm.result_id=?
+               AND mc.application_year=?
+               AND mc.enabled=1
+             ORDER BY mc.display_order ASC, mc.id ASC`,
+            [result.id, result.application_year]
+        );
+
+        result.component_marks = componentRows;
+
+        return result;
+    }
+
     // =====================================
     // All Results
     // =====================================
@@ -659,6 +713,44 @@ static async getOverallMeritList(applicationYear){
 // =====================================
 // Section Merit List
 // =====================================
+
+
+// =====================================
+// Section Top 10 Merit List
+// =====================================
+static async getSectionTop10MeritList(section, applicationYear){
+
+    const [rows] = await db.query(
+        `SELECT
+            r.section_rank,
+            r.total_marks,
+            r.total_full_marks,
+            r.percentage,
+            r.grade,
+            a.roll_no,
+            a.full_name,
+            a.school_name
+         FROM rtse_results r
+         INNER JOIN rtse_applications a
+            ON a.id=r.application_id
+         WHERE
+            a.section=?
+            AND a.application_year=?
+            AND r.id IS NOT NULL
+            AND r.section_rank IS NOT NULL
+         ORDER BY
+            r.section_rank ASC,
+            r.total_marks DESC,
+            r.id ASC
+         LIMIT 10`,
+        [
+            section,
+            applicationYear
+        ]
+    );
+
+    return rows;
+}
 
 static async getSectionMeritList(section, applicationYear){
 

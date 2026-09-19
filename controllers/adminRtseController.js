@@ -5772,6 +5772,59 @@ const students=
 // Section Merit List
 // =====================================
 
+
+// =====================================
+// Section Top 10 Merit List
+// =====================================
+
+exports.sectionTop10MeritList = async (req,res)=>{
+    try{
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if(!applicationYear){
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const section =
+            req.params.section;
+
+        const students =
+            await RtseResult.getSectionTop10MeritList(
+                section,
+                applicationYear
+            );
+
+        res.render(
+            "admin/rtse/section-top10-merit-list",
+            {
+                title:"Section Top 10 Merit List",
+                section,
+                students
+            }
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to load Section Top 10 Merit List."
+        );
+
+        res.redirect(
+            "/admin/rtse/results"
+        );
+    }
+};
+
 exports.sectionMeritList = async (req,res)=>{
 
     try{

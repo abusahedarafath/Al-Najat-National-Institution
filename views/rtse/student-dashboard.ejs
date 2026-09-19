@@ -385,6 +385,324 @@
         }
     }
 
+
+    /* =====================================
+       RTSE Student Examination Result Modal
+       ===================================== */
+
+    .rtse-result-trigger {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        font-family: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .rtse-result-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        padding: 14px;
+        background:
+            radial-gradient(circle at 20% 10%, rgba(59,130,246,.20), transparent 30%),
+            radial-gradient(circle at 85% 15%, rgba(234,179,8,.20), transparent 30%),
+            rgba(15,23,42,.72);
+        overflow-y: auto;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .rtse-result-modal.is-open {
+        display: flex;
+    }
+
+    .rtse-result-modal-card {
+        width: 100%;
+        max-width: 560px;
+        max-height: calc(100vh - 28px);
+        overflow-y: auto;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 25px 80px rgba(0,0,0,.28);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .rtse-result-hero {
+        position: relative;
+        padding: 30px 22px 24px;
+        text-align: center;
+        color: #ffffff;
+        background:
+            radial-gradient(circle at 15% 20%, rgba(255,255,255,.22), transparent 25%),
+            radial-gradient(circle at 85% 10%, rgba(250,204,21,.30), transparent 25%),
+            linear-gradient(135deg, #0f2a5f 0%, #174a86 48%, #7c3aed 100%);
+    }
+
+    .rtse-result-close {
+        position: absolute;
+        top: 12px;
+        right: 13px;
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,.16);
+        color: #ffffff;
+        font-size: 23px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .rtse-result-confetti {
+        font-size: 30px;
+        margin-bottom: 5px;
+    }
+
+    .rtse-result-congrats {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .rtse-result-subtitle {
+        margin: 7px 0 0;
+        font-size: 13px;
+        opacity: .90;
+    }
+
+    .rtse-result-photo-wrap {
+        margin: 18px auto 0;
+        width: 104px;
+        height: 104px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, #facc15, #ffffff, #60a5fa);
+        box-shadow: 0 8px 25px rgba(0,0,0,.20);
+    }
+
+    .rtse-result-photo {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: 50%;
+        background: #e5e7eb;
+    }
+
+    .rtse-result-body {
+        padding: 20px;
+    }
+
+    .rtse-result-identity {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .rtse-result-info {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+        padding: 12px;
+    }
+
+    .rtse-result-info-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        font-weight: 700;
+    }
+
+    .rtse-result-info-value {
+        display: block;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .rtse-result-marks-title {
+        margin: 18px 0 10px;
+        font-size: 16px;
+        color: #172554;
+    }
+
+    .rtse-result-mark-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .rtse-result-mark-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+        padding: 12px 13px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .rtse-result-mark-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .rtse-result-mark-obtained {
+        font-size: 14px;
+        font-weight: 800;
+        color: #174a86;
+    }
+
+    .rtse-result-mark-full {
+        font-size: 12px;
+        color: #64748b;
+        white-space: nowrap;
+    }
+
+    .rtse-result-total-card {
+        margin-top: 15px;
+        padding: 18px;
+        border-radius: 17px;
+        background:
+            linear-gradient(135deg, #eff6ff 0%, #f5f3ff 55%, #fffbeb 100%);
+        border: 1px solid #dbeafe;
+        text-align: center;
+    }
+
+    .rtse-result-total-label {
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .rtse-result-total-value {
+        margin-top: 5px;
+        color: #0f2a5f;
+        font-size: 30px;
+        font-weight: 900;
+    }
+
+    .rtse-result-total-value span {
+        font-size: 15px;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .rtse-result-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .rtse-result-summary-box {
+        padding: 14px 10px;
+        border-radius: 13px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+    }
+
+    .rtse-result-summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .rtse-result-summary-value {
+        display: block;
+        margin-top: 4px;
+        color: #111827;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .rtse-result-grade {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border-color: #fcd34d;
+    }
+
+    .rtse-result-status {
+        margin-top: 12px;
+        text-align: center;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .rtse-result-loading,
+    .rtse-result-error {
+        padding: 50px 25px;
+        text-align: center;
+        color: #475569;
+    }
+
+    .rtse-result-error {
+        color: #991b1b;
+    }
+
+    @media (max-width: 600px) {
+        .rtse-result-modal {
+            padding: 8px;
+        }
+
+        .rtse-result-modal-card {
+            max-height: calc(100vh - 16px);
+            border-radius: 20px;
+        }
+
+        .rtse-result-hero {
+            padding: 27px 17px 21px;
+        }
+
+        .rtse-result-congrats {
+            font-size: 23px;
+        }
+
+        .rtse-result-body {
+            padding: 15px;
+        }
+
+        .rtse-result-identity {
+            grid-template-columns: 1fr;
+        }
+
+        .rtse-result-mark-row {
+            grid-template-columns: 1fr auto;
+        }
+
+        .rtse-result-mark-full {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .rtse-result-mark-obtained {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .rtse-result-mark-name {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            align-self: center;
+        }
+    }
+
 </style>
 
 <div class="rtse-student-dashboard">
@@ -584,9 +902,10 @@
                     </a>
 
 <% if (rtseSetting && Number(rtseSetting.result_publish) === 1) { %>
-                    <a
-                        href="/rtse/student/result"
-                        class="rtse-service-card"
+                    <button
+                        type="button"
+                        class="rtse-service-card rtse-result-trigger"
+                        id="rtseResultTrigger"
                     >
                         <span class="rtse-service-icon">📊</span>
                         <span class="rtse-service-title">
@@ -595,7 +914,7 @@
                         <span class="rtse-service-description">
                             View your RTSE result and marks
                         </span>
-                    </a>
+                    </button>
 
 <% } %>
 <% if (rtseSetting && Number(rtseSetting.certificate_publish) === 1) { %>
@@ -665,6 +984,141 @@
 
     </div>
 
+</div>
+
+
+<!-- =====================================
+     RTSE STUDENT EXAMINATION RESULT MODAL
+     ===================================== -->
+<div
+    id="rtseResultModal"
+    class="rtse-result-modal"
+    aria-hidden="true"
+>
+    <div
+        class="rtse-result-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rtseResultCongrats"
+    >
+        <div class="rtse-result-hero">
+            <button
+                type="button"
+                class="rtse-result-close"
+                id="rtseResultClose"
+                aria-label="Close examination result"
+            >×</button>
+
+            <div class="rtse-result-confetti">🎉 🏆 🎉</div>
+
+            <h2
+                class="rtse-result-congrats"
+                id="rtseResultCongrats"
+            >
+                Congratulations!
+            </h2>
+
+            <p class="rtse-result-subtitle">
+                Your RTSE examination result is now available
+            </p>
+
+            <div class="rtse-result-photo-wrap">
+                <img
+                    id="rtseResultPhoto"
+                    class="rtse-result-photo"
+                    alt="Student Photo"
+                >
+            </div>
+        </div>
+
+        <div
+            id="rtseResultLoading"
+            class="rtse-result-loading"
+        >
+            Loading your result…
+        </div>
+
+        <div
+            id="rtseResultError"
+            class="rtse-result-error"
+            style="display:none;"
+        ></div>
+
+        <div
+            id="rtseResultContent"
+            class="rtse-result-body"
+            style="display:none;"
+        >
+            <div class="rtse-result-identity">
+                <div class="rtse-result-info">
+                    <span class="rtse-result-info-label">
+                        Registration No.
+                    </span>
+                    <span
+                        class="rtse-result-info-value"
+                        id="rtseResultRegistration"
+                    >—</span>
+                </div>
+
+                <div class="rtse-result-info">
+                    <span class="rtse-result-info-label">
+                        Roll No.
+                    </span>
+                    <span
+                        class="rtse-result-info-value"
+                        id="rtseResultRoll"
+                    >—</span>
+                </div>
+            </div>
+
+            <h3 class="rtse-result-marks-title">
+                📋 Marks Details
+            </h3>
+
+            <div
+                id="rtseResultMarks"
+                class="rtse-result-mark-list"
+            ></div>
+
+            <div class="rtse-result-total-card">
+                <div class="rtse-result-total-label">
+                    Total Marks
+                </div>
+
+                <div class="rtse-result-total-value">
+                    <span id="rtseResultTotal">—</span>
+                    <span>/ <span id="rtseResultFullTotal">—</span></span>
+                </div>
+
+                <div class="rtse-result-summary">
+                    <div class="rtse-result-summary-box">
+                        <span class="rtse-result-summary-label">
+                            Percentage
+                        </span>
+                        <span
+                            class="rtse-result-summary-value"
+                            id="rtseResultPercentage"
+                        >—</span>
+                    </div>
+
+                    <div class="rtse-result-summary-box rtse-result-grade">
+                        <span class="rtse-result-summary-label">
+                            Grade
+                        </span>
+                        <span
+                            class="rtse-result-summary-value"
+                            id="rtseResultGrade"
+                        >—</span>
+                    </div>
+                </div>
+
+                <div
+                    class="rtse-result-status"
+                    id="rtseResultStatus"
+                ></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- =====================================
@@ -817,6 +1271,226 @@
 
     </div>
 </div>
+
+
+<script>
+(function () {
+    const trigger = document.getElementById("rtseResultTrigger");
+    const modal = document.getElementById("rtseResultModal");
+    const closeButton = document.getElementById("rtseResultClose");
+    const loading = document.getElementById("rtseResultLoading");
+    const errorBox = document.getElementById("rtseResultError");
+    const content = document.getElementById("rtseResultContent");
+
+    if (!trigger || !modal || !closeButton) {
+        return;
+    }
+
+    const photo = document.getElementById("rtseResultPhoto");
+    const registration = document.getElementById("rtseResultRegistration");
+    const roll = document.getElementById("rtseResultRoll");
+    const marks = document.getElementById("rtseResultMarks");
+    const total = document.getElementById("rtseResultTotal");
+    const fullTotal = document.getElementById("rtseResultFullTotal");
+    const percentage = document.getElementById("rtseResultPercentage");
+    const grade = document.getElementById("rtseResultGrade");
+    const status = document.getElementById("rtseResultStatus");
+
+    function safeValue(value) {
+        return value === null || value === undefined || value === ""
+            ? "—"
+            : String(value);
+    }
+
+    function formatMark(value) {
+        if (value === null || value === undefined || value === "") {
+            return "—";
+        }
+
+        const number = Number(value);
+
+        if (!Number.isFinite(number)) {
+            return String(value);
+        }
+
+        return Number.isInteger(number)
+            ? String(number)
+            : number.toFixed(2).replace(/\.?0+$/, "");
+    }
+
+    function escapeHtml(value) {
+        return String(value === null || value === undefined ? "" : value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function resetModal() {
+        loading.style.display = "block";
+        loading.textContent = "Loading your result…";
+        errorBox.style.display = "none";
+        errorBox.textContent = "";
+        content.style.display = "none";
+        marks.innerHTML = "";
+        photo.removeAttribute("src");
+    }
+
+    function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+    }
+
+    function renderResult(data) {
+        const result = data.result || {};
+
+        registration.textContent = safeValue(result.registration_no);
+        roll.textContent = safeValue(result.roll_no);
+
+        if (result.photo) {
+            photo.src =
+                "/uploads/rtse/" +
+                encodeURIComponent(String(result.photo));
+        } else {
+            photo.src =
+                "data:image/svg+xml;charset=UTF-8," +
+                encodeURIComponent(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="104" height="104">' +
+                    '<rect width="104" height="104" fill="#e2e8f0"/>' +
+                    '<text x="52" y="58" text-anchor="middle" font-size="42">👤</text>' +
+                    '</svg>'
+                );
+        }
+
+        const rows = [];
+
+        rows.push({
+            name: "OMR",
+            marks: result.omr_marks,
+            maximum_marks: 100
+        });
+
+        (Array.isArray(result.components)
+            ? result.components
+            : []
+        ).forEach(function (component) {
+            rows.push({
+                name: component.name,
+                marks: component.marks,
+                maximum_marks: component.maximum_marks
+            });
+        });
+
+        marks.innerHTML = rows.map(function (row) {
+            return (
+                '<div class="rtse-result-mark-row">' +
+                    '<span class="rtse-result-mark-name">' +
+                        escapeHtml(row.name) +
+                    '</span>' +
+                    '<span class="rtse-result-mark-obtained">' +
+                        escapeHtml(formatMark(row.marks)) +
+                    '</span>' +
+                    '<span class="rtse-result-mark-full">' +
+                        '/ ' +
+                        escapeHtml(formatMark(row.maximum_marks)) +
+                    '</span>' +
+                '</div>'
+            );
+        }).join("");
+
+        total.textContent = formatMark(result.total_marks);
+        fullTotal.textContent = formatMark(result.total_full_marks);
+
+        const per = Number(result.percentage);
+
+        percentage.textContent =
+            Number.isFinite(per)
+                ? per.toFixed(2) + "%"
+                : safeValue(result.percentage);
+
+        grade.textContent = safeValue(result.grade);
+
+        status.textContent =
+            result.result_status
+                ? "Result Status: " + result.result_status
+                : "";
+
+        loading.style.display = "none";
+        content.style.display = "block";
+    }
+
+    async function loadResult() {
+        resetModal();
+
+        try {
+            const response = await fetch(
+                "/rtse/student/result-data",
+                {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }
+            );
+
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                throw new Error(
+                    "Unable to read the examination result response."
+                );
+            }
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load your examination result."
+                );
+            }
+
+            renderResult(data);
+        } catch (error) {
+            loading.style.display = "none";
+            content.style.display = "none";
+            errorBox.style.display = "block";
+            errorBox.textContent =
+                error.message ||
+                "Unable to load your examination result.";
+        }
+    }
+
+    trigger.addEventListener("click", function () {
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        loadResult();
+    });
+
+    closeButton.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (
+            event.key === "Escape" &&
+            modal.classList.contains("is-open")
+        ) {
+            closeModal();
+        }
+    });
+})();
+</script>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 

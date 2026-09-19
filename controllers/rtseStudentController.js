@@ -344,6 +344,88 @@ exports.registrationSlip = async (req, res) => {
 };
 
 
+
+// =====================================
+// PRIVATE RTSE STUDENT RESULT POPUP DATA
+// =====================================
+exports.resultPopupData = async (req, res) => {
+    try {
+        if (
+            !req.session ||
+            !req.session.rtseStudent ||
+            !req.session.rtseStudent.id
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Student authentication required."
+            });
+        }
+
+        const rtseSetting = await RtseSetting.get();
+
+        if (!rtseSetting || Number(rtseSetting.result_publish) !== 1) {
+            return res.status(403).json({
+                success: false,
+                message: "Results have not been published yet."
+            });
+        }
+
+        const applicationId = req.session.rtseStudent.id;
+
+        const student =
+            await RtseResult.getStudentPopupResult(applicationId);
+
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Your examination result is not available yet."
+            });
+        }
+
+        res.setHeader(
+            "Cache-Control",
+            "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+
+        return res.json({
+            success: true,
+            result: {
+                registration_no: student.registration_no,
+                roll_no: student.roll_no,
+                full_name: student.full_name,
+                photo: student.photo || null,
+                omr_marks: student.marks,
+                total_marks: student.total_marks,
+                total_full_marks: student.total_full_marks,
+                percentage: student.percentage,
+                grade: student.grade,
+                result_status: student.result_status,
+                components: Array.isArray(student.component_marks)
+                    ? student.component_marks.map(component => ({
+                        id: component.component_id,
+                        name: component.name,
+                        marks: component.marks,
+                        maximum_marks: component.maximum_marks
+                    }))
+                    : []
+            }
+        });
+    } catch (error) {
+        console.error(
+            "RTSE student result popup data error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load your examination result."
+        });
+    }
+};
+
+
 // =====================================
 // PRIVATE RTSE STUDENT RESULT
 // =====================================

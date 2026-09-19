@@ -175,6 +175,12 @@ router.get(
 );
 
 router.get(
+    "/student/result-data",
+    rtseStudentAuth.isLoggedIn,
+    rtseStudentController.resultPopupData
+);
+
+router.get(
     "/student/certificate",
     rtseStudentAuth.isLoggedIn,
     rtseStudentController.certificate

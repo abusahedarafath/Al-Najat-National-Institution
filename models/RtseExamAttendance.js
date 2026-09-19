@@ -204,56 +204,108 @@ class RtseExamAttendance {
     // shared/legacy RtseSeatPlan.getRoomWise().
     // =====================================
     static async getAttendanceSheetBySection(section, applicationYear) {
-        const normalizedSection = String(section || "").trim().toUpperCase();
-        const normalizedYear = Number(applicationYear);
+        const normalizedSection =
+            String(section || "").trim().toUpperCase();
 
-        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+        const normalizedYear =
+            Number(applicationYear);
+
+        if (
+            !["A", "B", "C", "D", "E"].includes(
+                normalizedSection
+            )
+        ) {
             throw new Error("Invalid RTSE section.");
         }
 
-        if (!Number.isInteger(normalizedYear) || normalizedYear < 1) {
+        if (
+            !Number.isInteger(normalizedYear) ||
+            normalizedYear < 1
+        ) {
             throw new Error("Invalid RTSE application year.");
         }
 
+        /*
+         * Attendance must follow the actual locked seat assignment.
+         *
+         * Therefore a student appears only when their application
+         * points to a physical seat and that physical seat is locked.
+         *
+         * Section is still respected, so:
+         *
+         *   /attendance-sheet/A -> locked A students
+         *   /attendance-sheet/B -> locked B students
+         *   /attendance-sheet/C -> locked C students
+         *   /attendance-sheet/D -> locked D students
+         *   /attendance-sheet/E -> locked E students
+         */
         const [rooms] = await db.query(
             `
             SELECT
-                room_no,
+                a.room_no,
                 COUNT(*) AS total_students
-            FROM rtse_applications
-            WHERE archive = 0
-              AND application_year = ?
-              AND section = ?
-              AND status = 'Approved'
-              AND roll_no IS NOT NULL
-              AND admit_generated = 1
-              AND room_no IS NOT NULL
-            GROUP BY room_no
-            ORDER BY room_no ASC
+            FROM rtse_applications a
+            INNER JOIN rtse_seat_plan_seats sp
+                ON sp.id = a.seat_id
+               AND sp.room_id = a.room_id
+               AND sp.shift_id = a.shift_id
+               AND sp.is_locked = 1
+            WHERE a.archive = 0
+              AND a.application_year = ?
+              AND a.section = ?
+              AND a.status = 'Approved'
+              AND a.roll_no IS NOT NULL
+              AND a.admit_generated = 1
+              AND a.shift_id IS NOT NULL
+              AND a.room_id IS NOT NULL
+              AND a.seat_id IS NOT NULL
+              AND a.room_no IS NOT NULL
+              AND a.seat_no IS NOT NULL
+            GROUP BY a.room_no
+            ORDER BY a.room_no ASC
             `,
-            [normalizedYear, normalizedSection]
+            [
+                normalizedYear,
+                normalizedSection
+            ]
         );
 
         for (const room of rooms) {
             const [students] = await db.query(
                 `
                 SELECT
-                    roll_no,
-                    registration_no,
-                    full_name,
-                    school_name,
-                    seat_no
-                FROM rtse_applications
-                WHERE archive = 0
-                  AND application_year = ?
-                  AND section = ?
-                  AND status = 'Approved'
-                  AND roll_no IS NOT NULL
-                  AND admit_generated = 1
-                  AND room_no = ?
-                ORDER BY seat_no ASC
+                    a.roll_no,
+                    a.registration_no,
+                    a.full_name,
+                    a.school_name,
+                    a.section,
+                    a.gender,
+                    a.seat_no
+                FROM rtse_applications a
+                INNER JOIN rtse_seat_plan_seats sp
+                    ON sp.id = a.seat_id
+                   AND sp.room_id = a.room_id
+                   AND sp.shift_id = a.shift_id
+                   AND sp.is_locked = 1
+                WHERE a.archive = 0
+                  AND a.application_year = ?
+                  AND a.section = ?
+                  AND a.status = 'Approved'
+                  AND a.roll_no IS NOT NULL
+                  AND a.admit_generated = 1
+                  AND a.shift_id IS NOT NULL
+                  AND a.room_id IS NOT NULL
+                  AND a.seat_id IS NOT NULL
+                  AND a.room_no = ?
+                ORDER BY
+                    a.seat_no ASC,
+                    a.roll_no ASC
                 `,
-                [normalizedYear, normalizedSection, room.room_no]
+                [
+                    normalizedYear,
+                    normalizedSection,
+                    room.room_no
+                ]
             );
 
             room.students = students;

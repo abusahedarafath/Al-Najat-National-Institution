@@ -1071,6 +1071,16 @@ router.get(
 );
 
 // =====================================
+
+// =====================================
+// Section Top 10 Merit List
+// =====================================
+router.get(
+    "/rtse/results/top10-merit-list/:section",
+    auth.isAdmin,
+    adminRtseController.sectionTop10MeritList
+);
+
 // Result Publishing
 // =====================================
 
