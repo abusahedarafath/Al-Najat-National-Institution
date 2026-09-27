@@ -5469,17 +5469,7 @@ exports.resultEntryPage = async (req, res) => {
             );
         }
 
-        res.render(
-            "admin/rtse/result-entry",
-            {
-                title:"Enter Result",
-                student,
-                result,
-                markComponents,
-                resultComponentMarks,
-                popup: String(req.query.popup || "") === "1"
-            }
-        );
+        return res.redirect("/admin/rtse/results");
     }
 
     catch(err){
