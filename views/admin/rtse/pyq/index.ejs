@@ -1,0 +1,108 @@
+<%- include("../../partials/header") %>
+<link rel="stylesheet" href="/css/rtse-pyq-admin.css">
+<script src="/js/rtse-pyq-admin.js" defer></script>
+
+<div class="admin-layout">
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>RTSE PYQ Management</h1>
+                    <p>Manage previous year question papers.</p>
+                </div>
+
+                <a href="/admin/rtse/pyq/create" class="btn-save">
+                    + Add PYQ
+                </a>
+            </div>
+
+            <% if (typeof messages !== "undefined" && messages.success && messages.success.length) { %>
+                <div class="alert alert-success"><%= messages.success[0] %></div>
+            <% } %>
+
+            <% if (typeof messages !== "undefined" && messages.error && messages.error.length) { %>
+                <div class="alert alert-danger"><%= messages.error[0] %></div>
+            <% } %>
+
+            <% if (!pyqs.length) { %>
+                <div class="profile-card">
+                    <h3>No PYQs found</h3>
+                    <p>Add the first previous year question paper.</p>
+                </div>
+            <% } else { %>
+                <div class="profile-card rtse-pyq-admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Year</th>
+                                <th>Class</th>
+                                <th>PDF</th>
+                                <th>Order</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% pyqs.forEach(pyq => { %>
+                                <tr>
+                                    <td><%= pyq.id %></td>
+                                    <td><strong><%= pyq.year %></strong></td>
+                                    <td>Class <%= pyq.class_name %></td>
+                                    <td>
+                                        <a
+                                            href="<%= pyq.pdf_path %>"
+                                            target="_blank"
+                                            rel="noopener"
+                                            class="btn-view"
+                                        >View PDF</a>
+                                    </td>
+                                    <td><%= pyq.display_order %></td>
+                                    <td>
+                                        <% if (pyq.is_active) { %>
+                                            <span style="color:green;font-weight:bold;">Active</span>
+                                        <% } else { %>
+                                            <span style="color:red;font-weight:bold;">Hidden</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <a
+                                            href="/admin/rtse/pyq/<%= pyq.id %>/edit"
+                                            class="btn-view"
+                                        >Edit</a>
+
+                                        <form
+                                            action="/admin/rtse/pyq/<%= pyq.id %>/toggle"
+                                            method="POST"
+                                            style="display:inline;"
+                                        >
+                                            <button type="submit" class="btn-save">
+                                                Toggle
+                                            </button>
+                                        </form>
+
+                                        <form
+                                            action="/admin/rtse/pyq/<%= pyq.id %>/delete"
+                                            method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Remove this PYQ from the listing? The PDF file will be preserved.');"
+                                        >
+                                            <button type="submit" class="btn-cancel">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</div>
+
+<%- include("../../partials/footer") %>

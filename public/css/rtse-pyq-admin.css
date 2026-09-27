@@ -1,0 +1,54 @@
+.rtse-pyq-admin-table-wrap {
+    overflow-x: auto;
+}
+
+.rtse-pyq-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.rtse-pyq-admin-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: #354052;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.rtse-pyq-admin-grid input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d8dee7;
+    border-radius: 9px;
+    background: #fff;
+    font: inherit;
+}
+
+.rtse-pyq-admin-switch {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    margin-top: 20px;
+    color: #354052;
+    font-weight: 700;
+}
+
+.rtse-pyq-admin-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+@media (max-width: 700px) {
+    .rtse-pyq-admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rtse-pyq-admin-actions {
+        flex-direction: column;
+    }
+}

@@ -9,6 +9,7 @@ const rtseController =
 
 const rtseHomepageController =
     require("../controllers/rtseHomepageController");
+const rtsePyqController = require("../controllers/rtsePyqController");
 
 const rtsePublicController =
     require("../controllers/rtsePublicController");
@@ -88,6 +89,8 @@ router.get("/", (req, res) => {
     return rtseHomepageController.home(req, res);
 
 });
+
+router.get("/pyq", rtsePyqController.index);
 
 
 // =====================================

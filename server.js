@@ -82,6 +82,7 @@ const adminRtseLoginInformationPdfRoutes = require("./routes/adminRtseLoginInfor
 const seoRoutes = require("./routes/seoRoutes");
 const adminRtseRoutes = require("./routes/adminRtseRoutes");
 const adminRtseHomepageRoutes = require("./routes/adminRtseHomepageRoutes");
+const adminRtsePyqRoutes = require("./routes/adminRtsePyqRoutes");
 const superScannerRoutes = require("./routes/superScannerRoutes");
 
 // RTSE attendance auto-finalization
@@ -297,6 +298,7 @@ app.use("/admin", siteSettingRoutes);
 
 app.use("/admin", adminRtseRoutes);
 app.use("/admin", adminRtseHomepageRoutes);
+app.use("/admin", adminRtsePyqRoutes);
 app.use("/admin", adminRtseLoginInformationPdfRoutes);
 
 // 404 Handler

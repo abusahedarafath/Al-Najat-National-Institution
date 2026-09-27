@@ -1,0 +1,162 @@
+.rtse-pyq-page {
+    min-height: 70vh;
+    background: #f7f9fc;
+    color: #122033;
+}
+
+.rtse-pyq-container {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+}
+
+.rtse-pyq-hero {
+    padding: 54px 0 60px;
+    background: linear-gradient(135deg, #0b1f3a, #123d6b);
+    color: #fff;
+}
+
+.rtse-pyq-back {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #fff;
+    text-decoration: none;
+    opacity: .85;
+}
+
+.rtse-pyq-badge {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(199,154,53,.16);
+    color: #f2ce78;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .13em;
+}
+
+.rtse-pyq-hero h1 {
+    margin: 15px 0 8px;
+    font-size: clamp(32px, 5vw, 52px);
+}
+
+.rtse-pyq-hero p {
+    margin: 0;
+    opacity: .8;
+    font-size: 16px;
+}
+
+.rtse-pyq-content {
+    padding: 42px 0 70px;
+}
+
+.rtse-pyq-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.rtse-pyq-card {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e3e8ef;
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(11,31,58,.06);
+}
+
+.rtse-pyq-card-icon {
+    width: 52px;
+    height: 62px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #0b1f3a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.rtse-pyq-card-body {
+    min-width: 0;
+}
+
+.rtse-pyq-year {
+    color: #c79a35;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.rtse-pyq-card h2 {
+    margin: 5px 0 15px;
+    color: #0b1f3a;
+    font-size: 20px;
+}
+
+.rtse-pyq-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rtse-pyq-actions a {
+    display: inline-block;
+    padding: 8px 11px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.rtse-pyq-view {
+    background: #edf3fa;
+    color: #123d6b;
+}
+
+.rtse-pyq-download {
+    background: #0b1f3a;
+    color: #fff;
+}
+
+.rtse-pyq-empty {
+    max-width: 620px;
+    margin: 20px auto;
+    padding: 55px 25px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #e3e8ef;
+    border-radius: 20px;
+}
+
+.rtse-pyq-empty > div {
+    font-size: 40px;
+}
+
+.rtse-pyq-empty h2 {
+    color: #0b1f3a;
+}
+
+.rtse-pyq-empty p {
+    color: #718096;
+}
+
+@media (max-width: 850px) {
+    .rtse-pyq-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .rtse-pyq-container {
+        width: min(100% - 22px, 1120px);
+    }
+
+    .rtse-pyq-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rtse-pyq-hero {
+        padding: 40px 0 45px;
+    }
+}
