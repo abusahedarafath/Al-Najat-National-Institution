@@ -353,10 +353,10 @@
     inset:0;
     z-index:99999;
     box-sizing:border-box;
-    padding:12px;
+    padding:8px;
     align-items:center;
     justify-content:center;
-    overflow:hidden;
+    overflow:auto;
     background:rgba(15,23,42,.58);
     backdrop-filter:blur(3px);
 }
@@ -366,11 +366,14 @@
 }
 
 .rtse-result-modal-card {
-    width:min(500px,94vw);
-    max-height:min(560px,88vh);
+    width:min(700px,calc(100vw - 16px));
+    max-width:none;
+    min-height:0;
+    height:auto;
+    max-height:calc(100dvh - 16px);
     display:flex;
     flex-direction:column;
-    overflow:hidden;
+    overflow:visible;
     box-sizing:border-box;
     background:#fff;
     border-radius:13px;
@@ -417,8 +420,7 @@
 .rtse-result-modal-content {
     flex:1 1 auto;
     min-height:0;
-    overflow-y:auto;
-    overflow-x:hidden;
+    overflow:visible;
     padding:11px 12px 12px;
     box-sizing:border-box;
 }
@@ -430,9 +432,14 @@
     }
 
     .rtse-result-modal-card {
-        width:94vw;
-        max-height:82vh;
+        width:calc(100vw - 16px);
+        max-width:none;
+        min-height:0;
+        height:auto;
+        max-height:calc(100dvh - 16px);
         border-radius:11px;
+        overflow:visible;
+        box-shadow:0 18px 55px rgba(0,0,0,.30);
     }
 
     .rtse-result-modal-header {
@@ -445,6 +452,7 @@
 
     .rtse-result-modal-content {
         padding:9px;
+        overflow:visible;
     }
 }
 
@@ -565,9 +573,9 @@
             } else if (percentageNumber >= 60) {
                 grade.value = "B";
             } else if (percentageNumber >= 50) {
-                grade.value = "C";
+                grade.value = "C+";
             } else if (percentageNumber >= 40) {
-                grade.value = "D";
+                grade.value = "C";
             } else {
                 grade.value = "F";
             }
