@@ -1,6 +1,10 @@
 <div class="rtse-popup-result">
 
+    <!-- =====================================
+         STUDENT INFORMATION
+         ===================================== -->
     <div class="rtse-popup-student">
+
         <div class="rtse-popup-section-title">
             <span>👤</span>
             <strong>Student Information</strong>
@@ -34,9 +38,13 @@
             </div>
 
         </div>
+
     </div>
 
-
+    <!-- =====================================
+         RESULT ENTRY
+         Same structure as Super Scanner
+         ===================================== -->
     <form
         id="rtseResultForm"
         action="/admin/rtse/result/<%= student.id %>"
@@ -44,145 +52,154 @@
         data-history-fix="off"
     >
 
-        <div class="rtse-popup-result-box">
-    <div class="rtse-popup-section-title">
-        <span>📊</span>
-        <strong>Result Details</strong>
-    </div>
+        <div class="result-entry-panel">
 
-    <div class="rtse-popup-form-grid">
-
-        <div class="rtse-popup-field">
-            <label for="full_marks">OMR Full Marks</label>
-            <input
-                type="number"
-                name="full_marks"
-                id="full_marks"
-                value="100"
-                min="100"
-                max="100"
-                readonly
-            >
-        </div>
-
-        <div class="rtse-popup-field">
-            <label for="marks">OMR Obtained Marks</label>
-            <input
-                type="number"
-                name="marks"
-                id="marks"
-                value="<%= result ? result.marks : '' %>"
-                min="0"
-                max="100"
-                step="0.01"
-                required
-            >
-        </div>
-
-        <% (markComponents || []).forEach(function(component) { %>
-            <%
-
-                const savedComponent =
-                    (resultComponentMarks || []).find(function(item) {
-                        return Number(item.component_id) === Number(component.id);
-                    });
-
-                const savedMarks =
-                    savedComponent &&
-                    Number(savedComponent.marks) !== 0
-                        ? savedComponent.marks
-                        : "";
-            %>
-
-            <div class="rtse-popup-field">
-                <label for="component_marks_<%= component.id %>">
-                    <%= component.name %>
-                    <span class="rtse-popup-field-limit">
-                        / <%= component.maximum_marks %>
-                    </span>
-                </label>
-
-                <input
-                    type="number"
-                    name="component_marks[<%= component.id %>]"
-                    id="component_marks_<%= component.id %>"
-                    value="<%= savedMarks %>"
-                    min="0"
-                    max="<%= component.maximum_marks %>"
-                    step="0.01"
-                    data-rtse-component-mark
-                    data-component-id="<%= component.id %>"
-                    data-component-max="<%= component.maximum_marks %>"
-                >
+            <div class="result-entry-title">
+                RTSE Result Entry
             </div>
-        <% }); %>
 
-        <div class="rtse-popup-field">
-            <label for="total_marks">Total Obtained Marks</label>
-            <input
-                type="number"
-                id="total_marks"
-                value="<%= result && result.total_marks !== null && result.total_marks !== undefined
-                    ? result.total_marks
-                    : (result ? result.marks : '') %>"
-                readonly
-            >
+            <div class="result-form-grid">
+
+                <div class="result-field">
+                    <label for="full_marks">OMR Full Marks</label>
+
+                    <input
+                        type="number"
+                        name="full_marks"
+                        id="full_marks"
+                        min="100"
+                        max="100"
+                        step="0.01"
+                        value="100"
+                        readonly
+                    >
+                </div>
+
+                <div class="result-field">
+                    <label for="marks">OMR Obtained Marks</label>
+
+                    <input
+                        type="number"
+                        name="marks"
+                        id="marks"
+                        value="<%= result ? result.marks : '' %>"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        placeholder="Enter OMR marks"
+                        required
+                    >
+                </div>
+
+                <% (markComponents || []).forEach(function(component) { %>
+
+                    <%
+                        const savedComponent =
+                            (resultComponentMarks || []).find(function(item) {
+                                return Number(item.component_id) === Number(component.id);
+                            });
+
+                        const savedMarks =
+                            savedComponent &&
+                            Number(savedComponent.marks) !== 0
+                                ? savedComponent.marks
+                                : "";
+                    %>
+
+                    <div class="result-field">
+
+                        <label for="component_marks_<%= component.id %>">
+                            <%= component.name %>
+                            (<%= component.maximum_marks %>)
+                        </label>
+
+                        <input
+                            type="number"
+                            name="component_marks[<%= component.id %>]"
+                            id="component_marks_<%= component.id %>"
+                            value="<%= savedMarks %>"
+                            min="0"
+                            max="<%= component.maximum_marks %>"
+                            step="0.01"
+                            placeholder="Enter marks"
+                            data-rtse-component-mark
+                            data-component-id="<%= component.id %>"
+                            data-component-max="<%= component.maximum_marks %>"
+                        >
+
+                    </div>
+
+                <% }); %>
+
+                <div class="result-field">
+                    <label for="total_marks">Total Obtained Marks</label>
+
+                    <input
+                        type="text"
+                        id="total_marks"
+                        value="<%= result && result.total_marks !== null && result.total_marks !== undefined
+                            ? result.total_marks
+                            : (result ? result.marks : '') %>"
+                        readonly
+                    >
+                </div>
+
+                <div class="result-field">
+                    <label for="total_full_marks">Total Full Marks</label>
+
+                    <input
+                        type="text"
+                        id="total_full_marks"
+                        value="<%= result && result.total_full_marks !== null && result.total_full_marks !== undefined
+                            ? result.total_full_marks
+                            : (100 + (markComponents || []).reduce(function(total, component) {
+                                return total + Number(component.maximum_marks || 0);
+                            }, 0)) %>"
+                        readonly
+                    >
+                </div>
+
+                <div class="result-field">
+                    <label for="percentage">Percentage</label>
+
+                    <input
+                        type="text"
+                        name="percentage"
+                        id="percentage"
+                        value="<%= result ? result.percentage : '' %>"
+                        readonly
+                    >
+                </div>
+
+                <div class="result-field">
+                    <label for="grade">Grade</label>
+
+                    <input
+                        type="text"
+                        name="grade"
+                        id="grade"
+                        value="<%= result ? result.grade : '' %>"
+                        readonly
+                    >
+                </div>
+
+            </div>
+
         </div>
-
-        <div class="rtse-popup-field">
-            <label for="total_full_marks">Total Full Marks</label>
-            <input
-                type="number"
-                id="total_full_marks"
-                value="<%= result && result.total_full_marks !== null && result.total_full_marks !== undefined
-                    ? result.total_full_marks
-                    : (100 + (markComponents || []).reduce(function(total, component) {
-                        return total + Number(component.maximum_marks || 0);
-                    }, 0)) %>"
-                readonly
-            >
-        </div>
-
-        <div class="rtse-popup-field">
-            <label for="percentage">Percentage</label>
-            <input
-                type="number"
-                name="percentage"
-                id="percentage"
-                value="<%= result ? result.percentage : '' %>"
-                readonly
-            >
-        </div>
-
-        <div class="rtse-popup-field">
-            <label for="grade">Grade</label>
-            <input
-                type="text"
-                name="grade"
-                id="grade"
-                value="<%= result ? result.grade : '' %>"
-                readonly
-            >
-        </div>
-
-    </div>
-</div>
 
     </form>
 
-
     <% if (result) { %>
 
-    <form
-        id="rtseResetResultForm"
-        action="/admin/rtse/result/<%= student.id %>/reset-pending"
-        method="POST"
-        data-history-fix="off"
-        style="display:none;"
-    ></form>
+        <form
+            id="rtseResetResultForm"
+            action="/admin/rtse/result/<%= student.id %>/reset-pending"
+            method="POST"
+            data-history-fix="off"
+            style="display:none;"
+        ></form>
 
     <% } %>
-
 
     <form
         id="rtseAttendanceResetForm"
@@ -192,30 +209,30 @@
         style="display:none;"
     ></form>
 
-
+    <!-- =====================================
+         ADMIN ACTIONS
+         ===================================== -->
     <div class="rtse-popup-actions">
 
         <button
             type="button"
             id="rtseSaveResultButton"
-            class="rtse-popup-btn rtse-popup-btn-save"
+            class="rtse-popup-btn rtse-popup-btn-save result-save-btn"
         >
             💾 Save Result
         </button>
 
-
         <% if (result) { %>
 
-        <button
-            type="submit"
-            form="rtseResetResultForm"
-            class="rtse-popup-btn rtse-popup-btn-pending"
-        >
-            ↩ Reset to Pending
-        </button>
+            <button
+                type="submit"
+                form="rtseResetResultForm"
+                class="rtse-popup-btn rtse-popup-btn-pending"
+            >
+                ↩ Reset to Pending
+            </button>
 
         <% } %>
-
 
         <button
             type="submit"
@@ -224,7 +241,6 @@
         >
             ↻ Attendance Reset
         </button>
-
 
         <button
             type="button"
@@ -238,10 +254,6 @@
 
 </div>
 
-
-<!-- =====================================
-     Optional Counted OMR
-     ===================================== -->
 <div class="rtse-counted-omr-box">
     <div class="rtse-popup-section-title">
         <span>📄</span>
@@ -1107,4 +1119,133 @@ body.rtse-omr-modal-open {
     }
 }
 
+</style>
+
+
+<style>
+/* SUPER SCANNER RESULT UI - ADMIN POPUP */
+
+.rtse-popup-result .result-entry-panel {
+    width: calc(100% - 40px);
+    box-sizing: border-box;
+    margin: 0 20px 14px;
+    padding: 14px;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #f8fbff;
+}
+
+.rtse-popup-result .result-entry-title {
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #1e3a8a;
+}
+
+.rtse-popup-result .result-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.rtse-popup-result .result-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rtse-popup-result .result-field label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+.rtse-popup-result .result-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #111827;
+    font-size: 14px;
+    font-weight: 700;
+    outline: none;
+}
+
+.rtse-popup-result .result-field input:focus {
+    border-color: #2563eb;
+}
+
+.rtse-popup-result .result-field input[readonly] {
+    background: #f3f4f6;
+}
+
+.rtse-popup-result .rtse-popup-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    padding-top: 2px;
+}
+
+.rtse-popup-result .rtse-popup-btn {
+    width: 100%;
+    min-height: 36px;
+    padding: 7px 9px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.rtse-popup-result .rtse-popup-btn-save {
+    background: #2563eb;
+    color: #fff;
+}
+
+.rtse-popup-result .rtse-popup-btn-pending {
+    background: #f59e0b;
+    color: #fff;
+}
+
+.rtse-popup-result .rtse-popup-btn-attendance {
+    background: #dc2626;
+    color: #fff;
+}
+
+.rtse-popup-result .rtse-popup-btn-close {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+@media (max-width: 520px) {
+
+    .rtse-popup-result .result-entry-panel {
+        width: calc(100% - 20px);
+        margin: 0 10px 12px;
+        padding: 12px;
+    }
+
+    .rtse-popup-result .result-form-grid {
+        gap: 8px;
+    }
+
+    .rtse-popup-result .result-field input {
+        padding: 9px;
+        font-size: 13px;
+    }
+
+    .rtse-popup-result .rtse-popup-actions {
+        gap: 6px;
+    }
+
+    .rtse-popup-result .rtse-popup-btn {
+        min-height: 36px;
+        padding: 7px 5px;
+        font-size: 10px;
+    }
+}
 </style>
