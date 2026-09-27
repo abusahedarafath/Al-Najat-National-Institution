@@ -1,0 +1,290 @@
+<%- include("../partials/header") %>
+<link rel="stylesheet" href="/css/rtse-homepage.css">
+<%- include("../partials/navbar") %>
+
+<%
+    const getSection = key => sectionMap && sectionMap[key] ? sectionMap[key] : null;
+    const hero = getSection("hero");
+    const announcement = getSection("announcement");
+    const quickServices = getSection("quick_services");
+    const why = getSection("why_rtse");
+    const steps = getSection("how_it_works");
+    const cta = getSection("cta");
+    const faq = getSection("faq");
+
+    const heroSettings = hero && hero.settingsData ? hero.settingsData : {};
+    const announcementSettings = announcement && announcement.settingsData ? announcement.settingsData : {};
+    const ctaSettings = cta && cta.settingsData ? cta.settingsData : {};
+
+    const examDate = exam && exam.exam_date
+        ? new Date(exam.exam_date).toLocaleDateString("en-IN", { day:"numeric", month:"long", year:"numeric" })
+        : "To be announced";
+
+    const applicationOpen = setting && Number(setting.application_open) === 1;
+    const admitPublished = setting && Number(setting.admit_publish) === 1;
+    const resultPublished = setting && Number(setting.result_publish) === 1;
+    const certificatePublished = setting && Number(setting.certificate_publish) === 1;
+%>
+
+<main class="rtse-homepage">
+
+    <% if (hero) { %>
+    <section class="rtse-hero">
+        <div class="rtse-hero-glow"></div>
+        <div class="rtse-container rtse-hero-grid">
+            <div class="rtse-hero-copy">
+                <% if (heroSettings.badge) { %>
+                    <span class="rtse-badge"><%= heroSettings.badge %></span>
+                <% } %>
+
+                <p class="rtse-eyebrow"><%= hero.subtitle || "Talent Search Examination" %></p>
+
+                <h1><%= hero.title || "Ratabari Talent Search Examination" %></h1>
+
+                <p class="rtse-hero-description">
+                    <%= hero.content || "Discover your potential. Showcase your talent." %>
+                </p>
+
+                <div class="rtse-hero-actions">
+                    <a class="rtse-btn rtse-btn-primary"
+                       href="<%= heroSettings.primary_url || '/rtse/apply' %>">
+                        <%= heroSettings.primary_label || "Apply Now" %>
+                    </a>
+
+                    <a class="rtse-btn rtse-btn-outline"
+                       href="<%= heroSettings.secondary_url || '/rtse/student/login' %>">
+                        <%= heroSettings.secondary_label || "Student Portal" %>
+                    </a>
+                </div>
+
+                <div class="rtse-hero-trust">
+                    <span>✓ Official RTSE Portal</span>
+                    <span>✓ Online Services</span>
+                    <span>✓ Student Access</span>
+                </div>
+            </div>
+
+            <div class="rtse-hero-panel">
+                <div class="rtse-floating-card">
+                    <span class="rtse-floating-label">EXAMINATION</span>
+                    <strong><%= exam ? exam.exam_name : "RTSE" %></strong>
+                    <span class="rtse-floating-year"><%= exam ? exam.exam_year : (setting ? setting.exam_year : "2026") %></span>
+                </div>
+
+                <div class="rtse-hero-orbit">
+                    <div class="rtse-orbit-center">RTSE</div>
+                    <div class="rtse-orbit-item one">🎓</div>
+                    <div class="rtse-orbit-item two">🏆</div>
+                    <div class="rtse-orbit-item three">📜</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <section class="rtse-status-strip">
+        <div class="rtse-container rtse-status-grid">
+            <div class="rtse-status-card">
+                <span>Applications</span>
+                <strong class="<%= applicationOpen ? 'status-open' : 'status-closed' %>">
+                    <%= applicationOpen ? "OPEN" : "CLOSED" %>
+                </strong>
+            </div>
+
+            <div class="rtse-status-card">
+                <span>Examination</span>
+                <strong><%= examDate %></strong>
+            </div>
+
+            <div class="rtse-status-card">
+                <span>Admit Cards</span>
+                <strong><%= admitPublished ? "PUBLISHED" : "NOT PUBLISHED" %></strong>
+            </div>
+
+            <div class="rtse-status-card">
+                <span>Results</span>
+                <strong><%= resultPublished ? "PUBLISHED" : "NOT PUBLISHED" %></strong>
+            </div>
+
+            <div class="rtse-status-card">
+                <span>Certificates</span>
+                <strong><%= certificatePublished ? "PUBLISHED" : "NOT PUBLISHED" %></strong>
+            </div>
+        </div>
+    </section>
+
+    <% if (announcement) { %>
+    <section class="rtse-announcement">
+        <div class="rtse-container rtse-announcement-inner">
+            <div class="rtse-announcement-icon">!</div>
+            <div>
+                <small><%= announcement.subtitle || "Announcement" %></small>
+                <strong><%= announcement.title %></strong>
+                <p><%= announcement.content %></p>
+            </div>
+
+            <% if (announcementSettings.button_url) { %>
+                <a href="<%= announcementSettings.button_url %>" class="rtse-text-btn">
+                    <%= announcementSettings.button_label || "View" %> →
+                </a>
+            <% } %>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (quickServices && Array.isArray(quickServices.contentData)) { %>
+    <section class="rtse-section">
+        <div class="rtse-container">
+            <div class="rtse-section-heading">
+                <span>ONLINE SERVICES</span>
+                <h2><%= quickServices.title %></h2>
+                <p><%= quickServices.subtitle %></p>
+            </div>
+
+            <div class="rtse-service-grid">
+                <% quickServices.contentData.forEach(service => { %>
+                    <a href="<%= service.url || '#' %>" class="rtse-service-card">
+                        <div class="rtse-service-icon"><%= service.icon || "•" %></div>
+                        <h3><%= service.title %></h3>
+                        <p><%= service.description %></p>
+                        <span>Open service →</span>
+                    </a>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (why && Array.isArray(why.contentData)) { %>
+    <section class="rtse-section rtse-section-soft">
+        <div class="rtse-container">
+            <div class="rtse-section-heading">
+                <span>WHY RTSE</span>
+                <h2><%= why.title %></h2>
+                <p><%= why.subtitle %></p>
+            </div>
+
+            <div class="rtse-card-grid">
+                <% why.contentData.forEach((item, index) => { %>
+                    <article class="rtse-feature-card">
+                        <div class="rtse-feature-number">0<%= index + 1 %></div>
+                        <h3><%= item.title %></h3>
+                        <p><%= item.description %></p>
+                    </article>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (exam) { %>
+    <section class="rtse-section">
+        <div class="rtse-container">
+            <div class="rtse-exam-box">
+                <div>
+                    <span class="rtse-section-kicker">ACTIVE EXAMINATION</span>
+                    <h2><%= exam.exam_name %></h2>
+                    <p>Official examination information from the active RTSE examination configuration.</p>
+                </div>
+
+                <div class="rtse-exam-details">
+                    <div>
+                        <small>Exam Year</small>
+                        <strong><%= exam.exam_year %></strong>
+                    </div>
+
+                    <div>
+                        <small>Exam Date</small>
+                        <strong><%= examDate %></strong>
+                    </div>
+
+                    <div>
+                        <small>Reporting</small>
+                        <strong><%= exam.reporting_time || "To be announced" %></strong>
+                    </div>
+
+                    <div>
+                        <small>Exam Time</small>
+                        <strong>
+                            <%= exam.exam_start_time || "--" %>
+                            <% if (exam.exam_end_time) { %> – <%= exam.exam_end_time %><% } %>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (steps && Array.isArray(steps.contentData)) { %>
+    <section class="rtse-section rtse-section-dark">
+        <div class="rtse-container">
+            <div class="rtse-section-heading rtse-heading-light">
+                <span>THE PROCESS</span>
+                <h2><%= steps.title %></h2>
+                <p><%= steps.subtitle %></p>
+            </div>
+
+            <div class="rtse-step-grid">
+                <% steps.contentData.forEach(step => { %>
+                    <div class="rtse-step">
+                        <span><%= step.number %></span>
+                        <h3><%= step.title %></h3>
+                        <p><%= step.description %></p>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (faq && Array.isArray(faq.contentData)) { %>
+    <section class="rtse-section">
+        <div class="rtse-container rtse-narrow">
+            <div class="rtse-section-heading">
+                <span>HELP</span>
+                <h2><%= faq.title %></h2>
+                <p><%= faq.subtitle %></p>
+            </div>
+
+            <div class="rtse-faq">
+                <% faq.contentData.forEach((item, index) => { %>
+                    <details <%= index === 0 ? "open" : "" %>>
+                        <summary><%= item.question %></summary>
+                        <p><%= item.answer %></p>
+                    </details>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (cta) { %>
+    <section class="rtse-final-cta">
+        <div class="rtse-container rtse-final-cta-inner">
+            <div>
+                <span>RTSE 2026</span>
+                <h2><%= cta.title %></h2>
+                <p><%= cta.subtitle %></p>
+                <small><%= cta.content %></small>
+            </div>
+
+            <div class="rtse-hero-actions">
+                <a class="rtse-btn rtse-btn-primary"
+                   href="<%= ctaSettings.primary_url || '/rtse/apply' %>">
+                    <%= ctaSettings.primary_label || "Apply Now" %>
+                </a>
+
+                <a class="rtse-btn rtse-btn-outline"
+                   href="<%= ctaSettings.secondary_url || '/rtse/student/login' %>">
+                    <%= ctaSettings.secondary_label || "Student Login" %>
+                </a>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+</main>
+
+<script src="/js/rtse-homepage.js"></script>
+<%- include("../partials/footer") %>

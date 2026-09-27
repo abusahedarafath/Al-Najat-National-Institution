@@ -7,6 +7,9 @@ const path = require("path");
 const rtseController =
     require("../controllers/rtseController");
 
+const rtseHomepageController =
+    require("../controllers/rtseHomepageController");
+
 const rtsePublicController =
     require("../controllers/rtsePublicController");
 
@@ -82,7 +85,7 @@ router.get(
 
 router.get("/", (req, res) => {
 
-    res.redirect("/rtse/apply");
+    return rtseHomepageController.home(req, res);
 
 });
 

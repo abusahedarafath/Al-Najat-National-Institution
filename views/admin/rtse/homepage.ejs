@@ -1,0 +1,354 @@
+<%- include("../partials/header") %>
+
+<link rel="stylesheet" href="/css/rtse-homepage-admin.css">
+<script src="/js/rtse-homepage-admin.js" defer></script>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content rtse-home-admin">
+        <div class="container">
+
+            <div class="page-header rtse-home-admin-header">
+                <div>
+                    <div class="rtse-admin-eyebrow">RTSE WEBSITE</div>
+                    <h1>Homepage Management</h1>
+                    <p>Update your RTSE homepage using simple forms. No coding or JSON required.</p>
+                </div>
+
+                <a href="/rtse/" target="_blank" class="btn-view">
+                    Preview Homepage ↗
+                </a>
+            </div>
+
+            <% if (saved) { %>
+                <div class="rtse-home-success">
+                    <span>✓</span>
+                    <div>
+                        <strong>Homepage updated successfully.</strong>
+                        <small>Your changes are now saved.</small>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="rtse-home-help">
+                <div class="rtse-home-help-icon">✦</div>
+                <div>
+                    <strong>Easy Homepage Editor</strong>
+                    <p>Edit text, buttons, cards, steps and FAQs below. Click <b>Save Section</b> after making changes.</p>
+                </div>
+            </div>
+
+            <div class="rtse-home-sections">
+
+                <% sections.forEach(section => {
+                    const content = section.contentData;
+                    const settings = section.settingsData || {};
+                %>
+
+                <form
+                    method="POST"
+                    action="/admin/rtse/homepage/<%= section.id %>"
+                    class="rtse-editor-card"
+                >
+
+                    <div class="rtse-editor-heading">
+                        <div class="rtse-editor-title">
+                            <span class="rtse-section-number"><%= String(section.display_order).padStart(2, "0") %></span>
+                            <div>
+                                <div class="rtse-section-type"><%= section.section_type %></div>
+                                <h2><%= section.title || section.section_key %></h2>
+                                <p>Homepage section</p>
+                            </div>
+                        </div>
+
+                        <label class="rtse-switch">
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                value="1"
+                                <%= Number(section.is_active) === 1 ? "checked" : "" %>
+                            >
+                            <span class="rtse-switch-slider"></span>
+                            <span>Visible</span>
+                        </label>
+                    </div>
+
+                    <div class="rtse-editor-body">
+
+                        <div class="rtse-basic-grid">
+                            <label class="rtse-field">
+                                <span>Section Heading</span>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value="<%= section.title || '' %>"
+                                    placeholder="Enter heading"
+                                >
+                            </label>
+
+                            <label class="rtse-field">
+                                <span>Section Subtitle</span>
+                                <input
+                                    type="text"
+                                    name="subtitle"
+                                    value="<%= section.subtitle || '' %>"
+                                    placeholder="Enter subtitle"
+                                >
+                            </label>
+                        </div>
+
+                        <% if (section.section_key === "hero") { %>
+
+                            <div class="rtse-editor-subtitle">Hero Content</div>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Badge</span>
+                                    <input type="text" name="badge" value="<%= settings.badge || '' %>" placeholder="RTSE 2026">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Hero Image URL <small>(optional)</small></span>
+                                    <input type="text" name="image" value="<%= settings.image || '' %>" placeholder="/uploads/...">
+                                </label>
+                            </div>
+
+                            <label class="rtse-field">
+                                <span>Description</span>
+                                <textarea name="description" rows="4" placeholder="Write your hero description..."><%= typeof content === "string" ? content : "" %></textarea>
+                            </label>
+
+                            <div class="rtse-mini-heading">Primary Button</div>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Button Text</span>
+                                    <input type="text" name="primary_label" value="<%= settings.primary_label || '' %>" placeholder="Apply Now">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Button Link</span>
+                                    <input type="text" name="primary_url" value="<%= settings.primary_url || '' %>" placeholder="/rtse/apply">
+                                </label>
+                            </div>
+
+                            <div class="rtse-mini-heading">Secondary Button</div>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Button Text</span>
+                                    <input type="text" name="secondary_label" value="<%= settings.secondary_label || '' %>" placeholder="Student Portal">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Button Link</span>
+                                    <input type="text" name="secondary_url" value="<%= settings.secondary_url || '' %>" placeholder="/rtse/student/login">
+                                </label>
+                            </div>
+
+                        <% } else if (section.section_key === "announcement") { %>
+
+                            <label class="rtse-field">
+                                <span>Announcement Message</span>
+                                <textarea name="message" rows="5" placeholder="Write the announcement..."><%= typeof content === "string" ? content : "" %></textarea>
+                            </label>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Button Text</span>
+                                    <input type="text" name="button_label" value="<%= settings.button_label || '' %>" placeholder="View Details">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Button Link</span>
+                                    <input type="text" name="button_url" value="<%= settings.button_url || '' %>" placeholder="/rtse/">
+                                </label>
+                            </div>
+
+                        <% } else if (section.section_key === "quick_services") { %>
+
+                            <div class="rtse-editor-subtitle">Quick Service Cards</div>
+
+                            <div class="rtse-repeat-list" data-repeat-list>
+                                <% (Array.isArray(content) ? content : []).forEach((item, i) => { %>
+                                    <div class="rtse-repeat-item">
+                                        <div class="rtse-repeat-top">
+                                            <strong>Service <%= i + 1 %></strong>
+                                            <button type="button" class="rtse-remove" data-remove-item>Remove</button>
+                                        </div>
+
+                                        <div class="rtse-basic-grid">
+                                            <label class="rtse-field">
+                                                <span>Icon</span>
+                                                <input type="text" name="service_<%= i %>_icon" value="<%= item.icon || '' %>" placeholder="📝">
+                                            </label>
+
+                                            <label class="rtse-field">
+                                                <span>Service Name</span>
+                                                <input type="text" name="service_<%= i %>_title" value="<%= item.title || '' %>" placeholder="Apply Online">
+                                            </label>
+                                        </div>
+
+                                        <label class="rtse-field">
+                                            <span>Description</span>
+                                            <input type="text" name="service_<%= i %>_description" value="<%= item.description || '' %>" placeholder="Short description">
+                                        </label>
+
+                                        <label class="rtse-field">
+                                            <span>Link</span>
+                                            <input type="text" name="service_<%= i %>_url" value="<%= item.url || '' %>" placeholder="/rtse/apply">
+                                        </label>
+                                    </div>
+                                <% }) %>
+                            </div>
+
+                            <button type="button" class="rtse-add-item" data-add-service>+ Add Service</button>
+
+                        <% } else if (section.section_key === "why_rtse") { %>
+
+                            <div class="rtse-editor-subtitle">Why RTSE Cards</div>
+
+                            <div class="rtse-repeat-list">
+                                <% (Array.isArray(content) ? content : []).forEach((item, i) => { %>
+                                    <div class="rtse-repeat-item">
+                                        <div class="rtse-repeat-top">
+                                            <strong>Card <%= i + 1 %></strong>
+                                            <button type="button" class="rtse-remove" data-remove-item>Remove</button>
+                                        </div>
+
+                                        <label class="rtse-field">
+                                            <span>Card Title</span>
+                                            <input type="text" name="card_<%= i %>_title" value="<%= item.title || '' %>" placeholder="Recognise Talent">
+                                        </label>
+
+                                        <label class="rtse-field">
+                                            <span>Description</span>
+                                            <textarea name="card_<%= i %>_description" rows="3"><%= item.description || '' %></textarea>
+                                        </label>
+                                    </div>
+                                <% }) %>
+                            </div>
+
+                            <button type="button" class="rtse-add-item" data-add-card>+ Add Card</button>
+
+                        <% } else if (section.section_key === "how_it_works") { %>
+
+                            <div class="rtse-editor-subtitle">RTSE Steps</div>
+
+                            <div class="rtse-repeat-list">
+                                <% (Array.isArray(content) ? content : []).forEach((item, i) => { %>
+                                    <div class="rtse-repeat-item">
+                                        <div class="rtse-repeat-top">
+                                            <strong>Step <%= i + 1 %></strong>
+                                            <button type="button" class="rtse-remove" data-remove-item>Remove</button>
+                                        </div>
+
+                                        <div class="rtse-basic-grid">
+                                            <label class="rtse-field">
+                                                <span>Step Number</span>
+                                                <input type="text" name="step_<%= i %>_number" value="<%= item.number || '' %>" placeholder="01">
+                                            </label>
+
+                                            <label class="rtse-field">
+                                                <span>Step Title</span>
+                                                <input type="text" name="step_<%= i %>_title" value="<%= item.title || '' %>" placeholder="Register">
+                                            </label>
+                                        </div>
+
+                                        <label class="rtse-field">
+                                            <span>Description</span>
+                                            <textarea name="step_<%= i %>_description" rows="3"><%= item.description || '' %></textarea>
+                                        </label>
+                                    </div>
+                                <% }) %>
+                            </div>
+
+                            <button type="button" class="rtse-add-item" data-add-step>+ Add Step</button>
+
+                        <% } else if (section.section_key === "cta") { %>
+
+                            <label class="rtse-field">
+                                <span>CTA Description</span>
+                                <textarea name="description" rows="4"><%= typeof content === "string" ? content : "" %></textarea>
+                            </label>
+
+                            <div class="rtse-editor-subtitle">Primary Button</div>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Button Text</span>
+                                    <input type="text" name="primary_label" value="<%= settings.primary_label || '' %>" placeholder="Apply for RTSE">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Button Link</span>
+                                    <input type="text" name="primary_url" value="<%= settings.primary_url || '' %>" placeholder="/rtse/apply">
+                                </label>
+                            </div>
+
+                            <div class="rtse-editor-subtitle">Secondary Button</div>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Button Text</span>
+                                    <input type="text" name="secondary_label" value="<%= settings.secondary_label || '' %>" placeholder="Student Login">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Button Link</span>
+                                    <input type="text" name="secondary_url" value="<%= settings.secondary_url || '' %>" placeholder="/rtse/student/login">
+                                </label>
+                            </div>
+
+                        <% } else if (section.section_key === "faq") { %>
+
+                            <div class="rtse-editor-subtitle">Frequently Asked Questions</div>
+
+                            <div class="rtse-repeat-list">
+                                <% (Array.isArray(content) ? content : []).forEach((item, i) => { %>
+                                    <div class="rtse-repeat-item">
+                                        <div class="rtse-repeat-top">
+                                            <strong>Question <%= i + 1 %></strong>
+                                            <button type="button" class="rtse-remove" data-remove-item>Remove</button>
+                                        </div>
+
+                                        <label class="rtse-field">
+                                            <span>Question</span>
+                                            <input type="text" name="faq_<%= i %>_question" value="<%= item.question || '' %>" placeholder="How can I apply?">
+                                        </label>
+
+                                        <label class="rtse-field">
+                                            <span>Answer</span>
+                                            <textarea name="faq_<%= i %>_answer" rows="4" placeholder="Write the answer..."><%= item.answer || '' %></textarea>
+                                        </label>
+                                    </div>
+                                <% }) %>
+                            </div>
+
+                            <button type="button" class="rtse-add-item" data-add-faq>+ Add FAQ</button>
+
+                        <% } %>
+
+                        <div class="rtse-editor-footer">
+                            <label class="rtse-order">
+                                <span>Display Order</span>
+                                <input type="number" name="display_order" value="<%= section.display_order %>">
+                            </label>
+
+                            <button type="submit" class="btn-save rtse-save-button">
+                                Save Section
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <% }) %>
+
+            </div>
+        </div>
+
+        <%- include("../partials/footer") %>
+    </main>
+</div>
