@@ -147,6 +147,28 @@
                                 </label>
                             </div>
 
+                            <div class="rtse-mini-heading">Previous Year Questions Button</div>
+
+                            <div class="rtse-basic-grid">
+                                <label class="rtse-field">
+                                    <span>Button Text</span>
+                                    <input type="text" name="pyq_label" value="<%= settings.pyq_label || '' %>" placeholder="Previous Year Questions">
+                                </label>
+
+                                <label class="rtse-field">
+                                    <span>Button Link</span>
+                                    <input type="text" name="pyq_url" value="<%= settings.pyq_url || '' %>" placeholder="/rtse/pyq">
+                                </label>
+                            </div>
+
+                            <label class="rtse-checkbox">
+                                <input type="checkbox"
+                                       name="pyq_enabled"
+                                       value="1"
+                                       <%= settings.pyq_enabled !== false ? 'checked' : '' %>>
+                                <span>Show Previous Year Questions button on the hero</span>
+                            </label>
+
                         <% } else if (section.section_key === "announcement") { %>
 
                             <label class="rtse-field">

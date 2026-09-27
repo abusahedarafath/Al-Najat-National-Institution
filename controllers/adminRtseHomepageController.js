@@ -50,6 +50,9 @@ function buildSectionData(section, body) {
                 primary_url: clean(body.primary_url),
                 secondary_label: clean(body.secondary_label),
                 secondary_url: clean(body.secondary_url),
+                pyq_label: clean(body.pyq_label),
+                pyq_url: clean(body.pyq_url),
+                pyq_enabled: body.pyq_enabled === "1",
                 image: clean(body.image)
             }
         };

@@ -55,6 +55,13 @@
                        href="<%= heroSettings.secondary_url || '/rtse/student/login' %>">
                         <%= heroSettings.secondary_label || "Student Portal" %>
                     </a>
+
+                    <% if (heroSettings.pyq_enabled !== false) { %>
+                        <a class="rtse-btn rtse-btn-outline"
+                           href="<%= heroSettings.pyq_url || '/rtse/pyq' %>">
+                            <%= heroSettings.pyq_label || "Previous Year Questions" %>
+                        </a>
+                    <% } %>
                 </div>
 
                 <div class="rtse-hero-trust">
