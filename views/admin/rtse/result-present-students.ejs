@@ -884,31 +884,30 @@
     }
 
 
-    document
-        .querySelectorAll(
-            ".rtse-result-popup-trigger"
-        )
-        .forEach(function (link) {
+    document.addEventListener(
+        "click",
+        function (event) {
+            const link =
+                event.target.closest(
+                    ".rtse-result-popup-trigger"
+                );
 
-            link.addEventListener(
-                "click",
-                function (event) {
+            if (!link) {
+                return;
+            }
 
-                    event.preventDefault();
+            event.preventDefault();
+            event.stopPropagation();
 
-                    const url =
-                        this.getAttribute(
-                            "data-result-url"
-                        ) ||
-                        this.getAttribute("href");
+            const url =
+                link.getAttribute(
+                    "data-result-url"
+                ) ||
+                link.getAttribute("href");
 
-
-                    openPopup(url);
-
-                }
-            );
-
-        });
+            openPopup(url);
+        }
+    );
 
 
     closeButton.addEventListener(
