@@ -104,6 +104,21 @@ async function saveRtseResult(applicationId, body) {
     const submittedComponents =
         readComponentMarks(source);
 
+    /*
+     * Express may parse component_marks[1] as an array when
+     * numeric bracket keys are submitted. Normalize that array
+     * to the configured component IDs before reading the values.
+     */
+    const normalizedComponentMarks = Array.isArray(submittedComponents)
+        ? components.reduce((map, component, index) => {
+            const value = submittedComponents[index];
+            if (value !== undefined) {
+                map[String(component.id)] = value;
+            }
+            return map;
+        }, {})
+        : submittedComponents;
+
     const componentMarks = [];
     let configuredObtainedMarks = 0;
     let configuredFullMarks = 0;
@@ -113,7 +128,7 @@ async function saveRtseResult(applicationId, body) {
             String(component.id);
 
         const rawValue =
-            submittedComponents[componentId];
+            normalizedComponentMarks[componentId];
 
         /*
          * Empty component input means zero.
