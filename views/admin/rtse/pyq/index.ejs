@@ -6,101 +6,493 @@
     <%- include("../../partials/sidebar") %>
 
     <main class="admin-content">
-        <div class="container">
-            <div class="page-header">
-                <div>
-                    <h1>RTSE PYQ Management</h1>
-                    <p>Manage previous year question papers.</p>
-                </div>
 
-                <a href="/admin/rtse/pyq/create" class="btn-save">
-                    + Add PYQ
-                </a>
+        <div class="rtse-pyq-admin-page">
+
+    <div class="rtse-pyq-admin-header">
+
+        <div>
+
+            <a
+                href="/admin/rtse/pyq/categories"
+                class="rtse-pyq-admin-back"
+            >
+                <i class="fas fa-arrow-left"></i>
+                Back to Year Categories
+            </a>
+
+            <div class="rtse-pyq-admin-eyebrow">
+                RTSE Previous Year Questions
             </div>
 
-            <% if (typeof messages !== "undefined" && messages.success && messages.success.length) { %>
-                <div class="alert alert-success"><%= messages.success[0] %></div>
-            <% } %>
+            <h1>
+                <%= category.year %> PYQ Management
+            </h1>
 
-            <% if (typeof messages !== "undefined" && messages.error && messages.error.length) { %>
-                <div class="alert alert-danger"><%= messages.error[0] %></div>
-            <% } %>
+            <p>
+                Manage the question papers inside
+                <strong><%= category.title %></strong>.
+            </p>
 
-            <% if (!pyqs.length) { %>
-                <div class="profile-card">
-                    <h3>No PYQs found</h3>
-                    <p>Add the first previous year question paper.</p>
+        </div>
+
+        <div class="rtse-pyq-admin-actions">
+
+            <button
+                type="button"
+                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary rtse-pyq-modal-open"
+                data-modal-target="rtse-pyq-add-modal"
+            >
+                <i class="fas fa-plus"></i>
+                Add PYQ
+            </button>
+
+        </div>
+
+    </div>
+
+    <% if (typeof messages !== "undefined" && messages.success && messages.success.length) { %>
+        <div class="rtse-pyq-alert rtse-pyq-alert-success">
+            <%= messages.success[0] %>
+        </div>
+    <% } %>
+
+    <% if (typeof messages !== "undefined" && messages.error && messages.error.length) { %>
+        <div class="rtse-pyq-alert rtse-pyq-alert-error">
+            <%= messages.error[0] %>
+        </div>
+    <% } %>
+
+    <!-- =====================================================
+         SELECTED CATEGORY INFORMATION
+         ===================================================== -->
+    <div class="rtse-pyq-selected-category">
+
+        <div class="rtse-pyq-selected-category-main">
+
+            <div class="rtse-pyq-selected-category-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+
+            <div>
+
+                <div class="rtse-pyq-selected-category-year">
+                    <%= category.year %>
                 </div>
-            <% } else { %>
-                <div class="profile-card rtse-pyq-admin-table-wrap">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Year</th>
-                                <th>Class</th>
-                                <th>PDF</th>
-                                <th>Order</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
 
-                        <tbody>
-                            <% pyqs.forEach(pyq => { %>
-                                <tr>
-                                    <td><%= pyq.id %></td>
-                                    <td><strong><%= pyq.year %></strong></td>
-                                    <td>Class <%= pyq.class_name %></td>
-                                    <td>
-                                        <a
-                                            href="<%= pyq.pdf_path %>"
-                                            target="_blank"
-                                            rel="noopener"
-                                            class="btn-view"
-                                        >View PDF</a>
-                                    </td>
-                                    <td><%= pyq.display_order %></td>
-                                    <td>
-                                        <% if (pyq.is_active) { %>
-                                            <span style="color:green;font-weight:bold;">Active</span>
-                                        <% } else { %>
-                                            <span style="color:red;font-weight:bold;">Hidden</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
+                <h2>
+                    <%= category.title %>
+                </h2>
+
+                <div class="rtse-pyq-category-meta">
+
+                    <% if (category.is_active) { %>
+                        <span class="rtse-pyq-status active">
+                            <i class="fas fa-eye"></i>
+                            Visible to Students
+                        </span>
+                    <% } else { %>
+                        <span class="rtse-pyq-status inactive">
+                            <i class="fas fa-eye-slash"></i>
+                            Hidden from Students
+                        </span>
+                    <% } %>
+
+                    <span>
+                        <i class="fas fa-sort"></i>
+                        Display Order: <%= category.display_order %>
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="rtse-pyq-admin-actions">
+
+            <a
+                href="/admin/rtse/pyq/categories/<%= category.id %>/edit"
+                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary"
+            >
+                <i class="fas fa-edit"></i>
+                Edit Category
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         PYQ LIST
+         ===================================================== -->
+    <% if (!pyqs || !pyqs.length) { %>
+
+        <div class="rtse-pyq-empty">
+
+            <div class="rtse-pyq-empty-icon">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+
+            <h2>No PYQs in <%= category.year %></h2>
+
+            <p>
+                Add the first previous year question paper to this category.
+            </p>
+
+            <button
+                type="button"
+                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary rtse-pyq-modal-open"
+                data-modal-target="rtse-pyq-add-modal"
+            >
+                <i class="fas fa-plus"></i>
+                Add <%= category.year %> PYQ
+            </button>
+
+        </div>
+
+    <% } else { %>
+
+        <div class="profile-card rtse-pyq-admin-table-wrap">
+
+            <div class="rtse-pyq-table-heading">
+
+                <div>
+                    <h2>
+                        <%= category.year %> Previous Year Questions
+                    </h2>
+
+                    <p>
+                        <%= pyqs.length %>
+                        question paper<%= pyqs.length === 1 ? "" : "s" %>
+                        in this category.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary rtse-pyq-modal-open"
+                    data-modal-target="rtse-pyq-add-modal"
+                >
+                    <i class="fas fa-plus"></i>
+                    Add PYQ
+                </button>
+
+            </div>
+
+            <div class="rtse-pyq-admin-table-scroll">
+
+                <table class="admin-table">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Class</th>
+                            <th>PDF</th>
+                            <th>Order</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% pyqs.forEach((pyq, index) => { %>
+
+                            <tr>
+
+                                <td>
+                                    <%= index + 1 %>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        Class <%= pyq.class_name %>
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="<%= pyq.pdf_path %>"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary"
+                                    >
+                                        <i class="fas fa-file-pdf"></i>
+                                        View PDF
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <%= pyq.display_order %>
+                                </td>
+
+                                <td>
+
+                                    <% if (pyq.is_active) { %>
+
+                                        <span class="rtse-pyq-status active">
+                                            Active
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="rtse-pyq-status inactive">
+                                            Hidden
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="rtse-pyq-row-actions">
+
                                         <a
                                             href="/admin/rtse/pyq/<%= pyq.id %>/edit"
-                                            class="btn-view"
-                                        >Edit</a>
+                                            class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </a>
 
                                         <form
-                                            action="/admin/rtse/pyq/<%= pyq.id %>/toggle"
                                             method="POST"
-                                            style="display:inline;"
+                                            action="/admin/rtse/pyq/<%= pyq.id %>/toggle"
+                                            class="rtse-pyq-inline-form"
                                         >
-                                            <button type="submit" class="btn-save">
-                                                Toggle
+                                            <button
+                                                type="submit"
+                                                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-warning"
+                                            >
+                                                <% if (pyq.is_active) { %>
+                                                    <i class="fas fa-eye-slash"></i>
+                                                    Hide
+                                                <% } else { %>
+                                                    <i class="fas fa-eye"></i>
+                                                    Show
+                                                <% } %>
                                             </button>
                                         </form>
 
                                         <form
-                                            action="/admin/rtse/pyq/<%= pyq.id %>/delete"
                                             method="POST"
-                                            style="display:inline;"
-                                            onsubmit="return confirm('Remove this PYQ from the listing? The PDF file will be preserved.');"
+                                            action="/admin/rtse/pyq/<%= pyq.id %>/delete"
+                                            class="rtse-pyq-inline-form rtse-pyq-delete-form"
                                         >
-                                            <button type="submit" class="btn-cancel">
+                                            <button
+                                                type="submit"
+                                                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-danger"
+                                            >
+                                                <i class="fas fa-trash"></i>
                                                 Delete
                                             </button>
                                         </form>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% }); %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+<!-- =========================================================
+     ADD PYQ POPUP
+     ========================================================= -->
+<div
+    id="rtse-pyq-add-modal"
+    class="rtse-pyq-modal"
+    aria-hidden="true"
+>
+    <div class="rtse-pyq-modal-backdrop rtse-pyq-modal-close"></div>
+
+    <div
+        class="rtse-pyq-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rtse-pyq-add-modal-title"
+    >
+
+        <div class="rtse-pyq-modal-header">
+
+            <div>
+
+                <h2 id="rtse-pyq-add-modal-title">
+                    Add <%= category.year %> PYQ
+                </h2>
+
+                <p>
+                    Upload a previous year question paper for
+                    <strong><%= category.title %></strong>.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="rtse-pyq-modal-x rtse-pyq-modal-close"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <form
+            method="POST"
+            action="/admin/rtse/pyq"
+            enctype="multipart/form-data"
+        >
+
+            <input
+                type="hidden"
+                name="category_id"
+                value="<%= category.id %>"
+            >
+
+            <input
+                type="hidden"
+                name="year"
+                value="<%= category.year %>"
+            >
+
+            <div class="rtse-pyq-form-grid">
+
+                <div class="rtse-pyq-form-group">
+
+                    <label for="rtse-pyq-class">
+                        Class
+                    </label>
+
+                    <input
+                        type="text"
+                        id="rtse-pyq-class"
+                        name="class_name"
+                        maxlength="100"
+                        required
+                        placeholder="Example: 10"
+                    >
+
+                    <small>
+                        Enter the class for this question paper.
+                    </small>
+
                 </div>
-            <% } %>
+
+                <div class="rtse-pyq-form-group">
+
+                    <label for="rtse-pyq-order">
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="rtse-pyq-order"
+                        name="display_order"
+                        value="0"
+                        min="0"
+                        step="1"
+                    >
+
+                    <small>
+                        Lower numbers appear first.
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="rtse-pyq-form-group">
+
+                <label for="rtse-pyq-pdf">
+                    Question Paper PDF
+                </label>
+
+                <input
+                    type="file"
+                    id="rtse-pyq-pdf"
+                    name="pdf"
+                    accept="application/pdf,.pdf"
+                    required
+                >
+
+                <small>
+                    PDF only. Maximum file size: 25 MB.
+                </small>
+
+            </div>
+
+            <div class="rtse-pyq-checkbox-row">
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="1"
+                        checked
+                    >
+
+                    <span>
+                        Make this PYQ visible to students
+                    </span>
+
+                </label>
+
+            </div>
+
+            <div class="rtse-pyq-modal-actions">
+
+                <button
+                    type="button"
+                    class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary rtse-pyq-modal-close"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary"
+                >
+                    <i class="fas fa-file-upload"></i>
+                    Add PYQ
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll(".rtse-pyq-delete-form").forEach(form => {
+    form.addEventListener("submit", event => {
+        const confirmed = window.confirm(
+            "Remove this PYQ from the listing? The existing PDF file will be preserved."
+        );
+
+        if (!confirmed) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+
         </div>
     </main>
 </div>

@@ -5,12 +5,45 @@ const db = require("../config/database");
 class RtsePyq {
     static async getAll(includeInactive = true) {
         const sql = includeInactive
-            ? `SELECT * FROM rtse_pyqs ORDER BY display_order ASC, year DESC, id DESC`
-            : `SELECT * FROM rtse_pyqs
-               WHERE is_active = 1
-               ORDER BY display_order ASC, year DESC, id DESC`;
+            ? `SELECT p.*, c.title AS category_title
+               FROM rtse_pyqs p
+               LEFT JOIN rtse_pyq_categories c ON c.id = p.category_id
+               ORDER BY
+                   COALESCE(c.display_order, 999999) ASC,
+                   p.display_order ASC,
+                   p.year DESC,
+                   p.id DESC`
+            : `SELECT p.*, c.title AS category_title
+               FROM rtse_pyqs p
+               LEFT JOIN rtse_pyq_categories c ON c.id = p.category_id
+               WHERE p.is_active = 1
+                 AND (p.category_id IS NULL OR c.is_active = 1)
+               ORDER BY
+                   COALESCE(c.display_order, 999999) ASC,
+                   p.display_order ASC,
+                   p.year DESC,
+                   p.id DESC`;
 
         const [rows] = await db.query(sql);
+        return rows;
+    }
+
+    static async getByCategory(categoryId, includeInactive = true) {
+        const sql = includeInactive
+            ? `SELECT p.*, c.title AS category_title
+               FROM rtse_pyqs p
+               INNER JOIN rtse_pyq_categories c ON c.id = p.category_id
+               WHERE p.category_id = ?
+               ORDER BY p.display_order ASC, p.year DESC, p.id DESC`
+            : `SELECT p.*, c.title AS category_title
+               FROM rtse_pyqs p
+               INNER JOIN rtse_pyq_categories c ON c.id = p.category_id
+               WHERE p.category_id = ?
+                 AND p.is_active = 1
+                 AND c.is_active = 1
+               ORDER BY p.display_order ASC, p.year DESC, p.id DESC`;
+
+        const [rows] = await db.query(sql, [categoryId]);
         return rows;
     }
 
@@ -25,9 +58,10 @@ class RtsePyq {
     static async create(data) {
         const [result] = await db.query(
             `INSERT INTO rtse_pyqs
-             (year, class_name, pdf_path, display_order, is_active)
-             VALUES (?, ?, ?, ?, ?)`,
+             (category_id, year, class_name, pdf_path, display_order, is_active)
+             VALUES (?, ?, ?, ?, ?, ?)`,
             [
+                data.category_id || null,
                 data.year,
                 data.class_name,
                 data.pdf_path,
@@ -42,9 +76,10 @@ class RtsePyq {
     static async update(id, data) {
         await db.query(
             `UPDATE rtse_pyqs
-             SET year=?, class_name=?, pdf_path=?, display_order=?, is_active=?
+             SET category_id=?, year=?, class_name=?, pdf_path=?, display_order=?, is_active=?
              WHERE id=?`,
             [
+                data.category_id || null,
                 data.year,
                 data.class_name,
                 data.pdf_path,

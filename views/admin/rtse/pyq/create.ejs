@@ -13,7 +13,10 @@
                     <p>Publish a previous year question paper.</p>
                 </div>
 
-                <a href="/admin/rtse/pyq" class="btn-view">← Back</a>
+                <a
+                    href="<%= category ? `/admin/rtse/pyq?category_id=${category.id}` : '/admin/rtse/pyq' %>"
+                    class="btn-view"
+                >← Back</a>
             </div>
 
             <div class="profile-card">
@@ -24,6 +27,27 @@
                 >
                     <div class="rtse-pyq-admin-grid">
                         <label>
+                            <span>Year Category</span>
+                            <select name="category_id">
+                                <option value="">No category</option>
+
+                                <% (categories || []).forEach(item => { %>
+                                    <option
+                                        value="<%= item.id %>"
+                                        <%= categoryId && Number(categoryId) === Number(item.id) ? "selected" : "" %>
+                                    >
+                                        <%= item.year %> — <%= item.title %>
+                                        <% if (!item.is_active) { %> (Hidden) <% } %>
+                                    </option>
+                                <% }) %>
+                            </select>
+
+                            <small>
+                                Select the year category that should contain this PYQ.
+                            </small>
+                        </label>
+
+                        <label>
                             <span>Year</span>
                             <input
                                 type="number"
@@ -31,6 +55,7 @@
                                 min="2000"
                                 max="2100"
                                 required
+                                value="<%= category ? category.year : '' %>"
                                 placeholder="2025"
                             >
                         </label>
@@ -71,7 +96,10 @@
                     </label>
 
                     <div class="rtse-pyq-admin-actions">
-                        <a href="/admin/rtse/pyq" class="btn-cancel">Cancel</a>
+                        <a
+                            href="<%= category ? `/admin/rtse/pyq?category_id=${category.id}` : '/admin/rtse/pyq' %>"
+                            class="btn-cancel"
+                        >Cancel</a>
                         <button type="submit" class="btn-save">Save PYQ</button>
                     </div>
                 </form>

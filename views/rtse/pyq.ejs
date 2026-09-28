@@ -2,54 +2,92 @@
 <link rel="stylesheet" href="/css/rtse-pyq.css">
 
 <main class="rtse-pyq-page">
+
     <section class="rtse-pyq-hero">
         <div class="rtse-pyq-container">
-            <a href="/rtse/" class="rtse-pyq-back">← Back to RTSE</a>
-            <span class="rtse-pyq-badge">RTSE STUDY RESOURCE</span>
+
+            <a href="/rtse/" class="rtse-pyq-back">
+                ← Back to RTSE
+            </a>
+
+            <span class="rtse-pyq-badge">
+                RTSE STUDY RESOURCE
+            </span>
+
             <h1>Previous Year Questions</h1>
-            <p>Practice with previous RTSE question papers.</p>
+
+            <p>
+                Select a year to explore all available RTSE question papers.
+            </p>
+
         </div>
     </section>
 
     <section class="rtse-pyq-content">
+
         <div class="rtse-pyq-container">
-            <% if (!pyqs.length) { %>
+
+            <% if (!categories || !categories.length) { %>
+
                 <div class="rtse-pyq-empty">
+
                     <div>📚</div>
-                    <h2>No PYQs available yet</h2>
-                    <p>Previous year question papers will appear here when published.</p>
+
+                    <h2>No PYQ Categories Available</h2>
+
+                    <p>
+                        Previous year question papers will appear here when
+                        they are published.
+                    </p>
+
                 </div>
+
             <% } else { %>
-                <div class="rtse-pyq-grid">
-                    <% pyqs.forEach(pyq => { %>
-                        <article class="rtse-pyq-card">
-                            <div class="rtse-pyq-card-icon">PDF</div>
 
-                            <div class="rtse-pyq-card-body">
-                                <span class="rtse-pyq-year"><%= pyq.year %></span>
-                                <h2>Class <%= pyq.class_name %></h2>
+                <div class="rtse-pyq-category-grid">
 
-                                <div class="rtse-pyq-actions">
-                                    <a
-                                        href="<%= pyq.pdf_path %>"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="rtse-pyq-view"
-                                    >View PDF</a>
+                    <% categories.forEach(category => { %>
 
-                                    <a
-                                        href="<%= pyq.pdf_path %>"
-                                        download
-                                        class="rtse-pyq-download"
-                                    >Download</a>
-                                </div>
+                        <a
+                            href="/rtse/pyq/<%= category.year %>"
+                            class="rtse-pyq-year-card"
+                        >
+
+                            <div class="rtse-pyq-year-card-icon">
+                                <span>
+                                    <%= category.year %>
+                                </span>
                             </div>
-                        </article>
-                    <% }) %>
+
+                            <div class="rtse-pyq-year-card-body">
+
+                                <span class="rtse-pyq-year-label">
+                                    RTSE <%= category.year %>
+                                </span>
+
+                                <h2>
+                                    <%= category.title %>
+                                </h2>
+
+                                <span class="rtse-pyq-year-card-link">
+                                    View Question Papers
+                                    <span aria-hidden="true">→</span>
+                                </span>
+
+                            </div>
+
+                        </a>
+
+                    <% }); %>
+
                 </div>
+
             <% } %>
+
         </div>
+
     </section>
+
 </main>
 
 <%- include("../partials/footer") %>

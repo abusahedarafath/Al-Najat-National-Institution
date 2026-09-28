@@ -91,6 +91,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/pyq", rtsePyqController.index);
+router.get("/pyq/:year", rtsePyqController.category);
 
 
 // =====================================

@@ -1,0 +1,129 @@
+<%- include("../partials/header") %>
+<link rel="stylesheet" href="/css/rtse-pyq.css">
+
+<main class="rtse-pyq-page">
+
+    <section class="rtse-pyq-hero">
+        <div class="rtse-pyq-container">
+
+            <a href="/rtse/pyq" class="rtse-pyq-back">
+                ← Back to Years
+            </a>
+
+            <span class="rtse-pyq-badge">
+                RTSE <%= category.year %>
+            </span>
+
+            <h1><%= category.title %></h1>
+
+            <p>
+                Previous year question papers for RTSE <%= category.year %>.
+            </p>
+
+        </div>
+    </section>
+
+    <section class="rtse-pyq-content">
+
+        <div class="rtse-pyq-container">
+
+            <% if (!pyqs || !pyqs.length) { %>
+
+                <div class="rtse-pyq-empty">
+
+                    <div>📄</div>
+
+                    <h2>No Question Papers Available</h2>
+
+                    <p>
+                        Question papers for <%= category.year %> will appear
+                        here when they are published.
+                    </p>
+
+                    <a
+                        href="/rtse/pyq"
+                        class="rtse-pyq-view"
+                        style="display:inline-block;margin-top:15px;"
+                    >
+                        Browse Other Years
+                    </a>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="rtse-pyq-category-heading">
+                    <div>
+                        <span class="rtse-pyq-year-label">
+                            RTSE <%= category.year %>
+                        </span>
+
+                        <h2>
+                            Available Question Papers
+                        </h2>
+                    </div>
+
+                    <span class="rtse-pyq-paper-count">
+                        <%= pyqs.length %>
+                        <%= pyqs.length === 1 ? "Paper" : "Papers" %>
+                    </span>
+                </div>
+
+                <div class="rtse-pyq-grid">
+
+                    <% pyqs.forEach(pyq => { %>
+
+                        <article class="rtse-pyq-card">
+
+                            <div class="rtse-pyq-card-icon">
+                                PDF
+                            </div>
+
+                            <div class="rtse-pyq-card-body">
+
+                                <span class="rtse-pyq-year">
+                                    <%= category.year %>
+                                </span>
+
+                                <h2>
+                                    Class <%= pyq.class_name %>
+                                </h2>
+
+                                <div class="rtse-pyq-actions">
+
+                                    <a
+                                        href="<%= pyq.pdf_path %>"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="rtse-pyq-view"
+                                    >
+                                        View PDF
+                                    </a>
+
+                                    <a
+                                        href="<%= pyq.pdf_path %>"
+                                        download
+                                        class="rtse-pyq-download"
+                                    >
+                                        Download
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    <% }); %>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </section>
+
+</main>
+
+<%- include("../partials/footer") %>

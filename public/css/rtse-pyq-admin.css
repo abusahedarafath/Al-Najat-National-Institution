@@ -52,3 +52,1060 @@
         flex-direction: column;
     }
 }
+
+/* =========================================================
+   RTSE PYQ YEAR CATEGORY MANAGEMENT
+   Additive styles only
+   ========================================================= */
+
+.rtse-pyq-category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.rtse-pyq-category-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.rtse-pyq-category-card.is-disabled {
+    opacity: 0.7;
+}
+
+.rtse-pyq-category-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 24px;
+}
+
+.rtse-pyq-category-year {
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 800;
+    color: #111827;
+}
+
+.rtse-pyq-category-title {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.rtse-pyq-category-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.rtse-pyq-category-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.rtse-pyq-inline-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.rtse-pyq-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.rtse-pyq-status.active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.rtse-pyq-status.inactive {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.rtse-pyq-category-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.rtse-pyq-category-admin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.rtse-pyq-category-admin-item > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.rtse-pyq-category-admin-item strong {
+    font-size: 20px;
+    color: #111827;
+}
+
+.rtse-pyq-category-admin-item span {
+    color: #6b7280;
+}
+
+.rtse-pyq-form-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.rtse-pyq-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.rtse-pyq-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.rtse-pyq-form-group label {
+    font-weight: 700;
+    color: #111827;
+}
+
+.rtse-pyq-form-group input,
+.rtse-pyq-form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #111827;
+}
+
+.rtse-pyq-form-group small {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.rtse-pyq-checkbox-row {
+    margin-top: 20px;
+}
+
+.rtse-pyq-checkbox-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+}
+
+.rtse-pyq-checkbox-row input {
+    width: 18px;
+    height: 18px;
+}
+
+.rtse-pyq-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+@media (max-width: 700px) {
+    .rtse-pyq-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rtse-pyq-category-admin-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .rtse-pyq-category-actions {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   RTSE PYQ ADMIN POPUPS
+   ========================================================= */
+
+.rtse-pyq-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.rtse-pyq-modal.is-open {
+    display: flex;
+}
+
+.rtse-pyq-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(3px);
+}
+
+.rtse-pyq-modal-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(760px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+    padding: 26px;
+}
+
+.rtse-pyq-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.rtse-pyq-modal-header h2 {
+    margin: 0 0 6px;
+}
+
+.rtse-pyq-modal-header p {
+    margin: 0;
+    opacity: 0.72;
+}
+
+.rtse-pyq-modal-x {
+    border: 0;
+    background: transparent;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 8px;
+}
+
+.rtse-pyq-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+body.rtse-pyq-modal-lock {
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .rtse-pyq-modal {
+        padding: 10px;
+    }
+
+    .rtse-pyq-modal-dialog {
+        max-height: calc(100vh - 20px);
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    .rtse-pyq-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .rtse-pyq-modal-actions button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   RTSE PYQ ADMIN — COMPLETE ADMIN UI STYLES
+   Additive styles only
+   ========================================================= */
+
+/* Main PYQ page container */
+.rtse-pyq-admin-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px;
+    box-sizing: border-box;
+}
+
+/* Header */
+.rtse-pyq-admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.rtse-pyq-admin-header h1 {
+    margin: 4px 0 8px;
+    color: #111827;
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.rtse-pyq-admin-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.rtse-pyq-admin-eyebrow {
+    color: #047857;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+/* Back link */
+.rtse-pyq-admin-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+    color: #047857;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rtse-pyq-admin-back:hover {
+    color: #065f46;
+    text-decoration: underline;
+}
+
+/* Buttons */
+.rtse-pyq-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background-color .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease,
+        transform .15s ease;
+}
+
+.rtse-pyq-admin-btn:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.rtse-pyq-admin-btn:focus-visible {
+    outline: 3px solid rgba(16, 185, 129, .22);
+    outline-offset: 2px;
+}
+
+.rtse-pyq-admin-btn-primary {
+    background: #047857;
+    border-color: #047857;
+    color: #ffffff !important;
+}
+
+.rtse-pyq-admin-btn-primary:hover {
+    background: #065f46;
+    border-color: #065f46;
+}
+
+.rtse-pyq-admin-btn-secondary {
+    background: #ffffff;
+    border-color: #d1d5db;
+    color: #374151 !important;
+}
+
+.rtse-pyq-admin-btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.rtse-pyq-admin-btn-warning {
+    background: #fffbeb;
+    border-color: #f59e0b;
+    color: #92400e !important;
+}
+
+.rtse-pyq-admin-btn-warning:hover {
+    background: #fef3c7;
+}
+
+.rtse-pyq-admin-btn-danger {
+    background: #fff1f2;
+    border-color: #fda4af;
+    color: #be123c !important;
+}
+
+.rtse-pyq-admin-btn-danger:hover {
+    background: #ffe4e6;
+}
+
+/* Action groups */
+.rtse-pyq-admin-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-top: 0;
+}
+
+.rtse-pyq-category-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rtse-pyq-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.rtse-pyq-inline-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+/* Alerts */
+.rtse-pyq-alert {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 20px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.rtse-pyq-alert-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.rtse-pyq-alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+/* Category cards */
+.rtse-pyq-category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.rtse-pyq-category-card {
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .06);
+    box-sizing: border-box;
+}
+
+.rtse-pyq-category-card:hover {
+    box-shadow: 0 9px 28px rgba(15, 23, 42, .09);
+}
+
+.rtse-pyq-category-card.is-disabled {
+    opacity: .68;
+}
+
+.rtse-pyq-category-icon {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 22px;
+}
+
+.rtse-pyq-category-content {
+    min-width: 0;
+}
+
+.rtse-pyq-category-year {
+    color: #111827;
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.rtse-pyq-category-title {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.rtse-pyq-category-meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.rtse-pyq-category-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Status pills */
+.rtse-pyq-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.rtse-pyq-status.active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.rtse-pyq-status.inactive {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* Selected category panel */
+.rtse-pyq-selected-category {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 22px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .05);
+}
+
+.rtse-pyq-selected-category-main {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.rtse-pyq-selected-category-icon {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 25px;
+}
+
+.rtse-pyq-selected-category-year {
+    color: #047857;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.rtse-pyq-selected-category h2 {
+    margin: 3px 0 0;
+    color: #111827;
+    font-size: 21px;
+    line-height: 1.3;
+}
+
+.rtse-pyq-selected-category .rtse-pyq-category-meta {
+    margin-top: 8px;
+}
+
+/* Empty state */
+.rtse-pyq-empty {
+    padding: 55px 25px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px dashed #d1d5db;
+    border-radius: 16px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .04);
+}
+
+.rtse-pyq-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 26px;
+}
+
+.rtse-pyq-empty h2 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-size: 21px;
+}
+
+.rtse-pyq-empty p {
+    max-width: 550px;
+    margin: 0 auto 20px;
+    color: #6b7280;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* PYQ table card */
+.rtse-pyq-admin-table-wrap {
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .05);
+}
+
+.rtse-pyq-table-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rtse-pyq-table-heading h2 {
+    margin: 0 0 5px;
+    color: #111827;
+    font-size: 19px;
+}
+
+.rtse-pyq-table-heading p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.rtse-pyq-admin-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Keep existing admin table styling compatible */
+.rtse-pyq-admin-table-wrap .admin-table {
+    width: 100%;
+    min-width: 760px;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.rtse-pyq-admin-table-wrap .admin-table th,
+.rtse-pyq-admin-table-wrap .admin-table td {
+    vertical-align: middle;
+    padding: 12px 14px;
+}
+
+.rtse-pyq-admin-table-wrap .admin-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Forms */
+.rtse-pyq-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.rtse-pyq-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 18px;
+}
+
+.rtse-pyq-form-group label {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.rtse-pyq-form-group input,
+.rtse-pyq-form-group select,
+.rtse-pyq-form-group textarea {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+}
+
+.rtse-pyq-form-group input:focus,
+.rtse-pyq-form-group select:focus,
+.rtse-pyq-form-group textarea:focus {
+    outline: none;
+    border-color: #047857;
+    box-shadow: 0 0 0 3px rgba(4, 120, 87, .10);
+}
+
+.rtse-pyq-form-group input[type="file"] {
+    min-height: auto;
+    padding: 9px;
+}
+
+.rtse-pyq-form-group small {
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.rtse-pyq-checkbox-row {
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.rtse-pyq-checkbox-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.rtse-pyq-checkbox-row input {
+    width: 18px;
+    height: 18px;
+    accent-color: #047857;
+}
+
+/* Modal */
+.rtse-pyq-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.rtse-pyq-modal.is-open {
+    display: flex;
+}
+
+.rtse-pyq-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, .62);
+    backdrop-filter: blur(3px);
+}
+
+.rtse-pyq-modal-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(700px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 26px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .25);
+}
+
+.rtse-pyq-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.rtse-pyq-modal-header h2 {
+    margin: 0 0 5px;
+    color: #111827;
+    font-size: 22px;
+}
+
+.rtse-pyq-modal-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.rtse-pyq-modal-x {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #4b5563;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.rtse-pyq-modal-x:hover {
+    background: #f3f4f6;
+}
+
+.rtse-pyq-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+}
+
+body.rtse-pyq-modal-lock {
+    overflow: hidden;
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE ADMIN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .rtse-pyq-admin-page {
+        padding: 22px 18px;
+    }
+
+    .rtse-pyq-admin-header {
+        gap: 18px;
+    }
+
+    .rtse-pyq-admin-header h1 {
+        font-size: 26px;
+    }
+
+    .rtse-pyq-selected-category {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .rtse-pyq-selected-category .rtse-pyq-admin-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .rtse-pyq-admin-page {
+        padding: 18px 12px;
+    }
+
+    .rtse-pyq-admin-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .rtse-pyq-admin-header h1 {
+        font-size: 23px;
+    }
+
+    .rtse-pyq-admin-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .rtse-pyq-admin-actions > .rtse-pyq-admin-btn,
+    .rtse-pyq-admin-actions > a.rtse-pyq-admin-btn {
+        flex: 1 1 auto;
+    }
+
+    .rtse-pyq-category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rtse-pyq-category-actions {
+        width: 100%;
+    }
+
+    .rtse-pyq-category-actions .rtse-pyq-admin-btn,
+    .rtse-pyq-category-actions .rtse-pyq-inline-form,
+    .rtse-pyq-category-actions .rtse-pyq-inline-form button {
+        flex: 1 1 auto;
+    }
+
+    .rtse-pyq-category-actions .rtse-pyq-inline-form {
+        display: flex;
+    }
+
+    .rtse-pyq-selected-category {
+        padding: 18px;
+    }
+
+    .rtse-pyq-selected-category-main {
+        align-items: flex-start;
+    }
+
+    .rtse-pyq-table-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .rtse-pyq-table-heading .rtse-pyq-admin-btn {
+        width: 100%;
+    }
+
+    .rtse-pyq-form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .rtse-pyq-admin-page {
+        padding: 15px 9px;
+    }
+
+    .rtse-pyq-admin-header h1 {
+        font-size: 21px;
+    }
+
+    .rtse-pyq-category-card {
+        padding: 18px;
+    }
+
+    .rtse-pyq-category-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .rtse-pyq-category-actions > .rtse-pyq-admin-btn:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .rtse-pyq-category-actions .rtse-pyq-admin-btn,
+    .rtse-pyq-category-actions .rtse-pyq-inline-form,
+    .rtse-pyq-category-actions .rtse-pyq-inline-form button {
+        width: 100%;
+    }
+
+    .rtse-pyq-selected-category-main {
+        flex-direction: column;
+    }
+
+    .rtse-pyq-selected-category-icon {
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
+    }
+
+    .rtse-pyq-modal {
+        padding: 8px;
+    }
+
+    .rtse-pyq-modal-dialog {
+        max-height: calc(100vh - 16px);
+        padding: 19px;
+        border-radius: 14px;
+    }
+
+    .rtse-pyq-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .rtse-pyq-modal-actions .rtse-pyq-admin-btn {
+        width: 100%;
+    }
+
+}

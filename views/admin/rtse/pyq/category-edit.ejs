@@ -1,0 +1,130 @@
+<%- include("../../partials/header") %>
+
+<link rel="stylesheet" href="/css/rtse-pyq-admin.css">
+
+<div class="rtse-pyq-admin-page">
+
+    <div class="rtse-pyq-admin-header">
+        <div>
+            <h1>Edit Year Category</h1>
+            <p>
+                Update the year category settings. Existing PYQ files and records are preserved.
+            </p>
+        </div>
+
+        <div class="rtse-pyq-admin-actions">
+            <a href="/admin/rtse/pyq/categories"
+               class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Back to Categories
+            </a>
+        </div>
+    </div>
+
+    <div class="rtse-pyq-form-card">
+
+        <form method="POST"
+              action="/admin/rtse/pyq/categories/<%= category.id %>">
+
+            <div class="rtse-pyq-form-grid">
+
+                <div class="rtse-pyq-form-group">
+                    <label for="year">
+                        Year
+                    </label>
+
+                    <input
+                        type="number"
+                        id="year"
+                        name="year"
+                        min="2000"
+                        max="2100"
+                        value="<%= category.year %>"
+                        required
+                    >
+
+                    <small>
+                        Example: 2026
+                    </small>
+                </div>
+
+                <div class="rtse-pyq-form-group">
+                    <label for="title">
+                        Category Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        maxlength="255"
+                        value="<%= category.title %>"
+                        required
+                    >
+
+                    <small>
+                        This title will be displayed to students.
+                    </small>
+                </div>
+
+                <div class="rtse-pyq-form-group">
+                    <label for="display_order">
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="display_order"
+                        name="display_order"
+                        value="<%= category.display_order %>"
+                        min="0"
+                        step="1"
+                    >
+
+                    <small>
+                        Lower numbers appear first.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="rtse-pyq-checkbox-row">
+
+                <label>
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="1"
+                        <%= category.is_active ? "checked" : "" %>
+                    >
+
+                    <span>
+                        Make this category visible to students
+                    </span>
+                </label>
+
+            </div>
+
+            <div class="rtse-pyq-form-actions">
+
+                <a href="/admin/rtse/pyq/categories"
+                   class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary">
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<%- include("../../partials/footer") %>

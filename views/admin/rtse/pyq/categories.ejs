@@ -1,0 +1,339 @@
+<%- include("../../partials/header") %>
+<link rel="stylesheet" href="/css/rtse-pyq-admin.css">
+<script src="/js/rtse-pyq-admin.js" defer></script>
+
+<div class="admin-layout">
+    <%- include("../../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="rtse-pyq-admin-page">
+
+    <div class="rtse-pyq-admin-header">
+        <div>
+            <div class="rtse-pyq-admin-eyebrow">
+                RTSE Previous Year Questions
+            </div>
+            <h1>PYQ Year Categories</h1>
+            <p>
+                Create and manage year categories. Open a category to manage
+                the question papers inside that year.
+            </p>
+        </div>
+
+        <div class="rtse-pyq-admin-actions">
+            <button
+                type="button"
+                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary rtse-pyq-modal-open"
+                data-modal-target="rtse-pyq-category-modal"
+            >
+                <i class="fas fa-folder-plus"></i>
+                Add Year Category
+            </button>
+        </div>
+    </div>
+
+    <% if (typeof messages !== "undefined" && messages.success && messages.success.length) { %>
+        <div class="rtse-pyq-alert rtse-pyq-alert-success">
+            <%= messages.success[0] %>
+        </div>
+    <% } %>
+
+    <% if (typeof messages !== "undefined" && messages.error && messages.error.length) { %>
+        <div class="rtse-pyq-alert rtse-pyq-alert-error">
+            <%= messages.error[0] %>
+        </div>
+    <% } %>
+
+    <% if (!categories || !categories.length) { %>
+
+        <div class="rtse-pyq-empty">
+            <div class="rtse-pyq-empty-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+
+            <h2>No Year Categories Yet</h2>
+
+            <p>
+                Create your first year category, such as 2026, 2025 or 2024.
+            </p>
+
+            <button
+                type="button"
+                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary rtse-pyq-modal-open"
+                data-modal-target="rtse-pyq-category-modal"
+            >
+                <i class="fas fa-plus"></i>
+                Create First Category
+            </button>
+        </div>
+
+    <% } else { %>
+
+        <div class="rtse-pyq-category-grid">
+
+            <% categories.forEach(category => { %>
+
+                <div class="rtse-pyq-category-card <%= category.is_active ? '' : 'is-disabled' %>">
+
+                    <div class="rtse-pyq-category-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+
+                    <div class="rtse-pyq-category-content">
+
+                        <div class="rtse-pyq-category-year">
+                            <%= category.year %>
+                        </div>
+
+                        <div class="rtse-pyq-category-title">
+                            <%= category.title %>
+                        </div>
+
+                        <div class="rtse-pyq-category-meta">
+
+                            <span>
+                                <i class="fas fa-sort"></i>
+                                Order: <%= category.display_order %>
+                            </span>
+
+                            <% if (category.is_active) { %>
+                                <span class="rtse-pyq-status active">
+                                    Active
+                                </span>
+                            <% } else { %>
+                                <span class="rtse-pyq-status inactive">
+                                    Hidden
+                                </span>
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+                    <div class="rtse-pyq-category-actions">
+
+                        <a
+                            href="/admin/rtse/pyq?category_id=<%= category.id %>"
+                            class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary"
+                        >
+                            <i class="fas fa-file-pdf"></i>
+                            Manage PYQs
+                        </a>
+
+                        <a
+                            href="/admin/rtse/pyq/categories/<%= category.id %>/edit"
+                            class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary"
+                        >
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="/admin/rtse/pyq/categories/<%= category.id %>/toggle"
+                            class="rtse-pyq-inline-form"
+                        >
+                            <button
+                                type="submit"
+                                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-warning"
+                            >
+                                <% if (category.is_active) { %>
+                                    <i class="fas fa-eye-slash"></i>
+                                    Hide
+                                <% } else { %>
+                                    <i class="fas fa-eye"></i>
+                                    Show
+                                <% } %>
+                            </button>
+                        </form>
+
+                        <form
+                            method="POST"
+                            action="/admin/rtse/pyq/categories/<%= category.id %>/delete"
+                            class="rtse-pyq-inline-form rtse-pyq-delete-form"
+                        >
+                            <button
+                                type="submit"
+                                class="rtse-pyq-admin-btn rtse-pyq-admin-btn-danger"
+                            >
+                                <i class="fas fa-trash"></i>
+                                Remove
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            <% }); %>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+<!-- =========================================================
+     CREATE YEAR CATEGORY POPUP
+     ========================================================= -->
+<div
+    id="rtse-pyq-category-modal"
+    class="rtse-pyq-modal"
+    aria-hidden="true"
+>
+    <div class="rtse-pyq-modal-backdrop rtse-pyq-modal-close"></div>
+
+    <div
+        class="rtse-pyq-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rtse-pyq-category-modal-title"
+    >
+
+        <div class="rtse-pyq-modal-header">
+            <div>
+                <h2 id="rtse-pyq-category-modal-title">
+                    Add Year Category
+                </h2>
+
+                <p>
+                    Create a new year for RTSE Previous Year Questions.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="rtse-pyq-modal-x rtse-pyq-modal-close"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+        </div>
+
+        <form
+            method="POST"
+            action="/admin/rtse/pyq/categories"
+            enctype="application/x-www-form-urlencoded"
+        >
+
+            <div class="rtse-pyq-form-grid">
+
+                <div class="rtse-pyq-form-group">
+                    <label for="modal-category-year">
+                        Year
+                    </label>
+
+                    <input
+                        type="number"
+                        id="modal-category-year"
+                        name="year"
+                        min="2000"
+                        max="2100"
+                        required
+                        placeholder="2026"
+                    >
+
+                    <small>
+                        Example: 2026
+                    </small>
+                </div>
+
+                <div class="rtse-pyq-form-group">
+                    <label for="modal-category-title">
+                        Category Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="modal-category-title"
+                        name="title"
+                        maxlength="255"
+                        required
+                        placeholder="RTSE 2026 Previous Year Questions"
+                    >
+
+                    <small>
+                        This title is displayed to students.
+                    </small>
+                </div>
+
+                <div class="rtse-pyq-form-group">
+                    <label for="modal-category-order">
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="modal-category-order"
+                        name="display_order"
+                        value="0"
+                        min="0"
+                        step="1"
+                    >
+
+                    <small>
+                        Lower numbers appear first.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="rtse-pyq-checkbox-row">
+                <label>
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="1"
+                        checked
+                    >
+
+                    <span>
+                        Make this category visible to students
+                    </span>
+                </label>
+            </div>
+
+            <div class="rtse-pyq-modal-actions">
+
+                <button
+                    type="button"
+                    class="rtse-pyq-admin-btn rtse-pyq-admin-btn-secondary rtse-pyq-modal-close"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="rtse-pyq-admin-btn rtse-pyq-admin-btn-primary"
+                >
+                    <i class="fas fa-folder-plus"></i>
+                    Create Year Category
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll(".rtse-pyq-delete-form").forEach(form => {
+    form.addEventListener("submit", event => {
+        const confirmed = window.confirm(
+            "Remove this year category? Existing PYQ records and PDF files will be preserved."
+        );
+
+        if (!confirmed) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+
+        </div>
+    </main>
+</div>
+
+<%- include("../../partials/footer") %>
