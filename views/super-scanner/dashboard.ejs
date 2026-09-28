@@ -1355,10 +1355,18 @@ body.rtse-omr-modal-open {
                     data-rtse-component-mark
                     data-component-id="<%= component.id %>"
                     data-component-max="<%= component.maximum_marks %>"
+                                    data-grade-counting="<%= Number(component.grade_counting) === 1 ? 1 : 0 %>"
                     min="0"
                     max="<%= component.maximum_marks %>"
                     step="0.01"
                     placeholder="Enter marks">
+                  <div class="component-grade">
+                      Grade:
+                      <strong
+                          id="resultComponentGrade_<%= component.id %>"
+                          data-result-component-grade
+                      ></strong>
+                  </div>
             </div>
         <% }); %>
 
@@ -2717,68 +2725,133 @@ function calculateScannerResult(){
     }
 
     let configuredObtained = 0;
-    let configuredFullMarks = 0;
-    let invalidComponent = false;
+let configuredFullMarks = 0;
+let gradeObtained = omrMarks;
+let gradeFullMarks = 100;
+let invalidComponent = false;
 
-    resultComponentInputs.forEach(
-        function(input){
+resultComponentInputs.forEach(
+    function(input){
 
-            const maximum =
-                Number(input.dataset.componentMax);
+        const maximum =
+            Number(input.dataset.componentMax);
 
-            const obtained =
-                input.value === ""
-                    ? 0
-                    : Number(input.value);
+        const obtained =
+            input.value === ""
+                ? 0
+                : Number(input.value);
 
-            if(
-                !Number.isFinite(maximum) ||
-                maximum < 0 ||
-                !Number.isFinite(obtained) ||
-                obtained < 0 ||
-                obtained > maximum
-            ){
-                invalidComponent = true;
-                return;
+        if(
+            !Number.isFinite(maximum) ||
+            maximum < 0 ||
+            !Number.isFinite(obtained) ||
+            obtained < 0 ||
+            obtained > maximum
+        ){
+            invalidComponent = true;
+
+            const invalidComponentGradeElement =
+                document.getElementById(
+                    "resultComponentGrade_" +
+                    input.dataset.componentId
+                );
+
+            if(invalidComponentGradeElement){
+                invalidComponentGradeElement.textContent = "";
             }
 
-            configuredObtained +=
+            return;
+        }
+
+        const componentGradeElement =
+            document.getElementById(
+                "resultComponentGrade_" +
+                input.dataset.componentId
+            );
+
+        if(componentGradeElement){
+            if(
+                input.value === "" ||
+                !Number.isFinite(maximum) ||
+                maximum <= 0
+            ){
+                componentGradeElement.textContent = "";
+            }else{
+                const componentPercentage =
+                    (obtained / maximum) * 100;
+
+                if(componentPercentage >= 90){
+                    componentGradeElement.textContent = "A+";
+                }
+                else if(componentPercentage >= 80){
+                    componentGradeElement.textContent = "A";
+                }
+                else if(componentPercentage >= 70){
+                    componentGradeElement.textContent = "B+";
+                }
+                else if(componentPercentage >= 60){
+                    componentGradeElement.textContent = "B";
+                }
+                else if(componentPercentage >= 50){
+                    componentGradeElement.textContent = "C+";
+                }
+                else if(componentPercentage >= 40){
+                    componentGradeElement.textContent = "C";
+                }
+                else{
+                    componentGradeElement.textContent = "F";
+                }
+            }
+        }
+
+        configuredObtained +=
+            obtained;
+
+        configuredFullMarks +=
+            maximum;
+
+        if(
+            Number(input.dataset.gradeCounting) === 1
+        ){
+            gradeObtained +=
                 obtained;
 
-            configuredFullMarks +=
+            gradeFullMarks +=
                 maximum;
         }
-    );
-
-    if(invalidComponent){
-
-        resultTotalMarks.value =
-            "";
-
-        resultTotalFullMarks.value =
-            "";
-
-        resultPercentage.value =
-            "";
-
-        resultGrade.value =
-            "";
-
-        return;
     }
+);
 
-    const totalMarks =
-        omrMarks +
-        configuredObtained;
+if(invalidComponent){
 
-    const totalFullMarks =
-        100 +
-        configuredFullMarks;
+    resultTotalMarks.value =
+        "";
 
-    const percentage =
+    resultTotalFullMarks.value =
+        "";
+
+    resultPercentage.value =
+        "";
+
+    resultGrade.value =
+        "";
+
+    return;
+}
+
+const totalMarks =
+    omrMarks +
+    configuredObtained;
+
+const totalFullMarks =
+    100 +
+    configuredFullMarks;
+
+const percentage =
+
         Number(
             (
-                (totalMarks / totalFullMarks) *
+                (gradeObtained / gradeFullMarks) *
                 100
             ).toFixed(2)
         );

@@ -207,11 +207,34 @@
                                                         <%= student.marks %> / 100
 
                                                         <% (markComponents || []).forEach(function(component) { %>
+                                                            <%
+                                                                const presentComponentMarks =
+                                                                    student.component_marks &&
+                                                                    student.component_marks[component.id] != null
+                                                                        ? Number(student.component_marks[component.id])
+                                                                        : 0;
+
+                                                                const presentComponentMaximum =
+                                                                    Number(component.maximum_marks || 0);
+
+                                                                const presentComponentPercentage =
+                                                                    presentComponentMaximum > 0
+                                                                        ? (presentComponentMarks / presentComponentMaximum) * 100
+                                                                        : 0;
+
+                                                                let presentComponentGrade = "F";
+
+                                                                if (presentComponentPercentage >= 90) presentComponentGrade = "A+";
+                                                                else if (presentComponentPercentage >= 80) presentComponentGrade = "A";
+                                                                else if (presentComponentPercentage >= 70) presentComponentGrade = "B+";
+                                                                else if (presentComponentPercentage >= 60) presentComponentGrade = "B";
+                                                                else if (presentComponentPercentage >= 50) presentComponentGrade = "C+";
+                                                                else if (presentComponentPercentage >= 40) presentComponentGrade = "C";
+                                                            %>
                                                             · <%= component.name %>:
-                                                            <%= student.component_marks && student.component_marks[component.id] != null
-                                                                ? student.component_marks[component.id]
-                                                                : 0 %> / <%= component.maximum_marks %>
-                                                        <% }); %>
+                                                            <%= presentComponentMarks %> / <%= component.maximum_marks %>
+                                                            — Grade <strong><%= presentComponentGrade %></strong>
+                                                            <% }); %>
 
                                                         <% if (student.total_marks !== null && student.total_marks !== undefined) { %>
                                                             · Total:
@@ -525,7 +548,8 @@
 
             let configuredObtained = 0;
             let configuredFullMarks = 0;
-
+            let gradeObtained = omrObtained;
+            let gradeFullMarks = 100;
 
             componentInputs.forEach(function (input) {
                 const maximum =
@@ -534,10 +558,58 @@
                 const obtained =
                     parseFloat(input.value) || 0;
 
+                const componentId =
+                    input.dataset.componentId ||
+                    input.id.replace(
+                        "component_marks_",
+                        ""
+                    );
+
+                const componentGradeElement =
+                    content.querySelector(
+                        "#component_grade_" + componentId
+                    );
+
+                if (componentGradeElement) {
+                    if (
+                        input.value === "" ||
+                        !Number.isFinite(maximum) ||
+                        maximum <= 0 ||
+                        !Number.isFinite(obtained) ||
+                        obtained < 0 ||
+                        obtained > maximum
+                    ) {
+                        componentGradeElement.textContent = "";
+                    } else {
+                        const componentPercentage =
+                            (obtained / maximum) * 100;
+
+                        if (componentPercentage >= 90) {
+                            componentGradeElement.textContent = "A+";
+                        } else if (componentPercentage >= 80) {
+                            componentGradeElement.textContent = "A";
+                        } else if (componentPercentage >= 70) {
+                            componentGradeElement.textContent = "B+";
+                        } else if (componentPercentage >= 60) {
+                            componentGradeElement.textContent = "B";
+                        } else if (componentPercentage >= 50) {
+                            componentGradeElement.textContent = "C+";
+                        } else if (componentPercentage >= 40) {
+                            componentGradeElement.textContent = "C";
+                        } else {
+                            componentGradeElement.textContent = "F";
+                        }
+                    }
+                }
+
                 configuredObtained += obtained;
                 configuredFullMarks += maximum;
-            });
 
+                if (Number(input.dataset.gradeCounting) === 1) {
+                    gradeObtained += obtained;
+                    gradeFullMarks += maximum;
+                }
+            });
 
             const total =
                 omrObtained + configuredObtained;
@@ -546,8 +618,8 @@
                 100 + configuredFullMarks;
 
             const per =
-                totalFull > 0
-                    ? ((total / totalFull) * 100).toFixed(2)
+                gradeFullMarks > 0
+                    ? ((gradeObtained / gradeFullMarks) * 100).toFixed(2)
                     : "0.00";
 
 

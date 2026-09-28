@@ -12,6 +12,7 @@ class RtseMarkComponent {
                 name,
                 maximum_marks,
                 enabled,
+                grade_counting,
                 display_order,
                 created_at,
                 updated_at
@@ -35,6 +36,7 @@ class RtseMarkComponent {
                 name,
                 maximum_marks,
                 enabled,
+                grade_counting,
                 display_order
              FROM rtse_mark_components
              WHERE application_year=?
@@ -57,6 +59,7 @@ class RtseMarkComponent {
                 name,
                 maximum_marks,
                 enabled,
+                grade_counting,
                 display_order,
                 created_at,
                 updated_at
@@ -79,14 +82,16 @@ class RtseMarkComponent {
                 name,
                 maximum_marks,
                 enabled,
+                grade_counting,
                 display_order
              )
-             VALUES (?,?,?,?,?)`,
+             VALUES (?,?,?,?,?,?)`,
             [
                 data.application_year,
                 data.name,
                 data.maximum_marks,
                 data.enabled === undefined ? 1 : data.enabled,
+                data.grade_counting === undefined ? 1 : data.grade_counting,
                 data.display_order === undefined ? 0 : data.display_order
             ]
         );
@@ -104,12 +109,14 @@ class RtseMarkComponent {
                 name=?,
                 maximum_marks=?,
                 enabled=?,
+                grade_counting=?,
                 display_order=?
              WHERE id=?`,
             [
                 data.name,
                 data.maximum_marks,
                 data.enabled === undefined ? 1 : data.enabled,
+                data.grade_counting === undefined ? 1 : data.grade_counting,
                 data.display_order === undefined ? 0 : data.display_order,
                 id
             ]
@@ -129,6 +136,7 @@ class RtseMarkComponent {
                 mc.name,
                 mc.maximum_marks,
                 mc.enabled,
+                mc.grade_counting,
                 mc.display_order
              FROM rtse_result_component_marks rcm
              INNER JOIN rtse_mark_components mc

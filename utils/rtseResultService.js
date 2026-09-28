@@ -123,6 +123,12 @@ async function saveRtseResult(applicationId, body) {
     let configuredObtainedMarks = 0;
     let configuredFullMarks = 0;
 
+    // OMR always counts toward grade percentage.
+    // All enabled components count toward total marks/ranking,
+    // while only grade_counting components affect grade percentage.
+    let gradeCountedObtainedMarks = omrMarks;
+    let gradeCountedFullMarks = 100;
+
     for (const component of components) {
         const componentId =
             String(component.id);
@@ -171,11 +177,17 @@ async function saveRtseResult(applicationId, body) {
 
         configuredObtainedMarks += value;
         configuredFullMarks += maximumMarks;
+
+        if (Number(component.grade_counting) === 1) {
+            gradeCountedObtainedMarks += value;
+            gradeCountedFullMarks += maximumMarks;
+        }
     }
 
     /*
      * OMR is always 100 marks.
-     * Configured components are added to that maximum.
+     * All enabled components remain part of total marks.
+     * Grade percentage uses only components configured for grading.
      */
     const totalMarks =
         omrMarks + configuredObtainedMarks;
@@ -184,10 +196,12 @@ async function saveRtseResult(applicationId, body) {
         100 + configuredFullMarks;
 
     const percentage =
-        Number(
-            ((totalMarks / totalFullMarks) * 100)
-                .toFixed(2)
-        );
+        gradeCountedFullMarks > 0
+            ? Number(
+                ((gradeCountedObtainedMarks / gradeCountedFullMarks) * 100)
+                    .toFixed(2)
+            )
+            : 0;
 
     const grade =
         calculateGrade(percentage);

@@ -74,7 +74,9 @@
                         </h2>
 
                         <p style="margin:6px 0 0;color:#6b7280;">
-                            OMR remains 100 marks. Enabled components are added to the total result marks.
+                            OMR remains 100 marks. Enabled components are added to total result marks.
+                            Grade Counting controls whether a component contributes to the grade percentage.
+                            Components with Grade Counting = No still contribute to total marks and ranking.
                         </p>
 
                     </div>
@@ -173,6 +175,19 @@
 
                             <div>
                                 <label>
+                                    Grade Counting
+                                </label>
+                                <select
+                                    name="grade_counting"
+                                    style="width:100%;"
+                                >
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label>
                                     Status
                                 </label>
 
@@ -220,6 +235,7 @@
                                 text-align:left;
                             ">
 
+
                                 <th style="padding:13px 10px;">
                                     Order
                                 </th>
@@ -230,6 +246,9 @@
 
                                 <th style="padding:13px 10px;">
                                     Maximum Marks
+                                </th>
+                                <th style="padding:13px 10px;">
+                                    Grade Counting
                                 </th>
 
                                 <th style="padding:13px 10px;">
@@ -255,7 +274,7 @@
                                 <tr>
 
                                     <td
-                                        colspan="5"
+                                        colspan="6"
                                         style="
                                             padding:35px 15px;
                                             text-align:center;
@@ -307,7 +326,26 @@
 
                                     </td>
 
-                                    <td style="padding:12px 10px;">
+
+                                <td style="padding:12px 10px;">
+                                    <select
+                                        form="edit-component-<%= component.id %>"
+                                        name="grade_counting"
+                                    >
+                                        <option
+                                            value="1"
+                                            <%= Number(component.grade_counting) === 1 ? "selected" : "" %>
+                                        >
+                                            Yes
+                                        </option>
+                                        <option
+                                            value="0"
+                                            <%= Number(component.grade_counting) !== 1 ? "selected" : "" %>
+                                        >
+                                            No
+                                        </option>
+                                    </select>
+                                </td><td style="padding:12px 10px;">
 
                                         <select
                                             form="edit-component-<%= component.id %>"

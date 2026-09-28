@@ -14,7 +14,7 @@ const pool = mysql.createPool({
 (async () => {
     try {
         const conn = await pool.getConnection();
-        console.log("✅ Connected to MariaDB");
+        console.log("Connected to MariaDB");
         conn.release();
     } catch (err) {
         console.error("❌ Database connection failed:", err);

@@ -273,15 +273,31 @@ Grade
   </td>
 
   <% (markComponents || []).forEach(component=>{ %>
+    <td>
+      <%
+        const sectionMeritComponentMarks =
+          student.component_marks && student.component_marks[component.id] != null
+            ? Number(student.component_marks[component.id])
+            : 0;
 
-  <td>
+        const sectionMeritComponentMaximum = Number(component.maximum_marks || 0);
+        const sectionMeritComponentPercentage =
+          sectionMeritComponentMaximum > 0
+            ? (sectionMeritComponentMarks / sectionMeritComponentMaximum) * 100
+            : 0;
 
-  <%= student.component_marks && student.component_marks[component.id] != null
-      ? student.component_marks[component.id]
-      : 0 %>
-
-  </td>
-
+        let sectionMeritComponentGrade = "F";
+        if (sectionMeritComponentPercentage >= 90) sectionMeritComponentGrade = "A+";
+        else if (sectionMeritComponentPercentage >= 80) sectionMeritComponentGrade = "A";
+        else if (sectionMeritComponentPercentage >= 70) sectionMeritComponentGrade = "B+";
+        else if (sectionMeritComponentPercentage >= 60) sectionMeritComponentGrade = "B";
+        else if (sectionMeritComponentPercentage >= 50) sectionMeritComponentGrade = "C+";
+        else if (sectionMeritComponentPercentage >= 40) sectionMeritComponentGrade = "C";
+      %>
+      <%= sectionMeritComponentMarks %>
+      <br>
+      <strong><%= sectionMeritComponentGrade %></strong>
+    </td>
   <% }) %>
 
   <td>

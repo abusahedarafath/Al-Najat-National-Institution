@@ -242,15 +242,31 @@ Grade
   </td>
 
   <% (markComponents || []).forEach(component=>{ %>
+    <td>
+      <%
+        const overallComponentMarks =
+          student.component_marks && student.component_marks[component.id] != null
+            ? Number(student.component_marks[component.id])
+            : 0;
 
-  <td>
+        const overallComponentMaximum = Number(component.maximum_marks || 0);
+        const overallComponentPercentage =
+          overallComponentMaximum > 0
+            ? (overallComponentMarks / overallComponentMaximum) * 100
+            : 0;
 
-  <%= student.component_marks && student.component_marks[component.id] != null
-      ? student.component_marks[component.id]
-      : 0 %>
-
-  </td>
-
+        let overallComponentGrade = "F";
+        if (overallComponentPercentage >= 90) overallComponentGrade = "A+";
+        else if (overallComponentPercentage >= 80) overallComponentGrade = "A";
+        else if (overallComponentPercentage >= 70) overallComponentGrade = "B+";
+        else if (overallComponentPercentage >= 60) overallComponentGrade = "B";
+        else if (overallComponentPercentage >= 50) overallComponentGrade = "C+";
+        else if (overallComponentPercentage >= 40) overallComponentGrade = "C";
+      %>
+      <%= overallComponentMarks %>
+      <br>
+      <strong><%= overallComponentGrade %></strong>
+    </td>
   <% }) %>
 
   <td>

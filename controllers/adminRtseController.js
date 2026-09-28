@@ -2247,6 +2247,15 @@ exports.createResultMarkComponent = async (req, res) => {
                 ? 1
                 : 0;
 
+        const gradeCounting =
+            String(
+                req.body.grade_counting === undefined
+                    ? "1"
+                    : req.body.grade_counting
+            ) === "1"
+                ? 1
+                : 0;
+
         if (!name) {
             throw new Error(
                 "Mark component name is required."
@@ -2276,6 +2285,7 @@ exports.createResultMarkComponent = async (req, res) => {
             name,
             maximum_marks: maximumMarks,
             enabled,
+            grade_counting: gradeCounting,
             display_order: displayOrder
         });
 
@@ -2349,6 +2359,15 @@ exports.updateResultMarkComponent = async (req, res) => {
                 ? 1
                 : 0;
 
+        const gradeCounting =
+            String(
+                req.body.grade_counting === undefined
+                    ? "1"
+                    : req.body.grade_counting
+            ) === "1"
+                ? 1
+                : 0;
+
         if (!name) {
             throw new Error(
                 "Mark component name is required."
@@ -2379,6 +2398,7 @@ exports.updateResultMarkComponent = async (req, res) => {
                 name,
                 maximum_marks: maximumMarks,
                 enabled,
+                grade_counting: gradeCounting,
                 display_order: displayOrder
             }
         );

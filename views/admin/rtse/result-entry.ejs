@@ -193,7 +193,15 @@
                                     step="0.01"
                                     data-rtse-component-mark
                                     data-component-max="<%= component.maximum_marks %>"
+                                    data-grade-counting="<%= Number(component.grade_counting) === 1 ? 1 : 0 %>"
                                 >
+                                <div class="component-grade">
+                                    Grade:
+                                    <strong
+                                        id="component_grade_<%= component.id %>"
+                                        data-component-grade
+                                    ></strong>
+                                </div>
                             </div>
                         <% }); %>
 
@@ -337,22 +345,74 @@ function calculate(){
 
     let configuredObtained=0;
     let configuredFullMarks=0;
+    let gradeObtained=omrObtained;
+    let gradeFullMarks=100;
 
     componentInputs.forEach(function(input){
 
         const maximum=parseFloat(input.dataset.componentMax)||0;
         const obtained=parseFloat(input.value)||0;
 
+        const componentId =
+            input.id.replace("component_marks_", "");
+
+        const componentGradeElement =
+            document.getElementById(
+                "component_grade_" + componentId
+            );
+
+        if(componentGradeElement){
+            if(
+                input.value === "" ||
+                !Number.isFinite(maximum) ||
+                maximum <= 0 ||
+                !Number.isFinite(obtained) ||
+                obtained < 0 ||
+                obtained > maximum
+            ){
+                componentGradeElement.textContent = "";
+            }else{
+                const componentPercentage =
+                    (obtained / maximum) * 100;
+
+                if(componentPercentage >= 90){
+                    componentGradeElement.textContent = "A+";
+                }
+                else if(componentPercentage >= 80){
+                    componentGradeElement.textContent = "A";
+                }
+                else if(componentPercentage >= 70){
+                    componentGradeElement.textContent = "B+";
+                }
+                else if(componentPercentage >= 60){
+                    componentGradeElement.textContent = "B";
+                }
+                else if(componentPercentage >= 50){
+                    componentGradeElement.textContent = "C+";
+                }
+                else if(componentPercentage >= 40){
+                    componentGradeElement.textContent = "C";
+                }
+                else{
+                    componentGradeElement.textContent = "F";
+                }
+            }
+        }
+
         configuredObtained+=obtained;
         configuredFullMarks+=maximum;
 
+        if(Number(input.dataset.gradeCounting)===1){
+            gradeObtained+=obtained;
+            gradeFullMarks+=maximum;
+        }
     });
 
     const total=omrObtained+configuredObtained;
     const totalFull=100+configuredFullMarks;
 
-    const per=totalFull>0
-        ? ((total/totalFull)*100).toFixed(2)
+    const per=gradeFullMarks>0
+        ? ((gradeObtained/gradeFullMarks)*100).toFixed(2)
         : "0.00";
 
     totalMarks.value=Number(total.toFixed(2));
@@ -374,10 +434,10 @@ function calculate(){
         grade.value="B";
     }
     else if(percentageNumber>=50){
-        grade.value="C";
+        grade.value="C+";
     }
     else if(percentageNumber>=40){
-        grade.value="D";
+        grade.value="C";
     }
     else{
         grade.value="F";
