@@ -93,7 +93,29 @@ static async exists(applicationId){
                 r.percentage,
                 r.grade,
                 r.section_rank,
-                r.overall_rank
+                r.overall_rank,
+
+                (
+                    SELECT rcm.marks
+                    FROM rtse_result_component_marks rcm
+                    INNER JOIN rtse_mark_components mc
+                        ON mc.id=rcm.component_id
+                    WHERE rcm.result_id=r.id
+                      AND LOWER(REPLACE(mc.name,' ','')) LIKE '%writingskill%'
+                    ORDER BY mc.display_order ASC, mc.id ASC
+                    LIMIT 1
+                ) AS writing_skill_marks,
+
+                (
+                    SELECT mc.maximum_marks
+                    FROM rtse_result_component_marks rcm
+                    INNER JOIN rtse_mark_components mc
+                        ON mc.id=rcm.component_id
+                    WHERE rcm.result_id=r.id
+                      AND LOWER(REPLACE(mc.name,' ','')) LIKE '%writingskill%'
+                    ORDER BY mc.display_order ASC, mc.id ASC
+                    LIMIT 1
+                ) AS writing_skill_maximum_marks
 
             FROM rtse_certificates c
 
@@ -187,7 +209,29 @@ static async getByCertificateNumber(certificateNo){
             r.percentage,
             r.grade,
             r.section_rank,
-            r.overall_rank
+            r.overall_rank,
+
+            (
+                SELECT rcm.marks
+                FROM rtse_result_component_marks rcm
+                INNER JOIN rtse_mark_components mc
+                    ON mc.id=rcm.component_id
+                WHERE rcm.result_id=r.id
+                  AND LOWER(REPLACE(mc.name,' ','')) LIKE '%writingskill%'
+                ORDER BY mc.display_order ASC, mc.id ASC
+                LIMIT 1
+            ) AS writing_skill_marks,
+
+            (
+                SELECT mc.maximum_marks
+                FROM rtse_result_component_marks rcm
+                INNER JOIN rtse_mark_components mc
+                    ON mc.id=rcm.component_id
+                WHERE rcm.result_id=r.id
+                  AND LOWER(REPLACE(mc.name,' ','')) LIKE '%writingskill%'
+                ORDER BY mc.display_order ASC, mc.id ASC
+                LIMIT 1
+            ) AS writing_skill_maximum_marks
 
         FROM rtse_certificates c
 

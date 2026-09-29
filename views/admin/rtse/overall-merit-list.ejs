@@ -176,31 +176,20 @@ Registration
 
   <% (markComponents || []).forEach(component=>{ %>
 
-  <th>
-
-  <%= component.name %> (<%= component.maximum_marks %>)
-
-  </th>
+  
 
   <% }) %>
 
-  <th>
+  
 
-  Total Mark
+  <% (markComponents || []).forEach(component=>{ %>
+    <th>
+    <%= component.name %> (<%= component.maximum_marks %>)
+    </th>
+<% }) %>
 
-  </th>
 
-  <th>
 
-  %
-
-  </th>
-
-<th>
-
-Grade
-
-</th>
 
 </tr>
 
@@ -263,37 +252,16 @@ Grade
         else if (overallComponentPercentage >= 50) overallComponentGrade = "C+";
         else if (overallComponentPercentage >= 40) overallComponentGrade = "C";
       %>
-      <%= overallComponentMarks %>
-      <br>
+      
       <strong><%= overallComponentGrade %></strong>
     </td>
   <% }) %>
 
-  <td>
+  
 
-  <strong>
+  
 
-  <% if (student.total_marks != null) { %>
-  <%= student.total_marks %> / <%= student.total_full_marks %>
-  <% } else { %>
-  <%= student.marks %> / 100
-  <% } %>
 
-  </strong>
-
-  </td>
-
-  <td>
-
-  <%= student.percentage %>
-
-  </td>
-
-<td>
-
-<%= student.grade %>
-
-</td>
 
 </tr>
 

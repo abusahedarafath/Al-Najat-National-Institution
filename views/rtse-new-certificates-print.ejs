@@ -1,0 +1,359 @@
+<%
+    function getDesign(rank) {
+
+        rank = Number(rank || 0);
+
+        if (rank === 1) {
+            return "rank1";
+        }
+
+        if (rank === 2) {
+            return "rank2";
+        }
+
+        if (rank === 3) {
+            return "rank3";
+        }
+
+        if (rank >= 4 && rank <= 10) {
+            return "merit";
+        }
+
+        return "appreciation";
+    }
+
+    function getCategory(rank) {
+
+        rank = Number(rank || 0);
+
+        if (rank <= 3) {
+            return "Excellence Certificate";
+        }
+
+        if (rank >= 4 && rank <= 10) {
+            return "Merit Certificate";
+        }
+
+        return "Appreciation Certificate";
+    }
+
+    function getRankLabel(rank) {
+
+        rank = Number(rank || 0);
+
+        if (rank === 1) return "1st Rank";
+        if (rank === 2) return "2nd Rank";
+        if (rank === 3) return "3rd Rank";
+
+        return `Section Rank ${rank}`;
+    }
+
+    const examName =
+        setting?.exam_name ||
+        "RATABARI TALLENT SEARCH EXAMINATION 2026";
+
+    const logo =
+        setting?.logo
+            ? `/uploads/arsp-settings/${setting.logo}`
+            : "";
+%>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= group === "merit"
+            ? "Merit Certificates"
+            : "Appreciation Certificates" %>
+        -
+        Section <%= section %>
+    </title>
+
+    <style>
+
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #fff;
+        }
+
+        .print-certificate-page {
+            width: 297mm;
+            height: 210mm;
+            page-break-after: always;
+            break-after: page;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .print-certificate-page:last-child {
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        @media print {
+
+            html,
+            body {
+                width: 297mm;
+                background: #fff;
+            }
+
+            .print-certificate-page {
+                width: 297mm;
+                height: 210mm;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<% certificates.forEach(function(certificate) { %>
+
+    <%
+        const sectionRank =
+            Number(certificate?.section_rank || 0);
+
+        const design =
+            getDesign(sectionRank);
+
+        const category =
+            getCategory(sectionRank);
+
+        const rankLabel =
+            getRankLabel(sectionRank);
+
+        const writingSkillGrade =
+            certificate?.writing_skill_grade || "—";
+
+        const qrCode =
+            certificate?.qr_code
+                ? `/uploads/rtse-qr/${certificate.qr_code}`
+                : "";
+    %>
+
+    <link
+        rel="stylesheet"
+        href="/css/rtse-certificate-<%= design %>.css"
+    >
+
+    <div class="print-certificate-page">
+
+        <div class="certificate-page <%= design %>">
+
+            <div class="certificate-frame">
+
+                <div class="inner-frame"></div>
+
+                <div class="ornament ornament-top-left"></div>
+                <div class="ornament ornament-top-right"></div>
+                <div class="ornament ornament-bottom-left"></div>
+                <div class="ornament ornament-bottom-right"></div>
+
+                <header class="certificate-header">
+
+                    <% if (logo) { %>
+
+                        <img
+                            class="arsp-logo"
+                            src="<%= logo %>"
+                            alt="ARSP Logo"
+                        >
+
+                    <% } %>
+
+                    <div class="organization-block">
+
+                        <div class="organization-name">
+                            ACTIVE RURAL SOCIAL PROGRESS
+                        </div>
+
+                        <div class="exam-name">
+                            <%= examName %>
+                        </div>
+
+                        <div class="organized-by">
+                            Organized by ARSP
+                        </div>
+
+                    </div>
+
+                    <div class="rank-badge">
+                        <span>
+                            <%= rankLabel %>
+                        </span>
+                    </div>
+
+                </header>
+
+                <main class="certificate-content">
+
+                    <div class="certificate-category">
+                        <%= category %>
+                    </div>
+
+                    <div class="certificate-intro">
+                        This certificate is proudly presented to
+                    </div>
+
+                    <div class="student-name">
+                        <%= certificate?.full_name || "Student Name" %>
+                    </div>
+
+                    <div class="student-divider"></div>
+
+                    <div class="achievement-text">
+
+                        for outstanding performance in the
+
+                        <strong>
+                            <%= certificate?.section || "Section" %>
+                        </strong>
+
+                        section of the examination.
+
+                    </div>
+
+                    <section class="achievement-grid">
+
+                        <div class="achievement-item">
+
+                            <span class="label">
+                                SECTION
+                            </span>
+
+                            <strong>
+                                <%= certificate?.section || "—" %>
+                            </strong>
+
+                        </div>
+
+                        <div class="achievement-item rank-item">
+
+                            <span class="label">
+                                SECTION RANK
+                            </span>
+
+                            <strong>
+                                <%= sectionRank || "—" %>
+                            </strong>
+
+                        </div>
+
+                        <div class="achievement-item">
+
+                            <span class="label">
+                                WRITING SKILL
+                            </span>
+
+                            <strong>
+                                <%= writingSkillGrade %>
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+                </main>
+
+                <footer class="certificate-footer">
+
+                    <div class="signature-block">
+
+                        <div class="signature-line"></div>
+
+                        <span>
+                            Controller of Examination
+                        </span>
+
+                    </div>
+
+                    <% if (qrCode) { %>
+
+                        <div class="certificate-qr">
+
+                            <img
+                                src="<%= qrCode %>"
+                                alt="Certificate QR"
+                            >
+
+                        </div>
+
+                    <% } %>
+
+                    <div class="certificate-number">
+
+                        <span>
+                            Certificate No.
+                        </span>
+
+                        <strong>
+                            <%= certificate?.certificate_number || "—" %>
+                        </strong>
+
+                    </div>
+
+                    <div class="signature-block">
+
+                        <div class="signature-line"></div>
+
+                        <span>
+                            President, ARSP
+                        </span>
+
+                    </div>
+
+                </footer>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<% }); %>
+
+<script>
+
+    window.addEventListener(
+        "load",
+        function () {
+
+            setTimeout(
+                function () {
+                    window.print();
+                },
+                500
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

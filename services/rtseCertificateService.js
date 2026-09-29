@@ -26,21 +26,29 @@ class RtseCertificateService {
 
         let type = "Participation";
 
-        if(student.overall_rank === 1){
+        // Certificate category is determined ONLY by section rank.
+        // Overall rank must never determine the certificate category.
+        const sectionRank = Number(student.section_rank);
+
+        if(sectionRank === 1){
 
             type = "Gold";
 
-        }else if(student.overall_rank === 2){
+        }else if(sectionRank === 2){
 
             type = "Silver";
 
-        }else if(student.overall_rank === 3){
+        }else if(sectionRank === 3){
 
             type = "Bronze";
 
-        }else if(student.section_rank <= 10){
+        }else if(sectionRank >= 4 && sectionRank <= 10){
 
             type = "Merit";
+
+        }else if(sectionRank >= 11){
+
+            type = "Appreciation";
 
         }
 

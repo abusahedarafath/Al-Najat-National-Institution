@@ -1,0 +1,261 @@
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #ddd;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.certificate-page {
+    width: 297mm;
+    height: 210mm;
+    padding: 10mm;
+    margin: auto;
+    background: #ead9c9;
+}
+
+.certificate-frame {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at center, #fffaf3, #f2e1d0 72%, #d8bca5);
+    border: 2mm solid #87563e;
+    box-shadow:
+        inset 0 0 0 1mm #c79878,
+        inset 0 0 0 2.5mm #f9eadc;
+}
+
+.inner-frame {
+    position: absolute;
+    inset: 6mm;
+    border: .7mm solid #9b674e;
+}
+
+.ornament {
+    position: absolute;
+    width: 40mm;
+    height: 40mm;
+    border: 1mm solid #9a644b;
+    border-radius: 50%;
+}
+
+.ornament-top-left {
+    left: -28mm;
+    top: -28mm;
+}
+
+.ornament-top-right {
+    right: -28mm;
+    top: -28mm;
+}
+
+.ornament-bottom-left {
+    left: -28mm;
+    bottom: -28mm;
+}
+
+.ornament-bottom-right {
+    right: -28mm;
+    bottom: -28mm;
+}
+
+.certificate-header {
+    position: relative;
+    height: 45mm;
+    padding: 9mm 24mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.arsp-logo {
+    position: absolute;
+    top: 9mm;
+    left: 20mm;
+    width: 25mm;
+    height: 25mm;
+    object-fit: contain;
+}
+
+.organization-name {
+    color: #72452f;
+    font-size: 6.6mm;
+    font-weight: 800;
+    letter-spacing: 1.4mm;
+}
+
+.exam-name {
+    margin-top: 2mm;
+    color: #25201d;
+    font-size: 4.8mm;
+    font-weight: 700;
+    letter-spacing: .55mm;
+}
+
+.organized-by {
+    margin-top: 1.5mm;
+    color: #91614a;
+    font-size: 3mm;
+    letter-spacing: .85mm;
+    text-transform: uppercase;
+}
+
+.rank-badge {
+    position: absolute;
+    top: 9mm;
+    right: 20mm;
+    width: 31mm;
+    height: 31mm;
+    border-radius: 50%;
+    border: .9mm solid #925f45;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #744630;
+    background: #f4dfcf;
+    font-size: 3mm;
+    font-weight: 800;
+}
+
+.certificate-content {
+    position: relative;
+    height: 104mm;
+    padding: 3mm 30mm;
+    text-align: center;
+}
+
+.certificate-category {
+    color: #744630;
+    font-size: 5.1mm;
+    font-weight: 800;
+    letter-spacing: 1.1mm;
+    text-transform: uppercase;
+}
+
+.certificate-intro {
+    margin-top: 7mm;
+    color: #665951;
+    font-size: 3.8mm;
+    font-style: italic;
+}
+
+.student-name {
+    margin-top: 3mm;
+    color: #2a211d;
+    font-size: 12mm;
+    font-weight: 700;
+    letter-spacing: .45mm;
+}
+
+.student-divider {
+    width: 76mm;
+    margin: 3mm auto 4mm;
+    border-top: .7mm solid #98674f;
+}
+
+.achievement-text {
+    color: #5b514b;
+    font-size: 4mm;
+    line-height: 1.55;
+}
+
+.achievement-grid {
+    width: 190mm;
+    margin: 7mm auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4mm;
+}
+
+.achievement-item {
+    padding: 4mm;
+    border: .5mm solid #b17e64;
+    background: rgba(255, 248, 240, .8);
+}
+
+.achievement-item .label {
+    display: block;
+    color: #95634c;
+    font-size: 2.6mm;
+    letter-spacing: .7mm;
+    font-weight: 700;
+}
+
+.achievement-item strong {
+    display: block;
+    margin-top: 1.5mm;
+    color: #352821;
+    font-size: 4.5mm;
+}
+
+.rank-item {
+    background: #edd4c2;
+}
+
+.certificate-footer {
+    position: absolute;
+    left: 20mm;
+    right: 20mm;
+    bottom: 12mm;
+    display: grid;
+    grid-template-columns: 1fr 24mm 1fr;
+    align-items: end;
+    gap: 20mm;
+}
+
+.signature-block {
+    text-align: center;
+    color: #594a42;
+    font-size: 3mm;
+}
+
+.signature-line {
+    width: 48mm;
+    margin: 0 auto 2mm;
+    border-top: .45mm solid #67493a;
+}
+
+.certificate-qr img {
+    width: 19mm;
+    height: 19mm;
+}
+
+.certificate-number {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -1mm;
+    color: #765848;
+    font-size: 2.5mm;
+    text-align: center;
+}
+
+.certificate-number strong {
+    display: block;
+    margin-top: .7mm;
+}
+
+@media print {
+    body {
+        background: white;
+    }
+
+    .certificate-page {
+        margin: 0;
+    }
+}

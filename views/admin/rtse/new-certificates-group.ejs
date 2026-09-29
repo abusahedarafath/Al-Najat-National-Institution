@@ -1,0 +1,233 @@
+<%- include("../partials/header") %>
+
+<style>
+    .group-page {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .group-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .group-header h1 {
+        margin-bottom: 8px;
+    }
+
+    .group-header p {
+        color: #666;
+    }
+
+    .group-actions {
+        margin-bottom: 20px;
+    }
+
+    .group-actions a {
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .student-table-wrap {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    th,
+    td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+    }
+
+    th {
+        background: #f3f4f6;
+        font-weight: 700;
+    }
+
+    .view-button {
+        display: inline-block;
+        padding: 8px 13px;
+        border-radius: 7px;
+        color: #fff;
+        background: #315f9b;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .print-actions {
+        margin: 0 0 20px;
+    }
+
+    .print-all-button {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 8px;
+        background: #111827;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        box-shadow: 0 5px 15px rgba(0,0,0,.12);
+    }
+
+    .print-all-button:hover {
+        opacity: .9;
+    }
+
+    .empty {
+        padding: 30px;
+        text-align: center;
+        color: #666;
+    }
+</style>
+
+<div class="group-page">
+
+    <div class="group-actions">
+
+        <a
+            href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>"
+        >
+            ← Back to Section Certificates
+        </a>
+
+    </div>
+
+    <div class="print-actions">
+
+        <% if (group === "merit") { %>
+
+            <a
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/merit/print"
+                class="print-all-button"
+                target="_blank"
+            >
+                🖨️ Print All Merit Certificates
+            </a>
+
+        <% } else { %>
+
+            <a
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/appreciation/print"
+                class="print-all-button"
+                target="_blank"
+            >
+                🖨️ Print All Appreciation Certificates
+            </a>
+
+        <% } %>
+
+    </div>
+
+    <div class="group-header">
+
+        <h1>
+            <% if (group === "merit") { %>
+                🏆 Merit Certificates
+            <% } else { %>
+                🎓 Appreciation Certificates
+            <% } %>
+        </h1>
+
+        <p>
+            Section <strong><%= section %></strong>
+            —
+            <%= students.length %> certificate(s)
+        </p>
+
+    </div>
+
+    <% if (students.length) { %>
+
+        <div class="student-table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Sl.</th>
+                        <th>Student Name</th>
+                        <th>Registration No.</th>
+                        <th>Roll No.</th>
+                        <th>Section Rank</th>
+                        <th>Certificate</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <% students.forEach(function(student, index) { %>
+
+                        <tr>
+
+                            <td>
+                                <%= index + 1 %>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <%= student.full_name %>
+                                </strong>
+                            </td>
+
+                            <td>
+                                <%= student.registration_no %>
+                            </td>
+
+                            <td>
+                                <%= student.roll_no %>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <%= student.section_rank %>
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="/admin/rtse/new-certificate/<%= student.application_id %>"
+                                    class="view-button"
+                                >
+                                    View Certificate
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    <% }); %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    <% } else { %>
+
+        <div class="empty">
+
+            No
+            <%= group === "merit"
+                ? "Merit"
+                : "Appreciation" %>
+            Certificate candidates found for this section.
+
+        </div>
+
+    <% } %>
+
+</div>
+
+<%- include("../partials/footer") %>

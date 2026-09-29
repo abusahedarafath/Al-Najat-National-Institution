@@ -214,23 +214,11 @@ Registration
 
   <% }) %>
 
-  <th>
+  
 
-  Total Mark
+  
 
-  </th>
 
-  <th>
-
-  %
-
-  </th>
-
-<th>
-
-Grade
-
-</th>
 
 </tr>
 
@@ -294,37 +282,15 @@ Grade
         else if (sectionMeritComponentPercentage >= 50) sectionMeritComponentGrade = "C+";
         else if (sectionMeritComponentPercentage >= 40) sectionMeritComponentGrade = "C";
       %>
-      <%= sectionMeritComponentMarks %>
-      <br>
       <strong><%= sectionMeritComponentGrade %></strong>
     </td>
   <% }) %>
 
-  <td>
+  
 
-  <strong>
+  
 
-  <% if (student.total_marks != null) { %>
-  <%= student.total_marks %> / <%= student.total_full_marks %>
-  <% } else { %>
-  <%= student.marks %> / 100
-  <% } %>
 
-  </strong>
-
-  </td>
-
-  <td>
-
-  <%= student.percentage %>
-
-  </td>
-
-<td>
-
-<%= student.grade %>
-
-</td>
 
 </tr>
 

@@ -5118,6 +5118,444 @@ const students =
 
 
 // =====================================
+// New Certificate Section
+// =====================================
+
+exports.newCertificateSection = async (req, res) => {
+
+    try {
+
+        const section =
+            String(req.params.section || "").trim();
+
+        if (!section) {
+
+            req.flash(
+                "error",
+                "RTSE section is required."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+
+        }
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+
+        }
+
+        /*
+         * Read-only access to existing result data.
+         *
+         * No certificate record is created or modified.
+         */
+
+        const students =
+            await RtseResult.getDashboardResults(
+                "",
+                section,
+                "Entered",
+                applicationYear
+            );
+
+        return res.render(
+            "admin/rtse/new-certificates-section",
+            {
+                title:
+                    `New Certificates - Section ${section}`,
+
+                students,
+
+                setting,
+
+                section,
+
+                applicationYear
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "New certificate section error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load the new certificate section."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    }
+
+};
+
+
+
+// =====================================
+// New Certificate Group - Merit / Appreciation
+// =====================================
+
+exports.newCertificateGroup = async (req, res) => {
+
+    try {
+
+        const section =
+            String(req.params.section || "").trim();
+
+        const group =
+            String(req.params.group || "").trim().toLowerCase();
+
+        if (!section) {
+
+            req.flash(
+                "error",
+                "RTSE section is required."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+
+        }
+
+        if (
+            group !== "merit" &&
+            group !== "appreciation"
+        ) {
+
+            req.flash(
+                "error",
+                "Invalid certificate group."
+            );
+
+            return res.redirect(
+                `/admin/rtse/new-certificates/section/${encodeURIComponent(section)}`
+            );
+
+        }
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+
+        }
+
+        const students =
+            await RtseResult.getDashboardResults(
+                "",
+                section,
+                "Entered",
+                applicationYear
+            );
+
+        const filteredStudents =
+            students.filter(student => {
+
+                const rank =
+                    Number(student.section_rank);
+
+                if (group === "merit") {
+
+                    return (
+                        rank >= 4 &&
+                        rank <= 10
+                    );
+
+                }
+
+                return rank >= 11;
+
+            });
+
+        return res.render(
+            "admin/rtse/new-certificates-group",
+            {
+                title:
+                    `${group === "merit" ? "Merit" : "Appreciation"} Certificates - Section ${section}`,
+
+                students:
+                    filteredStudents,
+
+                setting,
+
+                section,
+
+                applicationYear,
+
+                group
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "New certificate group error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load the certificate group."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    }
+
+};
+
+
+// =====================================
+// Print All New Certificate Group
+// =====================================
+
+exports.printNewCertificateGroup = async (req, res) => {
+
+    try {
+
+        const section =
+            String(req.params.section || "").trim();
+
+        const group =
+            String(req.params.group || "")
+                .trim()
+                .toLowerCase();
+
+        if (!section) {
+
+            return res.status(400).send(
+                "RTSE section is required."
+            );
+
+        }
+
+        if (
+            group !== "merit" &&
+            group !== "appreciation"
+        ) {
+
+            return res.status(400).send(
+                "Invalid certificate group."
+            );
+
+        }
+
+        const setting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(setting?.exam_year);
+
+        if (!applicationYear) {
+
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+
+        }
+
+        const examSetting =
+            await RtseExamSetting.get();
+
+        const students =
+            await RtseResult.getDashboardResults(
+                "",
+                section,
+                "Entered",
+                applicationYear
+            );
+
+        const filteredStudents =
+            students.filter(student => {
+
+                const rank =
+                    Number(student.section_rank);
+
+                if (group === "merit") {
+
+                    return (
+                        rank >= 4 &&
+                        rank <= 10
+                    );
+
+                }
+
+                return rank >= 11;
+
+            });
+
+        /*
+         * Build certificate-like objects in memory.
+         *
+         * Nothing is inserted into rtse_certificates.
+         */
+
+        const certificates = [];
+
+        for (const student of filteredStudents) {
+
+            const result =
+                await RtseResult.getStudentPopupResult(
+                    student.application_id
+                );
+
+            let writingSkillGrade = "";
+
+            const writingSkillComponent =
+                Array.isArray(result?.component_marks)
+                    ? result.component_marks.find(
+                        component => {
+
+                            const name =
+                                String(
+                                    component.name || ""
+                                )
+                                    .toLowerCase()
+                                    .replace(/\s+/g, "");
+
+                            return name.includes(
+                                "writingskill"
+                            );
+
+                        }
+                    )
+                    : null;
+
+            if (writingSkillComponent) {
+
+                const marks =
+                    Number(
+                        writingSkillComponent.marks
+                    );
+
+                const maximum =
+                    Number(
+                        writingSkillComponent.maximum_marks
+                    );
+
+                if (
+                    Number.isFinite(marks) &&
+                    Number.isFinite(maximum) &&
+                    maximum > 0
+                ) {
+
+                    const percentage =
+                        (marks / maximum) * 100;
+
+                    if (percentage >= 90) {
+                        writingSkillGrade = "A+";
+                    } else if (percentage >= 80) {
+                        writingSkillGrade = "A";
+                    } else if (percentage >= 70) {
+                        writingSkillGrade = "B+";
+                    } else if (percentage >= 60) {
+                        writingSkillGrade = "B";
+                    } else if (percentage >= 50) {
+                        writingSkillGrade = "C+";
+                    } else if (percentage >= 40) {
+                        writingSkillGrade = "C";
+                    } else {
+                        writingSkillGrade = "F";
+                    }
+
+                }
+
+            }
+
+            certificates.push({
+
+                application_id:
+                    student.application_id,
+
+                registration_no:
+                    student.registration_no,
+
+                roll_no:
+                    student.roll_no,
+
+                full_name:
+                    student.full_name,
+
+                school_name:
+                    student.school_name,
+
+                section:
+                    student.section,
+
+                photo:
+                    student.photo,
+
+                section_rank:
+                    student.section_rank,
+
+                writing_skill_grade:
+                    writingSkillGrade
+
+            });
+
+        }
+
+        return res.render(
+            "rtse-new-certificates-print",
+            {
+                title:
+                    `${group === "merit" ? "Merit" : "Appreciation"} Certificates - Section ${section}`,
+
+                certificates,
+
+                setting:
+                    examSetting || setting,
+
+                section,
+
+                group,
+
+                applicationYear
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Print new certificate group error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to generate the certificate print page."
+        );
+
+    }
+
+};
+
+// =====================================
 // Reset RTSE Rankings Only
 // =====================================
 
@@ -6031,6 +6469,182 @@ exports.generateCertificate = async (req,res)=>{
 // =====================================
 // View Certificate
 // =====================================
+
+
+// =====================================
+// View New RTSE Certificate
+// =====================================
+
+exports.viewNewCertificate = async (req, res) => {
+
+    try {
+
+        /*
+         * NEW certificate system:
+         * Read directly from the existing RTSE result.
+         *
+         * This intentionally does NOT depend on
+         * rtse_certificates, so opening this certificate
+         * never creates or modifies a certificate record.
+         */
+
+        const result =
+            await RtseResult.getStudentPopupResult(
+                req.params.id
+            );
+
+        if (!result) {
+
+            req.flash(
+                "error",
+                "RTSE result not found."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+
+        }
+
+        const setting =
+            await RtseExamSetting.get();
+
+        /*
+         * Find the Writing Skill component.
+         * Only its grade will be displayed on the
+         * certificate; numerical marks remain hidden.
+         */
+
+        const writingSkillComponent =
+            Array.isArray(result.component_marks)
+                ? result.component_marks.find(
+                    component => {
+                        const name =
+                            String(
+                                component.name || ""
+                            )
+                                .toLowerCase()
+                                .replace(/\s+/g, "");
+
+                        return name.includes(
+                            "writingskill"
+                        );
+                    }
+                )
+                : null;
+
+        let writingSkillGrade = "";
+
+        if (writingSkillComponent) {
+
+            const marks =
+                Number(
+                    writingSkillComponent.marks
+                );
+
+            const maximum =
+                Number(
+                    writingSkillComponent.maximum_marks
+                );
+
+            if (
+                Number.isFinite(marks) &&
+                Number.isFinite(maximum) &&
+                maximum > 0
+            ) {
+
+                const percentage =
+                    (marks / maximum) * 100;
+
+                if (percentage >= 90) {
+                    writingSkillGrade = "A+";
+                } else if (percentage >= 80) {
+                    writingSkillGrade = "A";
+                } else if (percentage >= 70) {
+                    writingSkillGrade = "B+";
+                } else if (percentage >= 60) {
+                    writingSkillGrade = "B";
+                } else if (percentage >= 50) {
+                    writingSkillGrade = "C+";
+                } else if (percentage >= 40) {
+                    writingSkillGrade = "C";
+                } else {
+                    writingSkillGrade = "F";
+                }
+
+            }
+
+        }
+
+        /*
+         * The new certificate renderer expects a certificate-like
+         * object. We construct that object in memory only.
+         *
+         * No database row is inserted or modified.
+         */
+
+        const certificate = {
+
+            registration_no:
+                result.registration_no,
+
+            roll_no:
+                result.roll_no,
+
+            full_name:
+                result.full_name,
+
+            school_name:
+                result.school_name,
+
+            section:
+                result.section,
+
+            photo:
+                result.photo,
+
+            section_rank:
+                result.section_rank,
+
+            overall_rank:
+                result.overall_rank,
+
+            writing_skill_grade:
+                writingSkillGrade
+
+        };
+
+        return res.render(
+            "rtse-new-certificate",
+            {
+                title:
+                    "RTSE New Certificate",
+
+                certificate,
+
+                setting
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "New RTSE certificate error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load new certificate."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    }
+
+};
 
 exports.viewCertificate = async (req, res) => {
 

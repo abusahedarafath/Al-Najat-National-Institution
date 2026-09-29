@@ -1135,6 +1135,22 @@ router.get(
 
 );
 
+// =====================================
+// New RTSE Certificate System
+// =====================================
+
+router.get(
+
+    "/rtse/new-certificate/:id",
+
+    auth.isAdmin,
+
+    adminRtseController.viewNewCertificate
+
+);
+
+
+
 
 
 // =====================================
@@ -1219,6 +1235,42 @@ router.get(
 
 );
 
+
+// =====================================
+// New Certificate System - Section
+// =====================================
+
+router.get(
+
+    "/rtse/new-certificates/section/:section",
+
+    auth.isAdmin,
+
+    adminRtseController.newCertificateSection
+
+);
+
+
+
+// =====================================
+// Print All New Certificate Groups
+// =====================================
+
+router.get(
+    "/rtse/new-certificates/section/:section/:group/print",
+    auth.isAdmin,
+    adminRtseController.printNewCertificateGroup
+);
+
+// =====================================
+// New Certificate Groups
+// =====================================
+
+router.get(
+    "/rtse/new-certificates/section/:section/:group",
+    auth.isAdmin,
+    adminRtseController.newCertificateGroup
+);
 
 // =====================================
 // All Certificates

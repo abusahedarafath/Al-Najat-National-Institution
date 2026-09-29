@@ -1,0 +1,197 @@
+<%
+const sectionRank = Number(certificate?.section_rank || 0);
+
+let design = "appreciation";
+let category = "Appreciation Certificate";
+let rankLabel = `Section Rank ${sectionRank}`;
+
+if (sectionRank === 1) {
+    design = "rank1";
+    category = "Excellence Certificate";
+    rankLabel = "1st Rank";
+} else if (sectionRank === 2) {
+    design = "rank2";
+    category = "Excellence Certificate";
+    rankLabel = "2nd Rank";
+} else if (sectionRank === 3) {
+    design = "rank3";
+    category = "Excellence Certificate";
+    rankLabel = "3rd Rank";
+} else if (sectionRank >= 4 && sectionRank <= 10) {
+    design = "merit";
+    category = "Merit Certificate";
+}
+
+let writingSkillGrade =
+    certificate?.writing_skill_grade ||
+    certificate?.writingSkillGrade ||
+    "";
+
+if (!writingSkillGrade && certificate?.writing_skill_marks != null) {
+    const marks = Number(certificate.writing_skill_marks);
+    const maximum = Number(certificate.writing_skill_maximum_marks || 100);
+
+    if (maximum > 0) {
+        const percentage = (marks / maximum) * 100;
+
+        if (percentage >= 90) writingSkillGrade = "A+";
+        else if (percentage >= 80) writingSkillGrade = "A";
+        else if (percentage >= 70) writingSkillGrade = "B+";
+        else if (percentage >= 60) writingSkillGrade = "B";
+        else if (percentage >= 50) writingSkillGrade = "C+";
+        else if (percentage >= 40) writingSkillGrade = "C";
+        else writingSkillGrade = "F";
+    }
+}
+
+writingSkillGrade = writingSkillGrade || "—";
+
+const examName =
+    setting?.exam_name ||
+    "RATABARI TALLENT SEARCH EXAMINATION 2026";
+
+const logo =
+    setting?.logo
+        ? `/uploads/arsp-settings/${setting.logo}`
+        : "";
+
+const qrCode =
+    certificate?.qr_code
+        ? `/uploads/rtse-qr/${certificate.qr_code}`
+        : "";
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= certificate?.full_name || "RTSE Certificate" %> - <%= category %></title>
+
+    <link rel="stylesheet"
+          href="/css/rtse-certificate-<%= design %>.css">
+</head>
+
+<body>
+
+<div class="certificate-page <%= design %>">
+
+    <div class="certificate-frame">
+        <div class="inner-frame"></div>
+
+        <div class="ornament ornament-top-left"></div>
+        <div class="ornament ornament-top-right"></div>
+        <div class="ornament ornament-bottom-left"></div>
+        <div class="ornament ornament-bottom-right"></div>
+
+        <header class="certificate-header">
+
+            <% if (logo) { %>
+                <img class="arsp-logo"
+                     src="<%= logo %>"
+                     alt="ARSP Logo">
+            <% } %>
+
+            <div class="organization-block">
+                <div class="organization-name">
+                    ACTIVE RURAL SOCIAL PROGRESS
+                </div>
+
+                <div class="exam-name">
+                    <%= examName %>
+                </div>
+
+                <div class="organized-by">
+                    Organized by ARSP
+                </div>
+            </div>
+
+            <div class="rank-badge">
+                <span><%= rankLabel %></span>
+            </div>
+
+        </header>
+
+        <main class="certificate-content">
+
+            <div class="certificate-category">
+                <%= category %>
+            </div>
+
+            <div class="certificate-intro">
+                This certificate is proudly presented to
+            </div>
+
+            <div class="student-name">
+                <%= certificate?.full_name || "Student Name" %>
+            </div>
+
+            <div class="student-divider"></div>
+
+            <div class="achievement-text">
+                for outstanding performance in the
+                <strong><%= certificate?.section || "Section" %></strong>
+                section of the examination.
+            </div>
+
+            <section class="achievement-grid">
+
+                <div class="achievement-item">
+                    <span class="label">SECTION</span>
+                    <strong><%= certificate?.section || "—" %></strong>
+                </div>
+
+                <div class="achievement-item rank-item">
+                    <span class="label">SECTION RANK</span>
+                    <strong><%= sectionRank || "—" %></strong>
+                </div>
+
+                <div class="achievement-item">
+                    <span class="label">WRITING SKILL</span>
+                    <strong><%= writingSkillGrade %></strong>
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="certificate-footer">
+
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <span>Controller of Examination</span>
+            </div>
+
+            <% if (qrCode) { %>
+                <div class="certificate-qr">
+                    <img src="<%= qrCode %>" alt="Certificate QR">
+                </div>
+            <% } %>
+
+            <div class="certificate-number">
+                <span>Certificate No.</span>
+                <strong><%= certificate?.certificate_number || "—" %></strong>
+            </div>
+
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <span>President, ARSP</span>
+            </div>
+
+        </footer>
+
+    </div>
+
+</div>
+
+<script>
+window.addEventListener("load", function () {
+    setTimeout(function () {
+        window.print();
+    }, 350);
+});
+</script>
+
+</body>
+</html>

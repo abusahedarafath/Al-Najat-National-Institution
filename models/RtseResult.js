@@ -729,6 +729,7 @@ static async getSectionTop10MeritList(section, applicationYear){
             r.grade,
             a.roll_no,
             a.full_name,
+              a.father_name,
             a.school_name
          FROM rtse_results r
          INNER JOIN rtse_applications a
@@ -738,11 +739,12 @@ static async getSectionTop10MeritList(section, applicationYear){
             AND a.application_year=?
             AND r.id IS NOT NULL
             AND r.section_rank IS NOT NULL
+            AND r.section_rank <= 10
          ORDER BY
             r.section_rank ASC,
             r.total_marks DESC,
             r.id ASC
-         LIMIT 10`,
+         `,
         [
             section,
             applicationYear
@@ -780,6 +782,7 @@ static async getSectionMeritList(section, applicationYear){
           AND a.application_year=?
 
         AND r.id IS NOT NULL
+        AND r.section_rank > 10
 
         ORDER BY
 

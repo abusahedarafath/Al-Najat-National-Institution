@@ -1,0 +1,319 @@
+<%- include("../partials/header") %>
+
+<style>
+    .certificate-section-page {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .certificate-section-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .certificate-section-header h1 {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    .certificate-section-header p {
+        margin-top: 8px;
+        color: #666;
+    }
+
+    .certificate-category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .certificate-category {
+        border-radius: 18px;
+        padding: 25px;
+        background: #fff;
+        box-shadow: 0 8px 25px rgba(0,0,0,.10);
+        border: 1px solid #e5e7eb;
+    }
+
+    .certificate-category h2 {
+        margin-top: 0;
+    }
+
+    .certificate-category p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .certificate-action {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .gold {
+        border-top: 6px solid #c99a16;
+    }
+
+    .silver {
+        border-top: 6px solid #8d99a6;
+    }
+
+    .bronze {
+        border-top: 6px solid #a96532;
+    }
+
+    .merit {
+        border-top: 6px solid #315f9b;
+    }
+
+    .appreciation {
+        border-top: 6px solid #6b7280;
+    }
+
+    .gold .certificate-action {
+        background: #b8860b;
+    }
+
+    .silver .certificate-action {
+        background: #64748b;
+    }
+
+    .bronze .certificate-action {
+        background: #9a5b2f;
+    }
+
+    .merit .certificate-action {
+        background: #315f9b;
+    }
+
+    .appreciation .certificate-action {
+        background: #4b5563;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+        .certificate-section-header h1 {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="certificate-section-page">
+
+    <a
+        href="/admin/rtse/results"
+        class="back-link"
+    >
+        ← Back to RTSE Result Dashboard
+    </a>
+
+    <div class="certificate-section-header">
+
+        <h1>
+            New Certificate System
+        </h1>
+
+        <p>
+            Section <strong><%= section %></strong>
+            Certificate Management
+        </p>
+
+    </div>
+
+    <div class="certificate-category-grid">
+
+        <!-- Rank 1 -->
+
+        <div class="certificate-category gold">
+
+            <h2>
+                🥇 1st Rank Certificate
+            </h2>
+
+            <% const rank1 = students.find(
+                student => Number(student.section_rank) === 1
+            ); %>
+
+            <% if (rank1) { %>
+
+                <p>
+                    <strong><%= rank1.full_name %></strong>
+                    <br>
+                    Registration:
+                    <%= rank1.registration_no %>
+                </p>
+
+                <a
+                    href="/admin/rtse/new-certificate/<%= rank1.application_id %>"
+                    class="certificate-action"
+                >
+                    View 1st Rank Certificate
+                </a>
+
+            <% } else { %>
+
+                <p>
+                    No Section Rank 1 result available.
+                </p>
+
+            <% } %>
+
+        </div>
+
+        <!-- Rank 2 -->
+
+        <div class="certificate-category silver">
+
+            <h2>
+                🥈 2nd Rank Certificate
+            </h2>
+
+            <% const rank2 = students.find(
+                student => Number(student.section_rank) === 2
+            ); %>
+
+            <% if (rank2) { %>
+
+                <p>
+                    <strong><%= rank2.full_name %></strong>
+                    <br>
+                    Registration:
+                    <%= rank2.registration_no %>
+                </p>
+
+                <a
+                    href="/admin/rtse/new-certificate/<%= rank2.application_id %>"
+                    class="certificate-action"
+                >
+                    View 2nd Rank Certificate
+                </a>
+
+            <% } else { %>
+
+                <p>
+                    No Section Rank 2 result available.
+                </p>
+
+            <% } %>
+
+        </div>
+
+        <!-- Rank 3 -->
+
+        <div class="certificate-category bronze">
+
+            <h2>
+                🥉 3rd Rank Certificate
+            </h2>
+
+            <% const rank3 = students.find(
+                student => Number(student.section_rank) === 3
+            ); %>
+
+            <% if (rank3) { %>
+
+                <p>
+                    <strong><%= rank3.full_name %></strong>
+                    <br>
+                    Registration:
+                    <%= rank3.registration_no %>
+                </p>
+
+                <a
+                    href="/admin/rtse/new-certificate/<%= rank3.application_id %>"
+                    class="certificate-action"
+                >
+                    View 3rd Rank Certificate
+                </a>
+
+            <% } else { %>
+
+                <p>
+                    No Section Rank 3 result available.
+                </p>
+
+            <% } %>
+
+        </div>
+
+        <!-- Merit -->
+
+        <div class="certificate-category merit">
+
+            <h2>
+                🏆 Merit Certificates
+            </h2>
+
+            <p>
+                All students holding Section Rank
+                <strong>4–10</strong>.
+            </p>
+
+            <p>
+                <strong>
+                    <%= students.filter(
+                        student =>
+                            Number(student.section_rank) >= 4 &&
+                            Number(student.section_rank) <= 10
+                    ).length %>
+                </strong>
+                Merit Certificate(s)
+            </p>
+
+            <a
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/merit"
+                class="certificate-action"
+            >
+                View All Merit Certificates
+            </a>
+
+        </div>
+
+        <!-- Appreciation -->
+
+        <div class="certificate-category appreciation">
+
+            <h2>
+                🎓 Appreciation Certificates
+            </h2>
+
+            <p>
+                All students holding Section Rank
+                <strong>11 and above</strong>.
+            </p>
+
+            <p>
+                <strong>
+                    <%= students.filter(
+                        student =>
+                            Number(student.section_rank) >= 11
+                    ).length %>
+                </strong>
+                Appreciation Certificate(s)
+            </p>
+
+            <a
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/appreciation"
+                class="certificate-action"
+            >
+                View All Appreciation Certificates
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

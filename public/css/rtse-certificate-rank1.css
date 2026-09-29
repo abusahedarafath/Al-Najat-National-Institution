@@ -1,0 +1,283 @@
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    background: #d8d8d8;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.certificate-page {
+    width: 297mm;
+    height: 210mm;
+    margin: 0 auto;
+    padding: 10mm;
+    background: #f5e7bd;
+}
+
+.certificate-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at center, #fffdf4 0%, #f8edcc 62%, #e7cf91 100%);
+    border: 2.5mm solid #8b641c;
+    box-shadow:
+        inset 0 0 0 1.2mm #d8b45d,
+        inset 0 0 0 2.2mm #fff4ca,
+        inset 0 0 0 3mm #8b641c;
+}
+
+.inner-frame {
+    position: absolute;
+    inset: 7mm;
+    border: 0.7mm solid #bd8c2c;
+}
+
+.ornament {
+    position: absolute;
+    width: 34mm;
+    height: 34mm;
+    border: 1.3mm solid #a97920;
+    transform: rotate(45deg);
+}
+
+.ornament-top-left {
+    top: -21mm;
+    left: -21mm;
+}
+
+.ornament-top-right {
+    top: -21mm;
+    right: -21mm;
+}
+
+.ornament-bottom-left {
+    bottom: -21mm;
+    left: -21mm;
+}
+
+.ornament-bottom-right {
+    bottom: -21mm;
+    right: -21mm;
+}
+
+.certificate-header {
+    position: relative;
+    height: 47mm;
+    padding: 12mm 18mm 4mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.arsp-logo {
+    position: absolute;
+    left: 20mm;
+    top: 10mm;
+    width: 25mm;
+    height: 25mm;
+    object-fit: contain;
+}
+
+.organization-block {
+    max-width: 205mm;
+}
+
+.organization-name {
+    color: #6c4910;
+    font-size: 7mm;
+    font-weight: 800;
+    letter-spacing: 1.7mm;
+}
+
+.exam-name {
+    margin-top: 2mm;
+    color: #191919;
+    font-size: 5.2mm;
+    font-weight: 700;
+    letter-spacing: .65mm;
+}
+
+.organized-by {
+    margin-top: 1.5mm;
+    color: #8c671f;
+    font-size: 3.2mm;
+    letter-spacing: .9mm;
+    text-transform: uppercase;
+}
+
+.rank-badge {
+    position: absolute;
+    right: 19mm;
+    top: 9mm;
+    width: 29mm;
+    height: 29mm;
+    border: 1mm solid #b8892c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #f8e6ae;
+    color: #68480e;
+    font-size: 3.1mm;
+    font-weight: 800;
+}
+
+.rank-badge::before {
+    content: "";
+    position: absolute;
+    inset: 2mm;
+    border: .4mm solid #b8892c;
+    border-radius: 50%;
+}
+
+.certificate-content {
+    position: relative;
+    height: 102mm;
+    padding: 3mm 25mm 0;
+    text-align: center;
+}
+
+.certificate-category {
+    display: inline-block;
+    padding: 2.5mm 13mm;
+    border-top: .6mm solid #a8791f;
+    border-bottom: .6mm solid #a8791f;
+    color: #704c0e;
+    font-size: 5.2mm;
+    font-weight: 800;
+    letter-spacing: 1mm;
+    text-transform: uppercase;
+}
+
+.certificate-intro {
+    margin-top: 7mm;
+    color: #555;
+    font-size: 3.8mm;
+    font-style: italic;
+}
+
+.student-name {
+    margin-top: 2.5mm;
+    color: #161616;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12mm;
+    font-weight: 700;
+    letter-spacing: .5mm;
+}
+
+.student-divider {
+    width: 80mm;
+    margin: 3mm auto 4mm;
+    border-bottom: .8mm solid #b48629;
+}
+
+.achievement-text {
+    color: #494949;
+    font-size: 4mm;
+    line-height: 1.5;
+}
+
+.achievement-grid {
+    margin: 7mm auto 0;
+    width: 190mm;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5mm;
+}
+
+.achievement-item {
+    padding: 4mm 5mm;
+    border: .45mm solid #c5a25c;
+    background: rgba(255, 250, 230, .72);
+}
+
+.achievement-item .label {
+    display: block;
+    color: #8a651e;
+    font-size: 2.7mm;
+    letter-spacing: .7mm;
+    font-weight: 700;
+}
+
+.achievement-item strong {
+    display: block;
+    margin-top: 1.2mm;
+    color: #27200f;
+    font-size: 4.5mm;
+}
+
+.rank-item {
+    background: #f3df9e;
+}
+
+.certificate-footer {
+    position: absolute;
+    left: 18mm;
+    right: 18mm;
+    bottom: 13mm;
+    display: grid;
+    grid-template-columns: 1fr 28mm 1fr;
+    align-items: end;
+    gap: 18mm;
+}
+
+.signature-block {
+    text-align: center;
+    color: #333;
+    font-size: 3mm;
+}
+
+.signature-line {
+    width: 50mm;
+    margin: 0 auto 2mm;
+    border-top: .45mm solid #54431e;
+}
+
+.certificate-qr img {
+    width: 20mm;
+    height: 20mm;
+    object-fit: contain;
+}
+
+.certificate-number {
+    position: absolute;
+    left: 50%;
+    bottom: -1mm;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 2.5mm;
+    color: #6b561f;
+}
+
+.certificate-number strong {
+    display: block;
+    margin-top: .7mm;
+}
+
+@media print {
+    body {
+        background: white;
+    }
+
+    .certificate-page {
+        margin: 0;
+    }
+}
