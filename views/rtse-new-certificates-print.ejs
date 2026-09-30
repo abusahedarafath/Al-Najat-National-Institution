@@ -19,7 +19,9 @@
             return "merit";
         }
 
-        return "appreciation";
+        throw new Error(
+            "The new certificate print system only supports Section Rank 1–10."
+        );
     }
 
     function getCategory(rank) {
@@ -34,7 +36,9 @@
             return "Merit Certificate";
         }
 
-        return "Appreciation Certificate";
+        throw new Error(
+            "The new certificate print system only supports Section Rank 1–10."
+        );
     }
 
     function getRankLabel(rank) {
@@ -74,7 +78,7 @@
     <title>
         <%= group === "merit"
             ? "Merit Certificates"
-            : "Appreciation Certificates" %>
+            : "Merit Certificates" %>
         -
         Section <%= section %>
     </title>

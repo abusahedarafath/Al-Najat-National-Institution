@@ -160,16 +160,22 @@ static async exists(applicationId){
             a.father_name,
             a.school_name,
             a.section,
-            a.photo
+            a.photo,
+            r.section_rank,
+            r.overall_rank
         FROM rtse_certificates c
         INNER JOIN rtse_applications a
             ON a.id=c.application_id
+        INNER JOIN rtse_results r
+            ON r.application_id=a.id
     `;
 
     const params = [];
 
+    sql += " WHERE r.section_rank >= 11";
+
     if(applicationYear){
-        sql += " WHERE a.application_year=?";
+        sql += " AND a.application_year=?";
         params.push(applicationYear);
     }
 
@@ -333,6 +339,8 @@ static async getPendingStudents(section = null, applicationYear = null){
 
             AND r.id IS NOT NULL
 
+            AND r.section_rank >= 11
+
         AND
 
             c.id IS NULL
@@ -403,8 +411,11 @@ static async resetAll(applicationYear){
          FROM rtse_certificates c
          INNER JOIN rtse_applications a
              ON a.id=c.application_id
+         INNER JOIN rtse_results r
+             ON r.application_id=a.id
          WHERE
-             a.application_year=?`,
+             a.application_year=?
+             AND r.section_rank >= 11`,
 
         [
             applicationYear

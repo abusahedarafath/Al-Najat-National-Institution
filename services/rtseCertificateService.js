@@ -24,33 +24,25 @@ class RtseCertificateService {
 
         }
 
-        let type = "Participation";
+        // The existing certificate system is now exclusively
+        // for Section Rank 11+ Appreciation Certificates.
+        //
+        // Ranks 1–10 are handled by the new certificate system.
+        // The guard here prevents direct/accidental use of the
+        // old generator for those students.
 
-        // Certificate category is determined ONLY by section rank.
-        // Overall rank must never determine the certificate category.
-        const sectionRank = Number(student.section_rank);
+        const sectionRank =
+            Number(student.section_rank);
 
-        if(sectionRank === 1){
+        if(sectionRank < 11){
 
-            type = "Gold";
-
-        }else if(sectionRank === 2){
-
-            type = "Silver";
-
-        }else if(sectionRank === 3){
-
-            type = "Bronze";
-
-        }else if(sectionRank >= 4 && sectionRank <= 10){
-
-            type = "Merit";
-
-        }else if(sectionRank >= 11){
-
-            type = "Appreciation";
+            throw new Error(
+                "The existing certificate system is only for Section Rank 11+ Appreciation Certificates."
+            );
 
         }
+
+        const type = "Appreciation";
 
         const applicationYear =
             Number(student.application_year);

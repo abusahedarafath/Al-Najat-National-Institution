@@ -114,16 +114,6 @@
                 🖨️ Print All Merit Certificates
             </a>
 
-        <% } else { %>
-
-            <a
-                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/appreciation/print"
-                class="print-all-button"
-                target="_blank"
-            >
-                🖨️ Print All Appreciation Certificates
-            </a>
-
         <% } %>
 
     </div>
@@ -133,8 +123,6 @@
         <h1>
             <% if (group === "merit") { %>
                 🏆 Merit Certificates
-            <% } else { %>
-                🎓 Appreciation Certificates
             <% } %>
         </h1>
 
@@ -219,9 +207,7 @@
         <div class="empty">
 
             No
-            <%= group === "merit"
-                ? "Merit"
-                : "Appreciation" %>
+            <%= "Merit" %>
             Certificate candidates found for this section.
 
         </div>

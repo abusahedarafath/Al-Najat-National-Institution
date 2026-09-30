@@ -1,6 +1,9 @@
 const db = require("../config/database");
 const ArspMember = require("../models/ArspMember");
 const ArspDocumentVerification = require("../models/ArspDocumentVerification");
+const RtseResultQr = require("../models/RtseResultQr");
+const RtseResult = require("../models/RtseResult");
+const RtseSetting = require("../models/RtseSetting");
 
 exports.verify = async (req, res) => {
     try {
@@ -25,6 +28,85 @@ exports.verify = async (req, res) => {
         }
 
         const pathname = url.pathname.replace(/\/+$/, "");
+
+        // ==========================================
+        // RTSE RESULT QR
+        // RTSE-RESULT-<secure-token>
+        // ==========================================
+        const rtseTokenMatch =
+            raw.match(/RTSE-RESULT-[a-f0-9]{64}/i) ||
+            pathname.match(/RTSE-RESULT-[a-f0-9]{64}/i);
+
+        if (rtseTokenMatch) {
+            const rtseToken = rtseTokenMatch[0];
+
+            const rtseSetting = await RtseSetting.get();
+
+            if (!rtseSetting || Number(rtseSetting.result_publish) !== 1) {
+                return res.json({
+                    type: "rtse_result",
+                    valid: false,
+                    published: false,
+                    message: "RTSE results have not been published yet."
+                });
+            }
+
+            const qrRecord =
+                await RtseResultQr.getByToken(rtseToken);
+
+            if (!qrRecord) {
+                return res.json({
+                    type: "rtse_result",
+                    valid: false,
+                    message: "Invalid RTSE result QR code."
+                });
+            }
+
+            if (
+                Number(qrRecord.archive) !== 0 ||
+                qrRecord.status !== "Approved" ||
+                Number(qrRecord.admit_generated) !== 1 ||
+                !qrRecord.roll_no
+            ) {
+                return res.json({
+                    type: "rtse_result",
+                    valid: false,
+                    message: "This RTSE QR code is no longer valid."
+                });
+            }
+
+            const studentResult =
+                await RtseResult.getByApplication(
+                    qrRecord.application_id
+                );
+
+            if (!studentResult) {
+                return res.json({
+                    type: "rtse_result",
+                    valid: false,
+                    message: "RTSE result is not available yet."
+                });
+            }
+
+            return res.json({
+                type: "rtse_result",
+                valid: true,
+                published: true,
+                message: "Congratulations!",
+                result: {
+                    full_name: qrRecord.full_name,
+                    class: qrRecord.class,
+                    section: qrRecord.section,
+                    application_year:
+                        qrRecord.application_year ||
+                        studentResult.application_year ||
+                        rtseSetting.exam_year,
+                    rank: studentResult.overall_rank,
+                    overall_rank: studentResult.overall_rank,
+                    section_rank: studentResult.section_rank
+                }
+            });
+        }
 
         // ==========================================
         // MEMBER QR

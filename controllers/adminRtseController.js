@@ -5208,7 +5208,7 @@ exports.newCertificateSection = async (req, res) => {
 
 
 // =====================================
-// New Certificate Group - Merit / Appreciation
+// New Certificate Group - Merit
 // =====================================
 
 exports.newCertificateGroup = async (req, res) => {
@@ -5234,10 +5234,7 @@ exports.newCertificateGroup = async (req, res) => {
 
         }
 
-        if (
-            group !== "merit" &&
-            group !== "appreciation"
-        ) {
+        if (group !== "merit") {
 
             req.flash(
                 "error",
@@ -5274,28 +5271,20 @@ exports.newCertificateGroup = async (req, res) => {
 
         const filteredStudents =
             students.filter(student => {
-
                 const rank =
                     Number(student.section_rank);
 
-                if (group === "merit") {
-
-                    return (
-                        rank >= 4 &&
-                        rank <= 10
-                    );
-
-                }
-
-                return rank >= 11;
-
+                return (
+                    rank >= 4 &&
+                    rank <= 10
+                );
             });
 
         return res.render(
             "admin/rtse/new-certificates-group",
             {
                 title:
-                    `${group === "merit" ? "Merit" : "Appreciation"} Certificates - Section ${section}`,
+                    `Merit Certificates - Section ${section}`,
 
                 students:
                     filteredStudents,
@@ -5355,10 +5344,7 @@ exports.printNewCertificateGroup = async (req, res) => {
 
         }
 
-        if (
-            group !== "merit" &&
-            group !== "appreciation"
-        ) {
+        if (group !== "merit") {
 
             return res.status(400).send(
                 "Invalid certificate group."
@@ -5397,17 +5383,10 @@ exports.printNewCertificateGroup = async (req, res) => {
                 const rank =
                     Number(student.section_rank);
 
-                if (group === "merit") {
-
-                    return (
-                        rank >= 4 &&
-                        rank <= 10
-                    );
-
-                }
-
-                return rank >= 11;
-
+                return (
+                    rank >= 4 &&
+                    rank <= 10
+                );
             });
 
         /*
@@ -5525,7 +5504,7 @@ exports.printNewCertificateGroup = async (req, res) => {
             "rtse-new-certificates-print",
             {
                 title:
-                    `${group === "merit" ? "Merit" : "Appreciation"} Certificates - Section ${section}`,
+                    `Merit Certificates - Section ${section}`,
 
                 certificates,
 
@@ -6506,8 +6485,29 @@ exports.viewNewCertificate = async (req, res) => {
 
         }
 
+        const sectionRank =
+            Number(result.section_rank);
+
+        if (
+            !Number.isFinite(sectionRank) ||
+            sectionRank < 1 ||
+            sectionRank > 10
+        ) {
+            req.flash(
+                "error",
+                "The new certificate system is only available for Section Rank 1–10. Section Rank 11+ uses the existing Appreciation certificate system."
+            );
+
+            return res.redirect(
+                "/admin/rtse/results"
+            );
+        }
+
         const setting =
             await RtseExamSetting.get();
+
+        const siteSettings =
+            await SiteSetting.get();
 
         /*
          * Find the Writing Skill component.
@@ -6583,6 +6583,11 @@ exports.viewNewCertificate = async (req, res) => {
          * No database row is inserted or modified.
          */
 
+        const existingCertificate =
+            await RtseCertificate.getByApplication(
+                req.params.id
+            );
+
         const certificate = {
 
             registration_no:
@@ -6609,6 +6614,9 @@ exports.viewNewCertificate = async (req, res) => {
             overall_rank:
                 result.overall_rank,
 
+            qr_code:
+                existingCertificate?.qr_code || null,
+
             writing_skill_grade:
                 writingSkillGrade
 
@@ -6622,7 +6630,9 @@ exports.viewNewCertificate = async (req, res) => {
 
                 certificate,
 
-                setting
+                setting,
+
+                siteSettings
             }
         );
 

@@ -71,10 +71,6 @@
         border-top: 6px solid #315f9b;
     }
 
-    .appreciation {
-        border-top: 6px solid #6b7280;
-    }
-
     .gold .certificate-action {
         background: #b8860b;
     }
@@ -89,10 +85,6 @@
 
     .merit .certificate-action {
         background: #315f9b;
-    }
-
-    .appreciation .certificate-action {
-        background: #4b5563;
     }
 
     .back-link {
@@ -280,37 +272,7 @@
 
         </div>
 
-        <!-- Appreciation -->
 
-        <div class="certificate-category appreciation">
-
-            <h2>
-                🎓 Appreciation Certificates
-            </h2>
-
-            <p>
-                All students holding Section Rank
-                <strong>11 and above</strong>.
-            </p>
-
-            <p>
-                <strong>
-                    <%= students.filter(
-                        student =>
-                            Number(student.section_rank) >= 11
-                    ).length %>
-                </strong>
-                Appreciation Certificate(s)
-            </p>
-
-            <a
-                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/appreciation"
-                class="certificate-action"
-            >
-                View All Appreciation Certificates
-            </a>
-
-        </div>
 
     </div>
 

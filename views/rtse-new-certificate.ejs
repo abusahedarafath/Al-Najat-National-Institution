@@ -1,8 +1,18 @@
 <%
 const sectionRank = Number(certificate?.section_rank || 0);
 
-let design = "appreciation";
-let category = "Appreciation Certificate";
+if (
+    !Number.isFinite(sectionRank) ||
+    sectionRank < 1 ||
+    sectionRank > 10
+) {
+    throw new Error(
+        "The new certificate system only supports Section Rank 1–10."
+    );
+}
+
+let design = "";
+let category = "";
 let rankLabel = `Section Rank ${sectionRank}`;
 
 if (sectionRank === 1) {
@@ -51,14 +61,28 @@ const examName =
     "RATABARI TALLENT SEARCH EXAMINATION 2026";
 
 const logo =
-    setting?.logo
-        ? `/uploads/arsp-settings/${setting.logo}`
+    siteSettings?.logo
+        ? `/uploads/site-settings/${siteSettings.logo}`
         : "";
 
 const qrCode =
     certificate?.qr_code
-        ? `/uploads/rtse-qr/${certificate.qr_code}`
+        ? `/uploads/rtse-certificates/${certificate.qr_code}`
         : "";
+
+const presidentSignature =
+    setting?.president_signature
+        ? `/uploads/arsp-settings/${setting.president_signature}`
+        : "";
+
+const directorSignature =
+    certificate?.director_signature
+        ? `/uploads/rtse/${certificate.director_signature}`
+        : (
+            setting?.director_signature
+                ? `/uploads/arsp-settings/${setting.director_signature}`
+                : ""
+        );
 %>
 
 <!DOCTYPE html>
@@ -74,6 +98,98 @@ const qrCode =
 </head>
 
 <body>
+<% if (design === "rank1") { %>
+
+    <%
+        const studentPhoto =
+            certificate?.photo
+                ? `/uploads/rtse/${certificate.photo}`
+                : "";
+    %>
+
+    <div class="certificate-page rank1">
+
+        <div class="rank1-frame">
+
+    <img
+        class="rank1-template-background"
+        src="/images/rtse-certificates/rank1-template.png"
+        alt=""
+        aria-hidden="true"
+    >
+
+    <div class="rank1-overlay">
+
+        <% if (logo) { %>
+            <img
+                class="rank1-overlay-logo"
+                src="<%= logo %>"
+                alt="ARSP Logo"
+            >
+        <% } %>
+
+        <div class="rank1-overlay-heading">
+            <div class="rank1-overlay-exam-name">
+                <%= examName %>
+            </div>
+            <div class="rank1-overlay-organized">
+                Organized by ARSP NGO
+            </div>
+        </div>
+
+        <% if (studentPhoto) { %>
+            <img
+                class="rank1-overlay-photo"
+                src="<%= studentPhoto %>"
+                alt="Student Photo"
+            >
+        <% } %>
+
+        <div class="rank1-overlay-student">
+            <div class="rank1-overlay-student-name">
+                <%= certificate?.full_name || "Student Name" %>
+            </div>
+
+
+
+            <div class="rank1-overlay-award">
+                This certificate is proudly awarded for securing the
+                <strong>First Rank</strong> in the
+                <strong><%= examName %></strong>.
+            </div>
+        </div>
+
+        <% if (qrCode) { %>
+            <img
+                class="rank1-overlay-qr"
+                src="<%= qrCode %>"
+                alt="Certification QR Code"
+            >
+        <% } %>
+
+        <% if (presidentSignature) { %>
+            <img
+                class="rank1-overlay-president-signature"
+                src="<%= presidentSignature %>"
+                alt="President Signature"
+            >
+        <% } %>
+
+        <% if (directorSignature) { %>
+            <img
+                class="rank1-overlay-director-signature"
+                src="<%= directorSignature %>"
+                alt="Director Signature"
+            >
+        <% } %>
+
+    </div>
+</div>
+
+    </div>
+
+<% } else { %>
+
 
 <div class="certificate-page <%= design %>">
 
@@ -185,6 +301,8 @@ const qrCode =
 
 </div>
 
+
+<% } %>
 <script>
 window.addEventListener("load", function () {
     setTimeout(function () {

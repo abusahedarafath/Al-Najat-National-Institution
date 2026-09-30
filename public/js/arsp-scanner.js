@@ -28,8 +28,131 @@
     let processing = false;
 
 
-    function showResult(data) {
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
+    function showResult(data) {
+        /*
+         * RTSE PUBLIC RESULT
+         * -----------------
+         * Dedicated public presentation for a published RTSE result.
+         */
+        if (data.type === "rtse_result") {
+            if (data.valid && data.result) {
+                const student = data.result;
+                const rank = Number(student.overall_rank);
+
+                const rankText =
+                    Number.isFinite(rank) && rank > 0
+                        ? `Rank ${escapeHtml(rank)}`
+                        : "Result Verified";
+
+                result.className =
+                    "arsp-scanner-result rtse-scanner-result valid";
+
+                result.innerHTML = `
+                    <div class="rtse-scanner-congratulations">
+
+                        <div class="rtse-scanner-confetti">
+                            🎉
+                        </div>
+
+                        <div class="rtse-scanner-success-title">
+                            Congratulations!
+                        </div>
+
+                        <div class="rtse-scanner-success-subtitle">
+                            RTSE 2026 Result Verified
+                        </div>
+
+                        <div class="rtse-scanner-student-name">
+                            ${escapeHtml(
+                                student.full_name || "Student"
+                            )}
+                        </div>
+
+                        <div class="rtse-scanner-rank">
+                            🏆 ${rankText}
+                        </div>
+
+                        <div class="rtse-scanner-details">
+
+                            <div>
+                                <span>Class</span>
+                                <strong>
+                                    ${escapeHtml(
+                                        student.class || "—"
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Section</span>
+                                <strong>
+                                    ${escapeHtml(
+                                        student.section || "—"
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Year</span>
+                                <strong>
+                                    ${escapeHtml(
+                                        student.application_year || "2026"
+                                    )}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="rtse-scanner-verified">
+                            ✓ Official ARSP QR Verification
+                        </div>
+
+                    </div>
+                `;
+
+                return;
+            }
+
+            result.className =
+                "arsp-scanner-result rtse-scanner-result invalid";
+
+            result.innerHTML = `
+                <div class="rtse-scanner-invalid">
+
+                    <div class="rtse-scanner-invalid-icon">
+                        !
+                    </div>
+
+                    <div class="rtse-scanner-invalid-title">
+                        RTSE Result Unavailable
+                    </div>
+
+                    <div class="rtse-scanner-invalid-message">
+                        ${escapeHtml(
+                            data.message ||
+                            "This RTSE result could not be verified."
+                        )}
+                    </div>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        /*
+         * Existing ARSP scanner result handling.
+         * Member, Appointment and Tiranga responses remain supported.
+         */
         result.className =
             "arsp-scanner-result " +
             (data.valid ? "valid" : "invalid");
@@ -40,38 +163,35 @@
             </div>
 
             <div class="scanner-result-message">
-                ${data.message || ""}
+                ${escapeHtml(data.message || "")}
             </div>
         `;
 
         if (data.member) {
-
             html += `
                 <div class="scanner-member">
                     <strong>
-                        ${data.member.full_name || ""}
+                        ${escapeHtml(data.member.full_name || "")}
                     </strong>
 
                     <span>
-                        ${data.member.member_id || ""}
+                        ${escapeHtml(data.member.member_id || "")}
                     </span>
                 </div>
             `;
         }
 
         if (data.document_number) {
-
             html += `
                 <div class="scanner-document">
                     Document:
-                    ${data.document_number}
+                    ${escapeHtml(data.document_number)}
                 </div>
             `;
         }
 
         result.innerHTML = html;
     }
-
 
     async function verify(value) {
 
