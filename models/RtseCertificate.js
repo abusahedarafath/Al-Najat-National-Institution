@@ -385,9 +385,12 @@ static async resetBySection(section, applicationYear){
          FROM rtse_certificates c
          INNER JOIN rtse_applications a
              ON a.id=c.application_id
+         INNER JOIN rtse_results r
+             ON r.application_id=a.id
          WHERE
              a.section=?
-             AND a.application_year=?`,
+             AND a.application_year=?
+             AND r.section_rank >= 11`,
 
         [
             section,
@@ -468,9 +471,11 @@ static async getBySection(section, applicationYear){
 
           AND a.application_year=?
 
+            AND r.section_rank >= 11
+
         ORDER BY
 
-            a.roll_no ASC`,
+            r.section_rank ASC`,
 
         [
 
