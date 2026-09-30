@@ -6583,9 +6583,13 @@ exports.viewNewCertificate = async (req, res) => {
          * No database row is inserted or modified.
          */
 
+        const host =
+            `${req.protocol}://${req.get("host")}`;
+
         const existingCertificate =
-            await RtseCertificate.getByApplication(
-                req.params.id
+            await RtseCertificateService.ensureNewCertificate(
+                req.params.id,
+                host
             );
 
         const certificate = {

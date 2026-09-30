@@ -144,6 +144,28 @@ static async exists(applicationId){
     }
 
 
+    // =====================================
+    // Update Certificate QR Code
+    // =====================================
+
+    static async updateQrCode(applicationId, qrCode){
+
+        await db.query(
+
+            `UPDATE rtse_certificates
+             SET qr_code=?
+             WHERE application_id=?`,
+
+            [
+                qrCode,
+                applicationId
+            ]
+
+        );
+
+    }
+
+
 
     // =====================================
     // Get All Certificates
