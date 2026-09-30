@@ -238,5 +238,10 @@ router.get(
     rtseController.verifyRegistration
 );
 
+router.get(
+    "/verify/certificate/:number",
+    rtseController.verifyCertificate
+);
+
 
 module.exports = router;
