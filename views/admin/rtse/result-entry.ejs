@@ -360,18 +360,19 @@ function calculate(){
             document.getElementById(
                 "component_grade_" + componentId
             );
-
-        if(componentGradeElement){
-            if(
-                input.value === "" ||
-                !Number.isFinite(maximum) ||
-                maximum <= 0 ||
-                !Number.isFinite(obtained) ||
-                obtained < 0 ||
-                obtained > maximum
-            ){
-                componentGradeElement.textContent = "";
-            }else{
+if(componentGradeElement){
+    if(Number(input.dataset.gradeCounting) !== 1){
+        componentGradeElement.textContent = "";
+    }else if(
+        input.value === "" ||
+        !Number.isFinite(maximum) ||
+        maximum <= 0 ||
+        !Number.isFinite(obtained) ||
+        obtained < 0 ||
+        obtained > maximum
+    ){
+        componentGradeElement.textContent = "";
+    }else{
                 const componentPercentage =
                     (obtained / maximum) * 100;
 

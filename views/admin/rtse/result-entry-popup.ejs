@@ -135,13 +135,13 @@
                                       const popupMarksNumber = Number(savedMarks);
                                       const popupMaximumNumber =
                                           Number(component.maximum_marks);
-
-                                      if (
-                                          savedMarks !== "" &&
-                                          Number.isFinite(popupMarksNumber) &&
-                                          Number.isFinite(popupMaximumNumber) &&
-                                          popupMaximumNumber > 0
-                                      ) {
+if (
+    Number(component.grade_counting) === 1 &&
+    savedMarks !== "" &&
+    Number.isFinite(popupMarksNumber) &&
+    Number.isFinite(popupMaximumNumber) &&
+    popupMaximumNumber > 0
+) {
                                           const popupPercentage =
                                               (popupMarksNumber / popupMaximumNumber) * 100;
 
@@ -749,27 +749,28 @@ body.rtse-omr-modal-open {
                 document.getElementById(
                     "component_grade_" + componentId
                 );
+if (componentGradeElement) {
+    if (Number(input.dataset.gradeCounting) !== 1) {
+        componentGradeElement.textContent = "";
+    } else if (
+        input.value === "" ||
+        !Number.isFinite(maximum) ||
+        maximum <= 0 ||
+        !Number.isFinite(obtained) ||
+        obtained < 0 ||
+        obtained > maximum
+    ) {
+        componentGradeElement.textContent = "";
+    } else {
+        const componentPercentage =
+            (obtained / maximum) * 100;
 
-            if (componentGradeElement) {
-                if (
-                    input.value === "" ||
-                    !Number.isFinite(maximum) ||
-                    maximum <= 0 ||
-                    !Number.isFinite(obtained) ||
-                    obtained < 0 ||
-                    obtained > maximum
-                ) {
-                    componentGradeElement.textContent = "";
-                } else {
-                    const componentPercentage =
-                        (obtained / maximum) * 100;
-
-                    componentGradeElement.textContent =
-                        rtsePopupCalculateGrade(
-                            componentPercentage
-                        );
-                }
-            }
+        componentGradeElement.textContent =
+            rtsePopupCalculateGrade(
+                componentPercentage
+            );
+    }
+}
 
             /*
              * All enabled components contribute

@@ -2280,12 +2280,22 @@ exports.createResultMarkComponent = async (req, res) => {
             );
         }
 
+        const rankingEnabled =
+            String(
+                req.body.ranking_enabled === undefined
+                    ? "1"
+                    : req.body.ranking_enabled
+            ) === "1"
+                ? 1
+                : 0;
+
         await RtseMarkComponent.create({
             application_year: applicationYear,
             name,
             maximum_marks: maximumMarks,
             enabled,
             grade_counting: gradeCounting,
+            ranking_enabled: rankingEnabled,
             display_order: displayOrder
         });
 
@@ -2392,6 +2402,15 @@ exports.updateResultMarkComponent = async (req, res) => {
             );
         }
 
+        const rankingEnabled =
+            String(
+                req.body.ranking_enabled === undefined
+                    ? "1"
+                    : req.body.ranking_enabled
+            ) === "1"
+                ? 1
+                : 0;
+
         await RtseMarkComponent.update(
             req.params.id,
             {
@@ -2399,6 +2418,7 @@ exports.updateResultMarkComponent = async (req, res) => {
                 maximum_marks: maximumMarks,
                 enabled,
                 grade_counting: gradeCounting,
+                ranking_enabled: rankingEnabled,
                 display_order: displayOrder
             }
         );
@@ -2430,6 +2450,112 @@ exports.updateResultMarkComponent = async (req, res) => {
 // -------------------------------------
 // Toggle Mark Component
 // -------------------------------------
+
+exports.toggleResultMarkComponentGradeCounting = async (req, res) => {
+    try {
+        const component =
+            await RtseMarkComponent.getById(req.params.id);
+
+        if (!component) {
+            throw new Error("Mark component not found.");
+        }
+
+        const setting = await RtseSetting.get();
+
+        if (
+            !setting ||
+            Number(setting.exam_year) !==
+                Number(component.application_year)
+        ) {
+            throw new Error(
+                "This mark component does not belong to the active RTSE year."
+            );
+        }
+
+        const newGradeCounting =
+            Number(component.grade_counting) === 1 ? 0 : 1;
+
+        await RtseMarkComponent.setGradeCounting(
+            req.params.id,
+            newGradeCounting
+        );
+
+        req.flash(
+            "success",
+            `Grade counting for "${component.name}" ${
+                newGradeCounting === 1 ? "enabled" : "disabled"
+            } successfully.`
+        );
+    } catch (err) {
+        console.error(
+            "Toggle RTSE Mark Component Grade Counting Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to change grade counting status."
+        );
+    }
+
+    return res.redirect(
+        "/admin/rtse/results/mark-components"
+    );
+};
+
+exports.toggleResultMarkComponentRanking = async (req, res) => {
+    try {
+        const component =
+            await RtseMarkComponent.getById(req.params.id);
+
+        if (!component) {
+            throw new Error("Mark component not found.");
+        }
+
+        const setting = await RtseSetting.get();
+
+        if (
+            !setting ||
+            Number(setting.exam_year) !==
+                Number(component.application_year)
+        ) {
+            throw new Error(
+                "This mark component does not belong to the active RTSE year."
+            );
+        }
+
+        const newRankingEnabled =
+            Number(component.ranking_enabled) === 1 ? 0 : 1;
+
+        await RtseMarkComponent.setRankingEnabled(
+            req.params.id,
+            newRankingEnabled
+        );
+
+        req.flash(
+            "success",
+            `Ranking calculation for "${component.name}" ${
+                newRankingEnabled === 1 ? "enabled" : "disabled"
+            } successfully.`
+        );
+    } catch (err) {
+        console.error(
+            "Toggle RTSE Mark Component Ranking Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to change ranking calculation status."
+        );
+    }
+
+    return res.redirect(
+        "/admin/rtse/results/mark-components"
+    );
+};
 
 exports.toggleResultMarkComponent = async (req, res) => {
     try {

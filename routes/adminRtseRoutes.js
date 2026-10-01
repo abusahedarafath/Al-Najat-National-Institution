@@ -622,6 +622,20 @@ router.post(
 );
 
 router.post(
+    "/rtse/results/mark-components/:id/toggle-grade-counting",
+    auth.isAdmin,
+    multer().none(),
+    adminRtseController.toggleResultMarkComponentGradeCounting
+);
+
+router.post(
+    "/rtse/results/mark-components/:id/toggle-ranking",
+    auth.isAdmin,
+    multer().none(),
+    adminRtseController.toggleResultMarkComponentRanking
+);
+
+router.post(
     "/rtse/results/mark-components/:id/delete",
     auth.isAdmin,
     adminRtseController.deleteResultMarkComponent

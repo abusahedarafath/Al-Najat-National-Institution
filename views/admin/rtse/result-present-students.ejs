@@ -233,7 +233,9 @@
                                                             %>
                                                             · <%= component.name %>:
                                                             <%= presentComponentMarks %> / <%= component.maximum_marks %>
-                                                            — Grade <strong><%= presentComponentGrade %></strong>
+                                                          <% if (Number(component.grade_counting) === 1) { %>
+    — Grade <strong><%= presentComponentGrade %></strong>
+<% } %>
                                                             <% }); %>
 
                                                         <% if (student.total_marks !== null && student.total_marks !== undefined) { %>

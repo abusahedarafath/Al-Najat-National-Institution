@@ -65,11 +65,12 @@
                             <%= applicationYear %>
                         </h2>
 
-                        <p>
-                            OMR remains 100 marks. Enabled components are added to total result marks.
-                            Grade Counting controls whether a component contributes to the grade percentage.
-                            Components with Grade Counting = No still contribute to total marks and ranking.
-                        </p>
+<p>
+    OMR remains 100 marks. Enable / Disable controls whether a component is active and visible for result entry.
+    Grade Counting controls whether an active component contributes to grade calculation.
+    Ranking controls whether an active component contributes to ranking. These controls are independent.
+</p>
+
 
                     </div>
 
@@ -151,6 +152,20 @@
                                 </select>
                             </div>
 
+
+<div>
+    <label>
+        Ranking
+    </label>
+    <select
+        name="ranking_enabled"
+    >
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+    </select>
+</div>
+
+
                             <div>
                                 <label>
                                     Status
@@ -204,17 +219,23 @@
                                 <th>
                                     Maximum Marks
                                 </th>
-                                <th>
-                                    Grade Counting
-                                </th>
 
-                                <th>
-                                    Status
-                                </th>
+<th>
+    Grade Counting
+</th>
 
-                                <th>
-                                    Actions
-                                </th>
+<th>
+    Ranking
+</th>
+
+<th>
+    Status
+</th>
+
+<th>
+    Actions
+</th>
+
 
                             </tr>
 
@@ -228,7 +249,7 @@
                                 <tr>
 
                                     <td
-                                        colspan="6"
+                                        colspan="7"
                                     >
                                         No additional mark components configured.
                                     </td>
@@ -275,24 +296,43 @@
 
 
                                 <td>
-                                    <select
-                                        form="edit-component-<%= component.id %>"
-                                        name="grade_counting"
+                                    <form
+                                        method="POST"
+                                        class="component-toggle-form"
+                                        action="/admin/rtse/results/mark-components/<%= component.id %>/toggle-grade-counting"
                                     >
-                                        <option
-                                            value="1"
-                                            <%= Number(component.grade_counting) === 1 ? "selected" : "" %>
+                                        <button
+                                            type="submit"
+                                            class="<%= Number(component.grade_counting) === 1 ? 'btn-warning' : 'btn-save' %>"
                                         >
-                                            Yes
-                                        </option>
-                                        <option
-                                            value="0"
-                                            <%= Number(component.grade_counting) !== 1 ? "selected" : "" %>
-                                        >
-                                            No
-                                        </option>
-                                    </select>
-                                </td><td>
+                                            <%= Number(component.grade_counting) === 1 ? "ON" : "OFF" %>
+                                        </button>
+                                    </form>
+                                </td>
+
+
+
+<td>
+    <select
+        form="edit-component-<%= component.id %>"
+        name="ranking_enabled"
+    >
+        <option
+            value="1"
+            <%= Number(component.ranking_enabled) === 1 ? "selected" : "" %>
+        >
+            Yes
+        </option>
+        <option
+            value="0"
+            <%= Number(component.ranking_enabled) !== 1 ? "selected" : "" %>
+        >
+            No
+        </option>
+    </select>
+</td>
+
+<td>
 
                                         <select
                                             form="edit-component-<%= component.id %>"
@@ -323,6 +363,12 @@
                                             method="POST"
                                             action="/admin/rtse/results/mark-components/<%= component.id %>/edit"
                                         >
+
+                                            <input
+                                                type="hidden"
+                                                name="grade_counting"
+                                                value="<%= Number(component.grade_counting) === 1 ? 1 : 0 %>"
+                                            >
 
                                             <input
                                                 type="number"
@@ -784,13 +830,17 @@
         content: "Maximum Marks" !important;
     }
 
-    .rtse-mark-components-page .component-table tbody td:nth-child(4)::before {
-        content: "Grade Counting" !important;
-    }
+.rtse-mark-components-page .component-table tbody td:nth-child(4)::before {
+    content: "Grade Counting" !important;
+}
 
-    .rtse-mark-components-page .component-table tbody td:nth-child(5)::before {
-        content: "Status" !important;
-    }
+.rtse-mark-components-page .component-table tbody td:nth-child(5)::before {
+    content: "Ranking" !important;
+}
+
+.rtse-mark-components-page .component-table tbody td:nth-child(6)::before {
+    content: "Status" !important;
+}
 
     .rtse-mark-components-page .component-table tbody td > input,
     .rtse-mark-components-page .component-table tbody td > select {

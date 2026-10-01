@@ -438,6 +438,7 @@ static async generateSectionRanks(section, applicationYear){
             ON mc.id=rcm.component_id
            AND mc.application_year=a.application_year
            AND mc.enabled=1
+           AND mc.ranking_enabled=1
 
         WHERE
 
@@ -598,6 +599,7 @@ static async generateOverallRank(applicationYear){
             ON mc.id=rcm.component_id
            AND mc.application_year=a.application_year
            AND mc.enabled=1
+           AND mc.ranking_enabled=1
 
         WHERE a.application_year=?
           AND r.id IS NOT NULL

@@ -282,7 +282,10 @@ Registration
         else if (sectionMeritComponentPercentage >= 50) sectionMeritComponentGrade = "C+";
         else if (sectionMeritComponentPercentage >= 40) sectionMeritComponentGrade = "C";
       %>
-      <strong><%= sectionMeritComponentGrade %></strong>
+     <% if (Number(component.grade_counting) === 1) { %>
+    <strong><%= sectionMeritComponentGrade %></strong>
+<% } %>
+
     </td>
   <% }) %>
 

@@ -13,6 +13,7 @@ class RtseMarkComponent {
                 maximum_marks,
                 enabled,
                 grade_counting,
+                ranking_enabled,
                 display_order,
                 created_at,
                 updated_at
@@ -37,6 +38,7 @@ class RtseMarkComponent {
                 maximum_marks,
                 enabled,
                 grade_counting,
+                ranking_enabled,
                 display_order
              FROM rtse_mark_components
              WHERE application_year=?
@@ -60,6 +62,7 @@ class RtseMarkComponent {
                 maximum_marks,
                 enabled,
                 grade_counting,
+                ranking_enabled,
                 display_order,
                 created_at,
                 updated_at
@@ -83,15 +86,17 @@ class RtseMarkComponent {
                 maximum_marks,
                 enabled,
                 grade_counting,
+                ranking_enabled,
                 display_order
              )
-             VALUES (?,?,?,?,?,?)`,
+             VALUES (?,?,?,?,?,?,?)`,
             [
                 data.application_year,
                 data.name,
                 data.maximum_marks,
                 data.enabled === undefined ? 1 : data.enabled,
                 data.grade_counting === undefined ? 1 : data.grade_counting,
+                data.ranking_enabled === undefined ? 1 : data.ranking_enabled,
                 data.display_order === undefined ? 0 : data.display_order
             ]
         );
@@ -110,6 +115,7 @@ class RtseMarkComponent {
                 maximum_marks=?,
                 enabled=?,
                 grade_counting=?,
+                ranking_enabled=?,
                 display_order=?
              WHERE id=?`,
             [
@@ -117,6 +123,7 @@ class RtseMarkComponent {
                 data.maximum_marks,
                 data.enabled === undefined ? 1 : data.enabled,
                 data.grade_counting === undefined ? 1 : data.grade_counting,
+                data.ranking_enabled === undefined ? 1 : data.ranking_enabled,
                 data.display_order === undefined ? 0 : data.display_order,
                 id
             ]
@@ -139,6 +146,36 @@ class RtseMarkComponent {
     }
 
     // =====================================
+    // Enable / disable grade counting
+    // =====================================
+    static async setGradeCounting(id, enabled) {
+        await db.query(
+            `UPDATE rtse_mark_components
+             SET grade_counting=?
+             WHERE id=?`,
+            [
+                Number(enabled) === 1 ? 1 : 0,
+                id
+            ]
+        );
+    }
+
+    // =====================================
+    // Enable / disable ranking calculation
+    // =====================================
+    static async setRankingEnabled(id, enabled) {
+        await db.query(
+            `UPDATE rtse_mark_components
+             SET ranking_enabled=?
+             WHERE id=?`,
+            [
+                Number(enabled) === 1 ? 1 : 0,
+                id
+            ]
+        );
+    }
+
+    // =====================================
     // Get saved component marks for result
     // =====================================
     static async getResultMarks(resultId) {
@@ -152,6 +189,7 @@ class RtseMarkComponent {
                 mc.maximum_marks,
                 mc.enabled,
                 mc.grade_counting,
+                mc.ranking_enabled,
                 mc.display_order
              FROM rtse_result_component_marks rcm
              INNER JOIN rtse_mark_components mc

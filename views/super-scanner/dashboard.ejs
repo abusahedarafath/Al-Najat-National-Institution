@@ -2768,15 +2768,16 @@ resultComponentInputs.forEach(
                 "resultComponentGrade_" +
                 input.dataset.componentId
             );
-
-        if(componentGradeElement){
-            if(
-                input.value === "" ||
-                !Number.isFinite(maximum) ||
-                maximum <= 0
-            ){
-                componentGradeElement.textContent = "";
-            }else{
+if(componentGradeElement){
+    if(Number(input.dataset.gradeCounting) !== 1){
+        componentGradeElement.textContent = "";
+    }else if(
+        input.value === "" ||
+        !Number.isFinite(maximum) ||
+        maximum <= 0
+    ){
+        componentGradeElement.textContent = "";
+    }else{
                 const componentPercentage =
                     (obtained / maximum) * 100;
 

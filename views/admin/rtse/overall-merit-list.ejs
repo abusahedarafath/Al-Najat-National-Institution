@@ -253,7 +253,10 @@ Registration
         else if (overallComponentPercentage >= 40) overallComponentGrade = "C";
       %>
       
-      <strong><%= overallComponentGrade %></strong>
+     <% if (Number(component.grade_counting) === 1) { %>
+    <strong><%= overallComponentGrade %></strong>
+<% } %>
+
     </td>
   <% }) %>
 
