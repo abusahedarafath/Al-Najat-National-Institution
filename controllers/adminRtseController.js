@@ -2428,6 +2428,68 @@ exports.updateResultMarkComponent = async (req, res) => {
 
 
 // -------------------------------------
+// Toggle Mark Component
+// -------------------------------------
+
+exports.toggleResultMarkComponent = async (req, res) => {
+    try {
+        const component =
+            await RtseMarkComponent.getById(
+                req.params.id
+            );
+
+        if (!component) {
+            throw new Error(
+                "Mark component not found."
+            );
+        }
+
+        const setting = await RtseSetting.get();
+
+        if (
+            !setting ||
+            Number(setting.exam_year) !==
+                Number(component.application_year)
+        ) {
+            throw new Error(
+                "This mark component does not belong to the active RTSE year."
+            );
+        }
+
+        const newEnabled =
+            Number(component.enabled) === 1 ? 0 : 1;
+
+        await RtseMarkComponent.setEnabled(
+            req.params.id,
+            newEnabled
+        );
+
+        req.flash(
+            "success",
+            `Mark component "${component.name}" ${
+                newEnabled === 1 ? "enabled" : "disabled"
+            } successfully.`
+        );
+    } catch (err) {
+        console.error(
+            "Toggle RTSE Mark Component Error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            err.message ||
+            "Unable to change mark component status."
+        );
+    }
+
+    return res.redirect(
+        "/admin/rtse/results/mark-components"
+    );
+};
+
+
+// -------------------------------------
 // Delete Mark Component
 // -------------------------------------
 

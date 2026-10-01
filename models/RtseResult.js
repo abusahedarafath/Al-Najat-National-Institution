@@ -408,11 +408,20 @@ static async generateSectionRanks(section, applicationYear){
 
             r.id,
 
-            CASE
-                WHEN r.total_marks IS NULL
-                    THEN r.marks
-                ELSE r.total_marks
-            END AS ranking_marks
+            (
+                COALESCE(r.marks, 0)
+                +
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN mc.id IS NOT NULL
+                                THEN COALESCE(rcm.marks, 0)
+                            ELSE 0
+                        END
+                    ),
+                    0
+                )
+            ) AS ranking_marks
 
         FROM rtse_results r
 
@@ -420,12 +429,28 @@ static async generateSectionRanks(section, applicationYear){
 
             ON a.id=r.application_id
 
+        LEFT JOIN rtse_result_component_marks rcm
+
+            ON rcm.result_id=r.id
+
+        LEFT JOIN rtse_mark_components mc
+
+            ON mc.id=rcm.component_id
+           AND mc.application_year=a.application_year
+           AND mc.enabled=1
+
         WHERE
 
             a.section=?
           AND a.application_year=?
 
         AND r.id IS NOT NULL
+
+        GROUP BY
+
+            r.id,
+            r.marks,
+            a.full_name
 
         ORDER BY
 
@@ -543,11 +568,20 @@ static async generateOverallRank(applicationYear){
 
             r.id,
 
-            CASE
-                WHEN r.total_marks IS NULL
-                    THEN r.marks
-                ELSE r.total_marks
-            END AS ranking_marks
+            (
+                COALESCE(r.marks, 0)
+                +
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN mc.id IS NOT NULL
+                                THEN COALESCE(rcm.marks, 0)
+                            ELSE 0
+                        END
+                    ),
+                    0
+                )
+            ) AS ranking_marks
 
         FROM rtse_results r
 
@@ -555,8 +589,24 @@ static async generateOverallRank(applicationYear){
 
             ON a.id=r.application_id
 
+        LEFT JOIN rtse_result_component_marks rcm
+
+            ON rcm.result_id=r.id
+
+        LEFT JOIN rtse_mark_components mc
+
+            ON mc.id=rcm.component_id
+           AND mc.application_year=a.application_year
+           AND mc.enabled=1
+
         WHERE a.application_year=?
           AND r.id IS NOT NULL
+
+        GROUP BY
+
+            r.id,
+            r.marks,
+            a.full_name
 
         ORDER BY
 

@@ -1,6 +1,6 @@
 <%- include("../partials/header") %>
 
-<div class="admin-layout">
+<div class="admin-layout rtse-mark-components-page">
 
     <%- include("../partials/sidebar") %>
 
@@ -16,18 +16,17 @@
                         RTSE Result Mark Components
                     </h1>
 
-                    <p style="margin:6px 0 0;color:#6b7280;">
+                    <p>
                         Configure additional mark components for RTSE result entry.
                     </p>
 
                 </div>
 
-                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <div>
 
                     <a
                         href="/admin/rtse/results"
                         class="btn-cancel"
-                        style="text-decoration:none;"
                     >
                         ← Result Dashboard
                     </a>
@@ -55,25 +54,18 @@
             <% } %>
 
 
-            <div class="profile-card">
+            <div class="profile-card rtse-components-card">
 
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    gap:15px;
-                    flex-wrap:wrap;
-                    margin-bottom:20px;
-                ">
+                <div>
 
-                    <div>
+                    <div class="rtse-year-summary">
 
-                        <h2 style="margin:0;">
+                        <h2>
                             Current RTSE Year:
                             <%= applicationYear %>
                         </h2>
 
-                        <p style="margin:6px 0 0;color:#6b7280;">
+                        <p>
                             OMR remains 100 marks. Enabled components are added to total result marks.
                             Grade Counting controls whether a component contributes to the grade percentage.
                             Components with Grade Counting = No still contribute to total marks and ranking.
@@ -81,13 +73,7 @@
 
                     </div>
 
-                    <div style="
-                        padding:9px 14px;
-                        border-radius:20px;
-                        background:#eef2ff;
-                        color:#3730a3;
-                        font-weight:600;
-                    ">
+                    <div>
                         Extra Marks:
                         <%= Number(configuredExtraMarks || 0).toFixed(2) %>
                     </div>
@@ -95,34 +81,17 @@
                 </div>
 
 
-                <div style="
-                    margin-bottom:25px;
-                    padding:18px;
-                    border:1px solid #e5e7eb;
-                    border-radius:12px;
-                    background:#f9fafb;
-                ">
+                <div class="rtse-add-component-panel">
 
-                    <h3 style="margin-top:0;">
-                        Add Mark Component
-                    </h3>
+                    <h3>Add Mark Component</h3>
 
                     <form
+                        class="rtse-add-component-form"
                         method="POST"
                         action="/admin/rtse/results/mark-components"
                     >
 
-                        <div style="
-                            display:grid;
-                            grid-template-columns:
-                                minmax(180px,2fr)
-                                minmax(130px,1fr)
-                                minmax(120px,1fr)
-                                minmax(110px,auto)
-                                auto;
-                            gap:12px;
-                            align-items:end;
-                        ">
+                        <div>
 
                             <div>
                                 <label>
@@ -135,7 +104,6 @@
                                     maxlength="150"
                                     placeholder="Writing Skill Test"
                                     required
-                                    style="width:100%;"
                                 >
                             </div>
 
@@ -152,7 +120,6 @@
                                     step="0.01"
                                     placeholder="10"
                                     required
-                                    style="width:100%;"
                                 >
                             </div>
 
@@ -168,7 +135,6 @@
                                     min="0"
                                     step="1"
                                     value="0"
-                                    style="width:100%;"
                                 >
                             </div>
 
@@ -179,7 +145,6 @@
                                 </label>
                                 <select
                                     name="grade_counting"
-                                    style="width:100%;"
                                 >
                                     <option value="1">Yes</option>
                                     <option value="0">No</option>
@@ -193,7 +158,6 @@
 
                                 <select
                                     name="enabled"
-                                    style="width:100%;"
                                 >
                                     <option value="1">
                                         Enabled
@@ -220,45 +184,35 @@
                 </div>
 
 
-                <div style="overflow-x:auto;">
+                <div>
 
-                    <table style="
-                        width:100%;
-                        border-collapse:collapse;
-                        min-width:850px;
-                    ">
+                    <table class="component-table">
 
                         <thead>
 
-                            <tr style="
-                                border-bottom:2px solid #e5e7eb;
-                                text-align:left;
-                            ">
+                            <tr>
 
 
-                                <th style="padding:13px 10px;">
+                                <th>
                                     Order
                                 </th>
 
-                                <th style="padding:13px 10px;">
+                                <th>
                                     Component
                                 </th>
 
-                                <th style="padding:13px 10px;">
+                                <th>
                                     Maximum Marks
                                 </th>
-                                <th style="padding:13px 10px;">
+                                <th>
                                     Grade Counting
                                 </th>
 
-                                <th style="padding:13px 10px;">
+                                <th>
                                     Status
                                 </th>
 
-                                <th style="
-                                    padding:13px 10px;
-                                    text-align:right;
-                                ">
+                                <th>
                                     Actions
                                 </th>
 
@@ -275,11 +229,6 @@
 
                                     <td
                                         colspan="6"
-                                        style="
-                                            padding:35px 15px;
-                                            text-align:center;
-                                            color:#6b7280;
-                                        "
                                     >
                                         No additional mark components configured.
                                     </td>
@@ -291,15 +240,13 @@
 
                             <% components.forEach(function(component) { %>
 
-                                <tr style="
-                                    border-bottom:1px solid #f1f5f9;
-                                ">
+                                <tr>
 
-                                    <td style="padding:12px 10px;">
+                                    <td>
                                         <%= component.display_order %>
                                     </td>
 
-                                    <td style="padding:12px 10px;">
+                                    <td>
 
                                         <input
                                             form="edit-component-<%= component.id %>"
@@ -312,7 +259,7 @@
 
                                     </td>
 
-                                    <td style="padding:12px 10px;">
+                                    <td>
 
                                         <input
                                             form="edit-component-<%= component.id %>"
@@ -327,7 +274,7 @@
                                     </td>
 
 
-                                <td style="padding:12px 10px;">
+                                <td>
                                     <select
                                         form="edit-component-<%= component.id %>"
                                         name="grade_counting"
@@ -345,7 +292,7 @@
                                             No
                                         </option>
                                     </select>
-                                </td><td style="padding:12px 10px;">
+                                </td><td>
 
                                         <select
                                             form="edit-component-<%= component.id %>"
@@ -370,12 +317,8 @@
 
                                     </td>
 
-                                    <td style="
-                                        padding:12px 10px;
-                                        text-align:right;
-                                    ">
-
-                                        <form
+                                    <td class="component-actions">
+                                        <form class="rtse-edit-form"
                                             id="edit-component-<%= component.id %>"
                                             method="POST"
                                             action="/admin/rtse/results/mark-components/<%= component.id %>/edit"
@@ -387,13 +330,11 @@
                                                 value="<%= Number(component.display_order || 0) %>"
                                                 min="0"
                                                 step="1"
-                                                style="width:90px;"
                                             >
 
                                             <button
                                                 type="submit"
                                                 class="btn-view"
-                                                style="margin-left:6px;"
                                             >
                                                 Save
                                             </button>
@@ -403,8 +344,22 @@
 
                                         <form
                                             method="POST"
+                                            class="component-toggle-form"
+                                            action="/admin/rtse/results/mark-components/<%= component.id %>/toggle"
+                                        >
+                                            <button
+                                                type="submit"
+                                                class="<%= Number(component.enabled) === 1 ? 'btn-warning' : 'btn-save' %>"
+                                            >
+                                                <%= Number(component.enabled) === 1 ? "Disable" : "Enable" %>
+                                            </button>
+                                        </form>
+
+
+                                        <form
+                                            method="POST"
+                                            class="component-delete-form"
                                             action="/admin/rtse/results/mark-components/<%= component.id %>/delete"
-                                            style="display:inline-block;margin-top:8px;"
                                             onsubmit="return confirm('Delete this mark component? Existing saved component marks, if any, must be handled separately.');"
                                         >
 
@@ -430,32 +385,15 @@
                 </div>
 
 
-                <div style="
-                    margin-top:20px;
-                    padding:14px 16px;
-                    border-left:4px solid #4f46e5;
-                    background:#eef2ff;
-                    border-radius:6px;
-                ">
-
+                <div class="rtse-how-it-works">
                     <strong>How this works</strong>
 
-                    <div style="margin-top:6px;color:#4b5563;">
-
-                        OMR marks remain 100 marks.
-                        Every enabled component configured here will later appear automatically
-                        in Admin Result Entry and Super Scanner Result Entry.
-
+                    <div class="rtse-how-it-works-text">
+                        OMR marks remain 100 marks. Every enabled component configured here will later appear automatically in Admin Result Entry and Super Scanner Result Entry.
                     </div>
 
-                    <div style="margin-top:6px;color:#4b5563;">
-
-                        Example:
-                        Writing Skill Test = 10 marks,
-                        OMR = 87,
-                        Writing Skill Test = 8,
-                        Total = 95 / 110.
-
+                    <div class="rtse-how-it-works-example">
+                        Example: Writing Skill Test = 10 marks, OMR = 87, Writing Skill Test = 8, Total = 95 / 110.
                     </div>
 
                 </div>
@@ -468,14 +406,501 @@
 
 </div>
 
+
 <style>
 
-@media (max-width: 900px) {
+/* =========================================================
+   RTSE RESULT MARK COMPONENTS
+   Professional page styling
+   ========================================================= */
 
-    .profile-card form > div {
-        grid-template-columns:1fr !important;
-    }
-
+.rtse-mark-components-page {
+    color: #1e293b;
 }
 
+
+/* =========================================================
+   Page Header
+   ========================================================= */
+
+.rtse-mark-components-page .page-header {
+    margin-bottom: 18px;
+}
+
+.rtse-mark-components-page .page-header h1 {
+    color: #172554;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.rtse-mark-components-page .page-header p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   Main Card
+   ========================================================= */
+
+.rtse-mark-components-page .profile-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   Year Summary
+   ========================================================= */
+
+.rtse-mark-components-page .rtse-year-summary {
+    padding: 18px 20px 14px;
+}
+
+.rtse-mark-components-page .rtse-year-summary h2 {
+    margin: 0 0 12px;
+    color: #172554;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.rtse-mark-components-page .rtse-year-summary p {
+    margin: 5px 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   Add Component
+   ========================================================= */
+
+.rtse-mark-components-page .rtse-add-component-panel {
+    margin: 0 0 16px;
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.rtse-mark-components-page .rtse-add-component-panel h3 {
+    margin: 0 0 14px;
+    color: #334155;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.rtse-mark-components-page .rtse-add-component-form > div {
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 2fr)
+        minmax(125px, 1fr)
+        minmax(110px, 1fr)
+        minmax(110px, 1fr)
+        minmax(110px, 1fr)
+        auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.rtse-mark-components-page .rtse-add-component-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.rtse-mark-components-page .rtse-add-component-form input,
+.rtse-mark-components-page .rtse-add-component-form select {
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.rtse-mark-components-page .rtse-add-component-form input:focus,
+.rtse-mark-components-page .rtse-add-component-form select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+
+/* =========================================================
+   Component Table — Desktop
+   ========================================================= */
+
+.rtse-mark-components-page .component-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.rtse-mark-components-page .component-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.rtse-mark-components-page .component-table thead {
+    display: table-header-group;
+    background: #f8fafc;
+}
+
+.rtse-mark-components-page .component-table th {
+    padding: 11px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.rtse-mark-components-page .component-table td {
+    padding: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+    vertical-align: middle;
+}
+
+.rtse-mark-components-page .component-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.rtse-mark-components-page .component-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.rtse-mark-components-page .component-table td input,
+.rtse-mark-components-page .component-table td select {
+    width: 100%;
+    min-height: 38px;
+    box-sizing: border-box;
+    padding: 0 9px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 12px;
+}
+
+.rtse-mark-components-page .component-table td:first-child {
+    width: 55px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.rtse-mark-components-page .component-table td:nth-child(3) {
+    width: 120px;
+}
+
+.rtse-mark-components-page .component-table td:nth-child(4),
+.rtse-mark-components-page .component-table td:nth-child(5) {
+    width: 135px;
+}
+
+.rtse-mark-components-page .component-actions {
+    width: 275px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.rtse-mark-components-page .rtse-edit-form,
+.rtse-mark-components-page .component-toggle-form,
+.rtse-mark-components-page .component-delete-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 4px 4px;
+    vertical-align: middle;
+}
+
+.rtse-mark-components-page .rtse-edit-form input {
+    width: 70px !important;
+    min-width: 70px !important;
+}
+
+.rtse-mark-components-page .component-table button {
+    min-height: 36px;
+    border-radius: 7px;
+    padding: 7px 11px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   How It Works
+   ========================================================= */
+
+.rtse-mark-components-page .rtse-how-it-works {
+    margin-top: 16px;
+    padding: 15px 18px;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #c59b45;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.rtse-mark-components-page .rtse-how-it-works strong {
+    display: block;
+    margin: 0 0 7px;
+    color: #172554;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.rtse-mark-components-page .rtse-how-it-works-text {
+    margin: 0;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.rtse-mark-components-page .rtse-how-it-works-example {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   Mobile Component Cards
+   ========================================================= */
+
+@media screen and (max-width: 1100px) {
+
+    .rtse-mark-components-page .rtse-add-component-form > div {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .rtse-mark-components-page
+    .rtse-add-component-form > div > div:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .rtse-mark-components-page .rtse-add-component-form > div > div {
+        min-width: 0;
+    }
+
+    .rtse-mark-components-page .component-table-wrap {
+        overflow: visible !important;
+    }
+
+    .rtse-mark-components-page .component-table {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+    }
+
+    .rtse-mark-components-page .component-table thead {
+        display: none !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody tr {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+
+        margin: 0 0 14px !important;
+        padding: 15px !important;
+
+        background: #ffffff !important;
+        border: 1px solid #dbe3ef !important;
+        border-radius: 13px !important;
+
+        box-shadow: 0 3px 12px rgba(15, 23, 42, .06) !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td {
+        display: grid !important;
+        grid-template-columns: 105px minmax(0, 1fr) !important;
+
+        align-items: center !important;
+        gap: 9px !important;
+
+        width: 100% !important;
+        box-sizing: border-box !important;
+
+        padding: 6px 0 !important;
+
+        border: 0 !important;
+        text-align: left !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td::before {
+        display: block !important;
+        color: #64748b !important;
+        font-size: 9px !important;
+        font-weight: 800 !important;
+        letter-spacing: .05em !important;
+        text-transform: uppercase !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td:nth-child(1)::before {
+        content: "Order" !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td:nth-child(2)::before {
+        content: "Component" !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td:nth-child(3)::before {
+        content: "Maximum Marks" !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td:nth-child(4)::before {
+        content: "Grade Counting" !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td:nth-child(5)::before {
+        content: "Status" !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td > input,
+    .rtse-mark-components-page .component-table tbody td > select {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 39px !important;
+        box-sizing: border-box !important;
+    }
+
+    .rtse-mark-components-page .component-table
+    tbody td.component-actions {
+        display: block !important;
+
+        margin-top: 10px !important;
+        padding: 12px 0 0 !important;
+
+        border-top: 1px solid #e5e7eb !important;
+    }
+
+    .rtse-mark-components-page .component-table
+    tbody td.component-actions::before {
+        content: "Actions" !important;
+        display: block !important;
+        margin-bottom: 9px !important;
+    }
+
+    .rtse-mark-components-page .component-actions .rtse-edit-form {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 68px !important;
+        gap: 7px !important;
+
+        width: 100% !important;
+        margin: 0 0 8px !important;
+    }
+
+    .rtse-mark-components-page .component-actions
+    .rtse-edit-form input {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .rtse-mark-components-page .component-actions
+    .rtse-edit-form button {
+        width: 68px !important;
+        min-width: 68px !important;
+    }
+
+    .rtse-mark-components-page .component-actions
+    .component-toggle-form,
+    .rtse-mark-components-page .component-actions
+    .component-delete-form {
+        display: inline-block !important;
+        width: auto !important;
+        margin: 0 6px 0 0 !important;
+        vertical-align: middle !important;
+    }
+
+    .rtse-mark-components-page .component-actions
+    .component-delete-form {
+        margin-right: 0 !important;
+    }
+
+    .rtse-mark-components-page .component-actions
+    .component-toggle-form button,
+    .rtse-mark-components-page .component-actions
+    .component-delete-form button {
+        width: 105px !important;
+        min-width: 105px !important;
+        min-height: 40px !important;
+        box-sizing: border-box !important;
+    }
+}
+
+
+/* =========================================================
+   Small Phones
+   ========================================================= */
+
+@media screen and (max-width: 600px) {
+
+    .rtse-mark-components-page .profile-card {
+        border-radius: 12px;
+    }
+
+    .rtse-mark-components-page .rtse-add-component-panel {
+        padding: 14px;
+    }
+
+    .rtse-mark-components-page .rtse-add-component-form > div {
+        grid-template-columns: 1fr;
+    }
+
+    .rtse-mark-components-page
+    .rtse-add-component-form > div > div:first-child {
+        grid-column: auto;
+    }
+
+    .rtse-mark-components-page .component-table tbody tr {
+        padding: 13px !important;
+    }
+
+    .rtse-mark-components-page .component-table tbody td {
+        grid-template-columns: 95px minmax(0, 1fr) !important;
+        gap: 8px !important;
+    }
+}
+
+
+
 </style>
+
+
+<%- include("../partials/footer") %>

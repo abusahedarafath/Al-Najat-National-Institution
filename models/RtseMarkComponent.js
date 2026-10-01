@@ -124,6 +124,21 @@ class RtseMarkComponent {
     }
 
     // =====================================
+    // Enable / disable component
+    // =====================================
+    static async setEnabled(id, enabled) {
+        await db.query(
+            `UPDATE rtse_mark_components
+             SET enabled=?
+             WHERE id=?`,
+            [
+                Number(enabled) === 1 ? 1 : 0,
+                id
+            ]
+        );
+    }
+
+    // =====================================
     // Get saved component marks for result
     // =====================================
     static async getResultMarks(resultId) {

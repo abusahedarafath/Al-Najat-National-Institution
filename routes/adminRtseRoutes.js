@@ -615,6 +615,13 @@ router.post(
 );
 
 router.post(
+    "/rtse/results/mark-components/:id/toggle",
+    auth.isAdmin,
+    multer().none(),
+    adminRtseController.toggleResultMarkComponent
+);
+
+router.post(
     "/rtse/results/mark-components/:id/delete",
     auth.isAdmin,
     adminRtseController.deleteResultMarkComponent
