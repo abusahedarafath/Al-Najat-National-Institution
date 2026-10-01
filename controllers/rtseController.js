@@ -1058,10 +1058,7 @@ function buildPublicResultPayload(student) {
         photo: student.photo || null,
 
         omr_marks:
-            student.omr_marks ??
-            student.omr_mark ??
-            student.omr_total ??
-            null,
+            student.marks ?? null,
 
         section_rank: student.section_rank,
         overall_rank: student.overall_rank,
