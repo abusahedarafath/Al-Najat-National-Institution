@@ -570,6 +570,73 @@
         white-space: nowrap;
     }
 
+    .rtse-result-component-grade-row {
+        grid-template-columns: 1fr auto;
+    }
+
+    .rtse-result-component-grade {
+        font-size: 14px;
+        font-weight: 900;
+        color: #174a86;
+        white-space: nowrap;
+    }
+
+    .rtse-result-rank-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .rtse-result-rank-card {
+        padding: 16px 12px;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid transparent;
+    }
+
+    .rtse-result-section-rank {
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        border-color: #86efac;
+    }
+
+    .rtse-result-overall-rank {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border-color: #fca5a5;
+    }
+
+    .rtse-result-rank-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .rtse-result-section-rank .rtse-result-rank-label {
+        color: #166534;
+    }
+
+    .rtse-result-overall-rank .rtse-result-rank-label {
+        color: #b91c1c;
+    }
+
+    .rtse-result-rank-value {
+        display: block;
+        margin-top: 5px;
+        font-size: 28px;
+        line-height: 1;
+        font-weight: 900;
+    }
+
+    .rtse-result-section-rank .rtse-result-rank-value {
+        color: #15803d;
+    }
+
+    .rtse-result-overall-rank .rtse-result-rank-value {
+        color: #dc2626;
+    }
+
     .rtse-result-total-card {
         margin-top: 15px;
         padding: 18px;
@@ -700,6 +767,22 @@
             grid-column: 1;
             grid-row: 1 / span 2;
             align-self: center;
+        }
+
+        .rtse-result-component-grade {
+            font-size: 13px;
+        }
+
+        .rtse-result-rank-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .rtse-result-rank-card {
+            padding: 14px 8px;
+        }
+
+        .rtse-result-rank-value {
+            font-size: 24px;
         }
     }
 
@@ -1080,43 +1163,32 @@
                 class="rtse-result-mark-list"
             ></div>
 
-            <div class="rtse-result-total-card">
-                <div class="rtse-result-total-label">
-                    Total Marks
+            <div class="rtse-result-rank-grid">
+                <div class="rtse-result-rank-card rtse-result-section-rank">
+                    <span class="rtse-result-rank-label">
+                        Section Rank
+                    </span>
+                    <strong
+                        class="rtse-result-rank-value"
+                        id="rtseResultSectionRank"
+                    >—</strong>
                 </div>
 
-                <div class="rtse-result-total-value">
-                    <span id="rtseResultTotal">—</span>
-                    <span>/ <span id="rtseResultFullTotal">—</span></span>
+                <div class="rtse-result-rank-card rtse-result-overall-rank">
+                    <span class="rtse-result-rank-label">
+                        Overall Rank
+                    </span>
+                    <strong
+                        class="rtse-result-rank-value"
+                        id="rtseResultOverallRank"
+                    >—</strong>
                 </div>
-
-                <div class="rtse-result-summary">
-                    <div class="rtse-result-summary-box">
-                        <span class="rtse-result-summary-label">
-                            Percentage
-                        </span>
-                        <span
-                            class="rtse-result-summary-value"
-                            id="rtseResultPercentage"
-                        >—</span>
-                    </div>
-
-                    <div class="rtse-result-summary-box rtse-result-grade">
-                        <span class="rtse-result-summary-label">
-                            Grade
-                        </span>
-                        <span
-                            class="rtse-result-summary-value"
-                            id="rtseResultGrade"
-                        >—</span>
-                    </div>
-                </div>
-
-                <div
-                    class="rtse-result-status"
-                    id="rtseResultStatus"
-                ></div>
             </div>
+
+            <div
+                class="rtse-result-status"
+                id="rtseResultStatus"
+            ></div>
         </div>
     </div>
 </div>
@@ -1290,10 +1362,8 @@
     const registration = document.getElementById("rtseResultRegistration");
     const roll = document.getElementById("rtseResultRoll");
     const marks = document.getElementById("rtseResultMarks");
-    const total = document.getElementById("rtseResultTotal");
-    const fullTotal = document.getElementById("rtseResultFullTotal");
-    const percentage = document.getElementById("rtseResultPercentage");
-    const grade = document.getElementById("rtseResultGrade");
+    const sectionRank = document.getElementById("rtseResultSectionRank");
+    const overallRank = document.getElementById("rtseResultOverallRank");
     const status = document.getElementById("rtseResultStatus");
 
     function safeValue(value) {
@@ -1376,14 +1446,61 @@
             ? result.components
             : []
         ).forEach(function (component) {
+            if (Number(component.grade_counting) !== 1) {
+                return;
+            }
+
+            const componentMarks = Number(component.marks);
+            const componentMaximum = Number(component.maximum_marks);
+
+            if (
+                !Number.isFinite(componentMarks) ||
+                !Number.isFinite(componentMaximum) ||
+                componentMaximum <= 0
+            ) {
+                return;
+            }
+
+            const componentPercentage =
+                (componentMarks / componentMaximum) * 100;
+
+            let componentGrade = "F";
+
+            if (componentPercentage >= 90) {
+                componentGrade = "A+";
+            } else if (componentPercentage >= 80) {
+                componentGrade = "A";
+            } else if (componentPercentage >= 70) {
+                componentGrade = "B+";
+            } else if (componentPercentage >= 60) {
+                componentGrade = "B";
+            } else if (componentPercentage >= 50) {
+                componentGrade = "C+";
+            } else if (componentPercentage >= 40) {
+                componentGrade = "C";
+            }
+
             rows.push({
+                type: "component-grade",
                 name: component.name,
-                marks: component.marks,
-                maximum_marks: component.maximum_marks
+                grade: componentGrade
             });
         });
 
         marks.innerHTML = rows.map(function (row) {
+            if (row.type === "component-grade") {
+                return (
+                    '<div class="rtse-result-mark-row rtse-result-component-grade-row">' +
+                        '<span class="rtse-result-mark-name">' +
+                            escapeHtml(row.name) +
+                        '</span>' +
+                        '<span class="rtse-result-component-grade">' +
+                            "Grade: " + escapeHtml(row.grade) +
+                        '</span>' +
+                    '</div>'
+                );
+            }
+
             return (
                 '<div class="rtse-result-mark-row">' +
                     '<span class="rtse-result-mark-name">' +
@@ -1400,17 +1517,8 @@
             );
         }).join("");
 
-        total.textContent = formatMark(result.total_marks);
-        fullTotal.textContent = formatMark(result.total_full_marks);
-
-        const per = Number(result.percentage);
-
-        percentage.textContent =
-            Number.isFinite(per)
-                ? per.toFixed(2) + "%"
-                : safeValue(result.percentage);
-
-        grade.textContent = safeValue(result.grade);
+        sectionRank.textContent = safeValue(result.section_rank);
+        overallRank.textContent = safeValue(result.overall_rank);
 
         status.textContent =
             result.result_status

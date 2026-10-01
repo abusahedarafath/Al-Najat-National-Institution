@@ -401,13 +401,16 @@ exports.resultPopupData = async (req, res) => {
                 total_full_marks: student.total_full_marks,
                 percentage: student.percentage,
                 grade: student.grade,
+                section_rank: student.section_rank,
+                overall_rank: student.overall_rank,
                 result_status: student.result_status,
                 components: Array.isArray(student.component_marks)
                     ? student.component_marks.map(component => ({
                         id: component.component_id,
                         name: component.name,
                         marks: component.marks,
-                        maximum_marks: component.maximum_marks
+                        maximum_marks: component.maximum_marks,
+                        grade_counting: component.grade_counting
                     }))
                     : []
             }

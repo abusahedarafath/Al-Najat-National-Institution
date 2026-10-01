@@ -205,6 +205,7 @@ class RtseResult {
                 mc.name,
                 mc.maximum_marks,
                 mc.enabled,
+                mc.grade_counting,
                 mc.display_order
              FROM rtse_result_component_marks rcm
              INNER JOIN rtse_mark_components mc
