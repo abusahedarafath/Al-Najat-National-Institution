@@ -95,6 +95,32 @@ router.get("/pyq/:year", rtsePyqController.category);
 
 
 // =====================================
+// PUBLIC RTSE RESULT PORTAL
+// =====================================
+
+router.get(
+    "/result",
+    rtseController.resultPortal
+);
+
+router.post(
+    "/result/search",
+    express.urlencoded({ extended: false }),
+    rtseController.searchResult
+);
+
+router.post(
+    "/result/verify",
+    express.urlencoded({ extended: false }),
+    rtseController.verifyPublicResult
+);
+
+router.get(
+    "/result/:id",
+    rtseController.viewResult
+);
+
+// =====================================
 // PUBLIC APPLICATION FORM
 // =====================================
 

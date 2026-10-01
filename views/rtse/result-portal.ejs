@@ -1,290 +1,1813 @@
 <%- include("../partials/header") %>
 
-<div class="container" style="max-width:700px;margin:50px auto;">
+<style>
+    .rtse-public-result-page {
+        max-width: 1050px;
+        margin: 35px auto 60px;
+        padding: 0 16px;
+    }
 
-    <div class="profile-card">
+    .rtse-public-result-hero {
+        background:
+            linear-gradient(135deg, #0f2a5f 0%, #174a86 55%, #7c3aed 100%);
+        color: #fff;
+        border-radius: 24px;
+        padding: 35px 24px;
+        text-align: center;
+        box-shadow: 0 18px 50px rgba(15, 42, 95, .22);
+    }
 
-        <div style="text-align:center;">
+    .rtse-public-result-hero h1 {
+        margin: 0 0 10px;
+        font-size: clamp(28px, 5vw, 44px);
+        font-weight: 800;
+    }
 
-            <h1>
+    .rtse-public-result-hero p {
+        margin: 0;
+        opacity: .92;
+        font-size: 15px;
+    }
 
-                RTSE Result Portal
+    .rtse-public-result-search {
+        background: #fff;
+        border-radius: 22px;
+        padding: 24px;
+        margin-top: -20px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 15px 45px rgba(0,0,0,.10);
+    }
 
-            </h1>
+    .rtse-public-result-search-row {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+    }
 
-            <p>
+    .rtse-public-result-search input {
+        flex: 1;
+        min-width: 0;
+        height: 50px;
+        border: 1px solid #d8deea;
+        border-radius: 12px;
+        padding: 0 15px;
+        font-size: 15px;
+        outline: none;
+    }
 
-                Search your result using Registration Number or Roll Number.
+    .rtse-public-result-search input:focus {
+        border-color: #174a86;
+        box-shadow: 0 0 0 3px rgba(23,74,134,.10);
+    }
 
-            </p>
+    .rtse-public-result-search button {
+        height: 50px;
+        border: 0;
+        border-radius: 12px;
+        padding: 0 22px;
+        background: #0f2a5f;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+    }
 
+    .rtse-public-result-search button:disabled {
+        opacity: .65;
+        cursor: wait;
+    }
+
+    .rtse-public-result-status {
+        margin-top: 12px;
+        font-size: 14px;
+        min-height: 20px;
+        text-align: center;
+    }
+
+    .rtse-public-result-candidates {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+    }
+
+    .rtse-public-candidate-card {
+        background: #fff;
+        border: 1px solid #e5e9f1;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.06);
+    }
+
+    .rtse-public-candidate-name {
+        font-size: 19px;
+        font-weight: 800;
+        color: #13213b;
+        margin-bottom: 12px;
+    }
+
+    .rtse-public-candidate-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 7px 0;
+        border-bottom: 1px solid #f0f2f6;
+        font-size: 14px;
+    }
+
+    .rtse-public-candidate-line:last-of-type {
+        border-bottom: 0;
+    }
+
+    .rtse-public-candidate-label {
+        color: #68748a;
+    }
+
+    .rtse-public-candidate-value {
+        color: #17233b;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .rtse-public-verify-btn {
+        width: 100%;
+        margin-top: 15px;
+        border: 0;
+        border-radius: 11px;
+        padding: 12px;
+        background: #0f2a5f;
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .rtse-public-empty {
+        grid-column: 1 / -1;
+        background: #fff;
+        border-radius: 18px;
+        padding: 30px;
+        text-align: center;
+        color: #68748a;
+        border: 1px solid #e5e9f1;
+    }
+
+    /* Verification modal */
+    .rtse-public-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(5, 15, 35, .72);
+        backdrop-filter: blur(5px);
+    }
+
+    .rtse-public-modal.is-open {
+        display: flex;
+    }
+
+    .rtse-public-modal-card {
+        width: min(100%, 470px);
+        background: #fff;
+        border-radius: 22px;
+        padding: 25px;
+        box-shadow: 0 25px 80px rgba(0,0,0,.30);
+        position: relative;
+        max-height: 92vh;
+        overflow-y: auto;
+    }
+
+    .rtse-public-modal-close {
+        position: absolute;
+        right: 15px;
+        top: 12px;
+        width: 38px;
+        height: 38px;
+        border: 0;
+        border-radius: 50%;
+        background: #f1f3f7;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .rtse-public-modal-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #12213c;
+        margin: 0 35px 6px 0;
+    }
+
+    .rtse-public-modal-subtitle {
+        color: #68748a;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .rtse-public-form-group {
+        margin-bottom: 15px;
+    }
+
+    .rtse-public-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #39465d;
+    }
+
+    .rtse-public-form-group input,
+    .rtse-public-form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        height: 48px;
+        border: 1px solid #d8deea;
+        border-radius: 11px;
+        padding: 0 13px;
+        background: #fff;
+        font-size: 15px;
+    }
+
+    .rtse-public-form-group input[readonly] {
+        background: #f4f6f9;
+    }
+
+    .rtse-public-verify-submit {
+        width: 100%;
+        height: 49px;
+        border: 0;
+        border-radius: 11px;
+        background: #0f2a5f;
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+        margin-top: 5px;
+    }
+
+    .rtse-public-verify-error {
+        color: #b42318;
+        background: #fff1f0;
+        border: 1px solid #ffd2cf;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 12px;
+        display: none;
+    }
+
+    /* Result popup */
+    .rtse-result-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 11000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        background: rgba(5, 15, 35, .78);
+        backdrop-filter: blur(6px);
+    }
+
+    .rtse-result-modal.is-open {
+        display: flex;
+    }
+
+    .rtse-result-modal-card {
+        width: min(100%, 650px);
+        max-height: 92vh;
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 30px 100px rgba(0,0,0,.38);
+        position: relative;
+        animation: rtseResultPopupIn .35s ease-out;
+    }
+
+    @keyframes rtseResultPopupIn {
+        from {
+            opacity: 0;
+            transform: translateY(25px) scale(.94);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .rtse-result-hero {
+        background:
+            linear-gradient(135deg, #0f2a5f 0%, #174a86 52%, #7c3aed 100%);
+        color: #fff;
+        text-align: center;
+        padding: 28px 20px 24px;
+        border-radius: 24px 24px 0 0;
+        position: relative;
+    }
+
+    .rtse-result-close {
+        position: absolute;
+        right: 14px;
+        top: 12px;
+        width: 38px;
+        height: 38px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,.16);
+        color: #fff;
+        cursor: pointer;
+        font-size: 21px;
+    }
+
+    .rtse-result-photo-wrap {
+        width: 104px;
+        height: 104px;
+        margin: 0 auto 12px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: rgba(255,255,255,.20);
+        border: 4px solid rgba(255,255,255,.75);
+        box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    .rtse-result-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .rtse-result-congrats {
+        font-size: 25px;
+        font-weight: 900;
+        margin-bottom: 5px;
+    }
+
+    .rtse-result-name {
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .rtse-result-body {
+        padding: 20px;
+    }
+
+    .rtse-result-identity {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .rtse-result-info {
+        background: #f7f9fc;
+        border-radius: 12px;
+        padding: 11px 12px;
+    }
+
+    .rtse-result-info small {
+        display: block;
+        color: #69758a;
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .rtse-result-info strong {
+        color: #18243b;
+        font-size: 14px;
+    }
+
+    .rtse-result-summary {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .rtse-result-summary-card {
+        border: 1px solid #e5e9f1;
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .rtse-result-summary-card small {
+        display: block;
+        color: #69758a;
+        margin-bottom: 4px;
+        font-size: 11px;
+    }
+
+    .rtse-result-summary-card strong {
+        font-size: 21px;
+        color: #0f2a5f;
+    }
+
+    .rtse-result-section-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #17233b;
+        margin: 18px 0 10px;
+    }
+
+    .rtse-result-mark-list {
+        border: 1px solid #e5e9f1;
+        border-radius: 13px;
+        overflow: hidden;
+    }
+
+    .rtse-result-mark-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf0f5;
+        font-size: 13px;
+    }
+
+    .rtse-result-mark-row:last-child {
+        border-bottom: 0;
+    }
+
+    .rtse-result-mark-row span:first-child {
+        color: #4e5b71;
+    }
+
+    .rtse-result-mark-row strong {
+        color: #17233b;
+        text-align: right;
+    }
+
+    .rtse-result-rank-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .rtse-result-rank-box {
+        padding: 13px;
+        border-radius: 13px;
+        background: #f7f9fc;
+        text-align: center;
+    }
+
+    .rtse-result-rank-box small {
+        display: block;
+        color: #69758a;
+        margin-bottom: 4px;
+    }
+
+    .rtse-result-rank-box strong {
+        font-size: 22px;
+        color: #0f2a5f;
+    }
+
+    .rtse-result-status {
+        text-align: center;
+        margin-top: 15px;
+        padding: 11px;
+        border-radius: 12px;
+        background: #eef7f0;
+        color: #176b2d;
+        font-weight: 800;
+    }
+
+    .rtse-result-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .rtse-result-action {
+        flex: 1;
+        min-height: 46px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-weight: 800;
+        cursor: pointer;
+        border: 0;
+    }
+
+    .rtse-result-action-primary {
+        background: #0f2a5f;
+        color: #fff;
+    }
+
+    .rtse-result-action-secondary {
+        background: #eef1f6;
+        color: #26344d;
+    }
+
+    /* Celebration */
+    .rtse-celebration {
+        position: fixed;
+        inset: 0;
+        z-index: 12000;
+        pointer-events: none;
+        overflow: hidden;
+        display: none;
+    }
+
+    .rtse-celebration.is-active {
+        display: block;
+    }
+
+    .rtse-celebration-burst {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 20px;
+        height: 20px;
+        transform: translate(-50%, -50%);
+    }
+
+    .rtse-celebration-particle {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        font-size: var(--size);
+        transform: translate(-50%, -50%);
+        animation: rtseCelebrationParticle 1.5s ease-out forwards;
+        animation-delay: var(--delay);
+    }
+
+    @keyframes rtseCelebrationParticle {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.3) rotate(0deg);
+        }
+        15% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform:
+                translate(
+                    calc(-50% + var(--x)),
+                    calc(-50% + var(--y))
+                )
+                scale(1.2)
+                rotate(var(--rotate));
+        }
+    }
+
+    .rtse-celebration-ring {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 35px;
+        height: 35px;
+        border: 3px solid rgba(255,255,255,.9);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: rtseCelebrationRing 1.2s ease-out forwards;
+    }
+
+    @keyframes rtseCelebrationRing {
+        0% {
+            opacity: .9;
+            width: 20px;
+            height: 20px;
+        }
+        100% {
+            opacity: 0;
+            width: 430px;
+            height: 430px;
+        }
+    }
+
+    .rtse-public-audio-fallback {
+        display: none;
+        margin: 12px auto 0;
+        border: 0;
+        border-radius: 10px;
+        padding: 9px 14px;
+        background: rgba(255,255,255,.18);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+        .rtse-public-result-page {
+            margin-top: 20px;
+        }
+
+        .rtse-public-result-search-row {
+            flex-direction: column;
+        }
+
+        .rtse-public-result-search button {
+            width: 100%;
+        }
+
+        .rtse-result-identity,
+        .rtse-result-summary,
+        .rtse-result-rank-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .rtse-result-actions {
+            flex-direction: column;
+        }
+
+        .rtse-result-modal-card {
+            max-height: 95vh;
+        }
+    }
+</style>
+<style id="rtse-public-result-full-page-celebration">
+#rtseCelebration.rtse-celebration {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    z-index: 2147483647 !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+}
+
+#rtseCelebration .rtse-celebration-ring {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 2 !important;
+}
+
+#rtseCelebration .rtse-celebration-burst {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+}
+
+#rtseCelebration .rtse-celebration-particle {
+    position: fixed !important;
+    left: 50vw !important;
+    top: 50vh !important;
+    z-index: 4 !important;
+    pointer-events: none !important;
+    will-change: transform, opacity !important;
+}
+
+@media (max-width: 600px) {
+    #rtseCelebration .rtse-celebration-particle {
+        font-size: var(--size) !important;
+    }
+}
+</style>
+
+<style id="rtse-public-result-download-print-style">
+@media print {
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #rtseResultModal,
+    #rtseResultModal * {
+        visibility: visible !important;
+    }
+
+    #rtseResultModal {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow: visible !important;
+        background: white !important;
+        display: block !important;
+    }
+
+    #rtseResultModal .rtse-result-modal-card {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 760px !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        page-break-inside: avoid !important;
+    }
+
+    #rtseResultModal .rtse-result-close,
+    #rtseResultModal .rtse-public-audio-fallback,
+    #rtseResultModal .rtse-result-actions,
+    #rtseCelebration {
+        display: none !important;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+}
+</style>
+
+
+<div class="rtse-public-result-page">
+
+    <section class="rtse-public-result-hero">
+        <h1>RTSE Result Portal</h1>
+
+        <p>
+            Search your result and verify your identity securely.
+        </p>
+    </section>
+
+    <section class="rtse-public-result-search">
+
+        <% if (!resultsPublished) { %>
+
+            <div class="rtse-public-empty">
+                <strong>Results are not published yet.</strong>
+                <div style="margin-top:7px;">
+                    Please check again after the official result publication.
+                </div>
+            </div>
+
+        <% } else { %>
+
+            <form id="rtsePublicSearchForm">
+
+                <div class="rtse-public-result-search-row">
+
+                    <input
+                        id="rtsePublicSearchInput"
+                        type="text"
+                        autocomplete="off"
+                        placeholder="Name / Registration No. / Roll No. / Father's Name / Class"
+                        required>
+
+                    <button id="rtsePublicSearchButton" type="submit">
+                        Search Result
+                    </button>
+
+                </div>
+
+            </form>
+
+            <div
+                id="rtsePublicSearchStatus"
+                class="rtse-public-result-status">
+            </div>
+
+        <% } %>
+
+    </section>
+
+    <% if (resultsPublished) { %>
+
+        <section
+            id="rtsePublicCandidates"
+            class="rtse-public-result-candidates">
+        </section>
+
+    <% } %>
+
+</div>
+
+
+<!-- =====================================================
+     VERIFICATION MODAL
+====================================================== -->
+
+<div
+    id="rtsePublicVerifyModal"
+    class="rtse-public-modal"
+    aria-hidden="true">
+
+    <div class="rtse-public-modal-card">
+
+        <button
+            type="button"
+            class="rtse-public-modal-close"
+            id="rtsePublicVerifyClose"
+            aria-label="Close">
+            ×
+        </button>
+
+        <h2 class="rtse-public-modal-title">
+            Verify Result
+        </h2>
+
+        <div class="rtse-public-modal-subtitle">
+            Enter one credential belonging to the selected student.
         </div>
 
-        <form
+        <div id="rtsePublicVerifyError"
+             class="rtse-public-verify-error">
+        </div>
 
-            action="/rtse/result"
+        <form id="rtsePublicVerifyForm">
 
-            method="POST">
+            <input
+                type="hidden"
+                id="rtsePublicApplicationId"
+                name="application_id">
 
-            <div class="form-group">
+            <div class="rtse-public-form-group">
 
                 <label>
-
-                    Registration No. / Roll No.
-
+                    Roll Number
                 </label>
 
                 <input
-
+                    id="rtsePublicRollNo"
+                    name="roll_no"
                     type="text"
+                    readonly>
 
-                    name="keyword"
+            </div>
 
-                    placeholder="Example : ARSP2600001 or RTSE26-1001"
+            <div class="rtse-public-form-group">
 
+                <label>
+                    Verification Method
+                </label>
+
+                <select
+                    id="rtsePublicCredentialType"
+                    name="credential_type">
+
+                    <option value="dob">
+                        Date of Birth
+                    </option>
+
+                    <option value="mobile">
+                        Registered Mobile Number
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="rtse-public-form-group">
+
+                <label id="rtsePublicCredentialLabel">
+                    Date of Birth
+                </label>
+
+                <input
+                    id="rtsePublicCredentialValue"
+                    name="credential_value"
+                    type="date"
                     required>
 
             </div>
 
             <button
-
+                id="rtsePublicVerifyButton"
                 type="submit"
-
-                class="btn-save"
-
-                style="width:100%;">
-
-                Search Result
-
+                class="rtse-public-verify-submit">
+                Verify & View Result
             </button>
 
         </form>
 
     </div>
 
-    <% if(student){ %>
+</div>
 
-    <div
 
-        class="profile-card"
+<!-- =====================================================
+     RESULT MODAL
+====================================================== -->
 
-        style="margin-top:25px;">
+<div
+    id="rtseResultModal"
+    class="rtse-result-modal"
+    aria-hidden="true">
 
-        <div style="text-align:center;">
+    <div class="rtse-result-modal-card">
 
-            <% if(student.photo){ %>
+        <div class="rtse-result-hero">
 
-            <img
+            <button
+                type="button"
+                id="rtseResultClose"
+                class="rtse-result-close"
+                aria-label="Close">
+                ×
+            </button>
 
-                src="/uploads/rtse/<%= student.photo %>"
+            <div class="rtse-result-photo-wrap">
+                <img
+                    id="rtseResultPhoto"
+                    class="rtse-result-photo"
+                    alt="Student Photo">
+            </div>
 
-                style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
+            <div class="rtse-result-congrats">
+                🎉 Congratulations! 🎉
+            </div>
 
-            <% } %>
+            <div id="rtseResultName" class="rtse-result-name">
+            </div>
 
-            <h2>
-
-                <%= student.full_name %>
-
-            </h2>
+            <button
+                type="button"
+                id="rtsePublicAudioFallback"
+                class="rtse-public-audio-fallback">
+                🔊 Play Congratulations
+            </button>
 
         </div>
 
-        <table class="admin-table">
+        <div class="rtse-result-body">
 
-            <tbody>
+            <div class="rtse-result-identity">
 
-                <tr>
+                <div class="rtse-result-info">
+                    <small>Registration No.</small>
+                    <strong id="rtseResultRegistration">—</strong>
+                </div>
 
-                    <th width="220">
+                <div class="rtse-result-info">
+                    <small>Roll No.</small>
+                    <strong id="rtseResultRoll">—</strong>
+                </div>
 
-                        Registration No.
+                <div class="rtse-result-info">
+                    <small>Class</small>
+                    <strong id="rtseResultClass">—</strong>
+                </div>
 
-                    </th>
+                <div class="rtse-result-info">
+                    <small>Section</small>
+                    <strong id="rtseResultSection">—</strong>
+                </div>
 
-                    <td>
+            </div>
 
-                        <%= student.registration_no %>
+            <div class="rtse-result-summary rtse-result-summary-single">
 
-                    </td>
+                <div class="rtse-result-summary-card">
+                    <small>OMR Marks</small>
+                    <strong id="rtseResultOmr">—</strong>
+                </div>
 
-                </tr>
+            </div>
 
-                <tr>
+            <div class="rtse-result-section-title">
+                Configured Mark Grade
+            </div>
 
-                    <th>
+            <div
+                id="rtseResultComponents"
+                class="rtse-result-mark-list">
+            </div>
 
-                        Roll Number
+            <div class="rtse-result-section-title">
+                Rank
+            </div>
 
-                    </th>
+            <div class="rtse-result-rank-grid">
 
-                    <td>
+                <div class="rtse-result-rank-box">
+                    <small>Section Rank</small>
+                    <strong id="rtseResultSectionRank">—</strong>
+                </div>
 
-                        <%= student.roll_no %>
+                <div class="rtse-result-rank-box">
+                    <small>Overall Rank</small>
+                    <strong id="rtseResultOverallRank">—</strong>
+                </div>
 
-                    </td>
+            </div>
 
-                </tr>
+            <div class="rtse-result-actions">
 
-                <tr>
+                <button
+                    type="button"
+                    id="rtseResultDownload"
+                    class="rtse-result-action rtse-result-action-primary">
+                    Download Result
+                </button>
 
-                    <th>
+                <button
+                    type="button"
+                    id="rtseResultDone"
+                    class="rtse-result-action rtse-result-action-secondary">
+                    Close
+                </button>
 
-                        School
-
-                    </th>
-
-                    <td>
-
-                        <%= student.school_name %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Section
-
-                    </th>
-
-                    <td>
-
-                        <%= student.section %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Marks
-
-                    </th>
-
-                    <td>
-
-                        <strong>
-
-                            <%= student.marks %>
-
-                        </strong>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Percentage
-
-                    </th>
-
-                    <td>
-
-                        <%= student.percentage %> %
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Grade
-
-                    </th>
-
-                    <td>
-
-                        <%= student.grade %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Section Rank
-
-                    </th>
-
-                    <td>
-
-                        <%= student.section_rank %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Overall Rank
-
-                    </th>
-
-                    <td>
-
-                        <%= student.overall_rank %>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>
-
-                        Result Status
-
-                    </th>
-
-                    <td>
-
-                        <strong>
-
-                            <%= student.result_status %>
-
-                        </strong>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-        <div
-            style="margin-top:25px;text-align:center;">
-
-            <a
-
-                href="/rtse/result/<%= student.application_id %>"
-
-                class="btn-save">
-
-                Download Mark Sheet
-
-            </a>
+            </div>
 
         </div>
 
     </div>
 
-    <% } %>
+</div>
+
+
+<!-- =====================================================
+     CELEBRATION
+====================================================== -->
+
+<div
+    id="rtseCelebration"
+    class="rtse-celebration"
+    aria-hidden="true">
+
+    <div class="rtse-celebration-ring"></div>
+
+    <div
+        id="rtseCelebrationBurst"
+        class="rtse-celebration-burst">
+    </div>
 
 </div>
+
+
+<script>
+(function () {
+    "use strict";
+
+    const searchForm =
+        document.getElementById("rtsePublicSearchForm");
+
+    if (!searchForm) {
+        return;
+    }
+
+    const searchInput =
+        document.getElementById("rtsePublicSearchInput");
+
+    const searchButton =
+        document.getElementById("rtsePublicSearchButton");
+
+    const searchStatus =
+        document.getElementById("rtsePublicSearchStatus");
+
+    const candidatesContainer =
+        document.getElementById("rtsePublicCandidates");
+
+    const verifyModal =
+        document.getElementById("rtsePublicVerifyModal");
+
+    const verifyForm =
+        document.getElementById("rtsePublicVerifyForm");
+
+    const verifyClose =
+        document.getElementById("rtsePublicVerifyClose");
+
+    const verifyError =
+        document.getElementById("rtsePublicVerifyError");
+
+    const credentialType =
+        document.getElementById("rtsePublicCredentialType");
+
+    const credentialLabel =
+        document.getElementById("rtsePublicCredentialLabel");
+
+    const credentialValue =
+        document.getElementById("rtsePublicCredentialValue");
+
+    const verifyButton =
+        document.getElementById("rtsePublicVerifyButton");
+
+    const resultModal =
+        document.getElementById("rtseResultModal");
+
+    const resultClose =
+        document.getElementById("rtseResultClose");
+
+    const resultDone =
+        document.getElementById("rtseResultDone");
+
+    const celebration =
+        document.getElementById("rtseCelebration");
+
+    const celebrationBurst =
+        document.getElementById("rtseCelebrationBurst");
+
+    const audioFallback =
+        document.getElementById("rtsePublicAudioFallback");
+
+    const audio =
+        new Audio("/audio/rtse-result-congratulations.mp3");
+
+    audio.preload = "auto";
+
+    let selectedCandidate = null;
+
+    function safeText(value) {
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return "—";
+        }
+
+        return String(value);
+    }
+
+    function setText(id, value) {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = safeText(value);
+        }
+    }
+
+    function closeVerifyModal() {
+        verifyModal.classList.remove("is-open");
+        verifyModal.setAttribute("aria-hidden", "true");
+    }
+
+    function openVerifyModal(candidate) {
+        selectedCandidate = candidate;
+
+        document.getElementById(
+            "rtsePublicApplicationId"
+        ).value = candidate.application_id;
+
+        document.getElementById(
+            "rtsePublicRollNo"
+        ).value = candidate.roll_no || "";
+
+        verifyError.style.display = "none";
+        verifyError.textContent = "";
+
+        credentialType.value = "dob";
+        updateCredentialInput();
+
+        verifyModal.classList.add("is-open");
+        verifyModal.setAttribute("aria-hidden", "false");
+
+        setTimeout(function () {
+            credentialValue.focus();
+        }, 80);
+    }
+
+    function updateCredentialInput() {
+        if (credentialType.value === "mobile") {
+
+            credentialLabel.textContent =
+                "Registered Mobile Number";
+
+            credentialValue.type = "tel";
+            credentialValue.inputMode = "numeric";
+            credentialValue.placeholder =
+                "Enter registered mobile number";
+            credentialValue.value = "";
+
+        } else {
+
+            credentialLabel.textContent =
+                "Date of Birth";
+
+            credentialValue.type = "date";
+            credentialValue.inputMode = "numeric";
+            credentialValue.placeholder = "";
+            credentialValue.value = "";
+        }
+    }
+
+    credentialType.addEventListener(
+        "change",
+        updateCredentialInput
+    );
+
+    verifyClose.addEventListener(
+        "click",
+        closeVerifyModal
+    );
+
+    verifyModal.addEventListener(
+        "click",
+        function (event) {
+            if (event.target === verifyModal) {
+                closeVerifyModal();
+            }
+        }
+    );
+
+    function renderCandidates(candidates) {
+
+        candidatesContainer.innerHTML = "";
+
+        if (!candidates.length) {
+
+            candidatesContainer.innerHTML =
+                '<div class="rtse-public-empty">' +
+                'No matching candidate was found.' +
+                '<div style="margin-top:7px;">' +
+                'Check the spelling or enter the Registration No. / Roll No.' +
+                '</div>' +
+                '</div>';
+
+            return;
+        }
+
+        candidates.forEach(function (candidate) {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "rtse-public-candidate-card";
+
+            const name =
+                document.createElement("div");
+
+            name.className =
+                "rtse-public-candidate-name";
+
+            name.textContent =
+                safeText(candidate.full_name);
+
+            card.appendChild(name);
+
+            function addLine(label, value) {
+
+                const row =
+                    document.createElement("div");
+
+                row.className =
+                    "rtse-public-candidate-line";
+
+                const left =
+                    document.createElement("span");
+
+                left.className =
+                    "rtse-public-candidate-label";
+
+                left.textContent = label;
+
+                const right =
+                    document.createElement("span");
+
+                right.className =
+                    "rtse-public-candidate-value";
+
+                right.textContent =
+                    safeText(value);
+
+                row.appendChild(left);
+                row.appendChild(right);
+
+                card.appendChild(row);
+            }
+
+            addLine(
+                "Father's Name",
+                candidate.father_name
+            );
+
+            addLine(
+                "Class",
+                candidate.class
+            );
+
+            addLine(
+                "Roll No.",
+                candidate.roll_no
+            );
+
+            addLine(
+                "Registration No.",
+                candidate.registration_no
+            );
+
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+            button.className =
+                "rtse-public-verify-btn";
+
+            button.textContent =
+                "VERIFY RESULT";
+
+            button.addEventListener(
+                "click",
+                function () {
+                    openVerifyModal(candidate);
+                }
+            );
+
+            card.appendChild(button);
+
+            candidatesContainer.appendChild(card);
+        });
+    }
+
+    searchForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const keyword =
+                searchInput.value.trim();
+
+            if (keyword.length < 2) {
+                searchStatus.textContent =
+                    "Enter at least 2 characters.";
+                return;
+            }
+
+            searchButton.disabled = true;
+            searchStatus.textContent =
+                "Searching...";
+
+            candidatesContainer.innerHTML = "";
+
+            try {
+
+                const body =
+                    new URLSearchParams();
+
+                body.set(
+                    "keyword",
+                    keyword
+                );
+
+                const response =
+                    await fetch(
+                        "/rtse/result/search",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded",
+                                "Accept":
+                                    "application/json"
+                            },
+                            credentials: "same-origin",
+                            cache: "no-store",
+                            body
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.message ||
+                        "Unable to search results."
+                    );
+                }
+
+                renderCandidates(
+                    data.candidates || []
+                );
+
+                searchStatus.textContent =
+                    data.candidates &&
+                    data.candidates.length
+                        ? "Select the correct candidate and verify the result."
+                        : "";
+
+            } catch (error) {
+
+                console.error(error);
+
+                searchStatus.textContent =
+                    error.message ||
+                    "Unable to search results.";
+
+            } finally {
+
+                searchButton.disabled = false;
+            }
+        }
+    );
+
+    function renderResult(result) {
+
+        setText(
+            "rtseResultName",
+            result.full_name
+        );
+
+        setText(
+            "rtseResultRegistration",
+            result.registration_no
+        );
+
+        setText(
+            "rtseResultRoll",
+            result.roll_no
+        );
+
+        setText(
+            "rtseResultClass",
+            result.class
+        );
+
+        setText(
+            "rtseResultSection",
+            result.section
+        );
+
+        setText(
+            "rtseResultOmr",
+            result.omr_marks
+        );
+
+        setText(
+            "rtseResultSectionRank",
+            result.section_rank
+        );
+
+        setText(
+            "rtseResultOverallRank",
+            result.overall_rank
+        );
+
+        const photo =
+            document.getElementById(
+                "rtseResultPhoto"
+            );
+
+        if (result.photo) {
+
+            photo.src =
+                "/uploads/rtse/" +
+                encodeURIComponent(
+                    result.photo
+                );
+
+            photo.style.display = "block";
+
+        } else {
+
+            photo.removeAttribute("src");
+            photo.style.display = "none";
+        }
+
+        const componentContainer =
+            document.getElementById(
+                "rtseResultComponents"
+            );
+
+        componentContainer.innerHTML = "";
+
+        const gradeComponents =
+            Array.isArray(result.component_grades)
+                ? result.component_grades
+                : [];
+
+        if (!gradeComponents.length) {
+
+            componentContainer.innerHTML =
+                '<div class="rtse-result-mark-row">' +
+                '<span>No grade-counting components configured.</span>' +
+                '<strong>—</strong>' +
+                '</div>';
+
+        } else {
+
+            gradeComponents.forEach(
+                function (component) {
+
+                    const row =
+                        document.createElement("div");
+
+                    row.className =
+                        "rtse-result-mark-row";
+
+                    const label =
+                        document.createElement("span");
+
+                    label.textContent =
+                        safeText(component.name);
+
+                    const value =
+                        document.createElement("strong");
+
+                    value.textContent =
+                        safeText(component.grade);
+
+                    row.appendChild(label);
+                    row.appendChild(value);
+
+                    componentContainer.appendChild(row);
+                }
+            );
+        }
+
+
+    }
+
+    function createCelebration() {
+
+        celebration.classList.add(
+            "is-active"
+        );
+
+        celebration.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        celebrationBurst.innerHTML = "";
+
+        const emojis = [
+            "🎉",
+            "🌸",
+            "💐",
+            "❤️",
+            "✨",
+            "🎊",
+            "🌟",
+            "💖"
+        ];
+
+        for (let i = 0; i < 32; i++) {
+
+            const particle =
+                document.createElement("span");
+
+            particle.className =
+                "rtse-celebration-particle";
+
+            particle.textContent =
+                emojis[
+                    Math.floor(
+                        Math.random() *
+                        emojis.length
+                    )
+                ];
+
+            const angle =
+                Math.random() *
+                Math.PI * 2;
+
+            const maxX =
+                Math.max(
+                    window.innerWidth * 0.72,
+                    420
+                );
+
+            const maxY =
+                Math.max(
+                    window.innerHeight * 0.72,
+                    420
+                );
+
+            const x =
+                Math.cos(angle) *
+                (maxX * (0.35 + Math.random() * 0.65));
+
+            const y =
+                Math.sin(angle) *
+                (maxY * (0.35 + Math.random() * 0.65));
+
+            particle.style.setProperty(
+                "--x",
+                x + "px"
+            );
+
+            particle.style.setProperty(
+                "--y",
+                y + "px"
+            );
+
+            particle.style.setProperty(
+                "--size",
+                (16 + Math.random() * 16) +
+                    "px"
+            );
+
+            particle.style.setProperty(
+                "--rotate",
+                (-360 +
+                    Math.random() * 720) +
+                    "deg"
+            );
+
+            particle.style.setProperty(
+                "--delay",
+                (Math.random() * .15) +
+                    "s"
+            );
+
+            celebrationBurst.appendChild(
+                particle
+            );
+        }
+
+        setTimeout(function () {
+
+            celebration.classList.remove(
+                "is-active"
+            );
+
+            celebration.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            celebrationBurst.innerHTML = "";
+
+        }, 1750);
+    }
+
+    async function playCongratulations() {
+
+        audio.currentTime = 0;
+
+        try {
+
+            await audio.play();
+
+            audioFallback.style.display =
+                "none";
+
+        } catch (error) {
+
+            console.warn(
+                "RTSE result audio autoplay blocked:",
+                error
+            );
+
+            audioFallback.style.display =
+                "inline-block";
+        }
+    }
+
+    audioFallback.addEventListener(
+        "click",
+        playCongratulations
+    );
+
+    const resultDownload =
+        document.getElementById(
+            "rtseResultDownload"
+        );
+
+    if (resultDownload) {
+        resultDownload.addEventListener(
+            "click",
+            function () {
+                window.print();
+            }
+        );
+    }
+
+
+    verifyForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            verifyButton.disabled = true;
+            verifyButton.textContent =
+                "Verifying...";
+
+            verifyError.style.display =
+                "none";
+
+            verifyError.textContent = "";
+
+            try {
+
+                const body =
+                    new URLSearchParams(
+                        new FormData(verifyForm)
+                    );
+
+                const response =
+                    await fetch(
+                        "/rtse/result/verify",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded",
+                                "Accept":
+                                    "application/json"
+                            },
+                            credentials: "same-origin",
+                            cache: "no-store",
+                            body
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.message ||
+                        "Verification failed."
+                    );
+                }
+
+                closeVerifyModal();
+
+                renderResult(
+                    data.result
+                );
+
+                resultModal.classList.add(
+                    "is-open"
+                );
+
+                resultModal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                /*
+                 * Celebration starts only after successful
+                 * credential verification.
+                 */
+                createCelebration();
+
+                /*
+                 * This is the exact dedicated RTSE public
+                 * result congratulations audio.
+                 *
+                 * It is NOT any Super Scanner audio.
+                 */
+                playCongratulations();
+
+            } catch (error) {
+
+                console.error(error);
+
+                verifyError.textContent =
+                    error.message ||
+                    "Verification failed.";
+
+                verifyError.style.display =
+                    "block";
+
+            } finally {
+
+                verifyButton.disabled = false;
+                verifyButton.textContent =
+                    "Verify & View Result";
+            }
+        }
+    );
+
+    function closeResultModal() {
+
+        resultModal.classList.remove(
+            "is-open"
+        );
+
+        resultModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+    resultClose.addEventListener(
+        "click",
+        closeResultModal
+    );
+
+    resultDone.addEventListener(
+        "click",
+        closeResultModal
+    );
+
+    resultModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                resultModal
+            ) {
+                closeResultModal();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape"
+            ) {
+                closeVerifyModal();
+                closeResultModal();
+            }
+        }
+    );
+
+})();
+</script>
 
 <%- include("../partials/footer") %>

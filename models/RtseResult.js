@@ -917,44 +917,108 @@ static async getSectionMeritList(section, applicationYear){
 }
 
 
-static async searchResult(keyword){
+static async searchPublicCandidates(keyword) {
 
-    const [rows]=await db.query(
+    const normalizedKeyword =
+        String(keyword || "")
+            .trim()
+            .replace(/\s+/g, " ");
 
-        `SELECT
+    const keywordLike = `%${normalizedKeyword}%`;
 
-            r.*,
-
-            a.*
+    const [rows] = await db.query(
+        `
+        SELECT
+            a.id AS application_id,
+            a.registration_no,
+            a.roll_no,
+            a.full_name,
+            a.father_name,
+            a.class,
+            a.section,
+            a.application_year
 
         FROM rtse_results r
 
         INNER JOIN rtse_applications a
-
-        ON a.id=r.application_id
+            ON a.id = r.application_id
 
         WHERE
+            a.archive = 0
+            AND a.status = 'Approved'
+            AND (
+                a.registration_no = ?
+                OR a.roll_no = ?
+                OR a.full_name LIKE ?
+                OR a.father_name LIKE ?
+                OR CAST(a.class AS CHAR) LIKE ?
+            )
 
-            a.registration_no=?
+        ORDER BY
+            CASE
+                WHEN a.registration_no = ? THEN 0
+                WHEN a.roll_no = ? THEN 1
+                ELSE 2
+            END,
+            a.full_name ASC
 
-        OR
-
-            a.roll_no=?`
-
-        ,
-
+        LIMIT 25
+        `,
         [
-
-            keyword,
-
-            keyword
-
+            normalizedKeyword,
+            normalizedKeyword,
+            keywordLike,
+            keywordLike,
+            keywordLike,
+            normalizedKeyword,
+            normalizedKeyword
         ]
-
     );
 
-    return rows[0];
+    return rows;
+}
 
+static async getPublicVerificationApplication(
+    applicationId,
+    rollNo
+) {
+
+    const [rows] = await db.query(
+        `
+        SELECT
+            a.id AS application_id,
+            a.roll_no,
+            a.dob,
+            a.mobile
+
+        FROM rtse_results r
+
+        INNER JOIN rtse_applications a
+            ON a.id = r.application_id
+
+        WHERE
+            a.id = ?
+            AND a.roll_no = ?
+            AND a.archive = 0
+            AND a.status = 'Approved'
+
+        LIMIT 1
+        `,
+        [
+            applicationId,
+            String(rollNo || "").trim()
+        ]
+    );
+
+    return rows[0] || null;
+}
+
+static async searchResult(keyword) {
+
+    const rows =
+        await this.searchPublicCandidates(keyword);
+
+    return rows[0] || null;
 }
 
 }

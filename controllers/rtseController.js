@@ -950,159 +950,398 @@ exports.verifyRegistration = async (req, res) => {
 
 
 
-// Result Portal
-
+// =====================================
+// Public RTSE Result Portal
 // =====================================
 
-exports.resultPortal = async (req,res)=>{
+function publicResultNoStore(res) {
+    res.set(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, private"
+    );
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+}
 
-    const examSetting =
-        await RtseExamSetting.get();
+function publicResultPublished(setting) {
+    return Number(setting && setting.result_publish) === 1;
+}
 
-    res.render(
+function normalizePublicMobile(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    return digits.length > 10 ? digits.slice(-10) : digits;
+}
 
-        "rtse/result-portal",
+function normalizePublicDob(value) {
+    const raw = String(value || "").trim();
 
-        {
+    if (!raw) return "";
 
-            title:"RTSE Result",
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        return raw;
+    }
 
-            examSetting,
+    let match = raw.match(/^(\d{2})[\/-](\d{2})[\/-](\d{4})$/);
 
-            student:null
+    if (match) {
+        return `${match[3]}-${match[2]}-${match[1]}`;
+    }
 
+    return "";
+}
+
+function formatPublicDate(value) {
+    if (!value) return "";
+
+    const d = new Date(value);
+
+    if (Number.isNaN(d.getTime())) {
+        return String(value).slice(0, 10);
+    }
+
+    return [
+        d.getFullYear(),
+        String(d.getMonth() + 1).padStart(2, "0"),
+        String(d.getDate()).padStart(2, "0")
+    ].join("-");
+}
+
+function calculatePublicComponentGrade(marks, maximumMarks) {
+    const obtained = Number(marks);
+    const maximum = Number(maximumMarks);
+
+    if (!Number.isFinite(obtained) || !Number.isFinite(maximum) || maximum <= 0) {
+        return "";
+    }
+
+    const percentage = (obtained / maximum) * 100;
+
+    if (percentage >= 90) return "A+";
+    if (percentage >= 80) return "A";
+    if (percentage >= 70) return "B+";
+    if (percentage >= 60) return "B";
+    if (percentage >= 50) return "C+";
+    if (percentage >= 40) return "C";
+    return "F";
+}
+
+function buildPublicResultPayload(student) {
+    const components = Array.isArray(student.component_marks)
+        ? student.component_marks.map(component => {
+            const marks = Number(component.marks);
+            const maximumMarks = Number(component.maximum_marks);
+
+            if (Number(component.grade_counting) !== 1) {
+                return null;
+            }
+
+            return {
+                component_id: component.component_id,
+                name: component.name,
+                grade: calculatePublicComponentGrade(
+                    marks,
+                    maximumMarks
+                )
+            };
+        })
+        : [];
+
+    const gradeComponents = components.filter(Boolean);
+
+    return {
+        application_id: student.application_id,
+        registration_no: student.registration_no,
+        roll_no: student.roll_no,
+        full_name: student.full_name,
+        class: student.class,
+        section: student.section,
+        photo: student.photo || null,
+
+        omr_marks:
+            student.omr_marks ??
+            student.omr_mark ??
+            student.omr_total ??
+            null,
+
+        section_rank: student.section_rank,
+        overall_rank: student.overall_rank,
+
+        component_grades: gradeComponents.map(component => ({
+            component_id: component.component_id,
+            name: component.name,
+            grade: component.grade
+        }))
+    };
+}
+
+// =====================================
+// Result Portal
+// =====================================
+
+exports.resultPortal = async (req, res) => {
+    try {
+        const [examSetting, rtseSetting] = await Promise.all([
+            RtseExamSetting.get(),
+            RtseSetting.get()
+        ]);
+
+        publicResultNoStore(res);
+
+        return res.render(
+            "rtse/result-portal",
+            {
+                title: "RTSE Result",
+                examSetting,
+                resultsPublished: publicResultPublished(rtseSetting)
+            }
+        );
+    } catch (err) {
+        console.error("RTSE public result portal error:", err);
+        return res.status(500).send("Unable to load RTSE Result Portal.");
+    }
+};
+
+// =====================================
+// Public Result Candidate Search
+// =====================================
+
+exports.searchResult = async (req, res) => {
+    try {
+        publicResultNoStore(res);
+
+        const rtseSetting = await RtseSetting.get();
+
+        if (!publicResultPublished(rtseSetting)) {
+            return res.status(403).json({
+                success: false,
+                message: "Results are not published yet."
+            });
         }
 
-    );
+        const keyword = String(req.body.keyword || "")
+            .trim()
+            .replace(/\s+/g, " ");
 
+        if (keyword.length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: "Enter at least 2 characters."
+            });
+        }
+
+        const candidates =
+            await RtseResult.searchPublicCandidates(keyword);
+
+        return res.json({
+            success: true,
+            candidates: candidates.map(candidate => ({
+                application_id: candidate.application_id,
+                registration_no: candidate.registration_no,
+                roll_no: candidate.roll_no,
+                full_name: candidate.full_name,
+                father_name: candidate.father_name,
+                class: candidate.class,
+                section: candidate.section
+            }))
+        });
+    } catch (err) {
+        console.error("RTSE public result search error:", err);
+
+        publicResultNoStore(res);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to search results."
+        });
+    }
 };
 
-
 // =====================================
-// Search Result
+// Public Result Verification
 // =====================================
 
-exports.searchResult = async (req,res)=>{
+exports.verifyPublicResult = async (req, res) => {
+    try {
+        publicResultNoStore(res);
 
-    try{
+        const rtseSetting = await RtseSetting.get();
 
-        const keyword = req.body.keyword;
+        if (!publicResultPublished(rtseSetting)) {
+            return res.status(403).json({
+                success: false,
+                message: "Results are not published yet."
+            });
+        }
+
+        const applicationId = Number(req.body.application_id);
+        const rollNo = String(req.body.roll_no || "").trim();
+        const credentialType = String(
+            req.body.credential_type || ""
+        ).trim().toLowerCase();
+
+        const credentialValue = String(
+            req.body.credential_value || ""
+        ).trim();
+
+        if (
+            !Number.isInteger(applicationId) ||
+            applicationId <= 0 ||
+            !rollNo ||
+            !credentialValue ||
+            !["dob", "mobile"].includes(credentialType)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide valid verification details."
+            });
+        }
+
+        const application =
+            await RtseResult.getPublicVerificationApplication(
+                applicationId,
+                rollNo
+            );
+
+        if (!application) {
+            return res.status(401).json({
+                success: false,
+                message: "Verification failed. Please check your details."
+            });
+        }
+
+        let verified = false;
+
+        if (credentialType === "dob") {
+            const enteredDob = normalizePublicDob(credentialValue);
+            const storedDob = formatPublicDate(application.dob);
+
+            verified =
+                Boolean(enteredDob) &&
+                Boolean(storedDob) &&
+                enteredDob === storedDob;
+        }
+
+        if (credentialType === "mobile") {
+            const enteredMobile =
+                normalizePublicMobile(credentialValue);
+
+            const storedMobile =
+                normalizePublicMobile(application.mobile);
+
+            verified =
+                Boolean(enteredMobile) &&
+                enteredMobile.length === 10 &&
+                enteredMobile === storedMobile;
+        }
+
+        if (!verified) {
+            return res.status(401).json({
+                success: false,
+                message: "Verification failed. Please check your details."
+            });
+        }
 
         const student =
+            await RtseResult.getStudentPopupResult(applicationId);
 
-        await RtseResult.searchResult(
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Result data was not found."
+            });
+        }
 
-            keyword
+        if (!req.session) {
+            return res.status(500).json({
+                success: false,
+                message: "Session is unavailable."
+            });
+        }
 
-        );
+        req.session.rtsePublicResultVerification = {
+            applicationId,
+            verifiedAt: Date.now()
+        };
 
-        const examSetting =
-            await RtseExamSetting.get();
+        return res.json({
+            success: true,
+            result: buildPublicResultPayload(student)
+        });
+    } catch (err) {
+        console.error("RTSE public result verification error:", err);
 
-        res.render(
+        publicResultNoStore(res);
 
-            "rtse/result-portal",
-
-            {
-
-                title:"RTSE Result",
-
-                examSetting,
-
-                student
-
-            }
-
-        );
-
+        return res.status(500).json({
+            success: false,
+            message: "Unable to verify result."
+        });
     }
-
-    catch(err){
-
-        console.error(err);
-
-        req.flash(
-
-            "error",
-
-            "Result not found."
-
-        );
-
-        res.redirect(
-
-            "/rtse/result"
-
-        );
-
-    }
-
 };
 
-
 // =====================================
-// View Result
+// View Official Mark Sheet
 // =====================================
 
-exports.viewResult = async (req,res)=>{
+exports.viewResult = async (req, res) => {
+    try {
+        publicResultNoStore(res);
 
-    try{
+        const rtseSetting = await RtseSetting.get();
+
+        if (!publicResultPublished(rtseSetting)) {
+            return res.status(403).send(
+                "RTSE results are not currently published."
+            );
+        }
+
+        const applicationId = Number(req.params.id);
+
+        if (!Number.isInteger(applicationId) || applicationId <= 0) {
+            return res.status(404).send("Result not found.");
+        }
+
+        const verification =
+            req.session &&
+            req.session.rtsePublicResultVerification;
+
+        const verificationValid =
+            verification &&
+            Number(verification.applicationId) === applicationId &&
+            Number.isFinite(Number(verification.verifiedAt)) &&
+            Date.now() - Number(verification.verifiedAt) <=
+                10 * 60 * 1000;
+
+        if (!verificationValid) {
+            return res.status(403).send(
+                "Please verify the result before viewing the mark sheet."
+            );
+        }
 
         const student =
+            await RtseResult.getByApplication(applicationId);
 
-        await RtseResult.getByApplication(
+        if (!student) {
+            return res.status(404).send("Result not found.");
+        }
 
-            req.params.id
-
-        );
-
-        const examSetting =
-            await RtseExamSetting.get();
-
-        res.render(
-
+        return res.render(
             "rtse/result-view",
-
             {
-
-                title:"RTSE Result",
-
-                examSetting,
-
+                title: "RTSE Result",
+                examSetting: await RtseExamSetting.get(),
                 student
-
             }
-
         );
+    } catch (err) {
+        console.error("RTSE public mark sheet error:", err);
 
+        return res.status(500).send(
+            "Unable to load the result mark sheet."
+        );
     }
-
-    catch(err){
-
-        console.error(err);
-
-        req.flash(
-
-            "error",
-
-            "Unable to load result."
-
-        );
-
-        res.redirect(
-
-            "/rtse/result"
-
-        );
-
-    }
-
 };
 
-
-
-
-// =====================================
 // Certificate Verification
 // =====================================
 
