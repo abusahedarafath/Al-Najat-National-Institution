@@ -1240,13 +1240,23 @@
                                             display:flex;
                                             justify-content:flex-end;
                                         ">
+                                            <% if (Number(rtseSettings && rtseSettings.admit_publish) === 1) { %>
                                             <button
                                                 type="button"
                                                 class="btn-view arsp-partial-select-student"
                                                 data-registration-no="${escapeHtml(student.registration_no)}"
                                             >
                                                 <i class="fa-solid fa-user-check"></i>
-                                                Select Student
+                                                Download Admit Card
+                                            </button>
+                                            <% } %>
+                                            <button
+                                                type="button"
+                                                class="btn-view arsp-member-see-result"
+                                                data-registration-no="${escapeHtml(student.registration_no)}"
+                                            >
+                                                <i class="fa-solid fa-square-poll-vertical"></i>
+                                                See Result
                                             </button>
                                         </div>
                                     </div>
@@ -1390,13 +1400,23 @@
                                         display:flex;
                                         justify-content:flex-end;
                                     ">
+                                        <% if (Number(rtseSettings && rtseSettings.admit_publish) === 1) { %>
                                         <button
                                             type="button"
                                             class="btn-view arsp-full-select-student"
                                             data-registration-no="${escapeHtml(student.registration_no)}"
                                         >
                                             <i class="fa-solid fa-user-check"></i>
-                                            Select Student
+                                            Download Admit Card
+                                        </button>
+                                        <% } %>
+                                        <button
+                                            type="button"
+                                            class="btn-view arsp-member-see-result"
+                                            data-registration-no="${escapeHtml(student.registration_no)}"
+                                        >
+                                            <i class="fa-solid fa-square-poll-vertical"></i>
+                                            See Result
                                         </button>
                                     </div>
                                 </div>
@@ -1682,6 +1702,626 @@
         );
 
     }
+
+
+    /* =====================================================
+       MEMBER RTSE RESULT VERIFICATION
+       ===================================================== */
+
+    let memberResultModal = null;
+
+    function closeMemberResultModal() {
+        if (memberResultModal) {
+            memberResultModal.remove();
+            memberResultModal = null;
+        }
+    }
+
+    function showMemberResultModal(registrationNo) {
+        closeMemberResultModal();
+
+        memberResultModal = document.createElement("div");
+        memberResultModal.className = "arsp-member-result-modal";
+        memberResultModal.style.cssText =
+            "position:fixed;inset:0;z-index:100000;" +
+            "display:flex;align-items:center;justify-content:center;" +
+            "padding:16px;background:rgba(0,0,0,.62);overflow:auto;";
+
+        const isFullAccess = currentAccess === "Full";
+
+        memberResultModal.innerHTML = `
+            <div role="dialog" aria-modal="true"
+                 style="
+                    width:min(520px,100%);
+                    max-height:92vh;
+                    overflow:auto;
+                    background:#fff;
+                    border-radius:18px;
+                    box-shadow:0 24px 80px rgba(0,0,0,.30);
+                    padding:22px;
+                    box-sizing:border-box;
+                 ">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    gap:12px;
+                    margin-bottom:16px;
+                ">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="
+                            width:42px;
+                            height:42px;
+                            border-radius:12px;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            background:#eef4ff;
+                            color:#173b72;
+                        ">
+                            <i class="fa-solid fa-square-poll-vertical"></i>
+                        </div>
+
+                        <div>
+                            <strong style="font-size:18px;display:block;">
+                                See Result
+                            </strong>
+                            <small style="color:#777;">
+                                Registration: ${escapeHtml(registrationNo)}
+                            </small>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            id="arspMemberResultCloseBtn"
+                            style="
+                                border:0;
+                                background:#f1f1f1;
+                                width:36px;
+                                height:36px;
+                                border-radius:50%;
+                                cursor:pointer;
+                            ">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div style="
+                    background:#f8fafc;
+                    border:1px solid #e6eaf0;
+                    border-radius:12px;
+                    padding:14px;
+                    margin-bottom:16px;
+                    color:#555;
+                    line-height:1.5;
+                ">
+                    ${
+                        isFullAccess
+                            ? "Enter your registered ARSP member mobile number to view this student's result."
+                            : "Enter the student's registered mobile number or date of birth to verify the result."
+                    }
+                </div>
+
+                ${
+                    isFullAccess
+                        ? `
+                            <label style="display:block;font-weight:600;margin-bottom:7px;">
+                                Your Registered Mobile Number
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="arspMemberResultMobile"
+                                inputmode="numeric"
+                                maxlength="10"
+                                autocomplete="off"
+                                placeholder="Enter your 10-digit mobile number"
+                                style="
+                                    width:100%;
+                                    box-sizing:border-box;
+                                    padding:12px 14px;
+                                    border:1px solid #d6dce5;
+                                    border-radius:10px;
+                                    font-size:15px;
+                                "
+                            >
+                        `
+                        : `
+                            <label style="display:block;font-weight:600;margin-bottom:7px;">
+                                Student Mobile Number
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="arspMemberResultMobile"
+                                inputmode="numeric"
+                                maxlength="10"
+                                autocomplete="off"
+                                placeholder="Enter student's mobile number"
+                                style="
+                                    width:100%;
+                                    box-sizing:border-box;
+                                    padding:12px 14px;
+                                    border:1px solid #d6dce5;
+                                    border-radius:10px;
+                                    font-size:15px;
+                                    margin-bottom:12px;
+                                "
+                            >
+
+                            <div style="
+                                text-align:center;
+                                color:#888;
+                                font-size:13px;
+                                margin:4px 0 12px;
+                            ">OR</div>
+
+                            <label style="display:block;font-weight:600;margin-bottom:7px;">
+                                Date of Birth
+                            </label>
+
+                            <input
+                                type="date"
+                                id="arspMemberResultDob"
+                                style="
+                                    width:100%;
+                                    box-sizing:border-box;
+                                    padding:12px 14px;
+                                    border:1px solid #d6dce5;
+                                    border-radius:10px;
+                                    font-size:15px;
+                                "
+                            >
+                        `
+                }
+
+                <div id="arspMemberResultVerificationStatus"
+                     style="margin-top:12px;min-height:20px;"></div>
+
+                <button type="button"
+                        id="arspMemberResultVerifyBtn"
+                        style="
+                            width:100%;
+                            margin-top:14px;
+                            border:0;
+                            border-radius:10px;
+                            padding:13px 16px;
+                            background:#173b72;
+                            color:#fff;
+                            font-weight:700;
+                            cursor:pointer;
+                            font-size:15px;
+                        ">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Verify & See Result
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(memberResultModal);
+
+        const closeButton =
+            memberResultModal.querySelector(
+                "#arspMemberResultCloseBtn"
+            );
+
+        const verifyButton =
+            memberResultModal.querySelector(
+                "#arspMemberResultVerifyBtn"
+            );
+
+        const mobileInput =
+            memberResultModal.querySelector(
+                "#arspMemberResultMobile"
+            );
+
+        const dobInput =
+            memberResultModal.querySelector(
+                "#arspMemberResultDob"
+            );
+
+        const verificationStatus =
+            memberResultModal.querySelector(
+                "#arspMemberResultVerificationStatus"
+            );
+
+        if (closeButton) {
+            closeButton.addEventListener(
+                "click",
+                closeMemberResultModal
+            );
+        }
+
+        memberResultModal.addEventListener(
+            "click",
+            function (event) {
+                if (event.target === memberResultModal) {
+                    closeMemberResultModal();
+                }
+            }
+        );
+
+        if (verifyButton) {
+            verifyButton.addEventListener(
+                "click",
+                async function () {
+                    const mobile =
+                        mobileInput
+                            ? mobileInput.value.trim()
+                            : "";
+
+                    const dob =
+                        dobInput
+                            ? dobInput.value.trim()
+                            : "";
+
+                    let credentialType = "";
+                    let credentialValue = "";
+
+                    if (isFullAccess) {
+                        credentialType = "mobile";
+                        credentialValue = mobile;
+                    } else if (mobile) {
+                        credentialType = "mobile";
+                        credentialValue = mobile;
+                    } else if (dob) {
+                        credentialType = "dob";
+                        credentialValue = dob;
+                    }
+
+                    if (!credentialValue) {
+                        verificationStatus.innerHTML =
+                            '<span style="color:#b42318;">' +
+                            "Please enter your verification information." +
+                            "</span>";
+                        return;
+                    }
+
+                    verifyButton.disabled = true;
+                    verifyButton.style.opacity = ".7";
+
+                    verificationStatus.innerHTML =
+                        '<span style="color:#555;">' +
+                        '<i class="fa-solid fa-spinner fa-spin"></i> ' +
+                        "Verifying..." +
+                        "</span>";
+
+                    try {
+                        const response = await fetch(
+                            "/arsp/student/result/verify",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+                                credentials: "same-origin",
+                                body: JSON.stringify({
+                                    registration_no:
+                                        registrationNo,
+                                    credential_type:
+                                        credentialType,
+                                    credential_value:
+                                        credentialValue
+                                })
+                            }
+                        );
+
+                        let data = null;
+
+                        try {
+                            data = await response.json();
+                        } catch (_) {}
+
+                        if (
+                            !response.ok ||
+                            !data ||
+                            !data.success
+                        ) {
+                            throw new Error(
+                                data && data.message
+                                    ? data.message
+                                    : "Result verification failed."
+                            );
+                        }
+
+                        renderMemberResult(data.result);
+
+                    } catch (error) {
+                        console.error(
+                            "ARSP member result verification error:",
+                            error
+                        );
+
+                        verificationStatus.innerHTML =
+                            '<span style="color:#b42318;">' +
+                            escapeHtml(
+                                error.message ||
+                                "Unable to verify result."
+                            ) +
+                            "</span>";
+
+                        verifyButton.disabled = false;
+                        verifyButton.style.opacity = "1";
+                    }
+                }
+            );
+        }
+
+        setTimeout(function () {
+            if (mobileInput) {
+                mobileInput.focus();
+            }
+        }, 0);
+    }
+
+    function renderMemberResult(student) {
+        if (!memberResultModal || !student) {
+            return;
+        }
+
+        const componentGrades =
+            Array.isArray(student.component_grades)
+                ? student.component_grades
+                : [];
+
+        const componentHtml =
+            componentGrades.length
+                ? componentGrades.map(function (component) {
+                    return `
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            gap:12px;
+                            padding:10px 0;
+                            border-bottom:1px solid #edf0f4;
+                        ">
+                            <span style="font-weight:600;color:#444;">
+                                ${escapeHtml(component.name)}
+                            </span>
+
+                            <strong style="color:#173b72;">
+                                ${escapeHtml(component.grade)}
+                            </strong>
+                        </div>
+                    `;
+                }).join("")
+                : `
+                    <div style="color:#777;padding:10px 0;">
+                        No configured component grades available.
+                    </div>
+                `;
+
+        memberResultModal.innerHTML = `
+            <div role="dialog" aria-modal="true"
+                 style="
+                    width:min(620px,100%);
+                    max-height:92vh;
+                    overflow:auto;
+                    background:#fff;
+                    border-radius:20px;
+                    box-shadow:0 24px 80px rgba(0,0,0,.35);
+                    padding:22px;
+                    box-sizing:border-box;
+                 ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:flex-start;
+                    gap:14px;
+                    margin-bottom:18px;
+                ">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div>
+                            <div style="
+                                font-size:20px;
+                                font-weight:800;
+                                color:#172033;
+                            ">
+                                ${escapeHtml(student.full_name)}
+                            </div>
+
+                            <div style="
+                                color:#687386;
+                                margin-top:4px;
+                            ">
+                                Result Verified
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            id="arspMemberResultCloseBtn"
+                            style="
+                                border:0;
+                                background:#f1f1f1;
+                                width:36px;
+                                height:36px;
+                                border-radius:50%;
+                                cursor:pointer;
+                            ">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:repeat(2,minmax(0,1fr));
+                    gap:10px;
+                    margin-bottom:18px;
+                ">
+                    <div style="background:#f8fafc;border-radius:12px;padding:12px;">
+                        <small style="color:#7b8493;">Registration No.</small>
+                        <strong style="display:block;margin-top:4px;">
+                            ${escapeHtml(student.registration_no)}
+                        </strong>
+                    </div>
+
+                    <div style="background:#f8fafc;border-radius:12px;padding:12px;">
+                        <small style="color:#7b8493;">Roll No.</small>
+                        <strong style="display:block;margin-top:4px;">
+                            ${escapeHtml(student.roll_no)}
+                        </strong>
+                    </div>
+
+                    <div style="background:#f8fafc;border-radius:12px;padding:12px;">
+                        <small style="color:#7b8493;">Class</small>
+                        <strong style="display:block;margin-top:4px;">
+                            ${escapeHtml(student.class)}
+                        </strong>
+                    </div>
+
+                    <div style="background:#f8fafc;border-radius:12px;padding:12px;">
+                        <small style="color:#7b8493;">Section</small>
+                        <strong style="display:block;margin-top:4px;">
+                            ${escapeHtml(student.section || "-")}
+                        </strong>
+                    </div>
+                </div>
+
+                <div style="
+                    border:1px solid #e7ebf0;
+                    border-radius:14px;
+                    padding:14px;
+                    margin-bottom:14px;
+                ">
+                    <div style="
+                        font-size:14px;
+                        font-weight:800;
+                        color:#333;
+                        margin-bottom:4px;
+                    ">
+                        OMR Marks
+                    </div>
+
+                    <div style="
+                        font-size:28px;
+                        font-weight:900;
+                        color:#173b72;
+                    ">
+                        ${escapeHtml(student.omr_marks ?? "-")}
+                    </div>
+                </div>
+
+                <div style="
+                    border:1px solid #e7ebf0;
+                    border-radius:14px;
+                    padding:14px;
+                ">
+                    <div style="
+                        font-size:15px;
+                        font-weight:800;
+                        margin-bottom:4px;
+                        color:#333;
+                    ">
+                        Grades
+                    </div>
+
+                    ${componentHtml}
+                </div>
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:repeat(2,minmax(0,1fr));
+                    gap:10px;
+                    margin-top:14px;
+                ">
+                    <div style="
+                        background:#f8fafc;
+                        border-radius:12px;
+                        padding:13px;
+                        text-align:center;
+                    ">
+                        <small style="color:#7b8493;">Section Rank</small>
+                        <strong style="
+                            display:block;
+                            font-size:22px;
+                            color:#173b72;
+                            margin-top:4px;
+                        ">
+                            ${escapeHtml(student.section_rank ?? "-")}
+                        </strong>
+                    </div>
+
+                    <div style="
+                        background:#f8fafc;
+                        border-radius:12px;
+                        padding:13px;
+                        text-align:center;
+                    ">
+                        <small style="color:#7b8493;">Overall Rank</small>
+                        <strong style="
+                            display:block;
+                            font-size:22px;
+                            color:#173b72;
+                            margin-top:4px;
+                        ">
+                            ${escapeHtml(student.overall_rank ?? "-")}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const closeButton =
+            memberResultModal.querySelector(
+                "#arspMemberResultCloseBtn"
+            );
+
+        if (closeButton) {
+            closeButton.addEventListener(
+                "click",
+                closeMemberResultModal
+            );
+        }
+
+        memberResultModal.addEventListener(
+            "click",
+            function (event) {
+                if (event.target === memberResultModal) {
+                    closeMemberResultModal();
+                }
+            }
+        );
+
+        const celebrationAudio =
+            new Audio(
+                "/audio/rtse-result-congratulations.mp3"
+            );
+
+        celebrationAudio.play().catch(function (error) {
+            console.warn(
+                "RTSE result celebration audio could not play:",
+                error
+            );
+        });
+    }
+
+    document.addEventListener(
+        "click",
+        function (event) {
+            const button =
+                event.target.closest(".arsp-member-see-result");
+
+            if (!button) {
+                return;
+            }
+
+            const registrationNo =
+                button.dataset.registrationNo || "";
+
+            if (!registrationNo) {
+                return;
+            }
+
+            showMemberResultModal(
+                registrationNo
+            );
+        }
+    );
 
 })();
 </script>

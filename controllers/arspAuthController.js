@@ -1,6 +1,7 @@
 const ArspAccount = require("../models/ArspAccount");
 
 const ArspMember = require("../models/ArspMember");
+const RtseSetting = require("../models/RtseSetting");
 const SiteSetting = require("../models/SiteSetting");
 const ArspSetting = require("../models/ArspSetting"); 
 const IdentityCardSetting = require("../models/IdentityCardSetting");
@@ -178,6 +179,8 @@ const member = await ArspMember.getById(
 
 const notices = await Notice.getLatest(5);
 
+const rtseSettings = await RtseSetting.get();
+
 const position =
     await ArspManagementPosition.getByMemberId(
         member.id
@@ -190,6 +193,7 @@ res.render(
         member,
         notices,
         position,
+        rtseSettings,
         hasAppointment: !!position
     }
 );

@@ -978,6 +978,34 @@ static async searchPublicCandidates(keyword) {
     return rows;
 }
 
+static async getMemberResultVerificationApplication(
+    registrationNo
+) {
+    const [rows] = await db.query(
+        `
+        SELECT
+            a.id AS application_id,
+            a.registration_no,
+            a.roll_no,
+            a.dob,
+            a.mobile
+        FROM rtse_results r
+        INNER JOIN rtse_applications a
+            ON a.id = r.application_id
+        WHERE
+            a.registration_no = ?
+            AND a.archive = 0
+            AND a.status = 'Approved'
+        LIMIT 1
+        `,
+        [
+            String(registrationNo || "").trim()
+        ]
+    );
+
+    return rows[0] || null;
+}
+
 static async getPublicVerificationApplication(
     applicationId,
     rollNo

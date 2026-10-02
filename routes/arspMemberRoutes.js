@@ -32,4 +32,10 @@ router.post(
     arspAdmitCardController.download
 );
 
+router.post(
+    "/arsp/student/result/verify",
+    arspAuth.isLoggedIn,
+    arspMemberController.verifyStudentResult
+);
+
 module.exports = router;
