@@ -45,6 +45,7 @@ const admission2027Routes = require("./routes/admission2027Routes");
 const adminNoticeRoutes = require("./routes/adminNoticeRoutes");
 const adminNewsRoutes = require("./routes/adminNewsRoutes");
 const publicRoutes = require("./routes/publicRoutes");
+const websiteVisitorRoutes = require("./routes/websiteVisitorRoutes");
 const adminGalleryRoutes = require("./routes/adminGalleryRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
@@ -250,6 +251,7 @@ app.use(adminNoticeRoutes);
 app.use(adminNewsRoutes);
 app.use(adminGalleryRoutes);
 
+app.use("/", websiteVisitorRoutes);
 app.use("/", publicRoutes);
 app.use(galleryRoutes);
 app.use("/", identityCardRoutes);

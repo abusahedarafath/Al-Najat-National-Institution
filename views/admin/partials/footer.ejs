@@ -4,6 +4,704 @@
 
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
+<style>
+.anvi-popup {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 999990;
+    width: min(700px, calc(100vw - 30px));
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.98);
+    color: #172033;
+    box-shadow:
+        0 20px 55px rgba(15, 23, 42, 0.18),
+        0 5px 18px rgba(15, 23, 42, 0.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+    cursor: move;
+}
+
+.anvi-popup.anvi-expanded {
+    width: min(900px, calc(100vw - 30px));
+    border-radius: 22px;
+    box-shadow:
+        0 28px 75px rgba(15, 23, 42, 0.24),
+        0 8px 25px rgba(15, 23, 42, 0.13);
+}
+
+.anvi-popup.anvi-expanded .anvi-popup-header {
+    min-height: 50px;
+    padding: 10px 13px 10px 18px;
+}
+
+.anvi-popup.anvi-expanded .anvi-popup-title {
+    font-size: 13px;
+}
+
+.anvi-popup.anvi-expanded .anvi-live-dot {
+    width: 9px;
+    height: 9px;
+    flex-basis: 9px;
+}
+
+.anvi-popup.anvi-expanded .anvi-popup-close {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+}
+
+.anvi-popup.anvi-expanded .anvi-stat {
+    padding: 20px 22px 19px;
+}
+
+.anvi-popup.anvi-expanded .anvi-stat-label {
+    margin-bottom: 8px;
+    font-size: 11px;
+}
+
+.anvi-popup.anvi-expanded .anvi-stat-value {
+    font-size: 34px;
+}
+
+.anvi-popup.anvi-expanded .anvi-popup-status {
+    min-height: 28px;
+    padding: 0 20px 10px;
+    font-size: 10px;
+}
+
+@media (max-width: 620px) {
+    .anvi-popup.anvi-expanded {
+        width: calc(100vw - 14px);
+        right: 7px;
+        bottom: 7px;
+    }
+
+    .anvi-popup.anvi-expanded .anvi-stat {
+        padding: 14px 7px 15px;
+    }
+
+    .anvi-popup.anvi-expanded .anvi-stat-label {
+        font-size: 7px;
+    }
+
+    .anvi-popup.anvi-expanded .anvi-stat-value {
+        font-size: 23px;
+    }
+}
+
+
+.anvi-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    padding: 7px 10px 7px 14px;
+    background: linear-gradient(
+        135deg,
+        #f8fafc,
+        #eef2ff
+    );
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.anvi-popup-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #172033;
+}
+
+.anvi-live-dot {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+    background: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.13);
+    animation: anviPulse 1.6s infinite;
+}
+
+@keyframes anviPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.88);
+    }
+}
+
+.anvi-popup-close {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.06);
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    touch-action: manipulation;
+}
+
+.anvi-popup-close:hover {
+    background: #ef4444;
+    color: #fff;
+    transform: scale(1.04);
+}
+
+.anvi-popup-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: #fff;
+}
+
+.anvi-stat {
+    position: relative;
+    min-width: 0;
+    padding: 13px 15px 12px;
+    border-right: 1px solid rgba(15, 23, 42, 0.07);
+}
+
+.anvi-stat:last-child {
+    border-right: 0;
+}
+
+.anvi-stat::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 3px;
+}
+
+.anvi-stat:nth-child(1)::before {
+    background: #8b5cf6;
+}
+
+.anvi-stat:nth-child(2)::before {
+    background: #2563eb;
+}
+
+.anvi-stat:nth-child(3)::before {
+    background: #16a34a;
+}
+
+.anvi-stat:nth-child(4)::before {
+    background: #f59e0b;
+}
+
+.anvi-stat-label {
+    margin-bottom: 5px;
+    font-size: 9px;
+    line-height: 1.2;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.anvi-stat-value {
+    font-size: 23px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: #172033;
+}
+
+.anvi-stat:nth-child(1) .anvi-stat-value {
+    color: #7c3aed;
+}
+
+.anvi-stat:nth-child(2) .anvi-stat-value {
+    color: #2563eb;
+}
+
+.anvi-stat:nth-child(3) .anvi-stat-value {
+    color: #16a34a;
+}
+
+.anvi-stat-live .anvi-stat-value {
+    color: #ea580c;
+}
+
+.anvi-popup-status {
+    min-height: 23px;
+    padding: 0 14px 8px;
+    font-size: 9px;
+    color: #94a3b8;
+    text-align: right;
+    background: #fff;
+}
+
+@media (max-width: 620px) {
+    .anvi-popup {
+        right: 10px;
+        bottom: 10px;
+        width: calc(100vw - 20px);
+        border-radius: 14px;
+    }
+
+    .anvi-popup-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .anvi-stat {
+        padding: 10px 7px 11px;
+        text-align: center;
+    }
+
+    .anvi-stat-label {
+        font-size: 7px;
+        letter-spacing: 0.04em;
+    }
+
+    .anvi-stat-value {
+        font-size: 17px;
+    }
+
+    .anvi-popup-title {
+        font-size: 9px;
+    }
+}
+</style>
+
+<div
+    id="anviVisitorPopup"
+    class="anvi-popup"
+    aria-label="Website visitor statistics"
+>
+    <div
+        id="anviVisitorDragHandle"
+        class="anvi-popup-header"
+        title="Drag to move"
+    >
+        <div class="anvi-popup-title">
+            <span class="anvi-live-dot"></span>
+            Website Visitors
+        </div>
+
+        <button
+            type="button"
+            id="anviVisitorClose"
+            class="anvi-popup-close"
+            aria-label="Close visitor statistics"
+            title="Close"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div class="anvi-popup-stats">
+        <div class="anvi-stat">
+            <div class="anvi-stat-label">LAST MONTH</div>
+            <div
+                id="anviLastMonth"
+                class="anvi-stat-value"
+            >
+                0
+            </div>
+        </div>
+
+        <div class="anvi-stat">
+            <div class="anvi-stat-label">LAST WEEK</div>
+            <div
+                id="anviLastWeek"
+                class="anvi-stat-value"
+            >
+                0
+            </div>
+        </div>
+
+        <div class="anvi-stat">
+            <div class="anvi-stat-label">TODAY</div>
+            <div
+                id="anviToday"
+                class="anvi-stat-value"
+            >
+                0
+            </div>
+        </div>
+
+        <div class="anvi-stat anvi-stat-live">
+            <div class="anvi-stat-label">LIVE</div>
+            <div
+                id="anviLive"
+                class="anvi-stat-value"
+            >
+                0
+            </div>
+        </div>
+    </div>
+
+    <div
+        id="anviVisitorStatus"
+        class="anvi-popup-status"
+    >
+        Updating…
+    </div>
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    const popup =
+        document.getElementById("anviVisitorPopup");
+
+    const dragHandle =
+        document.getElementById(
+            "anviVisitorDragHandle"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "anviVisitorClose"
+        );
+
+    const lastMonth =
+        document.getElementById("anviLastMonth");
+
+    const lastWeek =
+        document.getElementById("anviLastWeek");
+
+    const today =
+        document.getElementById("anviToday");
+
+    const live =
+        document.getElementById("anviLive");
+
+    const status =
+        document.getElementById("anviVisitorStatus");
+
+    if (
+        !popup ||
+        !dragHandle ||
+        !closeButton ||
+        !lastMonth ||
+        !lastWeek ||
+        !today ||
+        !live
+    ) {
+        return;
+    }
+
+    let statisticsRequestInFlight = false;
+
+    async function loadVisitorStatistics() {
+        if (statisticsRequestInFlight) {
+            return;
+        }
+
+        statisticsRequestInFlight = true;
+
+        try {
+            const response = await fetch(
+                "/admin/visitor-statistics",
+                {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Statistics request failed."
+                );
+            }
+
+            const data = await response.json();
+
+            if (
+                !data ||
+                !data.success ||
+                !data.statistics
+            ) {
+                throw new Error(
+                    "Invalid statistics response."
+                );
+            }
+
+            lastMonth.textContent =
+                Number(
+                    data.statistics.last_month || 0
+                ).toLocaleString();
+
+            lastWeek.textContent =
+                Number(
+                    data.statistics.last_week || 0
+                ).toLocaleString();
+
+            today.textContent =
+                Number(
+                    data.statistics.today || 0
+                ).toLocaleString();
+
+            live.textContent =
+                Number(
+                    data.statistics.live || 0
+                ).toLocaleString();
+
+            const now = new Date();
+
+            status.textContent =
+                "Updated " +
+                now.toLocaleTimeString(
+                    [],
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
+        } catch (error) {
+            status.textContent =
+                "Unable to update statistics";
+        } finally {
+            statisticsRequestInFlight = false;
+        }
+    }
+
+    closeButton.addEventListener(
+        "click",
+        function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            popup.style.display = "none";
+        }
+    );
+
+    let dragging = false;
+    let pointerId = null;
+    let offsetX = 0;
+    let offsetY = 0;
+    let dragStartedX = 0;
+    let dragStartedY = 0;
+    let didDrag = false;
+
+
+    popup.addEventListener(
+        "pointerdown",
+        function (event) {
+            if (
+                event.target.closest(
+                    "#anviVisitorClose"
+                )
+            ) {
+                return;
+            }
+
+            dragging = true;
+            pointerId = event.pointerId;
+            didDrag = false;
+            dragStartedX = event.clientX;
+            dragStartedY = event.clientY;
+
+            const rect =
+                popup.getBoundingClientRect();
+
+            offsetX =
+                event.clientX - rect.left;
+
+            offsetY =
+                event.clientY - rect.top;
+
+            popup.style.right = "auto";
+            popup.style.bottom = "auto";
+            popup.style.left =
+                rect.left + "px";
+            popup.style.top =
+                rect.top + "px";
+
+            try {
+                popup.setPointerCapture(
+                    pointerId
+                );
+            } catch (error) {}
+
+            event.preventDefault();
+        }
+    );
+
+    popup.addEventListener(
+        "pointermove",
+        function (event) {
+            if (
+                !dragging ||
+                event.pointerId !== pointerId
+            ) {
+                return;
+            }
+
+            if (
+                Math.abs(event.clientX - dragStartedX) > 5 ||
+                Math.abs(event.clientY - dragStartedY) > 5
+            ) {
+                didDrag = true;
+            }
+
+            const rect =
+                popup.getBoundingClientRect();
+
+            const maxLeft =
+                Math.max(
+                    5,
+                    window.innerWidth -
+                        rect.width -
+                        5
+                );
+
+            const maxTop =
+                Math.max(
+                    5,
+                    window.innerHeight -
+                        rect.height -
+                        5
+                );
+
+            let left =
+                event.clientX - offsetX;
+
+            let top =
+                event.clientY - offsetY;
+
+            left = Math.max(
+                5,
+                Math.min(left, maxLeft)
+            );
+
+            top = Math.max(
+                5,
+                Math.min(top, maxTop)
+            );
+
+            popup.style.left =
+                left + "px";
+
+            popup.style.top =
+                top + "px";
+        }
+    );
+
+    function stopDragging(event) {
+        if (
+            !dragging ||
+            event.pointerId !== pointerId
+        ) {
+            return;
+        }
+
+        dragging = false;
+
+        try {
+            popup.releasePointerCapture(
+                pointerId
+            );
+        } catch (error) {}
+
+        pointerId = null;
+    }
+
+    popup.addEventListener(
+        "click",
+        function (event) {
+            if (
+                event.target.closest(
+                    "#anviVisitorClose"
+                )
+            ) {
+                return;
+            }
+
+            if (didDrag) {
+                didDrag = false;
+                return;
+            }
+
+            popup.classList.toggle("anvi-expanded");
+        }
+    );
+
+    popup.addEventListener(
+        "pointerup",
+        stopDragging
+    );
+
+    popup.addEventListener(
+        "pointercancel",
+        stopDragging
+    );
+
+    window.addEventListener(
+        "resize",
+        function () {
+            if (
+                popup.style.left &&
+                popup.style.top &&
+                popup.style.display !== "none"
+            ) {
+                const rect =
+                    popup.getBoundingClientRect();
+
+                const maxLeft =
+                    window.innerWidth -
+                    rect.width;
+
+                const maxTop =
+                    window.innerHeight -
+                    rect.height;
+
+                popup.style.left =
+                    Math.max(
+                        5,
+                        Math.min(
+                            rect.left,
+                            maxLeft - 5
+                        )
+                    ) + "px";
+
+                popup.style.top =
+                    Math.max(
+                        5,
+                        Math.min(
+                            rect.top,
+                            maxTop - 5
+                        )
+                    ) + "px";
+            }
+        }
+    );
+
+    loadVisitorStatistics();
+
+    window.setInterval(
+        loadVisitorStatistics,
+        5000
+    );
+})();
+</script>
+
     <script>
 
         const menuToggle = document.getElementById("menuToggle");
