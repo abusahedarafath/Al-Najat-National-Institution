@@ -189,12 +189,18 @@ class WebsiteVisitor {
                 (
                     SELECT COUNT(*)
                     FROM website_visitors
+                ) AS total_visitors,
+
+                (
+                    SELECT COUNT(*)
+                    FROM website_visitors
                     WHERE is_live = 1
                 ) AS live_visitors
             `
         );
 
         return rows[0] || {
+            total_visitors: 0,
             today_visitors: 0,
             week_visitors: 0,
             last_month_visitors: 0,

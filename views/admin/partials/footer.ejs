@@ -120,6 +120,29 @@
     color: #172033;
 }
 
+.anvi-header-total {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 5px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.08);
+    color: #334155;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.anvi-header-total strong {
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
 .anvi-live-dot {
     width: 8px;
     height: 8px;
@@ -282,6 +305,17 @@
     .anvi-popup-title {
         font-size: 9px;
     }
+
+    .anvi-header-total {
+        gap: 4px;
+        margin-left: 2px;
+        padding: 3px 6px;
+        font-size: 6px;
+    }
+
+    .anvi-header-total strong {
+        font-size: 9px;
+    }
 }
 </style>
 
@@ -298,6 +332,10 @@
         <div class="anvi-popup-title">
             <span class="anvi-live-dot"></span>
             Website Visitors
+            <span class="anvi-header-total">
+                TOTAL
+                <strong id="anviTotalVisitors">0</strong>
+            </span>
         </div>
 
         <button
@@ -527,6 +565,12 @@
                     "Invalid statistics response."
                 );
             }
+
+            document.getElementById(
+                "anviTotalVisitors"
+            ).textContent = Number(
+                data.statistics.total || 0
+            ).toLocaleString();
 
             lastMonth.textContent =
                 Number(

@@ -95,6 +95,9 @@ exports.statistics = async (req, res) => {
         return res.json({
             success: true,
             statistics: {
+                total: Number(
+                    statistics.total_visitors || 0
+                ),
                 last_month: Number(
                     statistics.last_month_visitors || 0
                 ),
