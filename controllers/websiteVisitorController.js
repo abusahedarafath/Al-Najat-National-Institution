@@ -44,6 +44,49 @@ exports.heartbeat = async (req, res) => {
     }
 };
 
+exports.setLiveStatus = async (req, res) => {
+    try {
+        const visitorId = String(
+            req.body && req.body.visitorId || ""
+        ).trim();
+
+        const requestPath = String(
+            req.body && req.body.path || "/"
+        ).trim();
+
+        const isLive =
+            req.body &&
+            req.body.isLive === true;
+
+        if (!isValidVisitorId(visitorId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid visitor ID."
+            });
+        }
+
+        await WebsiteVisitor.setLiveStatus(
+            visitorId,
+            isLive,
+            requestPath || "/"
+        );
+
+        return res.json({
+            success: true
+        });
+    } catch (err) {
+        console.error(
+            "[Website Visitor] Live status error:",
+            err
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to update visitor status."
+        });
+    }
+};
+
 exports.statistics = async (req, res) => {
     try {
         const statistics =

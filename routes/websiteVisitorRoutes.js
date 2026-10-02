@@ -10,6 +10,11 @@ router.post(
     websiteVisitorController.heartbeat
 );
 
+router.post(
+    "/visitor/live-status",
+    websiteVisitorController.setLiveStatus
+);
+
 router.get(
     "/admin/visitor-statistics",
     auth.isAdmin,

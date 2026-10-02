@@ -242,7 +242,16 @@
     }
 
     const visitorId = getVisitorId();
+
     let heartbeatInFlight = false;
+    let liveStatusInFlight = false;
+
+    function getCurrentPath() {
+        return (
+            window.location.pathname +
+            window.location.search
+        );
+    }
 
     function sendHeartbeat() {
         if (heartbeatInFlight) {
@@ -259,9 +268,7 @@
             credentials: "same-origin",
             body: JSON.stringify({
                 visitorId: visitorId,
-                path:
-                    window.location.pathname +
-                    window.location.search
+                path: getCurrentPath()
             }),
             keepalive: true
         })
@@ -274,11 +281,91 @@
         });
     }
 
+    function sendLiveStatus(isLive, useBeacon) {
+        const payload = JSON.stringify({
+            visitorId: visitorId,
+            path: getCurrentPath(),
+            isLive: Boolean(isLive)
+        });
+
+        if (useBeacon && navigator.sendBeacon) {
+            try {
+                const blob = new Blob(
+                    [payload],
+                    {
+                        type: "application/json"
+                    }
+                );
+
+                if (
+                    navigator.sendBeacon(
+                        "/visitor/live-status",
+                        blob
+                    )
+                ) {
+                    return;
+                }
+            } catch (error) {
+                // Fall through to fetch.
+            }
+        }
+
+        if (liveStatusInFlight) {
+            return;
+        }
+
+        liveStatusInFlight = true;
+
+        fetch("/visitor/live-status", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin",
+            body: payload,
+            keepalive: true
+        })
+        .catch(function () {
+            // Visitor statistics must never interrupt
+            // the public website experience.
+        })
+        .finally(function () {
+            liveStatusInFlight = false;
+        });
+    }
+
+    // A page becomes a live visit when it is opened.
+    sendLiveStatus(true, false);
     sendHeartbeat();
 
+    // Heartbeat records visitor activity only.
+    // It does NOT control the live visitor state.
     window.setInterval(
         sendHeartbeat,
         HEARTBEAT_INTERVAL
+    );
+
+    // If the browser moves this page into the background,
+    // consider the visit inactive.
+    document.addEventListener(
+        "visibilitychange",
+        function () {
+            if (document.visibilityState === "visible") {
+                sendLiveStatus(true, false);
+                sendHeartbeat();
+            } else {
+                sendLiveStatus(false, true);
+            }
+        }
+    );
+
+    // pagehide is the primary signal that the visitor has
+    // actually left/navigated away from this page.
+    window.addEventListener(
+        "pagehide",
+        function () {
+            sendLiveStatus(false, true);
+        }
     );
 })();
 </script>

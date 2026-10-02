@@ -27,7 +27,7 @@
 }
 
 .anvi-popup.anvi-expanded {
-    width: min(900px, calc(100vw - 30px));
+    width: min(1100px, calc(100vw - 30px));
     border-radius: 22px;
     box-shadow:
         0 28px 75px rgba(15, 23, 42, 0.24),
@@ -35,43 +35,43 @@
 }
 
 .anvi-popup.anvi-expanded .anvi-popup-header {
-    min-height: 50px;
-    padding: 10px 13px 10px 18px;
+    min-height: 58px;
+    padding: 12px 16px 12px 22px;
 }
 
 .anvi-popup.anvi-expanded .anvi-popup-title {
-    font-size: 13px;
-}
-
-.anvi-popup.anvi-expanded .anvi-live-dot {
-    width: 9px;
-    height: 9px;
-    flex-basis: 9px;
-}
-
-.anvi-popup.anvi-expanded .anvi-popup-close {
-    width: 32px;
-    height: 32px;
     font-size: 15px;
 }
 
+.anvi-popup.anvi-expanded .anvi-live-dot {
+    width: 10px;
+    height: 10px;
+    flex-basis: 10px;
+}
+
+.anvi-popup.anvi-expanded .anvi-popup-close {
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+}
+
 .anvi-popup.anvi-expanded .anvi-stat {
-    padding: 20px 22px 19px;
+    padding: 25px 28px 24px;
 }
 
 .anvi-popup.anvi-expanded .anvi-stat-label {
-    margin-bottom: 8px;
-    font-size: 11px;
+    margin-bottom: 10px;
+    font-size: 13px;
 }
 
 .anvi-popup.anvi-expanded .anvi-stat-value {
-    font-size: 34px;
+    font-size: 42px;
 }
 
 .anvi-popup.anvi-expanded .anvi-popup-status {
-    min-height: 28px;
-    padding: 0 20px 10px;
-    font-size: 10px;
+    min-height: 34px;
+    padding: 0 24px 12px;
+    font-size: 11px;
 }
 
 @media (max-width: 620px) {
@@ -405,6 +405,92 @@
         return;
     }
 
+    const POPUP_POSITION_STORAGE_KEY =
+        "anvi_visitor_popup_position";
+
+    function savePopupPosition() {
+        try {
+            const rect =
+                popup.getBoundingClientRect();
+
+            localStorage.setItem(
+                POPUP_POSITION_STORAGE_KEY,
+                JSON.stringify({
+                    left: Math.round(rect.left),
+                    top: Math.round(rect.top)
+                })
+            );
+        } catch (error) {
+            // Position persistence must never interrupt
+            // the admin dashboard experience.
+        }
+    }
+
+    function restorePopupPosition() {
+        try {
+            const stored =
+                localStorage.getItem(
+                    POPUP_POSITION_STORAGE_KEY
+                );
+
+            if (!stored) {
+                return;
+            }
+
+            const position = JSON.parse(stored);
+
+            if (
+                !position ||
+                !Number.isFinite(Number(position.left)) ||
+                !Number.isFinite(Number(position.top))
+            ) {
+                return;
+            }
+
+            const rect =
+                popup.getBoundingClientRect();
+
+            const maxLeft = Math.max(
+                5,
+                window.innerWidth -
+                    rect.width -
+                    5
+            );
+
+            const maxTop = Math.max(
+                5,
+                window.innerHeight -
+                    rect.height -
+                    5
+            );
+
+            const left = Math.max(
+                5,
+                Math.min(
+                    Number(position.left),
+                    maxLeft
+                )
+            );
+
+            const top = Math.max(
+                5,
+                Math.min(
+                    Number(position.top),
+                    maxTop
+                )
+            );
+
+            popup.style.right = "auto";
+            popup.style.bottom = "auto";
+            popup.style.left = left + "px";
+            popup.style.top = top + "px";
+        } catch (error) {
+            // Invalid stored position is safely ignored.
+        }
+    }
+
+    restorePopupPosition();
+
     let statisticsRequestInFlight = false;
 
     async function loadVisitorStatistics() {
@@ -601,6 +687,8 @@
 
             popup.style.top =
                 top + "px";
+
+            savePopupPosition();
         }
     );
 
@@ -656,6 +744,8 @@
     window.addEventListener(
         "resize",
         function () {
+            restorePopupPosition();
+
             if (
                 popup.style.left &&
                 popup.style.top &&

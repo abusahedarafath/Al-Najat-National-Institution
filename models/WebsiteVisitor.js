@@ -2,7 +2,8 @@ const db = require("../config/database");
 
 class WebsiteVisitor {
     static async recordHeartbeat(visitorId, path) {
-        const normalizedVisitorId = String(visitorId || "").trim();
+        const normalizedVisitorId =
+            String(visitorId || "").trim();
 
         if (!normalizedVisitorId) {
             throw new Error("Visitor ID is required.");
@@ -14,9 +15,21 @@ class WebsiteVisitor {
         await db.query(
             `
             INSERT INTO website_visitors
-                (visitor_id, first_seen_at, last_seen_at, last_path)
+                (
+                    visitor_id,
+                    first_seen_at,
+                    last_seen_at,
+                    is_live,
+                    last_path
+                )
             VALUES
-                (?, UTC_TIMESTAMP(), UTC_TIMESTAMP(), ?)
+                (
+                    ?,
+                    UTC_TIMESTAMP(),
+                    UTC_TIMESTAMP(),
+                    0,
+                    ?
+                )
             ON DUPLICATE KEY UPDATE
                 last_seen_at = UTC_TIMESTAMP(),
                 last_path = VALUES(last_path)
@@ -30,9 +43,17 @@ class WebsiteVisitor {
         await db.query(
             `
             INSERT INTO website_visitor_daily
-                (visitor_id, visit_date, last_seen_at)
+                (
+                    visitor_id,
+                    visit_date,
+                    last_seen_at
+                )
             VALUES
-                (?, UTC_DATE(), UTC_TIMESTAMP())
+                (
+                    ?,
+                    UTC_DATE(),
+                    UTC_TIMESTAMP()
+                )
             ON DUPLICATE KEY UPDATE
                 last_seen_at = UTC_TIMESTAMP()
             `,
@@ -42,7 +63,90 @@ class WebsiteVisitor {
         );
     }
 
+    static async setLiveStatus(visitorId, isLive, path) {
+        const normalizedVisitorId =
+            String(visitorId || "").trim();
+
+        if (!normalizedVisitorId) {
+            throw new Error("Visitor ID is required.");
+        }
+
+        const normalizedPath =
+            String(path || "/").slice(0, 500);
+
+        await db.query(
+            `
+            INSERT INTO website_visitors
+                (
+                    visitor_id,
+                    first_seen_at,
+                    last_seen_at,
+                    is_live,
+                    last_path
+                )
+            VALUES
+                (
+                    ?,
+                    UTC_TIMESTAMP(),
+                    UTC_TIMESTAMP(),
+                    ?,
+                    ?
+                )
+            ON DUPLICATE KEY UPDATE
+                last_seen_at = UTC_TIMESTAMP(),
+                is_live = VALUES(is_live),
+                last_path = VALUES(last_path)
+            `,
+            [
+                normalizedVisitorId,
+                isLive ? 1 : 0,
+                normalizedPath
+            ]
+        );
+
+        if (isLive) {
+            await db.query(
+                `
+                INSERT INTO website_visitor_daily
+                    (
+                        visitor_id,
+                        visit_date,
+                        last_seen_at
+                    )
+                VALUES
+                    (
+                        ?,
+                        UTC_DATE(),
+                        UTC_TIMESTAMP()
+                    )
+                ON DUPLICATE KEY UPDATE
+                    last_seen_at = UTC_TIMESTAMP()
+                `,
+                [
+                    normalizedVisitorId
+                ]
+            );
+        }
+    }
+
+    static async cleanupStaleLiveVisitors() {
+        await db.query(
+            `
+            UPDATE website_visitors
+            SET is_live = 0
+            WHERE is_live = 1
+              AND last_seen_at <
+                  DATE_SUB(
+                      UTC_TIMESTAMP(),
+                      INTERVAL 30 SECOND
+                  )
+            `
+        );
+    }
+
     static async getStatistics() {
+        await this.cleanupStaleLiveVisitors();
+
         const [rows] = await db.query(
             `
             SELECT
@@ -85,11 +189,7 @@ class WebsiteVisitor {
                 (
                     SELECT COUNT(*)
                     FROM website_visitors
-                    WHERE last_seen_at >=
-                        DATE_SUB(
-                            UTC_TIMESTAMP(),
-                            INTERVAL 15 SECOND
-                        )
+                    WHERE is_live = 1
                 ) AS live_visitors
             `
         );
