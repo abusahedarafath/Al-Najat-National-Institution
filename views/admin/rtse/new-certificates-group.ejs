@@ -104,14 +104,28 @@
 
     <div class="print-actions">
 
-        <% if (group === "merit") { %>
+        <% if (
+            group === "rank1" ||
+            group === "rank2" ||
+            group === "rank3" ||
+            group === "merit"
+        ) { %>
 
             <a
-                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/merit/print"
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/<%= group %>/print"
                 class="print-all-button"
                 target="_blank"
             >
-                🖨️ Print All Merit Certificates
+                🖨️ Print All
+                <%= group === "rank1"
+                    ? "1st Rank"
+                    : group === "rank2"
+                        ? "2nd Rank"
+                        : group === "rank3"
+                            ? "3rd Rank"
+                            : "Merit"
+                %>
+                Certificates
             </a>
 
         <% } %>
@@ -121,9 +135,14 @@
     <div class="group-header">
 
         <h1>
-            <% if (group === "merit") { %>
-                🏆 Merit Certificates
-            <% } %>
+            <%= group === "rank1"
+                ? "🥇 1st Rank Certificates"
+                : group === "rank2"
+                    ? "🥈 2nd Rank Certificates"
+                    : group === "rank3"
+                        ? "🥉 3rd Rank Certificates"
+                        : "🏆 Merit Certificates"
+            %>
         </h1>
 
         <p>
@@ -205,11 +224,16 @@
     <% } else { %>
 
         <div class="empty">
-
             No
-            <%= "Merit" %>
+            <%= group === "rank1"
+                ? "1st Rank"
+                : group === "rank2"
+                    ? "2nd Rank"
+                    : group === "rank3"
+                        ? "3rd Rank"
+                        : "Merit"
+            %>
             Certificate candidates found for this section.
-
         </div>
 
     <% } %>

@@ -5400,17 +5400,39 @@ exports.newCertificateSection = async (req, res) => {
 // =====================================
 
 exports.newCertificateGroup = async (req, res) => {
-
     try {
-
         const section =
             String(req.params.section || "").trim();
 
         const group =
-            String(req.params.group || "").trim().toLowerCase();
+            String(req.params.group || "")
+                .trim()
+                .toLowerCase();
+
+        const groupConfig = {
+            rank1: {
+                minRank: 1,
+                maxRank: 1,
+                title: "1st Rank Certificates"
+            },
+            rank2: {
+                minRank: 2,
+                maxRank: 2,
+                title: "2nd Rank Certificates"
+            },
+            rank3: {
+                minRank: 3,
+                maxRank: 3,
+                title: "3rd Rank Certificates"
+            },
+            merit: {
+                minRank: 4,
+                maxRank: 10,
+                title: "Merit Certificates"
+            }
+        };
 
         if (!section) {
-
             req.flash(
                 "error",
                 "RTSE section is required."
@@ -5419,11 +5441,11 @@ exports.newCertificateGroup = async (req, res) => {
             return res.redirect(
                 "/admin/rtse/results"
             );
-
         }
 
-        if (group !== "merit") {
+        const config = groupConfig[group];
 
+        if (!config) {
             req.flash(
                 "error",
                 "Invalid certificate group."
@@ -5432,7 +5454,6 @@ exports.newCertificateGroup = async (req, res) => {
             return res.redirect(
                 `/admin/rtse/new-certificates/section/${encodeURIComponent(section)}`
             );
-
         }
 
         const setting =
@@ -5442,11 +5463,9 @@ exports.newCertificateGroup = async (req, res) => {
             Number(setting?.exam_year);
 
         if (!applicationYear) {
-
             throw new Error(
                 "Active RTSE exam year is not configured."
             );
-
         }
 
         const students =
@@ -5463,8 +5482,8 @@ exports.newCertificateGroup = async (req, res) => {
                     Number(student.section_rank);
 
                 return (
-                    rank >= 4 &&
-                    rank <= 10
+                    rank >= config.minRank &&
+                    rank <= config.maxRank
                 );
             });
 
@@ -5472,23 +5491,19 @@ exports.newCertificateGroup = async (req, res) => {
             "admin/rtse/new-certificates-group",
             {
                 title:
-                    `Merit Certificates - Section ${section}`,
+                    `${config.title} - Section ${section}`,
 
                 students:
                     filteredStudents,
 
                 setting,
-
                 section,
-
                 applicationYear,
-
                 group
             }
         );
 
     } catch (err) {
-
         console.error(
             "New certificate group error:",
             err
@@ -5502,20 +5517,15 @@ exports.newCertificateGroup = async (req, res) => {
         return res.redirect(
             "/admin/rtse/results"
         );
-
     }
-
 };
-
 
 // =====================================
 // Print All New Certificate Group
 // =====================================
 
 exports.printNewCertificateGroup = async (req, res) => {
-
     try {
-
         const section =
             String(req.params.section || "").trim();
 
@@ -5524,20 +5534,41 @@ exports.printNewCertificateGroup = async (req, res) => {
                 .trim()
                 .toLowerCase();
 
-        if (!section) {
+        const groupConfig = {
+            rank1: {
+                minRank: 1,
+                maxRank: 1,
+                title: "1st Rank Certificates"
+            },
+            rank2: {
+                minRank: 2,
+                maxRank: 2,
+                title: "2nd Rank Certificates"
+            },
+            rank3: {
+                minRank: 3,
+                maxRank: 3,
+                title: "3rd Rank Certificates"
+            },
+            merit: {
+                minRank: 4,
+                maxRank: 10,
+                title: "Merit Certificates"
+            }
+        };
 
+        if (!section) {
             return res.status(400).send(
                 "RTSE section is required."
             );
-
         }
 
-        if (group !== "merit") {
+        const config = groupConfig[group];
 
+        if (!config) {
             return res.status(400).send(
                 "Invalid certificate group."
             );
-
         }
 
         const setting =
@@ -5547,11 +5578,9 @@ exports.printNewCertificateGroup = async (req, res) => {
             Number(setting?.exam_year);
 
         if (!applicationYear) {
-
             throw new Error(
                 "Active RTSE exam year is not configured."
             );
-
         }
 
         const examSetting =
@@ -5567,13 +5596,12 @@ exports.printNewCertificateGroup = async (req, res) => {
 
         const filteredStudents =
             students.filter(student => {
-
                 const rank =
                     Number(student.section_rank);
 
                 return (
-                    rank >= 4 &&
-                    rank <= 10
+                    rank >= config.minRank &&
+                    rank <= config.maxRank
                 );
             });
 
@@ -5582,11 +5610,9 @@ exports.printNewCertificateGroup = async (req, res) => {
          *
          * Nothing is inserted into rtse_certificates.
          */
-
         const certificates = [];
 
         for (const student of filteredStudents) {
-
             const result =
                 await RtseResult.getStudentPopupResult(
                     student.application_id
@@ -5598,7 +5624,6 @@ exports.printNewCertificateGroup = async (req, res) => {
                 Array.isArray(result?.component_marks)
                     ? result.component_marks.find(
                         component => {
-
                             const name =
                                 String(
                                     component.name || ""
@@ -5609,13 +5634,11 @@ exports.printNewCertificateGroup = async (req, res) => {
                             return name.includes(
                                 "writingskill"
                             );
-
                         }
                     )
                     : null;
 
             if (writingSkillComponent) {
-
                 const marks =
                     Number(
                         writingSkillComponent.marks
@@ -5631,7 +5654,6 @@ exports.printNewCertificateGroup = async (req, res) => {
                     Number.isFinite(maximum) &&
                     maximum > 0
                 ) {
-
                     const percentage =
                         (marks / maximum) * 100;
 
@@ -5650,13 +5672,10 @@ exports.printNewCertificateGroup = async (req, res) => {
                     } else {
                         writingSkillGrade = "F";
                     }
-
                 }
-
             }
 
             certificates.push({
-
                 application_id:
                     student.application_id,
 
@@ -5683,16 +5702,14 @@ exports.printNewCertificateGroup = async (req, res) => {
 
                 writing_skill_grade:
                     writingSkillGrade
-
             });
-
         }
 
         return res.render(
             "rtse-new-certificates-print",
             {
                 title:
-                    `Merit Certificates - Section ${section}`,
+                    `${config.title} - Section ${section}`,
 
                 certificates,
 
@@ -5700,15 +5717,12 @@ exports.printNewCertificateGroup = async (req, res) => {
                     examSetting || setting,
 
                 section,
-
                 group,
-
                 applicationYear
             }
         );
 
     } catch (err) {
-
         console.error(
             "Print new certificate group error:",
             err
@@ -5717,9 +5731,7 @@ exports.printNewCertificateGroup = async (req, res) => {
         return res.status(500).send(
             "Unable to generate the certificate print page."
         );
-
     }
-
 };
 
 // =====================================

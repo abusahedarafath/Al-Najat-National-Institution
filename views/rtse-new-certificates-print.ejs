@@ -76,9 +76,14 @@
     >
 
     <title>
-        <%= group === "merit"
-            ? "Merit Certificates"
-            : "Merit Certificates" %>
+        <%= group === "rank1"
+            ? "1st Rank Certificates"
+            : group === "rank2"
+                ? "2nd Rank Certificates"
+                : group === "rank3"
+                    ? "3rd Rank Certificates"
+                    : "Merit Certificates"
+        %>
         -
         Section <%= section %>
     </title>

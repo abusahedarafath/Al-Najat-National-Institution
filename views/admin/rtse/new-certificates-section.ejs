@@ -130,27 +130,27 @@
         <div class="certificate-category gold">
 
             <h2>
-                🥇 1st Rank Certificate
+                🥇 1st Rank Certificates
             </h2>
 
-            <% const rank1 = students.find(
+            <% const rank1Students = students.filter(
                 student => Number(student.section_rank) === 1
             ); %>
 
-            <% if (rank1) { %>
+            <% if (rank1Students.length) { %>
 
                 <p>
-                    <strong><%= rank1.full_name %></strong>
-                    <br>
-                    Registration:
-                    <%= rank1.registration_no %>
+                    <strong>
+                        <%= rank1Students.length %>
+                    </strong>
+                    student(s) holding Section Rank 1.
                 </p>
 
                 <a
-                    href="/admin/rtse/new-certificate/<%= rank1.application_id %>"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank1"
                     class="certificate-action"
                 >
-                    View 1st Rank Certificate
+                    View All 1st Rank Certificates
                 </a>
 
             <% } else { %>
@@ -168,27 +168,27 @@
         <div class="certificate-category silver">
 
             <h2>
-                🥈 2nd Rank Certificate
+                🥈 2nd Rank Certificates
             </h2>
 
-            <% const rank2 = students.find(
+            <% const rank2Students = students.filter(
                 student => Number(student.section_rank) === 2
             ); %>
 
-            <% if (rank2) { %>
+            <% if (rank2Students.length) { %>
 
                 <p>
-                    <strong><%= rank2.full_name %></strong>
-                    <br>
-                    Registration:
-                    <%= rank2.registration_no %>
+                    <strong>
+                        <%= rank2Students.length %>
+                    </strong>
+                    student(s) holding Section Rank 2.
                 </p>
 
                 <a
-                    href="/admin/rtse/new-certificate/<%= rank2.application_id %>"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank2"
                     class="certificate-action"
                 >
-                    View 2nd Rank Certificate
+                    View All 2nd Rank Certificates
                 </a>
 
             <% } else { %>
@@ -206,27 +206,27 @@
         <div class="certificate-category bronze">
 
             <h2>
-                🥉 3rd Rank Certificate
+                🥉 3rd Rank Certificates
             </h2>
 
-            <% const rank3 = students.find(
+            <% const rank3Students = students.filter(
                 student => Number(student.section_rank) === 3
             ); %>
 
-            <% if (rank3) { %>
+            <% if (rank3Students.length) { %>
 
                 <p>
-                    <strong><%= rank3.full_name %></strong>
-                    <br>
-                    Registration:
-                    <%= rank3.registration_no %>
+                    <strong>
+                        <%= rank3Students.length %>
+                    </strong>
+                    student(s) holding Section Rank 3.
                 </p>
 
                 <a
-                    href="/admin/rtse/new-certificate/<%= rank3.application_id %>"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank3"
                     class="certificate-action"
                 >
-                    View 3rd Rank Certificate
+                    View All 3rd Rank Certificates
                 </a>
 
             <% } else { %>
