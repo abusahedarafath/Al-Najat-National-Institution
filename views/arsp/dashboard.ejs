@@ -1250,6 +1250,7 @@
                                                 Download Admit Card
                                             </button>
                                             <% } %>
+                                            <% if (Number(rtseSettings && rtseSettings.result_publish) === 1) { %>
                                             <button
                                                 type="button"
                                                 class="btn-view arsp-member-see-result"
@@ -1258,6 +1259,7 @@
                                                 <i class="fa-solid fa-square-poll-vertical"></i>
                                                 See Result
                                             </button>
+                                            <% } %>
                                         </div>
                                     </div>
                                 `;
@@ -1410,6 +1412,7 @@
                                             Download Admit Card
                                         </button>
                                         <% } %>
+                                        <% if (Number(rtseSettings && rtseSettings.result_publish) === 1) { %>
                                         <button
                                             type="button"
                                             class="btn-view arsp-member-see-result"
@@ -1418,6 +1421,7 @@
                                             <i class="fa-solid fa-square-poll-vertical"></i>
                                             See Result
                                         </button>
+                                        <% } %>
                                     </div>
                                 </div>
                             `;
