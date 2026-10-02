@@ -103,6 +103,11 @@ router.get(
     rtseController.resultPortal
 );
 
+router.get(
+    "/result/publication-status",
+    rtseController.resultPublicationStatus
+);
+
 router.post(
     "/result/search",
     express.urlencoded({ extended: false }),

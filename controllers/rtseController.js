@@ -1102,6 +1102,142 @@ exports.resultPortal = async (req, res) => {
 // Public Result Candidate Search
 // =====================================
 
+
+exports.resultPublicationStatus = async (req, res) => {
+    try {
+        publicResultNoStore(res);
+
+
+        /*
+         * Finalize an expired scheduled publication before reading
+         * the current publication state. This uses the same
+         * server-side publication mechanism as the scheduler.
+         */
+        await RtseSetting.publishScheduledResults();
+
+        /*
+         * Read result_publish_at as a raw MariaDB DATETIME string.
+         *
+         * The admin controller stores this value in UTC after
+         * converting the selected IST publication time. Reading it
+         * through mysql2 as a JavaScript Date can apply the process
+         * timezone (IST), causing an unwanted 5:30 hour shift.
+         *
+         * This query is intentionally local to the public publication
+         * status endpoint. RtseSetting.get() is used elsewhere and
+         * must not be changed globally.
+         */
+        const db = require("../config/database");
+
+        const [settingRows] = await db.query(`
+            SELECT
+                *,
+                DATE_FORMAT(
+                    result_publish_at,
+                    '%Y-%m-%d %H:%i:%s'
+                ) AS result_publish_at_utc_raw
+            FROM rtse_settings
+            LIMIT 1
+        `);
+
+        const rtseSetting = settingRows[0] || null;
+
+        const published =
+            publicResultPublished(rtseSetting);
+
+        const scheduled =
+            Number(rtseSetting?.result_publish_scheduled) === 1 &&
+            rtseSetting?.result_publish_at_utc_raw;
+
+        let publishAtUtcMs = null;
+        let countdownSeconds = 0;
+        let countdownStartAtUtcMs = null;
+
+        if (scheduled) {
+            const raw =
+                String(
+                    rtseSetting.result_publish_at_utc_raw || ""
+                ).trim();
+
+            const match = raw.match(
+                /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})$/
+            );
+
+            if (match) {
+                const year = Number(match[1]);
+                const month = Number(match[2]);
+                const day = Number(match[3]);
+                const hour = Number(match[4]);
+                const minute = Number(match[5]);
+                const second = Number(match[6]);
+
+                publishAtUtcMs = Date.UTC(
+                    year,
+                    month - 1,
+                    day,
+                    hour,
+                    minute,
+                    second
+                );
+
+                countdownSeconds = Number(
+                    rtseSetting.result_publish_countdown_seconds || 0
+                );
+
+                if (
+                    !Number.isSafeInteger(countdownSeconds) ||
+                    countdownSeconds < 0
+                ) {
+                    countdownSeconds = 0;
+                }
+
+                countdownStartAtUtcMs =
+                    publishAtUtcMs -
+                    countdownSeconds * 1000;
+            }
+        }
+
+        /*
+         * The server's current UTC timestamp is obtained from the
+         * database, so the visitor's device clock cannot control
+         * the countdown.
+         */
+
+        const [rows] = await db.query(
+            `SELECT UNIX_TIMESTAMP() * 1000 AS server_now_utc_ms`
+        );
+
+        const serverNowUtcMs =
+            Number(rows[0]?.server_now_utc_ms || Date.now());
+
+        return res.json({
+            success: true,
+            published,
+            scheduled: Boolean(
+                scheduled && publishAtUtcMs !== null
+            ),
+            server_now_utc_ms: serverNowUtcMs,
+            publish_at_utc_ms: publishAtUtcMs,
+            countdown_start_at_utc_ms:
+                countdownStartAtUtcMs,
+            countdown_seconds: countdownSeconds
+        });
+    } catch (err) {
+        console.error(
+            "RTSE result publication status error:",
+            err
+        );
+
+        publicResultNoStore(res);
+
+        return res.status(500).json({
+            success: false,
+            message:
+                "Unable to load result publication status."
+        });
+    }
+};
+
 exports.searchResult = async (req, res) => {
     try {
         publicResultNoStore(res);

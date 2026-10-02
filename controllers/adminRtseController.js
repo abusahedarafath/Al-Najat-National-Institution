@@ -6513,6 +6513,150 @@ const students=
 // Publish Results
 // =====================================
 
+exports.saveResultPublishSchedule = async (req, res) => {
+    try {
+        const enabled =
+            String(req.body.result_publish_scheduled || "") === "1";
+
+        const date =
+            String(req.body.result_publish_date || "").trim();
+
+        const publishTime =
+            String(req.body.result_publish_time || "").trim();
+
+        const countdownSecondsRaw =
+            String(
+                req.body.result_publish_countdown_seconds || "0"
+            ).trim();
+
+        let countdownSeconds = 0;
+
+        if (countdownSecondsRaw !== "") {
+            if (!/^\d+$/.test(countdownSecondsRaw)) {
+                req.flash(
+                    "error",
+                    "Countdown Starter must be a valid number of seconds."
+                );
+                return res.redirect("/admin/rtse/results");
+            }
+
+            countdownSeconds = Number(countdownSecondsRaw);
+
+            if (
+                !Number.isSafeInteger(countdownSeconds) ||
+                countdownSeconds < 0
+            ) {
+                req.flash(
+                    "error",
+                    "Countdown Starter must be a valid non-negative number."
+                );
+                return res.redirect("/admin/rtse/results");
+            }
+        }
+
+        let publishAt = null;
+
+        if (enabled) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                req.flash(
+                    "error",
+                    "Please select a valid publication date."
+                );
+                return res.redirect("/admin/rtse/results");
+            }
+
+            if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(publishTime)) {
+                req.flash(
+                    "error",
+                    "Please select a valid publication time."
+                );
+                return res.redirect("/admin/rtse/results");
+            }
+
+            const [yearText, monthText, dayText] = date.split("-");
+
+            const year = Number(yearText);
+            const month = Number(monthText);
+            const day = Number(dayText);
+
+            const [hourText, minuteText] = publishTime.split(":");
+
+            const hour24 = Number(hourText);
+            const minute = Number(minuteText);
+
+            /*
+             * The admin enters the publication time in IST (UTC+05:30).
+             * Convert that wall-clock time to UTC without depending on the
+             * server's local timezone.
+             */
+            const istMillis = Date.UTC(
+                year,
+                month - 1,
+                day,
+                hour24,
+                minute,
+                0
+            );
+
+            const istCheck = new Date(istMillis);
+
+            if (
+                istCheck.getUTCFullYear() !== year ||
+                istCheck.getUTCMonth() !== month - 1 ||
+                istCheck.getUTCDate() !== day ||
+                istCheck.getUTCHours() !== hour24 ||
+                istCheck.getUTCMinutes() !== minute
+            ) {
+                req.flash(
+                    "error",
+                    "Please select a valid publication date and time."
+                );
+                return res.redirect("/admin/rtse/results");
+            }
+
+            const utcMillis =
+                istMillis - (5 * 60 + 30) * 60 * 1000;
+
+            const utcDate = new Date(utcMillis);
+
+            const pad = value =>
+                String(value).padStart(2, "0");
+
+            publishAt =
+                `${utcDate.getUTCFullYear()}-` +
+                `${pad(utcDate.getUTCMonth() + 1)}-` +
+                `${pad(utcDate.getUTCDate())} ` +
+                `${pad(utcDate.getUTCHours())}:` +
+                `${pad(utcDate.getUTCMinutes())}:` +
+                `${pad(utcDate.getUTCSeconds())}`;
+        }
+
+        await RtseSetting.saveResultPublishSchedule(
+            enabled,
+            publishAt,
+            countdownSeconds
+        );
+
+        req.flash(
+            "success",
+            enabled
+                ? "Result publication schedule saved successfully."
+                : "Result publication schedule disabled."
+        );
+
+        res.redirect("/admin/rtse/results");
+    } catch (err) {
+        console.error(err);
+
+        req.flash(
+            "error",
+            "Unable to save result publication schedule."
+        );
+
+        res.redirect("/admin/rtse/results");
+    }
+};
+
 exports.publishResults = async (req, res) => {
 
     try {

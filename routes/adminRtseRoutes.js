@@ -995,6 +995,13 @@ router.post(
 
 );
 
+router.post(
+    "/rtse/results/publication-schedule",
+    multer().none(),
+    auth.isAdmin,
+    adminRtseController.saveResultPublishSchedule
+);
+
 router.get(
     "/rtse/results/absent",
     auth.isAdmin,

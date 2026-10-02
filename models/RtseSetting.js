@@ -92,57 +92,69 @@ class RtseSetting {
 // Publish Results
 // =====================================
 
-static async publishResults() {
-
+static async saveResultPublishSchedule(enabled, publishAt, countdownSeconds) {
     await db.query(
-
         `UPDATE rtse_settings
-
          SET
-
-            result_publish=1
-
-         WHERE id=1`
-
+            result_publish_scheduled=?,
+            result_publish_at=?,
+            result_publish_countdown_seconds=?,
+            result_publish=CASE
+                WHEN ? = 1 THEN 0
+                ELSE result_publish
+            END
+         WHERE id=1`,
+        [
+            enabled ? 1 : 0,
+            publishAt || null,
+            Number.isFinite(Number(countdownSeconds))
+                ? Math.max(0, Math.floor(Number(countdownSeconds)))
+                : 0,
+            enabled ? 1 : 0
+        ]
     );
-
 }
 
+static async publishScheduledResults() {
+    const [result] = await db.query(
+        `UPDATE rtse_settings
+         SET
+            result_publish=1,
+            result_publish_scheduled=0,
+            result_publish_at=NULL,
+            result_publish_countdown_seconds=0
+         WHERE id=1
+           AND result_publish_scheduled=1
+           AND result_publish_at IS NOT NULL
+           AND result_publish_at <= UTC_TIMESTAMP()`
+    );
 
+    return result.affectedRows > 0;
+}
 
-
-
-    // =====================================
-    // Hide Results
-    // =====================================
-
-    // =====================================
-// Hide Results
-// =====================================
+static async publishResults() {
+    await db.query(
+        `UPDATE rtse_settings
+         SET
+            result_publish=1,
+            result_publish_scheduled=0,
+            result_publish_at=NULL,
+            result_publish_countdown_seconds=0
+         WHERE id=1`
+    );
+}
 
 static async hideResults() {
-
     await db.query(
-
         `UPDATE rtse_settings
-
          SET
-
-            result_publish=0
-
+            result_publish=0,
+            result_publish_scheduled=0,
+            result_publish_at=NULL,
+            result_publish_countdown_seconds=0
          WHERE id=1`
-
     );
-
 }
-
-
-
-
-
-// =====================================
-// Publish Certificates
-// =====================================
 
 static async publishCertificates(){
 

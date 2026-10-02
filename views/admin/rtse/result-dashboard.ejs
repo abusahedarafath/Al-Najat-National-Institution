@@ -152,7 +152,182 @@
 
             </div>
 
-            <!-- Attendance Statistics -->
+
+<%
+    /*
+     * result_publish_at is stored in UTC.
+     * Convert the saved UTC datetime to IST (+05:30)
+     * before displaying the administrator's schedule fields.
+     */
+    const scheduledPublishRaw =
+        setting?.result_publish_at
+            ? String(setting.result_publish_at).replace("T", " ")
+            : "";
+
+    let scheduledPublishDate = "";
+    let scheduledPublishTime = "";
+    let scheduledPublishMeridiem = "AM";
+
+    const scheduledPublishMatch =
+        scheduledPublishRaw.match(
+            /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})$/
+        );
+
+    if (scheduledPublishMatch) {
+        const utcYear = Number(scheduledPublishMatch[1]);
+        const utcMonth = Number(scheduledPublishMatch[2]);
+        const utcDay = Number(scheduledPublishMatch[3]);
+        const utcHour = Number(scheduledPublishMatch[4]);
+        const utcMinute = Number(scheduledPublishMatch[5]);
+        const utcSecond = Number(scheduledPublishMatch[6]);
+
+        const istDate = new Date(
+            Date.UTC(
+                utcYear,
+                utcMonth - 1,
+                utcDay,
+                utcHour,
+                utcMinute,
+                utcSecond
+            ) + (5 * 60 + 30) * 60 * 1000
+        );
+
+        const istYear = istDate.getUTCFullYear();
+        const istMonth = istDate.getUTCMonth() + 1;
+        const istDay = istDate.getUTCDate();
+        const istHour24 = istDate.getUTCHours();
+        const istMinute = istDate.getUTCMinutes();
+
+        const pad = value =>
+            String(value).padStart(2, "0");
+
+        scheduledPublishDate =
+            `${istYear}-${pad(istMonth)}-${pad(istDay)}`;
+
+        scheduledPublishTime =
+            `${pad(istHour24)}:${pad(istMinute)}`;
+    }
+%>
+
+<div style="width:100%;box-sizing:border-box;background:#fff;padding:18px 20px;margin-top:14px;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 4px 14px rgba(15,23,42,.05);">
+
+    <div style="font-size:18px;font-weight:800;color:#17213a;margin-bottom:5px;">
+        🕐 Result Publication Schedule
+    </div>
+
+    <div style="font-size:13px;color:#667085;margin-bottom:16px;">
+        Set the date and time for scheduled RTSE result publication.
+    </div>
+
+    <form
+        method="POST"
+        action="/admin/rtse/results/publication-schedule"
+        style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;"
+    >
+
+        <label style="display:flex;flex-direction:column;gap:7px;min-width:180px;">
+            <span style="font-size:13px;font-weight:700;color:#344054;">
+                Publication Date
+            </span>
+
+            <input
+                type="date"
+                name="result_publish_date"
+                value="<%= scheduledPublishDate %>"
+                style="height:42px;border:1px solid #d0d5dd;border-radius:9px;padding:0 11px;font-size:14px;"
+            >
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:7px;min-width:160px;">
+            <span style="font-size:13px;font-weight:700;color:#344054;">
+                Publication Time
+            </span>
+
+            <div style="display:flex;gap:8px;align-items:center;">
+                <input
+                    type="time"
+                    name="result_publish_time"
+                    value="<%= scheduledPublishTime %>"
+                    step="60"
+                    aria-label="Publication time in IST"
+                    style="height:42px;width:145px;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:9px;padding:0 11px;font-size:14px;background:#fff;"
+                >
+
+                <span
+                    style="font-size:12px;color:#667085;white-space:nowrap;"
+                >
+                    IST (UTC+05:30)
+                </span>
+            </div>
+        </label>
+
+                <label style="display:flex;flex-direction:column;gap:7px;min-width:180px;">
+            <span style="font-size:13px;font-weight:700;color:#344054;">
+                Countdown Starter
+            </span>
+
+            <div style="display:flex;align-items:center;gap:8px;">
+                <input
+                    type="number"
+                    name="result_publish_countdown_seconds"
+                    value="<%= Number(setting?.result_publish_countdown_seconds || 0) %>"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    style="height:42px;width:130px;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:9px;padding:0 11px;font-size:14px;"
+                >
+
+                <span style="font-size:13px;color:#667085;">
+                    seconds
+                </span>
+            </div>
+        </label>
+
+<label style="display:flex;align-items:center;gap:9px;height:42px;padding:0 4px;">
+
+            <input
+                type="checkbox"
+                name="result_publish_scheduled"
+                value="1"
+                <%= Number(setting?.result_publish_scheduled) === 1 ? "checked" : "" %>
+                style="width:18px;height:18px;"
+            >
+
+            <span style="font-size:14px;font-weight:700;color:#344054;">
+                Enable Scheduled Publication
+            </span>
+
+        </label>
+
+        <button
+            type="submit"
+            class="btn-save"
+            style="height:42px;"
+        >
+            💾 Save Publication Schedule
+        </button>
+
+    </form>
+
+    <% if (
+        Number(setting?.result_publish_scheduled) === 1 &&
+        setting?.result_publish_at
+    ) { %>
+
+        <div style="margin-top:14px;padding:11px 13px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;color:#166534;font-size:13px;">
+
+            Scheduled publication:
+            <strong>
+                <%= scheduledPublishDate %> <%= scheduledPublishTime %> IST
+            </strong>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+<!-- Attendance Statistics -->
 
             <div class="rtse-statistics-grid">
 

@@ -668,6 +668,180 @@
             max-height: 95vh;
         }
     }
+
+<style id="rtse-public-countdown-styles">
+    .rtse-public-countdown {
+        position: relative;
+        width: min(920px, calc(100% - 32px));
+        margin: 24px auto 0;
+        padding: 30px 24px 26px;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,.20);
+        border-radius: 24px;
+        background:
+            radial-gradient(circle at 15% 10%, rgba(255,255,255,.16), transparent 28%),
+            radial-gradient(circle at 85% 90%, rgba(255,215,80,.14), transparent 30%),
+            linear-gradient(135deg, #071b3a, #0d3b70 55%, #102b52);
+        box-shadow:
+            0 18px 45px rgba(5,25,55,.20),
+            inset 0 1px 0 rgba(255,255,255,.12);
+        color: #fff;
+    }
+
+    .rtse-public-countdown::before {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        top: -130px;
+        right: -90px;
+        border-radius: 50%;
+        background: rgba(255,215,80,.10);
+        pointer-events: none;
+    }
+
+    .rtse-public-countdown-badge {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 0 13px;
+        border-radius: 999px;
+        background: rgba(255,215,80,.14);
+        border: 1px solid rgba(255,215,80,.34);
+        color: #ffe58a;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .12em;
+    }
+
+    .rtse-public-countdown h2 {
+        position: relative;
+        margin: 12px 0 6px;
+        color: #fff;
+        font-size: clamp(24px, 4vw, 34px);
+        line-height: 1.15;
+        font-weight: 850;
+    }
+
+    .rtse-public-countdown-message {
+        position: relative;
+        margin: 0 auto;
+        max-width: 680px;
+        color: rgba(255,255,255,.78);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .rtse-public-countdown-display {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 25px auto 20px;
+    }
+
+    .rtse-countdown-unit {
+        width: 105px;
+        min-width: 0;
+        padding: 14px 8px 12px;
+        box-sizing: border-box;
+        border-radius: 15px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.13);
+        backdrop-filter: blur(8px);
+    }
+
+    .rtse-countdown-unit strong {
+        display: block;
+        color: #fff;
+        font-size: clamp(28px, 5vw, 42px);
+        line-height: 1;
+        font-weight: 850;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rtse-countdown-unit span {
+        display: block;
+        margin-top: 7px;
+        color: rgba(255,255,255,.65);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+
+    .rtse-countdown-separator {
+        color: rgba(255,255,255,.42);
+        font-size: 25px;
+        font-weight: 800;
+        margin-top: -18px;
+    }
+
+    .rtse-countdown-progress {
+        position: relative;
+        width: min(650px, 100%);
+        height: 5px;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(255,255,255,.13);
+    }
+
+    .rtse-countdown-progress span {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #ffd75a, #fff0a6);
+        transition: width .4s ease;
+    }
+
+    .rtse-public-countdown-schedule {
+        position: relative;
+        margin-top: 13px;
+        color: rgba(255,255,255,.60);
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+        .rtse-public-countdown {
+            width: calc(100% - 20px);
+            margin-top: 16px;
+            padding: 23px 12px 20px;
+            border-radius: 20px;
+        }
+
+        .rtse-public-countdown-display {
+            gap: 3px;
+        }
+
+        .rtse-countdown-unit {
+            width: 72px;
+            padding: 12px 4px 10px;
+            border-radius: 12px;
+        }
+
+        .rtse-countdown-unit strong {
+            font-size: 27px;
+        }
+
+        .rtse-countdown-unit span {
+            font-size: 8px;
+        }
+
+        .rtse-countdown-separator {
+            font-size: 19px;
+            margin-top: -14px;
+        }
+    }
+</style>
+
 </style>
 <style id="rtse-public-result-full-page-celebration">
 #rtseCelebration.rtse-celebration {
@@ -773,6 +947,116 @@
         <p>
             Search your result and verify your identity securely.
         </p>
+    </section>
+
+    <section
+        id="rtsePublicationCountdown"
+        class="rtse-public-countdown"
+        hidden
+        aria-live="polite"
+    >
+        <div class="rtse-public-countdown-badge">
+            RTSE 2026 • RESULT DAY
+        </div>
+
+        <h2 id="rtsePublicationCountdownTitle">
+            Results are almost here
+        </h2>
+
+        <p
+            id="rtsePublicationCountdownMessage"
+            class="rtse-public-countdown-message"
+        >
+            Please wait while we prepare the official result publication.
+        </p>
+
+        <div
+            id="rtsePublicationCountdownDisplay"
+            class="rtse-public-countdown-display"
+            style="
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                justify-content:center;
+                margin:22px auto 18px;
+            "
+        >
+            <div
+                class="rtse-countdown-digital-frame"
+                style="
+                    position:relative;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    min-width:260px;
+                    padding:18px 28px 15px;
+                    border:1px solid rgba(74,222,128,.42);
+                    border-radius:18px;
+                    background:
+                        linear-gradient(180deg,rgba(3,18,12,.98),rgba(1,10,7,.98));
+                    box-shadow:
+                        0 0 0 1px rgba(74,222,128,.08) inset,
+                        0 0 28px rgba(74,222,128,.18),
+                        0 12px 35px rgba(0,0,0,.30);
+                    overflow:hidden;
+                "
+            >
+                <span
+                    aria-hidden="true"
+                    style="
+                        position:absolute;
+                        top:12px;
+                        left:14px;
+                        width:7px;
+                        height:7px;
+                        border-radius:50%;
+                        background:#4ade80;
+                        box-shadow:0 0 10px rgba(74,222,128,.95);
+                    "
+                ></span>
+
+                <strong
+                    id="rtseCountdownDigital"
+                    style="
+                        display:block;
+                        color:#4ade80;
+                        font-family:'Courier New',monospace;
+                        font-size:clamp(46px,10vw,76px);
+                        font-weight:800;
+                        line-height:1;
+                        letter-spacing:.08em;
+                        text-shadow:
+                            0 0 8px rgba(74,222,128,.72),
+                            0 0 22px rgba(74,222,128,.38);
+                        font-variant-numeric:tabular-nums;
+                        white-space:nowrap;
+                    "
+                >05:59</strong>
+            </div>
+
+            <div
+                style="
+                    margin-top:10px;
+                    color:#4ade80;
+                    font-size:11px;
+                    font-weight:800;
+                    letter-spacing:.28em;
+                    text-transform:uppercase;
+                    opacity:.86;
+                "
+            >
+                Minutes&nbsp;&nbsp;:&nbsp;&nbsp;Seconds
+            </div>
+        </div>
+
+        <div class="rtse-countdown-progress">
+            <span id="rtseCountdownProgressBar"></span>
+        </div>
+
+        <div
+            id="rtsePublicationCountdownSchedule"
+            class="rtse-public-countdown-schedule"
+        ></div>
     </section>
 
     <section class="rtse-public-result-search">
@@ -1075,6 +1359,863 @@
 
 </div>
 
+
+
+<script id="rtse-public-countdown-script">
+(function () {
+    "use strict";
+
+    const card =
+        document.getElementById("rtsePublicationCountdown");
+
+    if (!card) {
+        return;
+    }
+
+    const title =
+        document.getElementById("rtsePublicationCountdownTitle");
+
+    const message =
+        document.getElementById("rtsePublicationCountdownMessage");
+
+    const schedule =
+        document.getElementById("rtsePublicationCountdownSchedule");
+
+    const digitalEl =
+        document.getElementById("rtseCountdownDigital");
+
+    const progressBar =
+        document.getElementById("rtseCountdownProgressBar");
+
+    if (
+        !title ||
+        !message ||
+        !schedule ||
+        !digitalEl ||
+        !progressBar
+    ) {
+        console.error(
+            "[RTSE Result] Countdown UI elements are missing."
+        );
+        return;
+    }
+
+    /*
+     * Audio
+     */
+    const countdownAudio =
+        new Audio("/audio/rtse-countdown-one-second-beep.mp3");
+
+    const finalCountdownAudio =
+        new Audio("/audio/rtse-countdown-final-10.mp3");
+
+    const publicationSuccessAudio =
+        new Audio("/audio/super-scanner-success.mp3");
+
+    countdownAudio.preload = "auto";
+    finalCountdownAudio.preload = "auto";
+    publicationSuccessAudio.preload = "auto";
+
+    countdownAudio.volume = 0.55;
+    finalCountdownAudio.volume = 0.75;
+    publicationSuccessAudio.volume = 0.85;
+
+    let audioUnlocked = false;
+
+    /*
+     * Chrome/Android can block autoplay.
+     * We do not show an Enable Sound button.
+     * Instead, the first normal interaction with the page
+     * unlocks the already-loaded audio elements.
+     */
+    function unlockAudio() {
+        if (audioUnlocked) {
+            return;
+        }
+
+        audioUnlocked = true;
+
+        const audioList = [
+            countdownAudio,
+            finalCountdownAudio,
+            publicationSuccessAudio
+        ];
+
+        audioList.forEach(function (audio) {
+            try {
+                audio.muted = true;
+                audio.currentTime = 0;
+
+                const promise = audio.play();
+
+                if (
+                    promise &&
+                    typeof promise.then === "function"
+                ) {
+                    promise
+                        .then(function () {
+                            audio.pause();
+                            audio.currentTime = 0;
+                            audio.muted = false;
+                        })
+                        .catch(function () {
+                            audio.muted = false;
+                        });
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    audio.muted = false;
+                }
+            } catch (err) {
+                try {
+                    audio.muted = false;
+                    audio.pause();
+                    audio.currentTime = 0;
+                } catch (ignore) {}
+            }
+        });
+    }
+
+    document.addEventListener(
+        "pointerdown",
+        unlockAudio,
+        {
+            once: true,
+            passive: true
+        }
+    );
+
+    document.addEventListener(
+        "touchstart",
+        unlockAudio,
+        {
+            once: true,
+            passive: true
+        }
+    );
+
+    document.addEventListener(
+        "click",
+        unlockAudio,
+        {
+            once: true,
+            passive: true
+        }
+    );
+
+    let finalCountdownStarted = false;
+    let publicationSuccessPlayed = false;
+    let publicationReachedZero = false;
+
+    let clockOffsetMs = 0;
+
+    let status = null;
+    let countdownStartMs = null;
+    let publicationMs = null;
+
+    let lastDisplayedSecond = null;
+
+    let animationFrame = null;
+    let syncTimer = null;
+    let publishCheckTimer = null;
+
+    let refreshStarted = false;
+
+    function getServerNowMs() {
+        return Date.now() + clockOffsetMs;
+    }
+
+    function pad(value) {
+        return String(value).padStart(2, "0");
+    }
+
+    function formatIST(timestampMs) {
+        if (!Number.isFinite(timestampMs)) {
+            return "";
+        }
+
+        try {
+            return new Intl.DateTimeFormat(
+                "en-IN",
+                {
+                    timeZone: "Asia/Kolkata",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true
+                }
+            ).format(new Date(timestampMs));
+        } catch (err) {
+            return "";
+        }
+    }
+
+    function stopCountdownAudio() {
+        [
+            countdownAudio,
+            finalCountdownAudio
+        ].forEach(function (audio) {
+            try {
+                audio.pause();
+                audio.currentTime = 0;
+            } catch (err) {}
+        });
+    }
+
+    function playCountdownTick() {
+        if (
+            finalCountdownStarted ||
+            publicationReachedZero
+        ) {
+            return;
+        }
+
+        try {
+            countdownAudio.pause();
+            countdownAudio.currentTime = 0;
+
+            const promise =
+                countdownAudio.play();
+
+            if (
+                promise &&
+                typeof promise.catch === "function"
+            ) {
+                promise.catch(function (err) {
+                    console.warn(
+                        "[RTSE Result] Countdown tick audio playback failed:",
+                        err
+                    );
+                });
+            }
+        } catch (err) {
+            console.warn(
+                "[RTSE Result] Countdown tick audio playback failed:",
+                err
+            );
+        }
+    }
+
+    function playFinalCountdown() {
+        if (
+            finalCountdownStarted ||
+            publicationReachedZero
+        ) {
+            return;
+        }
+
+        finalCountdownStarted = true;
+
+        try {
+            /*
+             * The normal one-second sound must stop immediately.
+             */
+            countdownAudio.pause();
+            countdownAudio.currentTime = 0;
+
+            /*
+             * The final-10-second track is played exactly once
+             * and is never restarted on every animation frame.
+             */
+            finalCountdownAudio.pause();
+            finalCountdownAudio.currentTime = 0;
+
+            const promise =
+                finalCountdownAudio.play();
+
+            if (
+                promise &&
+                typeof promise.catch === "function"
+            ) {
+                promise.catch(function (err) {
+                    console.warn(
+                        "[RTSE Result] Final countdown audio playback failed:",
+                        err
+                    );
+                });
+            }
+        } catch (err) {
+            console.warn(
+                "[RTSE Result] Final countdown audio playback failed:",
+                err
+            );
+        }
+    }
+
+    function playPublicationSuccess() {
+        if (publicationSuccessPlayed) {
+            return;
+        }
+
+        publicationSuccessPlayed = true;
+
+        try {
+            /*
+             * Make absolutely sure no countdown audio remains.
+             */
+            stopCountdownAudio();
+
+            publicationSuccessAudio.muted = false;
+            publicationSuccessAudio.pause();
+            publicationSuccessAudio.currentTime = 0;
+
+            const promise =
+                publicationSuccessAudio.play();
+
+            if (
+                promise &&
+                typeof promise.catch === "function"
+            ) {
+                promise.catch(function (err) {
+                    console.warn(
+                        "[RTSE Result] Publication success audio playback was blocked:",
+                        err
+                    );
+                });
+            }
+        } catch (err) {
+            console.warn(
+                "[RTSE Result] Publication success audio playback failed:",
+                err
+            );
+        }
+    }
+
+    function hideCard() {
+        card.hidden = true;
+    }
+
+    function showCard() {
+        card.hidden = false;
+    }
+
+    function setUnits(totalSeconds) {
+        totalSeconds = Math.max(
+            0,
+            Math.floor(totalSeconds)
+        );
+
+        const days =
+            Math.floor(totalSeconds / 86400);
+
+        const hours =
+            Math.floor(
+                (totalSeconds % 86400) / 3600
+            );
+
+        const minutes =
+            Math.floor(
+                (totalSeconds % 3600) / 60
+            );
+
+        const seconds =
+            totalSeconds % 60;
+
+        let digitalTime;
+
+        if (days > 0) {
+            digitalTime =
+                String(days) +
+                "D " +
+                pad(hours) +
+                ":" +
+                pad(minutes) +
+                ":" +
+                pad(seconds);
+        } else if (hours > 0) {
+            digitalTime =
+                pad(hours) +
+                ":" +
+                pad(minutes) +
+                ":" +
+                pad(seconds);
+        } else {
+            digitalTime =
+                pad(minutes) +
+                ":" +
+                pad(seconds);
+        }
+
+        digitalEl.textContent = digitalTime;
+    }
+
+    function setProgress(currentMs) {
+        if (
+            !Number.isFinite(countdownStartMs) ||
+            !Number.isFinite(publicationMs) ||
+            publicationMs <= countdownStartMs
+        ) {
+            progressBar.style.width = "0%";
+            return;
+        }
+
+        const elapsed =
+            currentMs - countdownStartMs;
+
+        const total =
+            publicationMs - countdownStartMs;
+
+        const percentage =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    (elapsed / total) * 100
+                )
+            );
+
+        progressBar.style.width =
+            percentage.toFixed(2) + "%";
+    }
+
+    function showBeforeStart(currentMs) {
+        showCard();
+
+        title.textContent =
+            "Results are scheduled";
+
+        message.textContent =
+            "The official result countdown will begin soon.";
+
+        const untilStart =
+            Math.max(
+                0,
+                Math.ceil(
+                    (countdownStartMs - currentMs) / 1000
+                )
+            );
+
+        setUnits(untilStart);
+
+        progressBar.style.width = "0%";
+
+        const startText =
+            formatIST(countdownStartMs);
+
+        schedule.textContent =
+            startText
+                ? "Countdown starts: " +
+                  startText +
+                  " IST"
+                : "";
+
+        lastDisplayedSecond =
+            untilStart;
+    }
+
+    function showActiveCountdown(currentMs) {
+        showCard();
+
+        title.textContent =
+            "Results are almost here";
+
+        message.textContent =
+            "The official RTSE result will be published when the countdown reaches zero.";
+
+        const remaining =
+            Math.max(
+                0,
+                Math.ceil(
+                    (publicationMs - currentMs) / 1000
+                )
+            );
+
+        setUnits(remaining);
+        setProgress(currentMs);
+
+        const publicationText =
+            formatIST(publicationMs);
+
+        schedule.textContent =
+            publicationText
+                ? "Scheduled publication: " +
+                  publicationText +
+                  " IST"
+                : "";
+
+        /*
+         * Normal one-second sound is allowed only while
+         * there are MORE than 10 seconds remaining.
+         */
+        if (
+            !finalCountdownStarted &&
+            lastDisplayedSecond !== null &&
+            remaining !== lastDisplayedSecond &&
+            remaining > 10
+        ) {
+            playCountdownTick();
+        }
+
+        /*
+         * Exactly when the displayed countdown reaches 10,
+         * switch permanently to the final countdown track.
+         */
+        if (
+            !finalCountdownStarted &&
+            remaining <= 10 &&
+            remaining > 0
+        ) {
+            playFinalCountdown();
+        }
+
+        lastDisplayedSecond =
+            remaining;
+    }
+
+    function showPublishingState() {
+        showCard();
+
+        stopCountdownAudio();
+
+        title.textContent =
+            "Publishing results...";
+
+        message.textContent =
+            "The official result publication is being completed. Please wait a moment.";
+
+        setUnits(0);
+
+        progressBar.style.width = "100%";
+
+        schedule.textContent = "";
+
+        lastDisplayedSecond = 0;
+    }
+
+    function stopAnimation() {
+        if (animationFrame !== null) {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+        }
+    }
+
+    function stopSync() {
+        if (syncTimer !== null) {
+            clearInterval(syncTimer);
+            syncTimer = null;
+        }
+    }
+
+    function stopPublicationPolling() {
+        if (publishCheckTimer !== null) {
+            clearInterval(publishCheckTimer);
+            publishCheckTimer = null;
+        }
+    }
+
+    function showPublishedState() {
+        hideCard();
+
+        stopCountdownAudio();
+        stopAnimation();
+        stopSync();
+        stopPublicationPolling();
+
+        /*
+         * If zero was reached locally, the publication sound has
+         * already been requested. Do not play it twice.
+         */
+        if (
+            publicationReachedZero &&
+            !publicationSuccessPlayed
+        ) {
+            playPublicationSuccess();
+        }
+
+        if (refreshStarted) {
+            return;
+        }
+
+        refreshStarted = true;
+
+        const refreshKey =
+            "rtse-result-publication-refresh";
+
+        let alreadyRefreshed = false;
+
+        try {
+            alreadyRefreshed =
+                sessionStorage.getItem(
+                    refreshKey
+                ) === "1";
+        } catch (err) {}
+
+        if (!alreadyRefreshed) {
+            try {
+                sessionStorage.setItem(
+                    refreshKey,
+                    "1"
+                );
+            } catch (err) {}
+
+            setTimeout(function () {
+                window.location.reload();
+            }, 350);
+        }
+    }
+
+    function handlePublicationReachedZero() {
+        if (publicationReachedZero) {
+            return;
+        }
+
+        publicationReachedZero = true;
+
+        stopCountdownAudio();
+
+        /*
+         * Publication success sound is triggered immediately
+         * at the browser's 00:00 boundary.
+         */
+        playPublicationSuccess();
+
+        showPublishingState();
+
+        startPublicationPolling();
+    }
+
+    function renderCountdown() {
+        if (!status || status.published) {
+            return;
+        }
+
+        if (!status.scheduled) {
+            hideCard();
+            return;
+        }
+
+        const currentMs =
+            getServerNowMs();
+
+        if (
+            !Number.isFinite(countdownStartMs) ||
+            !Number.isFinite(publicationMs)
+        ) {
+            hideCard();
+            return;
+        }
+
+        if (currentMs < countdownStartMs) {
+            showBeforeStart(currentMs);
+            return;
+        }
+
+        if (currentMs < publicationMs) {
+            showActiveCountdown(currentMs);
+            return;
+        }
+
+        handlePublicationReachedZero();
+    }
+
+    function animationLoop() {
+        renderCountdown();
+
+        if (
+            !publicationReachedZero &&
+            !(
+                status &&
+                status.published
+            )
+        ) {
+            animationFrame =
+                requestAnimationFrame(
+                    animationLoop
+                );
+        }
+    }
+
+    function startAnimation() {
+        if (animationFrame !== null) {
+            return;
+        }
+
+        animationFrame =
+            requestAnimationFrame(
+                animationLoop
+            );
+    }
+
+    async function loadStatus() {
+        try {
+            const response =
+                await fetch(
+                    "/rtse/result/publication-status",
+                    {
+                        method: "GET",
+                        cache: "no-store",
+                        headers: {
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Publication status request failed."
+                );
+            }
+
+            const data =
+                await response.json();
+
+            if (
+                !data ||
+                data.success !== true
+            ) {
+                throw new Error(
+                    "Invalid publication status response."
+                );
+            }
+
+            status = data;
+
+            const serverNow =
+                Number(
+                    data.server_now_utc_ms
+                );
+
+            if (
+                Number.isFinite(serverNow)
+            ) {
+                clockOffsetMs =
+                    serverNow - Date.now();
+            }
+
+            if (data.published) {
+                showPublishedState();
+                return;
+            }
+
+            if (!data.scheduled) {
+                try {
+                    sessionStorage.removeItem(
+                        "rtse-result-publication-refresh"
+                    );
+                } catch (err) {}
+
+                hideCard();
+
+                /*
+                 * Keep the browser ready to detect a future
+                 * schedule without continuously rendering.
+                 */
+                return;
+            }
+
+            const newPublicationMs =
+                Number(
+                    data.publish_at_utc_ms
+                );
+
+            const newCountdownStartMs =
+                Number(
+                    data.countdown_start_at_utc_ms
+                );
+
+            if (
+                !Number.isFinite(
+                    newPublicationMs
+                ) ||
+                !Number.isFinite(
+                    newCountdownStartMs
+                )
+            ) {
+                hideCard();
+                return;
+            }
+
+            const scheduleChanged =
+                publicationMs !==
+                    newPublicationMs ||
+                countdownStartMs !==
+                    newCountdownStartMs;
+
+            publicationMs =
+                newPublicationMs;
+
+            countdownStartMs =
+                newCountdownStartMs;
+
+            if (
+                publicationMs <=
+                countdownStartMs
+            ) {
+                countdownStartMs =
+                    publicationMs;
+            }
+
+            /*
+             * Only reset countdown/audio state if the actual
+             * server schedule changed.
+             */
+            if (scheduleChanged) {
+                finalCountdownStarted = false;
+                publicationReachedZero = false;
+                publicationSuccessPlayed = false;
+                lastDisplayedSecond = null;
+
+                stopCountdownAudio();
+            }
+
+            renderCountdown();
+
+            if (
+                getServerNowMs() >=
+                publicationMs
+            ) {
+                startPublicationPolling();
+            }
+        } catch (err) {
+            console.error(
+                "RTSE publication countdown error:",
+                err
+            );
+        }
+    }
+
+    function startPublicationPolling() {
+        if (publishCheckTimer !== null) {
+            return;
+        }
+
+        publishCheckTimer =
+            setInterval(
+                async function () {
+                    await loadStatus();
+                },
+                1000
+            );
+    }
+
+    /*
+     * Initial server synchronization.
+     */
+    loadStatus();
+
+    /*
+     * Smooth local countdown.
+     * This does NOT reload the page.
+     */
+    startAnimation();
+
+    /*
+     * Periodic server synchronization.
+     * This is deliberately much less frequent than the
+     * visual countdown and never resets state unless the
+     * actual schedule changes.
+     */
+    syncTimer =
+        setInterval(
+            loadStatus,
+            10000
+        );
+})();
+</script>
 
 <script>
 (function () {

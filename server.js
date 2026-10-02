@@ -314,6 +314,14 @@ app.use((err, req, res, next) => {
     res.status(500).render("errors/500");
 });
 
+// =====================================
+// RTSE Result Publication Scheduler
+// =====================================
+const rtseResultPublicationScheduler =
+    require("./services/rtseResultPublicationScheduler");
+
+rtseResultPublicationScheduler.start();
+
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
