@@ -3,259 +3,233 @@
     margin: 0;
 }
 
-* {
-    box-sizing: border-box;
-}
-
 html,
 body {
     margin: 0;
     padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #fff;
 }
 
-body {
-    background: #ddd;
-    font-family: Georgia, "Times New Roman", serif;
+* {
+    box-sizing: border-box;
 }
 
-.certificate-page {
+.certificate-page.rank3 {
     width: 297mm;
     height: 210mm;
-    padding: 10mm;
-    margin: auto;
-    background: #ead9c9;
-}
-
-.certificate-frame {
+    margin: 0;
+    padding: 0;
     position: relative;
-    height: 100%;
     overflow: hidden;
-    background:
-        radial-gradient(circle at center, #fffaf3, #f2e1d0 72%, #d8bca5);
-    border: 2mm solid #87563e;
-    box-shadow:
-        inset 0 0 0 1mm #c79878,
-        inset 0 0 0 2.5mm #f9eadc;
+    background: #fff;
 }
 
-.inner-frame {
-    position: absolute;
-    inset: 6mm;
-    border: .7mm solid #9b674e;
-}
-
-.ornament {
-    position: absolute;
-    width: 40mm;
-    height: 40mm;
-    border: 1mm solid #9a644b;
-    border-radius: 50%;
-}
-
-.ornament-top-left {
-    left: -28mm;
-    top: -28mm;
-}
-
-.ornament-top-right {
-    right: -28mm;
-    top: -28mm;
-}
-
-.ornament-bottom-left {
-    left: -28mm;
-    bottom: -28mm;
-}
-
-.ornament-bottom-right {
-    right: -28mm;
-    bottom: -28mm;
-}
-
-.certificate-header {
+.rank3-frame {
     position: relative;
-    height: 45mm;
-    padding: 9mm 24mm;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    width: 297mm;
+    height: 210mm;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-.arsp-logo {
+.rank3-template-background {
     position: absolute;
-    top: 9mm;
-    left: 20mm;
-    width: 25mm;
-    height: 25mm;
-    object-fit: contain;
-}
-
-.organization-name {
-    color: #72452f;
-    font-size: 6.6mm;
-    font-weight: 800;
-    letter-spacing: 1.4mm;
-}
-
-.exam-name {
-    margin-top: 2mm;
-    color: #25201d;
-    font-size: 4.8mm;
-    font-weight: 700;
-    letter-spacing: .55mm;
-}
-
-.organized-by {
-    margin-top: 1.5mm;
-    color: #91614a;
-    font-size: 3mm;
-    letter-spacing: .85mm;
-    text-transform: uppercase;
-}
-
-.rank-badge {
-    position: absolute;
-    top: 9mm;
-    right: 20mm;
-    width: 31mm;
-    height: 31mm;
-    border-radius: 50%;
-    border: .9mm solid #925f45;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #744630;
-    background: #f4dfcf;
-    font-size: 3mm;
-    font-weight: 800;
-}
-
-.certificate-content {
-    position: relative;
-    height: 104mm;
-    padding: 3mm 30mm;
-    text-align: center;
-}
-
-.certificate-category {
-    color: #744630;
-    font-size: 5.1mm;
-    font-weight: 800;
-    letter-spacing: 1.1mm;
-    text-transform: uppercase;
-}
-
-.certificate-intro {
-    margin-top: 7mm;
-    color: #665951;
-    font-size: 3.8mm;
-    font-style: italic;
-}
-
-.student-name {
-    margin-top: 3mm;
-    color: #2a211d;
-    font-size: 12mm;
-    font-weight: 700;
-    letter-spacing: .45mm;
-}
-
-.student-divider {
-    width: 76mm;
-    margin: 3mm auto 4mm;
-    border-top: .7mm solid #98674f;
-}
-
-.achievement-text {
-    color: #5b514b;
-    font-size: 4mm;
-    line-height: 1.55;
-}
-
-.achievement-grid {
-    width: 190mm;
-    margin: 7mm auto 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4mm;
-}
-
-.achievement-item {
-    padding: 4mm;
-    border: .5mm solid #b17e64;
-    background: rgba(255, 248, 240, .8);
-}
-
-.achievement-item .label {
+    inset: 0;
+    width: 297mm;
+    height: 210mm;
     display: block;
-    color: #95634c;
-    font-size: 2.6mm;
-    letter-spacing: .7mm;
-    font-weight: 700;
+    object-fit: fill;
+    z-index: 1;
 }
 
-.achievement-item strong {
-    display: block;
-    margin-top: 1.5mm;
-    color: #352821;
-    font-size: 4.5mm;
-}
-
-.rank-item {
-    background: #edd4c2;
-}
-
-.certificate-footer {
+.rank3-overlay {
     position: absolute;
-    left: 20mm;
-    right: 20mm;
-    bottom: 12mm;
-    display: grid;
-    grid-template-columns: 1fr 24mm 1fr;
-    align-items: end;
-    gap: 20mm;
+    inset: 0;
+    width: 297mm;
+    height: 210mm;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-.signature-block {
-    text-align: center;
-    color: #594a42;
-    font-size: 3mm;
-}
-
-.signature-line {
-    width: 48mm;
-    margin: 0 auto 2mm;
-    border-top: .45mm solid #67493a;
-}
-
-.certificate-qr img {
-    width: 19mm;
-    height: 19mm;
-}
-
-.certificate-number {
+/* Top circular logo area */
+.rank3-overlay-logo {
     position: absolute;
-    left: 50%;
+    left: 49.83%;
+    top: 2.6%;
     transform: translateX(-50%);
-    bottom: -1mm;
-    color: #765848;
-    font-size: 2.5mm;
+    width: 35.2mm;
+    height: 35mm;
+    object-fit: contain;
+    display: block;
+    border-radius: 50%;
+}
+
+/* Examination heading */
+.rank3-overlay-heading {
+    position: absolute;
+    left: 15%;
+    right: 29%;
+    top: 18.9%;
+    text-align: center;
+    line-height: 1.05;
+}
+
+.rank3-overlay-exam-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22pt;
+    font-weight: 700;
+    letter-spacing: 0.35px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #102653;
+}
+
+.rank3-overlay-organized {
+    position: relative;
+    left: 13%;
+    margin-top: 0.1mm;
+    width: 100%;
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16.5pt;
+    font-weight: 600;
+    color: #171717;
+}
+
+/* Student photo */
+.rank3-overlay-photo {
+    position: absolute;
+    right: 4.8%;
+    top: 15.3%;
+    width: 32mm;
+    height: 39mm;
+    object-fit: cover;
+    display: block;
+}
+
+/* Main dynamic certificate content */
+.rank3-overlay-main {
+    position: absolute;
+    left: 19%;
+    right: 19%;
+    top: 56.5%;
     text-align: center;
 }
 
-.certificate-number strong {
+.rank3-overlay-student-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 38pt;
+    line-height: 1.05;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    background: linear-gradient(
+        180deg,
+        #8f5d16 0%,
+        #f4d477 28%,
+        #b77918 52%,
+        #ffe8a0 74%,
+        #8a5712 100%
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0.7px 0.7px 0 #5d3b0b,
+        -0.4px -0.4px 0 rgba(255, 255, 255, 0.75),
+        0 1.5px 2px rgba(0, 0, 0, 0.28);
+}
+
+.rank3-overlay-title {
+    margin-top: 3mm;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19.5pt;
+    font-weight: 700;
+    color: #12234d;
+    letter-spacing: 0.7px;
+}
+
+.rank3-overlay-description {
+    margin: 4mm auto 0;
+    max-width: 190mm;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12.6pt;
+    line-height: 1.48;
+    color: #202020;
+    text-align: center;
+}
+
+.rank3-overlay-description strong {
+    font-weight: 700;
+}
+
+/* QR */
+.rank3-overlay-qr {
+    position: absolute;
+    left: 3.4%;
+    bottom: 12%;
+    width: 29.5mm;
+    height: 33mm;
+    object-fit: contain;
     display: block;
-    margin-top: .7mm;
+}
+
+/* Signatures */
+.rank3-overlay-president-signature {
+    position: absolute;
+    left: 27%;
+    bottom: 7.4%;
+    width: 38mm;
+    height: 16mm;
+    object-fit: contain;
+    display: block;
+}
+
+.rank3-overlay-director-signature {
+    position: absolute;
+    right: 27%;
+    bottom: 7.4%;
+    width: 38mm;
+    height: 16mm;
+    object-fit: contain;
+    display: block;
+}
+
+.rank3-overlay-president-label,
+.rank3-overlay-director-label {
+    position: absolute;
+    bottom: 7.0%;
+    width: 45mm;
+    padding-top: 1.8mm;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12.5pt;
+    font-weight: 700;
+    text-align: center;
+    color: #222;
+}
+
+.rank3-overlay-president-label {
+    left: 24.5%;
+}
+
+.rank3-overlay-director-label {
+    right: 23%;
 }
 
 @media print {
+    html,
     body {
-        background: white;
+        background: #fff;
     }
 
-    .certificate-page {
+    .certificate-page.rank3 {
         margin: 0;
     }
 }

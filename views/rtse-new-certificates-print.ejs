@@ -266,8 +266,127 @@
         </div>
     </div>
 
+<% } else if (design === "rank3") { %>
+    <%
+        const studentPhoto = certificate?.photo
+            ? `/uploads/rtse/${certificate.photo}`
+            : "";
+
+        const presidentSignature =
+            setting?.president_signature
+                ? `/uploads/arsp-settings/${setting.president_signature}`
+                : "";
+
+        const directorSignature =
+            certificate?.director_signature
+                ? `/uploads/rtse/${certificate.director_signature}`
+                : (
+                    setting?.director_signature
+                        ? `/uploads/arsp-settings/${setting.director_signature}`
+                        : ""
+                );
+    %>
+
+    <div class="print-certificate-page">
+        <div class="certificate-page rank3">
+            <div class="rank3-frame">
+
+                <img
+                    class="rank3-template-background"
+                    src="/images/rtse-certificates/rank3-template.png"
+                    alt=""
+                    aria-hidden="true"
+                >
+
+                <div class="rank3-overlay">
+
+                    <% if (logo) { %>
+                        <img
+                            class="rank3-overlay-logo"
+                            src="<%= logo %>"
+                            alt="ARSP Logo"
+                        >
+                    <% } %>
+
+                    <div class="rank3-overlay-heading">
+                        <div class="rank3-overlay-exam-name">
+                            <%= examName %>
+                        </div>
+
+                        <div class="rank3-overlay-organized">
+                            Organized by ARSP NGO
+                        </div>
+                    </div>
+
+                    <% if (studentPhoto) { %>
+                        <img
+                            class="rank3-overlay-photo"
+                            src="<%= studentPhoto %>"
+                            alt="Student Photo"
+                        >
+                    <% } %>
+
+                    <div class="rank3-overlay-main">
+
+                        <div class="rank3-overlay-student-name">
+                            <%= certificate?.full_name || "Student Name" %>
+                        </div>
+
+                        <div class="rank3-overlay-title">
+                            CERTIFICATE OF EXCELLENCE
+                        </div>
+
+                        <div class="rank3-overlay-description">
+                            This is proudly presented to
+                            <strong><%= certificate?.full_name || "Student Name" %></strong>
+                            for exceptional achievement and securing the
+                            <strong>Third Rank</strong> in the
+                            <strong><%= examName %></strong>
+                            held in 2026.
+                            Their dedication, perseverance, and outstanding performance
+                            across all subjects have distinguished them as a leader
+                            among their peers.
+                            We commend their hard work and commitment to excellence.
+                        </div>
+
+                    </div>
+
+                    <% if (qrCode) { %>
+                        <img
+                            class="rank3-overlay-qr"
+                            src="<%= qrCode %>"
+                            alt="Certification QR Code"
+                        >
+                    <% } %>
+
+                    <% if (presidentSignature) { %>
+                        <img
+                            class="rank3-overlay-president-signature"
+                            src="<%= presidentSignature %>"
+                            alt="President Signature"
+                        >
+                    <% } %>
+
+                    <% if (directorSignature) { %>
+                        <img
+                            class="rank3-overlay-director-signature"
+                            src="<%= directorSignature %>"
+                            alt="Director Signature"
+                        >
+                    <% } %>
+
+                    <div class="rank3-overlay-president-label">
+                        President
+                    </div>
+
+                    <div class="rank3-overlay-director-label">
+                        Director
+                    </div>
+
+                </div>
+            </div>
+        </div>
 <% } else { %>
-<div class="certificate-page <%= design %>">
 
             <div class="certificate-frame">
 
