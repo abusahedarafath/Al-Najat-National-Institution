@@ -188,8 +188,113 @@ const directorSignature =
 
     </div>
 
-<% } else { %>
 
+<% } else if (design === "rank2") { %>
+    <%
+        const studentPhoto = certificate?.photo
+            ? `/uploads/rtse/${certificate.photo}`
+            : "";
+    %>
+
+    <div class="certificate-page rank2">
+        <div class="rank2-frame">
+            <img
+                class="rank2-template-background"
+                src="/images/rtse-certificates/rank2-template.png"
+                alt=""
+                aria-hidden="true"
+            >
+
+            <div class="rank2-overlay">
+
+                <% if (logo) { %>
+                    <img
+                        class="rank2-overlay-logo"
+                        src="<%= logo %>"
+                        alt="ARSP Logo"
+                    >
+                <% } %>
+
+                <div class="rank2-overlay-heading">
+                    <div class="rank2-overlay-exam-name">
+                        <%= examName %>
+                    </div>
+
+                    <div class="rank2-overlay-organized">
+                        Organized by ARSP NGO
+                    </div>
+                </div>
+
+                <% if (studentPhoto) { %>
+                    <img
+                        class="rank2-overlay-photo"
+                        src="<%= studentPhoto %>"
+                        alt="Student Photo"
+                    >
+                <% } %>
+
+                <div class="rank2-overlay-main">
+
+                    <div class="rank2-overlay-student-name">
+                        <%= certificate?.full_name || "Student Name" %>
+                    </div>
+
+                    <div class="rank2-overlay-title">
+                        CERTIFICATE OF EXCELLENCE
+                    </div>
+
+                    <div class="rank2-overlay-description">
+                        This is proudly presented to
+                        <strong><%= certificate?.full_name || "Student Name" %></strong>
+                        for exceptional achievement and securing the
+                        <strong>Second Rank</strong> in the
+                        <strong><%= examName %></strong>
+                        held in 2026.
+                        Their dedication, perseverance, and outstanding performance
+                        across all subjects have distinguished them as a leader
+                        among their peers.
+                        We commend their hard work and commitment to excellence.
+                    </div>
+
+                </div>
+
+                <% if (qrCode) { %>
+                    <img
+                        class="rank2-overlay-qr"
+                        src="<%= qrCode %>"
+                        alt="Certification QR Code"
+                    >
+                <% } %>
+
+                <% if (presidentSignature) { %>
+                    <img
+                        class="rank2-overlay-president-signature"
+                        src="<%= presidentSignature %>"
+                        alt="President Signature"
+                    >
+                <% } %>
+
+                <% if (directorSignature) { %>
+                    <img
+                        class="rank2-overlay-director-signature"
+                        src="<%= directorSignature %>"
+                        alt="Director Signature"
+                    >
+                <% } %>
+
+                <div class="rank2-overlay-president-label">
+                    President
+                </div>
+
+                <div class="rank2-overlay-director-label">
+                    Director
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<% } else { %>
 
 <div class="certificate-page <%= design %>">
 
