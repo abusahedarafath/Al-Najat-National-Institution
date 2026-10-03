@@ -295,6 +295,28 @@ body {
     z-index: 20;
 }
 
+.rank1-overlay-president-label,
+.rank1-overlay-director-label {
+    position: absolute;
+    bottom: 16mm;
+    width: 38mm;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12pt;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    color: #222;
+    z-index: 20;
+}
+
+.rank1-overlay-president-label {
+    left: 67.5mm;
+}
+
+.rank1-overlay-director-label {
+    right: 73mm;
+}
+
 @media print {
     html,
     body {
