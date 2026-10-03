@@ -386,7 +386,134 @@
                 </div>
             </div>
         </div>
+<% } else if (design === "merit") { %>
+    <%
+        const studentPhoto = certificate?.photo
+            ? `/uploads/rtse/${certificate.photo}`
+            : "";
+
+        const presidentSignature =
+            setting?.president_signature
+                ? `/uploads/arsp-settings/${setting.president_signature}`
+                : "";
+
+        const directorSignature =
+            certificate?.director_signature
+                ? `/uploads/rtse/${certificate.director_signature}`
+                : (
+                    setting?.director_signature
+                        ? `/uploads/arsp-settings/${setting.director_signature}`
+                        : ""
+                );
+    %>
+
+    <div class="merit-frame">
+
+        <img
+            class="merit-template-background"
+            src="/images/rtse-certificates/merit-template.png"
+            alt=""
+            aria-hidden="true"
+        >
+
+        <div class="merit-overlay">
+
+            <% if (logo) { %>
+                <img
+                    class="merit-overlay-logo"
+                    src="<%= logo %>"
+                    alt="ARSP Logo"
+                >
+            <% } %>
+
+            <div class="merit-overlay-heading">
+
+                <div class="merit-overlay-exam-name">
+                    <%= examName %>
+                </div>
+
+                <div class="merit-overlay-organized">
+                    Organized by ARSP NGO
+                </div>
+
+            </div>
+
+            <% if (studentPhoto) { %>
+                <img
+                    class="merit-overlay-photo"
+                    src="<%= studentPhoto %>"
+                    alt="Student Photo"
+                >
+            <% } %>
+
+            <div class="merit-overlay-main">
+
+                <div class="merit-overlay-title">
+                    CERTIFICATE OF MERIT
+                </div>
+
+                <div class="merit-overlay-student-name">
+                    <%= certificate?.full_name || "Student Name" %>
+                </div>
+
+                <div class="merit-overlay-description">
+                    This is proudly presented to
+                    <strong><%= certificate?.full_name || "Student Name" %></strong>
+                    for exceptional achievement and securing the
+                    <strong>
+                        <%= sectionRank || "Merit" %><%= sectionRank ? (
+                            sectionRank == 1 ? "st" :
+                            sectionRank == 2 ? "nd" :
+                            sectionRank == 3 ? "rd" : "th"
+                        ) : "" %> Rank
+                    </strong>
+                    in the
+                    <strong><%= examName %></strong>
+                    held in 2026.
+                    Their dedication, perseverance, and outstanding performance
+                    across all subjects have distinguished them among their peers.
+                    We commend their hard work and commitment to excellence.
+                </div>
+
+            </div>
+
+            <% if (qrCode) { %>
+                <img
+                    class="merit-overlay-qr"
+                    src="<%= qrCode %>"
+                    alt="Certification QR Code"
+                >
+            <% } %>
+
+            <% if (presidentSignature) { %>
+                <img
+                    class="merit-overlay-president-signature"
+                    src="<%= presidentSignature %>"
+                    alt="President Signature"
+                >
+            <% } %>
+
+            <% if (directorSignature) { %>
+                <img
+                    class="merit-overlay-director-signature"
+                    src="<%= directorSignature %>"
+                    alt="RTSE Controller Signature"
+                >
+            <% } %>
+
+            <div class="merit-overlay-president-label">
+                President
+            </div>
+
+            <div class="merit-overlay-director-label">
+                RTSE Controller
+            </div>
+
+        </div>
+    </div>
+
 <% } else { %>
+
 
             <div class="certificate-frame">
 
