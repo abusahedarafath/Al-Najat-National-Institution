@@ -108,10 +108,10 @@ body {
 
 .rank2-overlay-photo {
     position: absolute;
-    right: 6%;
-    top: 15.7%;
-    width: 30mm;
-    height: 37.5mm;
+    right: 6.5%;
+    top: 16.5%;
+    width: 27mm;
+    height: 34mm;
     object-fit: cover;
     display: block;
 }

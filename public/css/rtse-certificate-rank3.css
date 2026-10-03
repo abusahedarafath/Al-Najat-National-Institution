@@ -103,10 +103,10 @@ body {
 /* Student photo */
 .rank3-overlay-photo {
     position: absolute;
-    right: 4.8%;
-    top: 15.3%;
-    width: 32mm;
-    height: 39mm;
+    right: 5.9%;
+    top: 17.15%;
+    width: 25.5mm;
+    height: 32mm;
     object-fit: cover;
     display: block;
 }
