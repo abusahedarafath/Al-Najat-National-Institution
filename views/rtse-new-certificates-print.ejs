@@ -818,7 +818,7 @@
 <button
     type="button"
     class="certificate-print-button"
-    onclick="window.print()"
+    onclick="printCertificatesWhenReady(this)"
 >
     🖨️ Print Certificate
 </button>
@@ -850,6 +850,48 @@
     }
 }
 </style>
+
+<script>
+async function printCertificatesWhenReady(button) {
+    if (button.disabled) {
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Preparing Certificates...";
+
+    try {
+        const images = Array.from(document.images);
+
+        await Promise.all(
+            images.map(async (image) => {
+                if (!image.complete) {
+                    await new Promise((resolve) => {
+                        image.addEventListener("load", resolve, { once: true });
+                        image.addEventListener("error", resolve, { once: true });
+                    });
+                }
+
+                if (typeof image.decode === "function") {
+                    try {
+                        await image.decode();
+                    } catch (_) {
+                        // Continue printing even if decode is unavailable.
+                    }
+                }
+            })
+        );
+
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        window.print();
+    } finally {
+        button.disabled = false;
+        button.textContent = "🖨️ Print Certificate";
+    }
+}
+</script>
 
 
 </body>
