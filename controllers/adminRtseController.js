@@ -35,6 +35,12 @@ const RtseCountedOmr = require("../models/RtseCountedOmr");
 const { saveRtseResult } = require("../utils/rtseResultService");
 
 const RtseExamSetting = require("../models/RtseExamSetting");
+
+const RtseCertificateSetting =
+    require("../models/RtseCertificateSetting");
+
+const RtseCertificateCategorySetting =
+    require("../models/RtseCertificateCategorySetting");
 const RtseMarkComponent = require("../models/RtseMarkComponent");
 const RtseAdmitCardSetting = require("../models/RtseAdmitCardSetting");
 const RtseCentre = require("../models/RtseCentre");
@@ -5586,6 +5592,14 @@ exports.printNewCertificateGroup = async (req, res) => {
         const examSetting =
             await RtseExamSetting.get();
 
+        const certificateSetting =
+            await RtseCertificateSetting.get();
+
+        const certificateCategorySetting =
+            await RtseCertificateCategorySetting.getByCategory(
+                group
+            );
+
         const students =
             await RtseResult.getDashboardResults(
                 "",
@@ -5718,7 +5732,9 @@ exports.printNewCertificateGroup = async (req, res) => {
 
                 section,
                 group,
-                applicationYear
+                applicationYear,
+                certificateSetting,
+                certificateCategorySetting
             }
         );
 
@@ -6850,6 +6866,23 @@ exports.viewNewCertificate = async (req, res) => {
         const setting =
             await RtseExamSetting.get();
 
+        const certificateSetting =
+            await RtseCertificateSetting.get();
+
+        const categoryKey =
+            sectionRank === 1
+                ? "rank1"
+                : sectionRank === 2
+                    ? "rank2"
+                    : sectionRank === 3
+                        ? "rank3"
+                        : "merit";
+
+        const certificateCategorySetting =
+            await RtseCertificateCategorySetting.getByCategory(
+                categoryKey
+            );
+
         const siteSettings =
             await SiteSetting.get();
 
@@ -6979,6 +7012,10 @@ exports.viewNewCertificate = async (req, res) => {
                 certificate,
 
                 setting,
+
+                certificateSetting,
+
+                certificateCategorySetting,
 
                 siteSettings
             }

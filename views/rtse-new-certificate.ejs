@@ -57,8 +57,35 @@ if (!writingSkillGrade && certificate?.writing_skill_marks != null) {
 writingSkillGrade = writingSkillGrade || "—";
 
 const examName =
-    setting?.exam_name ||
+    certificateSetting?.exam_name ||
     "RATABARI TALLENT SEARCH EXAMINATION 2026";
+
+const organizedBy =
+    certificateSetting?.organized_by ||
+    "ARSP NGO";
+
+const certificateName =
+    certificateCategorySetting?.certificate_name ||
+    category;
+
+const certificateDescriptionTemplate =
+    certificateCategorySetting?.certificate_description ||
+    "";
+
+function renderCertificateDescription(template) {
+    return String(template || "")
+        .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
+        .replace(/\{exam_name\}/g, examName)
+        .replace(/\{rank\}/g, String(sectionRank))
+        .replace(/\{rank_label\}/g, rankLabel)
+        .replace(/\{section\}/g, certificate?.section || "Section")
+        .replace(/\{year\}/g, String(new Date().getFullYear()));
+}
+
+const certificateDescription =
+    renderCertificateDescription(
+        certificateDescriptionTemplate
+    );
 
 const logo =
     siteSettings?.logo
@@ -71,18 +98,22 @@ const qrCode =
         : "";
 
 const presidentSignature =
-    setting?.president_signature
-        ? `/uploads/arsp-settings/${setting.president_signature}`
+    certificateSetting?.left_signature
+        ? `/uploads/rtse-certificate-settings/${certificateSetting.left_signature}`
         : "";
 
 const directorSignature =
-    certificate?.director_signature
-        ? `/uploads/rtse/${certificate.director_signature}`
-        : (
-            setting?.director_signature
-                ? `/uploads/arsp-settings/${setting.director_signature}`
-                : ""
-        );
+    certificateSetting?.right_signature
+        ? `/uploads/rtse-certificate-settings/${certificateSetting.right_signature}`
+        : "";
+
+const presidentLabel =
+    certificateSetting?.left_signature_label ||
+    "President";
+
+const directorLabel =
+    certificateSetting?.right_signature_label ||
+    "RTSE Controller";
 %>
 
 <!DOCTYPE html>
@@ -133,7 +164,7 @@ const directorSignature =
                 <%= examName %>
             </div>
             <div class="rank1-overlay-organized">
-                Organized by ARSP NGO
+                <%= organizedBy %>
             </div>
         </div>
 
@@ -153,9 +184,7 @@ const directorSignature =
 
 
             <div class="rank1-overlay-award">
-                This certificate is proudly awarded for securing the
-                <strong>First Rank</strong> in the
-                <strong><%= examName %></strong>.
+                <%= certificateDescription %>
             </div>
         </div>
 
@@ -184,11 +213,11 @@ const directorSignature =
         <% } %>
 
         <div class="rank1-overlay-president-label">
-            President
+            <%= presidentLabel %>
         </div>
 
         <div class="rank1-overlay-director-label">
-            RTSE Controller
+            <%= directorLabel %>
         </div>
 
     </div>
@@ -229,7 +258,7 @@ const directorSignature =
                     </div>
 
                     <div class="rank2-overlay-organized">
-                        Organized by ARSP NGO
+                        <%= organizedBy %>
                     </div>
                 </div>
 
@@ -248,20 +277,11 @@ const directorSignature =
                     </div>
 
                     <div class="rank2-overlay-title">
-                        CERTIFICATE OF EXCELLENCE
+                        <%= certificateName %>
                     </div>
 
                     <div class="rank2-overlay-description">
-                        This is proudly presented to
-                        <strong><%= certificate?.full_name || "Student Name" %></strong>
-                        for exceptional achievement and securing the
-                        <strong>Second Rank</strong> in the
-                        <strong><%= examName %></strong>
-                        held in 2026.
-                        Their dedication, perseverance, and outstanding performance
-                        across all subjects have distinguished them as a leader
-                        among their peers.
-                        We commend their hard work and commitment to excellence.
+                        <%= certificateDescription %>
                     </div>
 
                 </div>
@@ -291,11 +311,11 @@ const directorSignature =
                 <% } %>
 
                 <div class="rank2-overlay-president-label">
-                    President
+                    <%= presidentLabel %>
                 </div>
 
                 <div class="rank2-overlay-director-label">
-                    RTSE Controller
+                    <%= directorLabel %>
                 </div>
 
             </div>
@@ -335,7 +355,7 @@ const directorSignature =
                     </div>
 
                     <div class="rank3-overlay-organized">
-                        Organized by ARSP NGO
+                        <%= organizedBy %>
                     </div>
                 </div>
 
@@ -354,20 +374,11 @@ const directorSignature =
                     </div>
 
                     <div class="rank3-overlay-title">
-                        CERTIFICATE OF EXCELLENCE
+                        <%= certificateName %>
                     </div>
 
                     <div class="rank3-overlay-description">
-                        This is proudly presented to
-                        <strong><%= certificate?.full_name || "Student Name" %></strong>
-                        for exceptional achievement and securing the
-                        <strong>Third Rank</strong> in the
-                        <strong><%= examName %></strong>
-                        held in 2026.
-                        Their dedication, perseverance, and outstanding performance
-                        across all subjects have distinguished them as a leader
-                        among their peers.
-                        We commend their hard work and commitment to excellence.
+                        <%= certificateDescription %>
                     </div>
 
                 </div>
@@ -397,11 +408,11 @@ const directorSignature =
                 <% } %>
 
                 <div class="rank3-overlay-president-label">
-                    President
+                    <%= presidentLabel %>
                 </div>
 
                 <div class="rank3-overlay-director-label">
-                    RTSE Controller
+                    <%= directorLabel %>
                 </div>
 
             </div>
@@ -442,7 +453,7 @@ const directorSignature =
                     </div>
 
                     <div class="merit-overlay-organized">
-                        Organized by ARSP NGO
+                        <%= organizedBy %>
                     </div>
 
                 </div>
@@ -458,7 +469,7 @@ const directorSignature =
                 <div class="merit-overlay-main">
 
                     <div class="merit-overlay-title">
-                        CERTIFICATE OF MERIT
+                        <%= certificateName %>
                     </div>
 
                     <div class="merit-overlay-student-name">
@@ -466,22 +477,7 @@ const directorSignature =
                     </div>
 
                     <div class="merit-overlay-description">
-                        This is proudly presented to
-                        <strong><%= certificate?.full_name || "Student Name" %></strong>
-                        for exceptional achievement and securing the
-                        <strong>
-                            <%= sectionRank || "Merit" %><%= sectionRank ? (
-                                sectionRank == 1 ? "st" :
-                                sectionRank == 2 ? "nd" :
-                                sectionRank == 3 ? "rd" : "th"
-                            ) : "" %> Rank
-                        </strong>
-                        in the
-                        <strong><%= examName %></strong>
-                        held in 2026.
-                        Their dedication, perseverance, and outstanding performance
-                        across all subjects have distinguished them among their peers.
-                        We commend their hard work and commitment to excellence.
+                        <%= certificateDescription %>
                     </div>
 
                 </div>
@@ -511,11 +507,11 @@ const directorSignature =
                 <% } %>
 
                 <div class="merit-overlay-president-label">
-                    President
+                    <%= presidentLabel %>
                 </div>
 
                 <div class="merit-overlay-director-label">
-                    RTSE Controller
+                    <%= directorLabel %>
                 </div>
 
             </div>

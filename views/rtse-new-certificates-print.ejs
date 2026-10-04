@@ -53,13 +53,35 @@
     }
 
     const examName =
-        setting?.exam_name ||
+        certificateSetting?.exam_name ||
         "RATABARI TALLENT SEARCH EXAMINATION 2026";
+
+    const organizedBy =
+        certificateSetting?.organized_by ||
+        "ARSP NGO";
 
     const logo =
         setting?.logo
             ? `/uploads/arsp-settings/${setting.logo}`
             : "";
+
+    const presidentSignatureImage =
+        certificateSetting?.left_signature
+            ? `/uploads/rtse-certificate-settings/${certificateSetting.left_signature}`
+            : "";
+
+    const directorSignatureImage =
+        certificateSetting?.right_signature
+            ? `/uploads/rtse-certificate-settings/${certificateSetting.right_signature}`
+            : "";
+
+    const presidentLabel =
+        certificateSetting?.left_signature_label ||
+        "President";
+
+    const directorLabel =
+        certificateSetting?.right_signature_label ||
+        "RTSE Controller";
 %>
 
 <!DOCTYPE html>
@@ -224,20 +246,17 @@
                         </div>
 
                         <div class="rank2-overlay-title">
-                            CERTIFICATE OF EXCELLENCE
+                            <%= certificateCategorySetting?.certificate_name || "CERTIFICATE OF EXCELLENCE" %>
                         </div>
 
                         <div class="rank2-overlay-description">
-                            This is proudly presented to
-                            <strong><%= certificate?.full_name || "Student Name" %></strong>
-                            for exceptional achievement and securing the
-                            <strong>Second Rank</strong> in the
-                            <strong><%= examName %></strong>
-                            held in 2026.
-                            Their dedication, perseverance, and outstanding performance
-                            across all subjects have distinguished them as a leader
-                            among their peers.
-                            We commend their hard work and commitment to excellence.
+                            <%= (certificateCategorySetting?.certificate_description || "")
+                                .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
+                                .replace(/\{exam_name\}/g, examName)
+                                .replace(/\{rank\}/g, String(sectionRank))
+                                .replace(/\{rank_label\}/g, rankLabel)
+                                .replace(/\{section\}/g, certificate?.section || "Section")
+                                .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                         </div>
 
                     </div>
@@ -250,15 +269,28 @@
                         >
                     <% } %>
 
-                    <% if (logo) { %>
+                    <% if (presidentSignatureImage) { %>
+                        <img
+                            class="rank2-overlay-president-signature"
+                            src="<%= presidentSignatureImage %>"
+                            alt="President Signature"
+                        >
+                    <% } %>
+
+                    <% if (directorSignatureImage) { %>
+                        <img
+                            class="rank2-overlay-director-signature"
+                            src="<%= directorSignatureImage %>"
+                            alt="RTSE Controller Signature"
+                        >
                     <% } %>
 
                     <div class="rank2-overlay-president-label">
-                        President
+                        <%= presidentLabel %>
                     </div>
 
                     <div class="rank2-overlay-director-label">
-                        RTSE Controller
+                        <%= directorLabel %>
                     </div>
 
                 </div>
@@ -333,20 +365,17 @@
                         </div>
 
                         <div class="rank3-overlay-title">
-                            CERTIFICATE OF EXCELLENCE
+                            <%= certificateCategorySetting?.certificate_name || "CERTIFICATE OF EXCELLENCE" %>
                         </div>
 
                         <div class="rank3-overlay-description">
-                            This is proudly presented to
-                            <strong><%= certificate?.full_name || "Student Name" %></strong>
-                            for exceptional achievement and securing the
-                            <strong>Third Rank</strong> in the
-                            <strong><%= examName %></strong>
-                            held in 2026.
-                            Their dedication, perseverance, and outstanding performance
-                            across all subjects have distinguished them as a leader
-                            among their peers.
-                            We commend their hard work and commitment to excellence.
+                            <%= (certificateCategorySetting?.certificate_description || "")
+                                .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
+                                .replace(/\{exam_name\}/g, examName)
+                                .replace(/\{rank\}/g, String(sectionRank))
+                                .replace(/\{rank_label\}/g, rankLabel)
+                                .replace(/\{section\}/g, certificate?.section || "Section")
+                                .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                         </div>
 
                     </div>
@@ -359,28 +388,28 @@
                         >
                     <% } %>
 
-                    <% if (presidentSignature) { %>
+                    <% if (presidentSignatureImage) { %>
                         <img
                             class="rank3-overlay-president-signature"
-                            src="<%= presidentSignature %>"
+                            src="<%= presidentSignatureImage %>"
                             alt="President Signature"
                         >
                     <% } %>
 
-                    <% if (directorSignature) { %>
+                    <% if (directorSignatureImage) { %>
                         <img
                             class="rank3-overlay-director-signature"
-                            src="<%= directorSignature %>"
-                            alt="Director Signature"
+                            src="<%= directorSignatureImage %>"
+                            alt="RTSE Controller Signature"
                         >
                     <% } %>
 
                     <div class="rank3-overlay-president-label">
-                        President
+                        <%= presidentLabel %>
                     </div>
 
                     <div class="rank3-overlay-director-label">
-                        RTSE Controller
+                        <%= directorLabel %>
                     </div>
 
                 </div>
@@ -449,7 +478,7 @@
             <div class="merit-overlay-main">
 
                 <div class="merit-overlay-title">
-                    CERTIFICATE OF MERIT
+                    <%= certificateCategorySetting?.certificate_name || "CERTIFICATE OF MERIT" %>
                 </div>
 
                 <div class="merit-overlay-student-name">
@@ -457,22 +486,13 @@
                 </div>
 
                 <div class="merit-overlay-description">
-                    This is proudly presented to
-                    <strong><%= certificate?.full_name || "Student Name" %></strong>
-                    for exceptional achievement and securing the
-                    <strong>
-                        <%= sectionRank || "Merit" %><%= sectionRank ? (
-                            sectionRank == 1 ? "st" :
-                            sectionRank == 2 ? "nd" :
-                            sectionRank == 3 ? "rd" : "th"
-                        ) : "" %> Rank
-                    </strong>
-                    in the
-                    <strong><%= examName %></strong>
-                    held in 2026.
-                    Their dedication, perseverance, and outstanding performance
-                    across all subjects have distinguished them among their peers.
-                    We commend their hard work and commitment to excellence.
+                    <%= (certificateCategorySetting?.certificate_description || "")
+                        .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
+                        .replace(/\{exam_name\}/g, examName)
+                        .replace(/\{rank\}/g, String(sectionRank))
+                        .replace(/\{rank_label\}/g, rankLabel)
+                        .replace(/\{section\}/g, certificate?.section || "Section")
+                        .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                 </div>
 
             </div>
@@ -485,28 +505,28 @@
                 >
             <% } %>
 
-            <% if (presidentSignature) { %>
+            <% if (presidentSignatureImage) { %>
                 <img
                     class="merit-overlay-president-signature"
-                    src="<%= presidentSignature %>"
+                    src="<%= presidentSignatureImage %>"
                     alt="President Signature"
                 >
             <% } %>
 
-            <% if (directorSignature) { %>
+            <% if (directorSignatureImage) { %>
                 <img
                     class="merit-overlay-director-signature"
-                    src="<%= directorSignature %>"
+                    src="<%= directorSignatureImage %>"
                     alt="RTSE Controller Signature"
                 >
             <% } %>
 
             <div class="merit-overlay-president-label">
-                President
+                <%= presidentLabel %>
             </div>
 
             <div class="merit-overlay-director-label">
-                RTSE Controller
+                <%= directorLabel %>
             </div>
 
         </div>
@@ -547,7 +567,7 @@
                         </div>
 
                         <div class="organized-by">
-                            Organized by ARSP
+                            <%= organizedBy %>
                         </div>
 
                     </div>
@@ -563,7 +583,7 @@
                 <main class="certificate-content">
 
                     <div class="certificate-category">
-                        <%= category %>
+                        <%= certificateCategorySetting?.certificate_name || category %>
                     </div>
 
                     <div class="certificate-intro">
@@ -577,15 +597,13 @@
                     <div class="student-divider"></div>
 
                     <div class="achievement-text">
-
-                        for outstanding performance in the
-
-                        <strong>
-                            <%= certificate?.section || "Section" %>
-                        </strong>
-
-                        section of the examination.
-
+                        <%= (certificateCategorySetting?.certificate_description || "")
+                            .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
+                            .replace(/\{exam_name\}/g, examName)
+                            .replace(/\{rank\}/g, String(sectionRank))
+                            .replace(/\{rank_label\}/g, rankLabel)
+                            .replace(/\{section\}/g, certificate?.section || "Section")
+                            .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                     </div>
 
                     <section class="achievement-grid">
@@ -637,7 +655,7 @@
                         <div class="signature-line"></div>
 
                         <span>
-                            Controller of Examination
+                            <%= presidentLabel %>
                         </span>
 
                     </div>
@@ -672,7 +690,7 @@
                         <div class="signature-line"></div>
 
                         <span>
-                            President, ARSP
+                            <%= directorLabel %>
                         </span>
 
                     </div>

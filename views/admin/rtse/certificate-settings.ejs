@@ -1,0 +1,315 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <div class="page-header">
+            <div>
+                <h1>RTSE Certificate Settings</h1>
+                <p>
+                    Manage common certificate information and
+                    category-wise certificate content.
+                </p>
+            </div>
+        </div>
+
+        <form
+            method="POST"
+            action="/admin/rtse/certificate-settings"
+            enctype="multipart/form-data"
+        >
+
+            <div class="card">
+                <div class="card-body">
+
+                    <h3>RTSE All Certificate Setting</h3>
+
+                    <p class="text-muted">
+                        These settings are used across Rank 1,
+                        Rank 2, Rank 3 and Merit certificates.
+                    </p>
+
+                    <div class="mb-3">
+                        <label
+                            for="exam_name"
+                            class="form-label"
+                        >
+                            Exam Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="exam_name"
+                            name="exam_name"
+                            class="form-control"
+                            value="<%= setting?.exam_name || '' %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label
+                            for="organized_by"
+                            class="form-label"
+                        >
+                            Organized By
+                        </label>
+
+                        <input
+                            type="text"
+                            id="organized_by"
+                            name="organized_by"
+                            class="form-control"
+                            value="<%= setting?.organized_by || '' %>"
+                            required
+                        >
+                    </div>
+
+                    <hr>
+
+                    <h4>Left Signature</h4>
+
+                    <% if (setting?.left_signature) { %>
+                        <div
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                min-height:120px;
+                                padding:15px;
+                                margin-bottom:15px;
+                                border:1px solid #ddd;
+                                border-radius:8px;
+                                background:#fff;
+                            "
+                        >
+                            <img
+                                src="/uploads/rtse-certificate-settings/<%= setting.left_signature %>"
+                                alt="Current Left Signature"
+                                style="
+                                    max-width:400px;
+                                    max-height:120px;
+                                    object-fit:contain;
+                                "
+                            >
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-secondary">
+                            No left signature has been saved yet.
+                        </div>
+                    <% } %>
+
+                    <div class="mb-3">
+                        <label
+                            for="left_signature"
+                            class="form-label"
+                        >
+                            Upload / Replace Left Signature
+                        </label>
+
+                        <input
+                            type="file"
+                            id="left_signature"
+                            name="left_signature"
+                            class="form-control"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <small class="text-muted">
+                            JPG, PNG or WEBP. Maximum 5 MB.
+                            Existing signature files are retained.
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label
+                            for="left_signature_label"
+                            class="form-label"
+                        >
+                            Left Signature Label / Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="left_signature_label"
+                            name="left_signature_label"
+                            class="form-control"
+                            value="<%= setting?.left_signature_label || '' %>"
+                            placeholder="Example: President"
+                            required
+                        >
+                    </div>
+
+                    <hr>
+
+                    <h4>Right Signature</h4>
+
+                    <% if (setting?.right_signature) { %>
+                        <div
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                min-height:120px;
+                                padding:15px;
+                                margin-bottom:15px;
+                                border:1px solid #ddd;
+                                border-radius:8px;
+                                background:#fff;
+                            "
+                        >
+                            <img
+                                src="/uploads/rtse-certificate-settings/<%= setting.right_signature %>"
+                                alt="Current Right Signature"
+                                style="
+                                    max-width:400px;
+                                    max-height:120px;
+                                    object-fit:contain;
+                                "
+                            >
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-secondary">
+                            No right signature has been saved yet.
+                        </div>
+                    <% } %>
+
+                    <div class="mb-3">
+                        <label
+                            for="right_signature"
+                            class="form-label"
+                        >
+                            Upload / Replace Right Signature
+                        </label>
+
+                        <input
+                            type="file"
+                            id="right_signature"
+                            name="right_signature"
+                            class="form-control"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <small class="text-muted">
+                            JPG, PNG or WEBP. Maximum 5 MB.
+                            Existing signature files are retained.
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label
+                            for="right_signature_label"
+                            class="form-label"
+                        >
+                            Right Signature Label / Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="right_signature_label"
+                            name="right_signature_label"
+                            class="form-control"
+                            value="<%= setting?.right_signature_label || '' %>"
+                            placeholder="Example: RTSE Controller"
+                            required
+                        >
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+
+                    <h3>Category-wise Settings</h3>
+
+                    <p class="text-muted">
+                        Configure the certificate name and
+                        description for each certificate category.
+                    </p>
+
+                    <% const categoryList = [
+                        ["rank1", "Rank 1"],
+                        ["rank2", "Rank 2"],
+                        ["rank3", "Rank 3"],
+                        ["merit", "Merit (Rank 4–10)"]
+                    ]; %>
+
+                    <% categoryList.forEach(([key, label]) => { %>
+                        <div class="mb-4">
+
+                            <h4><%= label %></h4>
+
+                            <div class="mb-3">
+                                <label
+                                    for="certificate_name_<%= key %>"
+                                    class="form-label"
+                                >
+                                    Certificate Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="certificate_name_<%= key %>"
+                                    name="certificate_name_<%= key %>"
+                                    class="form-control"
+                                    value="<%= categories?.[key]?.certificate_name || '' %>"
+                                    required
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <label
+                                    for="certificate_description_<%= key %>"
+                                    class="form-label"
+                                >
+                                    Certificate Description
+                                </label>
+
+                                <textarea
+                                    id="certificate_description_<%= key %>"
+                                    name="certificate_description_<%= key %>"
+                                    class="form-control"
+                                    rows="5"
+                                    required
+                                ><%= categories?.[key]?.certificate_description || '' %></textarea>
+
+                                <small class="text-muted">
+                                    Available placeholders:
+                                    <code>{student_name}</code>,
+                                    <code>{exam_name}</code>,
+                                    <code>{rank}</code>,
+                                    <code>{rank_label}</code>,
+                                    <code>{section}</code>,
+                                    <code>{year}</code>
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <% if (key !== "merit") { %>
+                            <hr>
+                        <% } %>
+
+                    <% }); %>
+
+                    <div class="mt-4">
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Save RTSE Certificate Settings
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+
+    </main>
+</div>
+
+<%- include("../partials/footer") %>

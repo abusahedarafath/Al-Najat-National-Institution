@@ -56,10 +56,37 @@ const rtseCountedOmrUpload = multer({
     }
 });
 
+const rtseCertificateSettingsUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedMime = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (allowedMime.includes(file.mimetype)) {
+            return cb(null, true);
+        }
+
+        return cb(
+            new Error(
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            )
+        );
+    }
+});
+
 const auth = require("../middleware/auth");
 
 const adminRtseController =
 require("../controllers/adminRtseController");
+
+const rtseCertificateSettingsController =
+    require("../controllers/rtseCertificateSettingsController");
 const adminRtseOmrController =
 require("../controllers/adminRtseOmrController");
 const adminRtseAdmitDownloadController =
@@ -454,6 +481,32 @@ router.post(
     adminRtseController.updateAdmitCardSettings
 );
 
+
+// =====================================
+// RTSE Certificate Settings
+// =====================================
+
+router.get(
+    "/rtse/certificate-settings",
+    auth.isAdmin,
+    rtseCertificateSettingsController.page
+);
+
+router.post(
+    "/rtse/certificate-settings",
+    auth.isAdmin,
+    rtseCertificateSettingsUpload.fields([
+        {
+            name: "left_signature",
+            maxCount: 1
+        },
+        {
+            name: "right_signature",
+            maxCount: 1
+        }
+    ]),
+    rtseCertificateSettingsController.update
+);
 
 // =====================================
 // View Admit Card
