@@ -184,8 +184,8 @@ body {
 /* Signatures */
 .rank3-overlay-president-signature {
     position: absolute;
-    left: 27%;
-    bottom: 7.4%;
+    left: 25.3%;
+    bottom: 10.5%;
     width: 38mm;
     height: 16mm;
     object-fit: contain;
@@ -194,8 +194,8 @@ body {
 
 .rank3-overlay-director-signature {
     position: absolute;
-    right: 27%;
-    bottom: 7.4%;
+    right: 25.3%;
+    bottom: 10.5%;
     width: 38mm;
     height: 16mm;
     object-fit: contain;
@@ -205,7 +205,7 @@ body {
 .rank3-overlay-president-label,
 .rank3-overlay-director-label {
     position: absolute;
-    bottom: 7.0%;
+    top: 89.5%;
     width: 45mm;
     padding-top: 1.8mm;
     font-family: Georgia, "Times New Roman", serif;
@@ -220,7 +220,7 @@ body {
 }
 
 .rank3-overlay-director-label {
-    right: 23%;
+    left: 62%;
 }
 
 @media print {

@@ -167,8 +167,8 @@ body {
 /* SIGNATURES */
 .merit-overlay-president-signature {
     position: absolute;
-    left: 22.2%;
-    bottom: 8.4%;
+    left: 20.5%;
+    bottom: 14%;
     width: 38mm;
     height: 14mm;
     object-fit: contain;
@@ -177,8 +177,8 @@ body {
 
 .merit-overlay-director-signature {
     position: absolute;
-    right: 22.2%;
-    bottom: 8.4%;
+    right: 20.5%;
+    bottom: 14%;
     width: 38mm;
     height: 14mm;
     object-fit: contain;
@@ -188,7 +188,7 @@ body {
 .merit-overlay-president-label,
 .merit-overlay-director-label {
     position: absolute;
-    bottom: 10%;
+    top: 87%;
     width: 45mm;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 12.5pt;
@@ -203,7 +203,7 @@ body {
 }
 
 .merit-overlay-director-label {
-    right: 20.2%;
+    left: 63%;
 }
 
 @media print {
