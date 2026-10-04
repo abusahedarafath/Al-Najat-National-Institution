@@ -139,33 +139,83 @@ class RtseCertificateService {
 
         }
 
+        /*
+         * The old and new certificate systems may both contain
+         * a certificate for the same application.
+         *
+         * Therefore the new certificate system must look up
+         * its own certificate type instead of using
+         * getByApplication().
+         */
         const existing =
-            await RtseCertificate.getByApplication(
-                applicationId
+            await RtseCertificate.getByApplicationAndType(
+                applicationId,
+                type
             );
 
         const applicationYear =
             Number(student.application_year);
 
         if(!applicationYear){
-
             throw new Error(
                 "RTSE application year is missing for this result."
             );
-
         }
 
         const year =
             String(applicationYear).slice(-2);
 
-        const certificateNo =
-            existing?.certificate_no ||
+        const baseCertificateNo =
             `RTC${year}${String(applicationId).padStart(6,"0")}`;
 
+        /*
+         * If the correct new-system certificate already exists
+         * and already has its QR, preserve it exactly.
+         */
         if(existing?.qr_code){
-
             return existing;
+        }
 
+        let certificateNo =
+            existing?.certificate_no || null;
+
+        /*
+         * The normal new-system format is:
+         * RTC + year + application ID
+         *
+         * If that number is already occupied by another
+         * certificate system, use a type-specific suffix.
+         *
+         * This allows the old Appreciation certificate and
+         * the new Bronze/Gold/Silver/Merit certificate to
+         * coexist for the same application.
+         */
+        if(!certificateNo){
+            const [numberRows] =
+                await require("../config/database").query(
+                    `SELECT id
+                     FROM rtse_certificates
+                     WHERE certificate_no=?
+                     LIMIT 1`,
+                    [
+                        baseCertificateNo
+                    ]
+                );
+
+            if(numberRows.length){
+                const suffix = {
+                    Gold: "G",
+                    Silver: "S",
+                    Bronze: "B",
+                    Merit: "M"
+                }[type] || "N";
+
+                certificateNo =
+                    `${baseCertificateNo}-${suffix}`;
+            } else {
+                certificateNo =
+                    baseCertificateNo;
+            }
         }
 
         const qrCode =
@@ -174,10 +224,16 @@ class RtseCertificateService {
                 `${host}/rtse/verify/certificate/${certificateNo}`
             );
 
+        /*
+         * If a correct-type certificate exists but its QR is
+         * missing, update ONLY that certificate row.
+         *
+         * Never update by application_id because an old-system
+         * certificate may also belong to this application.
+         */
         if(existing){
-
-            await RtseCertificate.updateQrCode(
-                applicationId,
+            await RtseCertificate.updateQrCodeById(
+                existing.id,
                 qrCode
             );
 
@@ -185,25 +241,19 @@ class RtseCertificateService {
                 ...existing,
                 qr_code:qrCode
             };
-
         }
 
         await RtseCertificate.generate({
-
             application_id:applicationId,
-
             certificate_no:certificateNo,
-
             certificate_type:type,
-
             issue_date:new Date(),
-
             qr_code:qrCode
-
         });
 
-        return await RtseCertificate.getByApplication(
-            applicationId
+        return await RtseCertificate.getByApplicationAndType(
+            applicationId,
+            type
         );
 
     }

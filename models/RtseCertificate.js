@@ -145,6 +145,43 @@ static async exists(applicationId){
 
 
     // =====================================
+    // Get Certificate by Application + Type
+    // =====================================
+    static async getByApplicationAndType(applicationId, certificateType){
+        const [rows] = await db.query(
+            `SELECT
+                c.*,
+                a.registration_no,
+                a.roll_no,
+                a.full_name,
+                a.father_name,
+                a.school_name,
+                a.section,
+                a.photo,
+                r.marks,
+                r.percentage,
+                r.grade,
+                r.section_rank,
+                r.overall_rank
+             FROM rtse_certificates c
+             INNER JOIN rtse_applications a
+                ON a.id=c.application_id
+             INNER JOIN rtse_results r
+                ON r.application_id=a.id
+             WHERE c.application_id=?
+               AND c.certificate_type=?
+             ORDER BY c.id ASC
+             LIMIT 1`,
+            [
+                applicationId,
+                certificateType
+            ]
+        );
+
+        return rows[0];
+    }
+
+    // =====================================
     // Update Certificate QR Code
     // =====================================
 
@@ -166,6 +203,21 @@ static async exists(applicationId){
     }
 
 
+
+    // =====================================
+    // Update Certificate QR Code by ID
+    // =====================================
+    static async updateQrCodeById(certificateId, qrCode){
+        await db.query(
+            `UPDATE rtse_certificates
+             SET qr_code=?
+             WHERE id=?`,
+            [
+                qrCode,
+                certificateId
+            ]
+        );
+    }
 
     // =====================================
     // Get All Certificates
