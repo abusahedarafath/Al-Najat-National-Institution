@@ -452,14 +452,6 @@
                                 <% if (certificateSections?.[sectionData.section]) { %>
 
                                     <a
-                                        href="/admin/rtse/certificates/section/<%= encodeURIComponent(sectionData.section) %>"
-                                        class="btn-view"
-                                    >
-                                        📄 Section <%= sectionData.section %> Certificates
-                                    </a>
-
-
-                                    <a
                                         href="/admin/rtse/certificates/reset/<%= encodeURIComponent(sectionData.section) %>"
                                         class="btn-warning"
                                         data-rtse-confirm="Reset certificates for Section <%= sectionData.section %>? Results, marks, attendance and uploaded files will NOT be deleted."
