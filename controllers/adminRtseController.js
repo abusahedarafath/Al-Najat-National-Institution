@@ -5600,6 +5600,9 @@ exports.printNewCertificateGroup = async (req, res) => {
                 group
             );
 
+        const siteSettings =
+            await SiteSetting.get();
+
         const students =
             await RtseResult.getDashboardResults(
                 "",
@@ -5689,6 +5692,11 @@ exports.printNewCertificateGroup = async (req, res) => {
                 }
             }
 
+            const existingCertificate =
+                await RtseCertificate.getByApplication(
+                    student.application_id
+                );
+
             certificates.push({
                 application_id:
                     student.application_id,
@@ -5709,10 +5717,13 @@ exports.printNewCertificateGroup = async (req, res) => {
                     student.section,
 
                 photo:
-                    student.photo,
+                    result?.photo || student.photo || null,
 
                 section_rank:
                     student.section_rank,
+
+                qr_code:
+                    existingCertificate?.qr_code || null,
 
                 writing_skill_grade:
                     writingSkillGrade
@@ -5734,7 +5745,8 @@ exports.printNewCertificateGroup = async (req, res) => {
                 group,
                 applicationYear,
                 certificateSetting,
-                certificateCategorySetting
+                certificateCategorySetting,
+                siteSettings
             }
         );
 

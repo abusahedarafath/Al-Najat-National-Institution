@@ -61,8 +61,8 @@
         "ARSP NGO";
 
     const logo =
-        setting?.logo
-            ? `/uploads/arsp-settings/${setting.logo}`
+        siteSettings?.logo
+            ? `/uploads/site-settings/${siteSettings.logo}`
             : "";
 
     const presidentSignatureImage =
@@ -182,7 +182,7 @@
 
         const qrCode =
             certificate?.qr_code
-                ? `/uploads/rtse-qr/${certificate.qr_code}`
+                ? `/uploads/rtse-certificates/${certificate.qr_code}`
                 : "";
     %>
 
@@ -190,11 +190,120 @@
         rel="stylesheet"
         href="/css/rtse-certificate-<%= design %>.css"
     >
+<% if (design === "rank1") { %>
+    <%
+        const rank1StudentPhoto =
+            certificate?.photo
+                ? `/uploads/rtse/${certificate.photo}`
+                : "";
+
+        const rank1QrCode =
+            certificate?.qr_code
+                ? `/uploads/rtse-certificates/${certificate.qr_code}`
+                : "";
+
+        const rank1Description =
+            (certificateCategorySetting?.certificate_description || "")
+                .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
+                .replace(/\{exam_name\}/g, examName)
+                .replace(/\{rank\}/g, String(sectionRank))
+                .replace(/\{rank_label\}/g, rankLabel)
+                .replace(/\{section\}/g, certificate?.section || "Section")
+                .replace(/\{year\}/g, String(new Date().getFullYear()));
+    %>
 
     <div class="print-certificate-page">
+        <div class="certificate-page rank1">
+
+            <div class="rank1-frame">
+
+                <img
+                    class="rank1-template-background"
+                    src="/images/rtse-certificates/rank1-template.png"
+                    alt=""
+                    aria-hidden="true"
+                >
+
+                <div class="rank1-overlay">
+
+                    <% if (logo) { %>
+                        <img
+                            class="rank1-overlay-logo"
+                            src="<%= logo %>"
+                            alt="ARSP Logo"
+                        >
+                    <% } %>
+
+                    <div class="rank1-overlay-heading">
+                        <div class="rank1-overlay-exam-name">
+                            <%= examName %>
+                        </div>
+
+                        <div class="rank1-overlay-organized">
+                            <%= organizedBy %>
+                        </div>
+                    </div>
+
+                    <% if (rank1StudentPhoto) { %>
+                        <img
+                            class="rank1-overlay-photo"
+                            src="<%= rank1StudentPhoto %>"
+                            alt="Student Photo"
+                        >
+                    <% } %>
+
+                    <div class="rank1-overlay-student">
+
+                        <div class="rank1-overlay-student-name">
+                            <%= certificate?.full_name || "Student Name" %>
+                        </div>
+
+                        <div class="rank1-overlay-award">
+                            <%= rank1Description %>
+                        </div>
+
+                    </div>
+
+                    <% if (rank1QrCode) { %>
+                        <img
+                            class="rank1-overlay-qr"
+                            src="<%= rank1QrCode %>"
+                            alt="Certification QR Code"
+                        >
+                    <% } %>
+
+                    <% if (presidentSignatureImage) { %>
+                        <img
+                            class="rank1-overlay-president-signature"
+                            src="<%= presidentSignatureImage %>"
+                            alt="President Signature"
+                        >
+                    <% } %>
+
+                    <% if (directorSignatureImage) { %>
+                        <img
+                            class="rank1-overlay-director-signature"
+                            src="<%= directorSignatureImage %>"
+                            alt="RTSE Controller Signature"
+                        >
+                    <% } %>
+
+                    <div class="rank1-overlay-president-label">
+                        <%= presidentLabel %>
+                    </div>
+
+                    <div class="rank1-overlay-director-label">
+                        <%= directorLabel %>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 
-<% if (design === "rank2") { %>
+<% } else if (design === "rank2") { %>
     <%
         const studentPhoto = certificate?.photo
             ? `/uploads/rtse/${certificate.photo}`
@@ -227,7 +336,7 @@
                         </div>
 
                         <div class="rank2-overlay-organized">
-                            Organized by ARSP NGO
+                            Organized by <%= organizedBy %>
                         </div>
                     </div>
 
@@ -346,7 +455,7 @@
                         </div>
 
                         <div class="rank3-overlay-organized">
-                            Organized by ARSP NGO
+                            Organized by <%= organizedBy %>
                         </div>
                     </div>
 
@@ -462,7 +571,7 @@
                 </div>
 
                 <div class="merit-overlay-organized">
-                    Organized by ARSP NGO
+                    Organized by <%= organizedBy %>
                 </div>
 
             </div>
@@ -706,23 +815,42 @@
 <% } %>
 <% }); %>
 
-<script>
+<button
+    type="button"
+    class="certificate-print-button"
+    onclick="window.print()"
+>
+    🖨️ Print Certificate
+</button>
 
-    window.addEventListener(
-        "load",
-        function () {
+<style>
+.certificate-print-button {
+    display: block;
+    margin: 20px auto 30px;
+    position: relative;
+    z-index: 9999;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    background: #1f2937;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
 
-            setTimeout(
-                function () {
-                    window.print();
-                },
-                500
-            );
+.certificate-print-button:hover {
+    opacity: 0.9;
+}
 
-        }
-    );
+@media print {
+    .certificate-print-button {
+        display: none !important;
+    }
+}
+</style>
 
-</script>
 
 </body>
 
