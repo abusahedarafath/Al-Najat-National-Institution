@@ -64,6 +64,26 @@
         certificateSetting?.organized_by_label ||
         "Organized by";
 
+    function escapeCertificateHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function renderBulkCertificateDescription(template, certificate, examName, sectionRank, rankLabel) {
+        return String(template || "")
+            .replace(/\{student_name\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.full_name || "Student Name")}</span>`)
+            .replace(/\{exam_name\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(examName)}</span>`)
+            .replace(/\{rank\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(sectionRank)}</span>`)
+            .replace(/\{rank_label\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(rankLabel)}</span>`)
+            .replace(/\{section\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.section || "Section")}</span>`)
+            .replace(/\{class\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.class || "Class")}</span>`)
+            .replace(/\{year\}/g, `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(new Date().getFullYear())}</span>`);
+    }
+
     const logo =
         siteSettings?.logo
             ? `/uploads/site-settings/${siteSettings.logo}`
@@ -207,14 +227,13 @@
                 : "";
 
         const rank1Description =
-            (certificateCategorySetting?.certificate_description || "")
-                .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
-                .replace(/\{exam_name\}/g, examName)
-                .replace(/\{rank\}/g, String(sectionRank))
-                .replace(/\{rank_label\}/g, rankLabel)
-                .replace(/\{section\}/g, certificate?.section || "Section")
-                .replace(/\{class\}/g, certificate?.class || "Class")
-                .replace(/\{year\}/g, String(new Date().getFullYear()));
+            renderBulkCertificateDescription(
+                certificateCategorySetting?.certificate_description || "",
+                certificate,
+                examName,
+                sectionRank,
+                rankLabel
+            );
     %>
 
     <div class="print-certificate-page">
@@ -264,7 +283,7 @@
                         </div>
 
                         <div class="rank1-overlay-award">
-                            <%= rank1Description %>
+                            <%- rank1Description %>
                         </div>
 
                     </div>
@@ -364,14 +383,13 @@
                         </div>
 
                         <div class="rank2-overlay-description">
-                            <%= (certificateCategorySetting?.certificate_description || "")
-                                .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
-                                .replace(/\{exam_name\}/g, examName)
-                                .replace(/\{rank\}/g, String(sectionRank))
-                                .replace(/\{rank_label\}/g, rankLabel)
-                                .replace(/\{section\}/g, certificate?.section || "Section")
-                                .replace(/\{class\}/g, certificate?.class || "Class")
-                                .replace(/\{year\}/g, String(new Date().getFullYear())) %>
+                            <%- renderBulkCertificateDescription(
+                            certificateCategorySetting?.certificate_description || "",
+                            certificate,
+                            examName,
+                            sectionRank,
+                            rankLabel
+                        ) %>
                         </div>
 
                     </div>
@@ -484,14 +502,13 @@
                         </div>
 
                         <div class="rank3-overlay-description">
-                            <%= (certificateCategorySetting?.certificate_description || "")
-                                .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
-                                .replace(/\{exam_name\}/g, examName)
-                                .replace(/\{rank\}/g, String(sectionRank))
-                                .replace(/\{rank_label\}/g, rankLabel)
-                                .replace(/\{section\}/g, certificate?.section || "Section")
-                                .replace(/\{class\}/g, certificate?.class || "Class")
-                                .replace(/\{year\}/g, String(new Date().getFullYear())) %>
+                            <%- renderBulkCertificateDescription(
+                            certificateCategorySetting?.certificate_description || "",
+                            certificate,
+                            examName,
+                            sectionRank,
+                            rankLabel
+                        ) %>
                         </div>
 
                     </div>
@@ -833,6 +850,13 @@
 </button>
 
 <style>
+.certificate-dynamic-highlight {
+    color: #0B2A5B;
+    font-weight: 800;
+    font-size: 1.08em;
+    line-height: 1.15;
+}
+
 .certificate-print-button {
     display: block;
     margin: 20px auto 30px;
