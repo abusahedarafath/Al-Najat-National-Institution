@@ -60,6 +60,10 @@
         certificateSetting?.organized_by ||
         "ARSP NGO";
 
+    const organizedByLabel =
+        certificateSetting?.organized_by_label ||
+        "Organized by";
+
     const logo =
         siteSettings?.logo
             ? `/uploads/site-settings/${siteSettings.logo}`
@@ -337,7 +341,7 @@
                         </div>
 
                         <div class="rank2-overlay-organized">
-                            Organized by <%= organizedBy %>
+                            <%= organizedByLabel %> <%= organizedBy %>
                         </div>
                     </div>
 
@@ -457,7 +461,7 @@
                         </div>
 
                         <div class="rank3-overlay-organized">
-                            Organized by <%= organizedBy %>
+                            <%= organizedByLabel %> <%= organizedBy %>
                         </div>
                     </div>
 
@@ -574,7 +578,7 @@
                 </div>
 
                 <div class="merit-overlay-organized">
-                    Organized by <%= organizedBy %>
+                    <%= organizedByLabel %> <%= organizedBy %>
                 </div>
 
             </div>
