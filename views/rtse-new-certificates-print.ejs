@@ -209,6 +209,7 @@
                 .replace(/\{rank\}/g, String(sectionRank))
                 .replace(/\{rank_label\}/g, rankLabel)
                 .replace(/\{section\}/g, certificate?.section || "Section")
+                .replace(/\{class\}/g, certificate?.class || "Class")
                 .replace(/\{year\}/g, String(new Date().getFullYear()));
     %>
 
@@ -365,6 +366,7 @@
                                 .replace(/\{rank\}/g, String(sectionRank))
                                 .replace(/\{rank_label\}/g, rankLabel)
                                 .replace(/\{section\}/g, certificate?.section || "Section")
+                                .replace(/\{class\}/g, certificate?.class || "Class")
                                 .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                         </div>
 
@@ -484,6 +486,7 @@
                                 .replace(/\{rank\}/g, String(sectionRank))
                                 .replace(/\{rank_label\}/g, rankLabel)
                                 .replace(/\{section\}/g, certificate?.section || "Section")
+                                .replace(/\{class\}/g, certificate?.class || "Class")
                                 .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                         </div>
 
@@ -601,6 +604,7 @@
                         .replace(/\{rank\}/g, String(sectionRank))
                         .replace(/\{rank_label\}/g, rankLabel)
                         .replace(/\{section\}/g, certificate?.section || "Section")
+                        .replace(/\{class\}/g, certificate?.class || "Class")
                         .replace(/\{year\}/g, String(new Date().getFullYear())) %>
                 </div>
 

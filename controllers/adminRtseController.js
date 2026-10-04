@@ -5720,6 +5720,9 @@ exports.printNewCertificateGroup = async (req, res) => {
                 section:
                     student.section,
 
+                class:
+                    student.class,
+
                 photo:
                     result?.photo || student.photo || null,
 
