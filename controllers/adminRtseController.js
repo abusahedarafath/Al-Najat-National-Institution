@@ -5692,9 +5692,13 @@ exports.printNewCertificateGroup = async (req, res) => {
                 }
             }
 
+            const host =
+                `${req.protocol}://${req.get("host")}`;
+
             const existingCertificate =
-                await RtseCertificate.getByApplication(
-                    student.application_id
+                await RtseCertificateService.ensureNewCertificate(
+                    student.application_id,
+                    host
                 );
 
             certificates.push({
