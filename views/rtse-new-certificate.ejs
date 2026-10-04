@@ -98,6 +98,9 @@ function renderCertificateDescription(template) {
         .replace(/\{section\}/g,
             `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.section || "Section")}</span>`
         )
+        .replace(/\{class\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.class || "Class")}</span>`
+        )
         .replace(/\{year\}/g,
             `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(new Date().getFullYear())}</span>`);
 }
@@ -661,6 +664,13 @@ const directorLabel =
 </button>
 
 <style>
+.certificate-dynamic-highlight {
+    color: #0B2A5B;
+    font-weight: 900;
+    font-size: 1.2em;
+    line-height: 1.3;
+}
+
 .certificate-print-button {
     display: block;
     margin: 20px auto 30px;
