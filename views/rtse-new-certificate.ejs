@@ -72,14 +72,34 @@ const certificateDescriptionTemplate =
     certificateCategorySetting?.certificate_description ||
     "";
 
+function escapeCertificateHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 function renderCertificateDescription(template) {
     return String(template || "")
-        .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
-        .replace(/\{exam_name\}/g, examName)
-        .replace(/\{rank\}/g, String(sectionRank))
-        .replace(/\{rank_label\}/g, rankLabel)
-        .replace(/\{section\}/g, certificate?.section || "Section")
-        .replace(/\{year\}/g, String(new Date().getFullYear()));
+        .replace(/\{student_name\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.full_name || "Student Name")}</span>`
+        )
+        .replace(/\{exam_name\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(examName)}</span>`
+        )
+        .replace(/\{rank\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(sectionRank)}</span>`
+        )
+        .replace(/\{rank_label\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(rankLabel)}</span>`
+        )
+        .replace(/\{section\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(certificate?.section || "Section")}</span>`
+        )
+        .replace(/\{year\}/g,
+            `<span class="certificate-dynamic-highlight">${escapeCertificateHtml(new Date().getFullYear())}</span>`);
 }
 
 const certificateDescription =
@@ -184,7 +204,7 @@ const directorLabel =
 
 
             <div class="rank1-overlay-award">
-                <%= certificateDescription %>
+                <%- certificateDescription %>
             </div>
         </div>
 
@@ -281,7 +301,7 @@ const directorLabel =
                     </div>
 
                     <div class="rank2-overlay-description">
-                        <%= certificateDescription %>
+                        <%- certificateDescription %>
                     </div>
 
                 </div>
@@ -378,7 +398,7 @@ const directorLabel =
                     </div>
 
                     <div class="rank3-overlay-description">
-                        <%= certificateDescription %>
+                        <%- certificateDescription %>
                     </div>
 
                 </div>
@@ -477,7 +497,7 @@ const directorLabel =
                     </div>
 
                     <div class="merit-overlay-description">
-                        <%= certificateDescription %>
+                        <%- certificateDescription %>
                     </div>
 
                 </div>
