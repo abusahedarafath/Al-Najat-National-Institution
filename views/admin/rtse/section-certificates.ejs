@@ -578,9 +578,6 @@ function renderDescription(template, certificate) {
     const organizedBy =
         certificateSetting?.organized_by?.trim() || "";
 
-    const organizedByLabel =
-        certificateSetting?.organized_by_label?.trim() || "";
-
     const description =
         categorySetting?.certificate_description ||
         "This certificate is proudly presented to {student_name} in recognition of their achievement in {exam_name}.";
@@ -621,17 +618,9 @@ function renderDescription(template, certificate) {
                 <%= examName %>
             </div>
 
-            <% if (organizedByLabel || organizedBy) { %>
+            <% if (organizedBy) { %>
                 <div class="organized-by">
-                    <% if (organizedByLabel) { %>
-                        <%= organizedByLabel %>
-                    <% } %>
-                    <% if (organizedByLabel && organizedBy) { %>
-                        &nbsp;
-                    <% } %>
-                    <% if (organizedBy) { %>
-                        <%= organizedBy %>
-                    <% } %>
+                    <%= organizedBy %>
                 </div>
             <% } %>
 
