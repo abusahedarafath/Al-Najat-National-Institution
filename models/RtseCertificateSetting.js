@@ -21,7 +21,6 @@ class RtseCertificateSetting {
                     (
                         exam_name,
                         organized_by,
-                        organized_by_label,
                         left_signature,
                         left_signature_label,
                         right_signature,
@@ -31,7 +30,6 @@ class RtseCertificateSetting {
                 [
                     data.exam_name,
                     data.organized_by,
-                    data.organized_by_label || "Organized by",
                     data.left_signature || null,
                     data.left_signature_label,
                     data.right_signature || null,
@@ -47,7 +45,6 @@ class RtseCertificateSetting {
              SET
                 exam_name=?,
                 organized_by=?,
-                organized_by_label=?,
                 left_signature=?,
                 left_signature_label=?,
                 right_signature=?,
@@ -56,7 +53,6 @@ class RtseCertificateSetting {
             [
                 data.exam_name,
                 data.organized_by,
-                data.organized_by_label || "Organized by",
                 data.left_signature || null,
                 data.left_signature_label,
                 data.right_signature || null,
