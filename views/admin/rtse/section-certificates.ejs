@@ -576,12 +576,10 @@ function renderDescription(template, certificate) {
         "RATABARI TALLENT SEARCH EXAMINATION 2026";
 
     const organizedBy =
-        certificateSetting?.organized_by ||
-        "ARSP";
+        certificateSetting?.organized_by?.trim() || "";
 
     const organizedByLabel =
-        certificateSetting?.organized_by_label ||
-        "Organized by";
+        certificateSetting?.organized_by_label?.trim() || "";
 
     const description =
         categorySetting?.certificate_description ||
@@ -623,9 +621,19 @@ function renderDescription(template, certificate) {
                 <%= examName %>
             </div>
 
-            <div class="organized-by">
-                <%= organizedByLabel %> <%= organizedBy %>
-            </div>
+            <% if (organizedByLabel || organizedBy) { %>
+                <div class="organized-by">
+                    <% if (organizedByLabel) { %>
+                        <%= organizedByLabel %>
+                    <% } %>
+                    <% if (organizedByLabel && organizedBy) { %>
+                        &nbsp;
+                    <% } %>
+                    <% if (organizedBy) { %>
+                        <%= organizedBy %>
+                    <% } %>
+                </div>
+            <% } %>
 
             <div class="certificate-name">
                 <%= categorySetting?.certificate_name || certificate?.certificate_type || "CERTIFICATE" %>
