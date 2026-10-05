@@ -166,9 +166,6 @@ exports.update = async (req, res) => {
             organized_by: normalizeText(
                 req.body.organized_by
             ),
-            organized_by_label: normalizeText(
-                req.body.organized_by_label
-            ) || "Organized by",
             left_signature: leftSignature,
             left_signature_label: normalizeText(
                 req.body.left_signature_label
