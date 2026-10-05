@@ -81,7 +81,8 @@ const CATEGORY_KEYS = [
     "rank1",
     "rank2",
     "rank3",
-    "merit"
+    "merit",
+    "appreciation"
 ];
 
 exports.page = async (req, res) => {

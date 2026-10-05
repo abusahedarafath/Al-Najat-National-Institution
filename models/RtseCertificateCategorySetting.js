@@ -5,7 +5,7 @@ class RtseCertificateCategorySetting {
         const [rows] = await db.query(
             `SELECT *
              FROM rtse_certificate_category_settings
-             ORDER BY FIELD(category_key, 'rank1', 'rank2', 'rank3', 'merit')`
+             ORDER BY FIELD(category_key, 'rank1', 'rank2', 'rank3', 'merit', 'appreciation')`
         );
 
         return rows;

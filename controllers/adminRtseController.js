@@ -7436,26 +7436,41 @@ const certificates=
               applicationYear
           );
 
-        const setting=
+        const setting =
+            await RtseExamSetting.get();
 
-        await RtseExamSetting.get();
+        const siteSettings =
+            await SiteSetting.get();
+
+        const certificateSettingModel =
+            require("../models/RtseCertificateSetting");
+
+        const certificateCategorySettingModel =
+            require("../models/RtseCertificateCategorySetting");
+
+        const certificateSetting =
+            await certificateSettingModel.get();
+
+        const categoryRows =
+            await certificateCategorySettingModel.getAll();
+
+        const certificateCategories = {};
+
+        for (const row of categoryRows) {
+            certificateCategories[row.category_key] = row;
+        }
 
         res.render(
-
             "admin/rtse/section-certificates",
-
             {
-
-                title:"Section Certificates",
-
+                title: "Section Certificates",
                 certificates,
-
                 setting,
-
-                section:req.params.section
-
+                siteSettings,
+                certificateSetting,
+                certificateCategories,
+                section: req.params.section
             }
-
         );
 
     }

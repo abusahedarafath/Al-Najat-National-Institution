@@ -1,449 +1,737 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
 
 <title>
-
 RTSE Section <%= section %> Certificates
-
 </title>
 
 <style>
 
-*{
-
-box-sizing:border-box;
-
+* {
+    box-sizing: border-box;
 }
 
-body{
-
-margin:0;
-
-padding:20px;
-
-background:#eee;
-
-font-family:"Times New Roman",serif;
-
+@page {
+    size: A4 landscape;
+    margin: 0;
 }
 
-.toolbar{
-
-text-align:center;
-
-margin-bottom:20px;
-
+body {
+    margin: 0;
+    padding: 24px;
+    background: #e9ecef;
+    font-family: "Times New Roman", Georgia, serif;
+    color: #172033;
 }
 
-.toolbar button{
-
-padding:12px 25px;
-
-font-size:16px;
-
-cursor:pointer;
-
+.toolbar {
+    text-align: center;
+    margin-bottom: 24px;
 }
 
-.page{
-
-width:1123px;
-
-height:794px;
-
-background:#fff;
-
-margin:0 auto 25px auto;
-
-border:10px solid #b8860b;
-
-padding:35px;
-
-page-break-after:always;
-
-position:relative;
-
+.toolbar button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 26px;
+    background: #123c73;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
-.inner{
+.certificate-page {
+    width: 1123px;
+    height: 794px;
+    margin: 0 auto 28px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
 
-height:100%;
+    background:
+        radial-gradient(circle at 50% 46%, rgba(181,138,43,.055) 0, rgba(181,138,43,.018) 22%, transparent 46%),
+        radial-gradient(circle at 4% 4%, rgba(18,60,115,.075) 0, transparent 22%),
+        radial-gradient(circle at 96% 4%, rgba(181,138,43,.075) 0, transparent 22%),
+        radial-gradient(circle at 4% 96%, rgba(181,138,43,.065) 0, transparent 22%),
+        radial-gradient(circle at 96% 96%, rgba(18,60,115,.065) 0, transparent 22%),
+        #fdfcf8;
 
-border:3px solid #b8860b;
-
-padding:25px;
-
+    box-shadow:
+        0 18px 45px rgba(20,32,52,.18),
+        0 2px 8px rgba(20,32,52,.08);
 }
 
-.header{
+.certificate-page::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border: 4px solid #173f72;
+    pointer-events: none;
+    z-index: 1;
 
-display:flex;
+    box-shadow:
+        inset 0 0 0 2px #b58a2b,
+        0 0 0 1px rgba(23,63,114,.45);
 
-justify-content:space-between;
+    background:
+        radial-gradient(circle at 0 0,
+            #b58a2b 0,
+            #b58a2b 7px,
+            transparent 8px),
 
-align-items:center;
+        radial-gradient(circle at 100% 0,
+            #b58a2b 0,
+            #b58a2b 7px,
+            transparent 8px),
 
+        radial-gradient(circle at 0 100%,
+            #b58a2b 0,
+            #b58a2b 7px,
+            transparent 8px),
+
+        radial-gradient(circle at 100% 100%,
+            #b58a2b 0,
+            #b58a2b 7px,
+            transparent 8px);
 }
 
-.logo{
+.certificate-page::after {
+    content: "";
+    position: absolute;
+    inset: 20px;
+    border: 2px solid #b58a2b;
+    pointer-events: none;
+    z-index: 1;
 
-width:100px;
+    box-shadow:
+        inset 0 0 0 1px #173f72,
+        inset 0 0 0 4px #fdfcf8,
+        inset 0 0 0 5px rgba(181,138,43,.72);
 
-height:100px;
+    background:
+        linear-gradient(90deg,
+            #b58a2b 0,
+            #b58a2b 34px,
+            transparent 34px,
+            transparent calc(100% - 34px),
+            #b58a2b calc(100% - 34px),
+            #b58a2b 100%
+        ) top / 100% 2px no-repeat,
 
-object-fit:contain;
+        linear-gradient(90deg,
+            #b58a2b 0,
+            #b58a2b 34px,
+            transparent 34px,
+            transparent calc(100% - 34px),
+            #b58a2b calc(100% - 34px),
+            #b58a2b 100%
+        ) bottom / 100% 2px no-repeat,
 
+        linear-gradient(0deg,
+            #b58a2b 0,
+            #b58a2b 34px,
+            transparent 34px,
+            transparent calc(100% - 34px),
+            #b58a2b calc(100% - 34px),
+            #b58a2b 100%
+        ) left / 2px 100% no-repeat,
+
+        linear-gradient(0deg,
+            #b58a2b 0,
+            #b58a2b 34px,
+            transparent 34px,
+            transparent calc(100% - 34px),
+            #b58a2b calc(100% - 34px),
+            #b58a2b 100%
+        ) right / 2px 100% no-repeat;
 }
 
-.photo{
-
-width:120px;
-
-height:140px;
-
-border:2px solid #555;
-
-object-fit:cover;
-
+.certificate-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    padding: 31px 43px;
 }
 
-.title{
-
-flex:1;
-
-text-align:center;
-
+.certificate-logo-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 530px;
+    height: 530px;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+    opacity: 0.060;
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
 }
 
-.title h1{
-
-margin:0;
-
-font-size:36px;
-
-color:#004a99;
-
+.certificate-logo {
+    position: absolute;
+    top: 27px;
+    left: 39px;
+    width: 105px;
+    height: 105px;
+    object-fit: contain;
+    z-index: 5;
+    border-radius: 50%;
+    padding: 4px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 3px solid #b58a2b;
+    outline: 2px solid #173f72;
+    outline-offset: 3px;
+    filter: drop-shadow(0 3px 5px rgba(0,0,0,.14));
 }
 
-.title h2{
+.certificate-number {
+    position: absolute;
+    top: 29px;
+    right: 43px;
+    min-width: 132px;
+    padding: 7px 11px 8px;
+    text-align: right;
 
-margin:8px 0;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    color: #7a6a48;
 
-color:#8b0000;
-
+    border: 1px solid rgba(181,138,43,.45);
+    background: rgba(255,255,255,.58);
+    border-radius: 3px;
+    z-index: 5;
 }
 
-.title h3{
-
-margin:0;
-
+.certificate-number strong {
+    display: block;
+    margin-top: 3px;
+    color: #173f72;
+    font-size: 12px;
+    letter-spacing: .5px;
 }
 
-.name{
-
-font-size:34px;
-
-font-weight:bold;
-
-color:#004a99;
-
-margin-top:25px;
-
-text-align:center;
-
+.certificate-header {
+    text-align: center;
+    padding: 1px 135px 0;
 }
 
-.text{
-
-font-size:22px;
-
-line-height:1.8;
-
-text-align:center;
-
-margin-top:20px;
-
+.exam-name {
+    margin-top: 2px;
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1.55px;
+    line-height: 1.2;
+    color: #173f72;
+    text-transform: uppercase;
 }
 
-.info{
+.organized-by {
+    display: inline-block;
+    margin-top: 7px;
+    padding: 4px 18px;
 
-margin-top:25px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .45px;
+    color: #687182;
 
-width:100%;
-
-border-collapse:collapse;
-
+    border-top: 1px solid rgba(181,138,43,.42);
+    border-bottom: 1px solid rgba(181,138,43,.42);
 }
 
-.info td{
-
-border:1px solid #999;
-
-padding:10px;
-
-font-size:18px;
-
+.certificate-name {
+    position: relative;
+    margin-top: 16px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 29px;
+    font-weight: 900;
+    letter-spacing: 2.8px;
+    line-height: 1.1;
+    color: #9a711b;
+    text-transform: uppercase;
 }
 
-.footer{
-
-margin-top:45px;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:flex-end;
-
+.certificate-name::before,
+.certificate-name::after {
+    content: "◆";
+    display: inline-block;
+    margin: 0 14px;
+    vertical-align: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 7px;
+    color: #b58a2b;
 }
 
-.signature{
-
-width:230px;
-
-text-align:center;
-
-border-top:1px solid #000;
-
-padding-top:8px;
-
+.student-area {
+    position: relative;
+    margin-top: 18px;
+    min-height: 143px;
+    padding-right: 178px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.qr{
+.student-photo-wrap {
+    position: absolute;
+    right: 18px;
+    top: -3px;
+    width: 110px;
+    height: 134px;
+    padding: 5px;
 
-width:90px;
+    border: 1px solid #b58a2b;
+    outline: 1px solid rgba(181,138,43,.42);
+    outline-offset: 3px;
+    background: #fff;
 
-height:90px;
-
+    box-shadow:
+        0 5px 14px rgba(23,63,114,.12),
+        inset 0 0 0 1px rgba(181,138,43,.18);
 }
 
-.number{
-
-position:absolute;
-
-top:18px;
-
-right:30px;
-
-font-weight:bold;
-
-font-size:16px;
-
+.student-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-@media print{
+.student-name {
+    position: relative;
+    width: 100%;
+    padding: 0 18px 10px;
 
-.toolbar{
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: .4px;
+    color: #173f72;
 
-display:none;
-
+    border-bottom: 1px solid #caa85c;
 }
 
-body{
-
-background:#fff;
-
-padding:0;
-
+.student-name::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 58px;
+    height: 7px;
+    transform: translateX(-50%);
+    background: #fdfcf8;
+    border-left: 1px solid #caa85c;
+    border-right: 1px solid #caa85c;
 }
 
-.page{
+.description {
+    position: relative;
+    max-width: 790px;
+    min-height: 104px;
+    margin: 11px auto 0;
+    padding: 13px 42px 11px;
 
-margin:0;
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.48;
+    color: #3b4350;
 
-border:none;
-
+    border-top: 1px solid rgba(181,138,43,.32);
+    border-bottom: 1px solid rgba(181,138,43,.32);
+    background: rgba(255,255,255,.26);
 }
 
+.description::before,
+.description::after {
+    position: absolute;
+    font-family: Georgia, serif;
+    font-size: 31px;
+    line-height: 1;
+    color: rgba(181,138,43,.42);
+}
+
+.description::before {
+    content: "“";
+    left: 12px;
+    top: 6px;
+}
+
+.description::after {
+    content: "”";
+    right: 12px;
+    bottom: -7px;
+}
+
+.dynamic-value {
+    color: #173f72;
+    font-weight: 800;
+}
+
+.bottom-area {
+    position: absolute;
+    left: 43px;
+    right: 43px;
+    bottom: 31px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.qr-area {
+    width: 112px;
+    min-height: 104px;
+    padding: 7px 5px 5px;
+    text-align: center;
+
+    border: 1px solid rgba(181,138,43,.38);
+    background: rgba(255,255,255,.55);
+}
+
+.qr {
+    width: 76px;
+    height: 76px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 4px;
+}
+
+.qr-label {
+    font-family: Arial, sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .35px;
+    color: #687182;
+    text-transform: uppercase;
+}
+
+.signatures {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 90px;
+    flex: 1;
+    padding-left: 70px;
+}
+
+.signature {
+    width: 205px;
+    text-align: center;
+}
+
+.signature-image {
+    height: 50px;
+    width: 178px;
+    margin: 0 auto 5px;
+    object-fit: contain;
+}
+
+.signature-line {
+    border-top: 1px solid #253043;
+    padding-top: 6px;
+
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    color: #263143;
+}
+
+.signature-label {
+    margin-top: 2px;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    color: #7a8290;
+}
+
+@media print {
+
+    body {
+        background: #fff;
+        padding: 0;
+    }
+
+    .toolbar {
+        display: none;
+    }
+
+    .certificate-page {
+        width: 297mm;
+        height: 210mm;
+        margin: 0;
+        padding: 18px;
+        box-shadow: none;
+        page-break-after: always;
+    }
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="toolbar">
-
-<button onclick="window.print()">
-
-🖨 Print / Save PDF
-
-</button>
-
+    <button onclick="window.print()">
+        🖨 Print / Save PDF
+    </button>
 </div>
 
-<% certificates.forEach(certificate=>{ %>
+<%
+const categoryMap = {
+    Gold: "rank1",
+    Silver: "rank2",
+    Bronze: "rank3",
+    Merit: "merit",
+    Appreciation: "appreciation"
+};
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function renderDescription(template, certificate) {
+
+    const sectionRank =
+        certificate?.section_rank ??
+        certificate?.overall_rank ??
+        "—";
+
+    let rankLabel = "Appreciation";
+
+    if (certificate?.certificate_type === "Gold") {
+        rankLabel = "Rank 1";
+    } else if (certificate?.certificate_type === "Silver") {
+        rankLabel = "Rank 2";
+    } else if (certificate?.certificate_type === "Bronze") {
+        rankLabel = "Rank 3";
+    } else if (certificate?.certificate_type === "Merit") {
+        rankLabel = `Rank ${sectionRank}`;
+    }
+
+    const examName =
+        certificateSetting?.exam_name ||
+        "RATABARI TALLENT SEARCH EXAMINATION 2026";
+
+    return String(template || "")
+        .replace(
+            /\{student_name\}/g,
+            `<span class="dynamic-value">${escapeHtml(certificate?.full_name || "Student Name")}</span>`
+        )
+        .replace(
+            /\{exam_name\}/g,
+            `<span class="dynamic-value">${escapeHtml(examName)}</span>`
+        )
+        .replace(
+            /\{rank\}/g,
+            `<span class="dynamic-value">${escapeHtml(sectionRank)}</span>`
+        )
+        .replace(
+            /\{rank_label\}/g,
+            `<span class="dynamic-value">${escapeHtml(rankLabel)}</span>`
+        )
+        .replace(
+            /\{section\}/g,
+            `<span class="dynamic-value">${escapeHtml(certificate?.section || section || "Section")}</span>`
+        )
+        .replace(
+            /\{class\}/g,
+            `<span class="dynamic-value">${escapeHtml(certificate?.class || "Class")}</span>`
+        )
+        .replace(
+            /\{year\}/g,
+            `<span class="dynamic-value">${escapeHtml(new Date().getFullYear())}</span>`
+        );
+}
+%>
+
+<% certificates.forEach(certificate => {
+
+    const categoryKey =
+        categoryMap[certificate?.certificate_type] ||
+        "appreciation";
+
+    const categorySetting =
+        certificateCategories?.[categoryKey] || {};
+
+    const examName =
+        certificateSetting?.exam_name ||
+        "RATABARI TALLENT SEARCH EXAMINATION 2026";
+
+    const organizedBy =
+        certificateSetting?.organized_by ||
+        "ARSP";
+
+    const organizedByLabel =
+        certificateSetting?.organized_by_label ||
+        "Organized by";
+
+    const description =
+        categorySetting?.certificate_description ||
+        "This certificate is proudly presented to {student_name} in recognition of their achievement in {exam_name}.";
+
+%>
+
+<div class="certificate-page">
 
-<div class="page">
+    <div class="certificate-inner">
 
-<div class="number">
+        <% if (siteSettings?.logo) { %>
+            <img
+                src="/uploads/site-settings/<%= siteSettings.logo %>"
+                class="certificate-logo-watermark"
+                alt=""
+                aria-hidden="true"
+            >
+        <% } %>
 
-Certificate No.
+        <% if (siteSettings?.logo) { %>
+            <img
+                src="/uploads/site-settings/<%= siteSettings.logo %>"
+                class="certificate-logo"
+                alt="ARSP Logo"
+            >
+        <% } %>
 
-<strong>
+        <div class="certificate-number">
+            Certificate No.
+            <strong>
+                <%= certificate?.certificate_no || "—" %>
+            </strong>
+        </div>
 
-<%= certificate.certificate_no %>
+        <div class="certificate-header">
 
-</strong>
+            <div class="exam-name">
+                <%= examName %>
+            </div>
 
-</div>
+            <div class="organized-by">
+                <%= organizedByLabel %> <%= organizedBy %>
+            </div>
 
-<div class="inner">
+            <div class="certificate-name">
+                <%= categorySetting?.certificate_name || certificate?.certificate_type || "CERTIFICATE" %>
+            </div>
 
-<div class="header">
+        </div>
 
-<img
+        <div class="student-area">
 
-src="/uploads/arsp-settings/<%= setting.logo %>"
+            <% if (certificate?.photo) { %>
+                <div class="student-photo-wrap">
+                    <img
+                        src="/uploads/rtse/<%= certificate.photo %>"
+                        class="student-photo"
+                        alt="Student Photo"
+                    >
+                </div>
+            <% } %>
 
-class="logo">
+            <div class="student-name">
+                <%= certificate?.full_name || "Student Name" %>
+            </div>
 
-<div class="title">
+        </div>
 
-<h1>
+        <div class="description">
+            <%- renderDescription(description, certificate) %>
+        </div>
 
-ACTIVE RURAL SOCIAL PROGRESS
+        <div class="bottom-area">
 
-</h1>
+            <div class="qr-area">
 
-<h2>
+                <% if (certificate?.qr_code) { %>
 
-Ratabari Talent Search Examination
+                    <img
+                        src="/uploads/rtse-certificates/<%= certificate.qr_code %>"
+                        class="qr"
+                        alt="Certificate QR"
+                    >
 
-</h2>
+                    <div class="qr-label">
+                        Scan to verify certificate
+                    </div>
 
-<h3>
+                <% } %>
 
-Official Certificate
+            </div>
 
-</h3>
+            <div class="signatures">
 
-</div>
+                <div class="signature">
 
-<img
+                    <% if (certificateSetting?.left_signature) { %>
 
-src="/uploads/rtse/<%= certificate.photo %>"
+                        <img
+                            src="/uploads/rtse-certificate-settings/<%= certificateSetting.left_signature %>"
+                            class="signature-image"
+                            alt="President Signature"
+                        >
 
-class="photo">
+                    <% } else { %>
 
-</div>
+                        <div class="signature-image"></div>
 
-<div class="name">
+                    <% } %>
 
-<%= certificate.full_name %>
+                    <div class="signature-line">
+                        <%= certificateSetting?.left_signature_label || "President" %>
+                    </div>
 
-</div>
 
-<div class="text">
+                </div>
 
-This certificate is proudly presented for successful participation and achievement in the
+                <div class="signature">
 
-<strong>
+                    <% if (certificateSetting?.right_signature) { %>
 
-Ratabari Talent Search Examination
+                        <img
+                            src="/uploads/rtse-certificate-settings/<%= certificateSetting.right_signature %>"
+                            class="signature-image"
+                            alt="Director Signature"
+                        >
 
-</strong>
+                    <% } else { %>
 
-conducted by
+                        <div class="signature-image"></div>
 
-<strong>
+                    <% } %>
 
-Active Rural Social Progress (ARSP)
+                    <div class="signature-line">
+                        <%= certificateSetting?.right_signature_label || "Director" %>
+                    </div>
 
-</strong>.
 
-</div>
+                </div>
 
-<table class="info">
+            </div>
 
-<tr>
+        </div>
 
-<td>Registration No.</td>
-
-<td><%= certificate.registration_no %></td>
-
-<td>Roll No.</td>
-
-<td><%= certificate.roll_no %></td>
-
-</tr>
-
-<tr>
-
-<td>School</td>
-
-<td><%= certificate.school_name %></td>
-
-<td>Section</td>
-
-<td><%= certificate.section %></td>
-
-</tr>
-
-<tr>
-
-<td>Marks</td>
-
-<td><%= certificate.marks %></td>
-
-<td>Grade</td>
-
-<td><%= certificate.grade %></td>
-
-</tr>
-
-<tr>
-
-<td>Certificate</td>
-
-<td><%= certificate.certificate_type %></td>
-
-<td>Overall Rank</td>
-
-<td><%= certificate.overall_rank || "-" %></td>
-
-</tr>
-
-</table>
-
-<div class="footer">
-
-<div>
-
-<img
-
-src="/uploads/rtse-certificates/<%= certificate.qr_code %>"
-
-class="qr">
-
-</div>
-
-<div class="signature">
-
-Controller of Examination
-
-</div>
-
-<div class="signature">
-
-President, ARSP
-
-</div>
-
-</div>
-
-</div>
+    </div>
 
 </div>
 
 <% }) %>
 
 </body>
-
 </html>
