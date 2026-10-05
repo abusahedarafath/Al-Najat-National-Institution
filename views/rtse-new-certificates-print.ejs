@@ -288,7 +288,12 @@
 
                     </div>
 
-                    <% if (rank1QrCode) { %>
+                                        <div class="rank1-overlay-certificate-number">
+                        <span>Certificate No.</span>
+                        <strong><%= certificate?.certificate_no || "—" %></strong>
+                    </div>
+
+<% if (rank1QrCode) { %>
                         <img
                             class="rank1-overlay-qr"
                             src="<%= rank1QrCode %>"
@@ -394,7 +399,12 @@
 
                     </div>
 
-                    <% if (qrCode) { %>
+                                        <div class="rank2-overlay-certificate-number">
+                        <span>Certificate No.</span>
+                        <strong><%= certificate?.certificate_no || "—" %></strong>
+                    </div>
+
+<% if (qrCode) { %>
                         <img
                             class="rank2-overlay-qr"
                             src="<%= qrCode %>"
@@ -513,7 +523,12 @@
 
                     </div>
 
-                    <% if (qrCode) { %>
+                                        <div class="rank3-overlay-certificate-number">
+                        <span>Certificate No.</span>
+                        <strong><%= certificate?.certificate_no || "—" %></strong>
+                    </div>
+
+<% if (qrCode) { %>
                         <img
                             class="rank3-overlay-qr"
                             src="<%= qrCode %>"
@@ -632,7 +647,12 @@
 
             </div>
 
-            <% if (qrCode) { %>
+                        <div class="merit-overlay-certificate-number">
+                <span>Certificate No.</span>
+                <strong><%= certificate?.certificate_no || "—" %></strong>
+            </div>
+
+<% if (qrCode) { %>
                 <img
                     class="merit-overlay-qr"
                     src="<%= qrCode %>"
@@ -815,7 +835,7 @@
                         </span>
 
                         <strong>
-                            <%= certificate?.certificate_number || "—" %>
+                            <%= certificate?.certificate_no || "—" %>
                         </strong>
 
                     </div>

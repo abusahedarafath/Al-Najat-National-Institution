@@ -211,6 +211,11 @@ const directorLabel =
             </div>
         </div>
 
+        <div class="rank1-overlay-certificate-number">
+            <span>Certificate No.</span>
+            <strong><%= certificate?.certificate_no || "—" %></strong>
+        </div>
+
         <% if (qrCode) { %>
             <img
                 class="rank1-overlay-qr"
@@ -307,6 +312,11 @@ const directorLabel =
                         <%- certificateDescription %>
                     </div>
 
+                </div>
+
+                <div class="rank2-overlay-certificate-number">
+                    <span>Certificate No.</span>
+                    <strong><%= certificate?.certificate_no || "—" %></strong>
                 </div>
 
                 <% if (qrCode) { %>
@@ -406,6 +416,11 @@ const directorLabel =
 
                 </div>
 
+                <div class="rank3-overlay-certificate-number">
+                    <span>Certificate No.</span>
+                    <strong><%= certificate?.certificate_no || "—" %></strong>
+                </div>
+
                 <% if (qrCode) { %>
                     <img
                         class="rank3-overlay-qr"
@@ -503,6 +518,11 @@ const directorLabel =
                         <%- certificateDescription %>
                     </div>
 
+                </div>
+
+                <div class="merit-overlay-certificate-number">
+                    <span>Certificate No.</span>
+                    <strong><%= certificate?.certificate_no || "—" %></strong>
                 </div>
 
                 <% if (qrCode) { %>
@@ -638,7 +658,7 @@ const directorLabel =
 
             <div class="certificate-number">
                 <span>Certificate No.</span>
-                <strong><%= certificate?.certificate_number || "—" %></strong>
+                <strong><%= certificate?.certificate_no || "—" %></strong>
             </div>
 
             <div class="signature-block">

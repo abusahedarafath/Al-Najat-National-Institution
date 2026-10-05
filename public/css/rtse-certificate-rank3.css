@@ -233,3 +233,27 @@ body {
         margin: 0;
     }
 }
+
+.rank3-overlay-certificate-number {
+    position: absolute;
+    left: 23%;
+    bottom: 65.15%;
+    transform: translateX(-50%);
+    z-index: 20;
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 9.5pt;
+    line-height: 1.15;
+    color: #12234d;
+    white-space: nowrap;
+}
+
+.rank3-overlay-certificate-number span {
+    font-weight: 600;
+}
+
+.rank3-overlay-certificate-number strong {
+    margin-left: 1.5mm;
+    font-weight: 800;
+    color: #8a5712;
+}

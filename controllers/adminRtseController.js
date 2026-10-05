@@ -5729,6 +5729,9 @@ exports.printNewCertificateGroup = async (req, res) => {
                 section_rank:
                     student.section_rank,
 
+                certificate_no:
+                    existingCertificate?.certificate_no || null,
+
                 qr_code:
                     existingCertificate?.qr_code || null,
 
@@ -7013,6 +7016,9 @@ exports.viewNewCertificate = async (req, res) => {
 
             overall_rank:
                 result.overall_rank,
+
+            certificate_no:
+                existingCertificate?.certificate_no || null,
 
             qr_code:
                 existingCertificate?.qr_code || null,
