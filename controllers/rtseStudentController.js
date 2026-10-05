@@ -1,6 +1,8 @@
 const RtseApplication = require("../models/RtseApplication");
 const RtseResult = require("../models/RtseResult");
 const RtseCertificate = require("../models/RtseCertificate");
+const RtseCertificateSetting = require("../models/RtseCertificateSetting");
+const RtseCertificateCategorySetting = require("../models/RtseCertificateCategorySetting");
 const RtseSetting = require("../models/RtseSetting");
 const RtseExamSetting = require("../models/RtseExamSetting");
 const RtseCentre = require("../models/RtseCentre");
@@ -577,12 +579,22 @@ exports.certificate = async (req, res) => {
 
         }
 
+        const certificateCategorySetting =
+            await RtseCertificateCategorySetting.getByCategory(
+                "appreciation"
+            );
+
+        const certificateSetting =
+            await RtseCertificateSetting.get();
+
         return res.render(
             "rtse/certificate",
             {
                 title: "RTSE Certificate",
                 setting,
-                certificate
+                certificate,
+                certificateCategorySetting,
+                certificateSetting
             }
         );
 

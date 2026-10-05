@@ -296,19 +296,19 @@ class="logo">
 
 <h1>
 
-ACTIVE RURAL SOCIAL PROGRESS
+<%= certificateSetting?.organized_by || "" %>
 
 </h1>
 
 <h2>
 
-Ratabari Talent Search Examination
+<%= certificateSetting?.exam_name || "RTSE" %>
 
 </h2>
 
 <h3>
 
-Official Certificate
+<%= certificateCategorySetting?.certificate_name || "CERTIFICATE OF APPRECIATION" %>
 
 </h3>
 
@@ -326,17 +326,9 @@ class="photo">
 
 <h1>
 
-<%= certificate.certificate_type %>
-
-Certificate
+<%= certificateCategorySetting?.certificate_name || "CERTIFICATE OF APPRECIATION" %>
 
 </h1>
-
-<p class="text">
-
-This certificate is proudly presented to
-
-</p>
 
 <div class="name">
 
@@ -345,25 +337,24 @@ This certificate is proudly presented to
 </div>
 
 <p class="text">
+<%
+const certificateDescription =
+    certificateCategorySetting?.certificate_description ||
+    "This certificate is proudly presented to {student_name} in recognition of their achievement in {exam_name}.";
 
-for successfully participating in the
+const renderedDescription =
+    String(certificateDescription)
+        .replace(
+            /\{student_name\}/g,
+            certificate?.full_name || "Student"
+        )
+        .replace(
+            /\{exam_name\}/g,
+            certificateSetting?.exam_name || "RTSE"
+        );
+%>
 
-<strong>
-
-Ratabari Talent Search Examination
-
-</strong>
-
-conducted by
-
-<strong>
-
-Active Rural Social Progress (ARSP)
-
-</strong>
-
-and securing an excellent performance.
-
+<%- renderedDescription %>
 </p>
 
 <table class="info">
