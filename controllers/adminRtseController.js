@@ -5312,6 +5312,191 @@ const students =
 
 
 // =====================================
+// Print Individual Appreciation Certificate
+// =====================================
+
+
+// =====================================
+// Print All Appreciation Certificates
+// =====================================
+
+exports.printAllSectionCertificates = async (req, res) => {
+
+    try {
+
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const certificates =
+            await RtseCertificate.getBySection(
+                req.params.section,
+                applicationYear
+            );
+
+        const appreciationCertificates =
+            (certificates || []).filter(
+                (certificate) =>
+                    String(certificate?.certificate_type || "")
+                        .trim()
+                        .toLowerCase() === "appreciation"
+            );
+
+        if (!appreciationCertificates.length) {
+            return res.status(404).send(
+                "No Appreciation certificates found for this section."
+            );
+        }
+
+        const setting =
+            await RtseExamSetting.get();
+
+        const siteSettings =
+            await SiteSetting.get();
+
+        const certificateSettingModel =
+            require("../models/RtseCertificateSetting");
+
+        const certificateCategorySettingModel =
+            require("../models/RtseCertificateCategorySetting");
+
+        const certificateSetting =
+            await certificateSettingModel.get();
+
+        const categoryRows =
+            await certificateCategorySettingModel.getAll();
+
+        const certificateCategories = {};
+
+        for (const row of categoryRows) {
+            certificateCategories[row.category_key] = row;
+        }
+
+        return res.render(
+            "admin/rtse/section-certificates",
+            {
+                title: "Print All Appreciation Certificates",
+                certificates: appreciationCertificates,
+                setting,
+                siteSettings,
+                certificateSetting,
+                certificateCategories,
+                section: req.params.section
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Print all Appreciation certificates error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to generate the Appreciation certificates print page."
+        );
+
+    }
+
+};
+
+exports.printSectionCertificate = async (req, res) => {
+
+    try {
+
+        const applicationId =
+            Number(req.params.id);
+
+        if (!Number.isInteger(applicationId) || applicationId <= 0) {
+
+            return res.status(400).send(
+                "Invalid certificate application."
+            );
+
+        }
+
+        const certificate =
+            await RtseCertificate.getByApplicationAndType(
+                applicationId,
+                "Appreciation"
+            );
+
+        if (!certificate) {
+
+            return res.status(404).send(
+                "Appreciation certificate not found."
+            );
+
+        }
+
+        const setting =
+            await RtseExamSetting.get();
+
+        const siteSettings =
+            await SiteSetting.get();
+
+        const certificateSettingModel =
+            require("../models/RtseCertificateSetting");
+
+        const certificateCategorySettingModel =
+            require("../models/RtseCertificateCategorySetting");
+
+        const certificateSetting =
+            await certificateSettingModel.get();
+
+        const categoryRows =
+            await certificateCategorySettingModel.getAll();
+
+        const certificateCategories = {};
+
+        for (const row of categoryRows) {
+            certificateCategories[row.category_key] = row;
+        }
+
+        return res.render(
+            "admin/rtse/section-certificates",
+            {
+                title: "Appreciation Certificate",
+
+                certificates: [certificate],
+
+                setting,
+
+                siteSettings,
+
+                certificateSetting,
+
+                certificateCategories,
+
+                section: certificate.section
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Print individual Appreciation certificate error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to generate the Appreciation certificate print page."
+        );
+
+    }
+
+};
+
+
+// =====================================
 // New Certificate Section
 // =====================================
 
@@ -7461,14 +7646,10 @@ const certificates=
         }
 
         res.render(
-            "admin/rtse/section-certificates",
+            "admin/rtse/appreciation-certificates-section",
             {
-                title: "Section Certificates",
+                title: "Appreciation Certificates",
                 certificates,
-                setting,
-                siteSettings,
-                certificateSetting,
-                certificateCategories,
                 section: req.params.section
             }
         );

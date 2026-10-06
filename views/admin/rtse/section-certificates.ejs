@@ -42,6 +42,24 @@ body {
     cursor: pointer;
 }
 
+.individual-print-action {
+    width: 1123px;
+    margin: 0 auto 12px;
+    text-align: right;
+}
+
+.individual-print-action a {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #123c73;
+    color: #fff;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 4px;
+}
+
 .certificate-page {
     width: 1123px;
     height: 794px;
@@ -468,6 +486,10 @@ body {
         display: none;
     }
 
+    .individual-print-action {
+        display: none;
+    }
+
     .certificate-page {
         width: 297mm;
         height: 210mm;
@@ -583,6 +605,14 @@ function renderDescription(template, certificate) {
         "This certificate is proudly presented to {student_name} in recognition of their achievement in {exam_name}.";
 
 %>
+
+<div class="individual-print-action">
+    <a
+        href="/admin/rtse/certificates/<%= encodeURIComponent(certificate.application_id) %>/print"
+    >
+        🖨️ Print Certificate
+    </a>
+</div>
 
 <div class="certificate-page">
 

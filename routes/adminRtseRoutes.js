@@ -1316,6 +1316,26 @@ router.get(
 
 );
 
+router.get(
+
+    "/rtse/certificates/section/:section/print",
+
+    auth.isAdmin,
+
+    adminRtseController.printAllSectionCertificates
+
+);
+
+router.get(
+
+    "/rtse/certificates/:id/print",
+
+    auth.isAdmin,
+
+    adminRtseController.printSectionCertificate
+
+);
+
 
 // =====================================
 // New Certificate System - Section

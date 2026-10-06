@@ -93,6 +93,14 @@
         background: #315f9b;
     }
 
+    .appreciation {
+        border-top: 6px solid #7c3aed;
+    }
+
+    .appreciation .certificate-action {
+        background: #7c3aed;
+    }
+
     .back-link {
         display: inline-block;
         margin-bottom: 20px;
@@ -276,11 +284,36 @@
                 View All Merit Certificates
             </a>
 
+        </div>
+
+        <!-- Appreciation -->
+
+        <div class="certificate-category appreciation">
+
+            <h2>
+                🏅 Appreciation Certificates
+            </h2>
+
+            <p>
+                All students holding Section Rank
+                <strong>11+</strong>.
+            </p>
+
+            <p>
+                <strong>
+                    <%= students.filter(
+                        student =>
+                            Number(student.section_rank) >= 11
+                    ).length %>
+                </strong>
+                Appreciation Certificate(s)
+            </p>
+
             <a
                 href="/admin/rtse/certificates/section/<%= encodeURIComponent(section) %>"
-                class="btn-view"
+                class="certificate-action"
             >
-                📄 Section <%= section %> Certificates
+                View All Appreciation Certificates
             </a>
 
         </div>
