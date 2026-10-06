@@ -1357,6 +1357,33 @@ router.get(
 // Print All New Certificate Groups
 // =====================================
 
+// =====================================
+// New Certificate System - School-wise
+// =====================================
+
+router.get(
+    "/rtse/new-certificates/section/:section/schools",
+    auth.isAdmin,
+    adminRtseController.schoolCertificateSection
+);
+
+router.get(
+    "/rtse/new-certificates/section/:section/schools/:school/print",
+    auth.isAdmin,
+    adminRtseController.printAllSchoolCertificates
+);
+
+router.get(
+    "/rtse/new-certificates/section/:section/schools/:school",
+    auth.isAdmin,
+    adminRtseController.schoolCertificateStudents
+);
+
+
+// =====================================
+// Print All New Certificate Groups
+// =====================================
+
 router.get(
     "/rtse/new-certificates/section/:section/:group/print",
     auth.isAdmin,

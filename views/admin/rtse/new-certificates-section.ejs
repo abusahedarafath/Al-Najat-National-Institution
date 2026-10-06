@@ -101,6 +101,15 @@
         background: #7c3aed;
     }
 
+    .school-wise {
+        border-top: 6px solid #0f766e;
+    }
+
+    .school-wise .certificate-action {
+        background: #0f766e;
+    }
+
+
     .back-link {
         display: inline-block;
         margin-bottom: 20px;
@@ -317,6 +326,33 @@
             </a>
 
         </div>
+        <!-- School-wise Certificates -->
+
+        <div class="certificate-category school-wise">
+
+            <h2>
+                🏫 School-wise Certificates
+            </h2>
+
+            <p>
+                View and manage Appreciation certificates
+                school-wise for this section.
+            </p>
+
+            <p>
+                <strong>School-wise</strong>
+                Certificate Management
+            </p>
+
+            <a
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools"
+                class="certificate-action"
+            >
+                View School-wise Certificates
+            </a>
+
+        </div>
+
 
 
 
