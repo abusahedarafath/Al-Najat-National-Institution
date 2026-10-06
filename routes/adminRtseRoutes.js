@@ -1401,6 +1401,29 @@ router.get(
 );
 
 // =====================================
+// School-wise Appreciation Certificates
+// =====================================
+
+router.get(
+    "/rtse/certificates/schools",
+    auth.isAdmin,
+    adminRtseController.schoolWiseAppreciationCertificates
+);
+
+router.get(
+    "/rtse/certificates/schools/:school/print",
+    auth.isAdmin,
+    adminRtseController.printAllSchoolWiseAppreciationCertificates
+);
+
+router.get(
+    "/rtse/certificates/schools/:school",
+    auth.isAdmin,
+    adminRtseController.schoolWiseAppreciationCertificateStudents
+);
+
+
+// =====================================
 // All Certificates
 // =====================================
 

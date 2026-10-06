@@ -8029,6 +8029,358 @@ const certificates=
 
 
 // =====================================
+// School-wise Appreciation Certificates
+// =====================================
+
+exports.schoolWiseAppreciationCertificates = async (req, res) => {
+
+    try {
+
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const certificates =
+            await RtseCertificate.getAll(
+                applicationYear
+            );
+
+        const appreciationCertificates =
+            (certificates || []).filter(
+                certificate =>
+                    String(
+                        certificate?.certificate_type || ""
+                    )
+                        .trim()
+                        .toLowerCase() === "appreciation"
+            );
+
+        const schoolMap = new Map();
+
+        for (const certificate of appreciationCertificates) {
+
+            const schoolName =
+                String(
+                    certificate?.school_name || ""
+                ).trim();
+
+            if (!schoolName) {
+                continue;
+            }
+
+            const schoolKey =
+                schoolName.toLowerCase();
+
+            if (!schoolMap.has(schoolKey)) {
+
+                schoolMap.set(
+                    schoolKey,
+                    {
+                        school_name: schoolName,
+                        certificate_count: 0
+                    }
+                );
+
+            }
+
+            schoolMap.get(
+                schoolKey
+            ).certificate_count += 1;
+
+        }
+
+        const schools =
+            Array.from(
+                schoolMap.values()
+            ).sort(
+                (a, b) =>
+                    a.school_name.localeCompare(
+                        b.school_name,
+                        undefined,
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+            );
+
+        return res.render(
+            "admin/rtse/school-wise-appreciation-certificates",
+            {
+                title:
+                    "School-wise Appreciation Certificates",
+                schools,
+                applicationYear
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School-wise Appreciation certificate list error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load school-wise Appreciation certificates."
+        );
+
+        return res.redirect(
+            "/admin/rtse/results"
+        );
+
+    }
+
+};
+
+
+exports.schoolWiseAppreciationCertificateStudents = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const school =
+            String(
+                req.params.school || ""
+            ).trim();
+
+        if (!school) {
+
+            req.flash(
+                "error",
+                "School is required."
+            );
+
+            return res.redirect(
+                "/admin/rtse/certificates/schools"
+            );
+
+        }
+
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const certificates =
+            await RtseCertificate.getAll(
+                applicationYear
+            );
+
+        const requestedSchoolKey =
+            school.toLowerCase();
+
+        const appreciationCertificates =
+            (certificates || []).filter(
+                certificate => {
+
+                    const certificateType =
+                        String(
+                            certificate?.certificate_type || ""
+                        )
+                            .trim()
+                            .toLowerCase();
+
+                    const certificateSchool =
+                        String(
+                            certificate?.school_name || ""
+                        )
+                            .trim()
+                            .toLowerCase();
+
+                    return (
+                        certificateType === "appreciation" &&
+                        certificateSchool === requestedSchoolKey
+                    );
+
+                }
+            );
+
+        const displaySchool =
+            appreciationCertificates[0]?.school_name ||
+            school;
+
+        return res.render(
+            "admin/rtse/school-wise-appreciation-certificate-students",
+            {
+                title:
+                    `${displaySchool} - Appreciation Certificates`,
+                school: displaySchool,
+                certificates:
+                    appreciationCertificates,
+                applicationYear
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School-wise Appreciation certificate students error:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to load the school's Appreciation certificates."
+        );
+
+        return res.redirect(
+            "/admin/rtse/certificates/schools"
+        );
+
+    }
+
+};
+
+
+exports.printAllSchoolWiseAppreciationCertificates = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const school =
+            String(
+                req.params.school || ""
+            ).trim();
+
+        if (!school) {
+
+            return res.status(400).send(
+                "School is required."
+            );
+
+        }
+
+        const rtseSetting =
+            await RtseSetting.get();
+
+        const applicationYear =
+            Number(rtseSetting?.exam_year);
+
+        if (!applicationYear) {
+            throw new Error(
+                "Active RTSE exam year is not configured."
+            );
+        }
+
+        const certificates =
+            await RtseCertificate.getAll(
+                applicationYear
+            );
+
+        const requestedSchoolKey =
+            school.toLowerCase();
+
+        const appreciationCertificates =
+            (certificates || []).filter(
+                certificate => {
+
+                    const certificateType =
+                        String(
+                            certificate?.certificate_type || ""
+                        )
+                            .trim()
+                            .toLowerCase();
+
+                    const certificateSchool =
+                        String(
+                            certificate?.school_name || ""
+                        )
+                            .trim()
+                            .toLowerCase();
+
+                    return (
+                        certificateType === "appreciation" &&
+                        certificateSchool === requestedSchoolKey
+                    );
+
+                }
+            );
+
+        if (!appreciationCertificates.length) {
+
+            return res.status(404).send(
+                "No Appreciation certificates found for this school."
+            );
+
+        }
+
+        const setting =
+            await RtseExamSetting.get();
+
+        const siteSettings =
+            await SiteSetting.get();
+
+        const certificateSetting =
+            await RtseCertificateSetting.get();
+
+        const categoryRows =
+            await RtseCertificateCategorySetting.getAll();
+
+        const certificateCategories = {};
+
+        for (const row of categoryRows) {
+            certificateCategories[
+                row.category_key
+            ] = row;
+        }
+
+        const displaySchool =
+            appreciationCertificates[0]?.school_name ||
+            school;
+
+        return res.render(
+            "admin/rtse/section-certificates",
+            {
+                title:
+                    `Print ${appreciationCertificates.length} Appreciation Certificates - ${displaySchool}`,
+                certificates:
+                    appreciationCertificates,
+                setting,
+                siteSettings,
+                certificateSetting,
+                certificateCategories,
+                section:
+                    "All Sections"
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "School-wise Appreciation certificate bulk print error:",
+            err
+        );
+
+        return res.status(500).send(
+            "Unable to generate the school Appreciation certificates print page."
+        );
+
+    }
+
+};
+
+
+// =====================================
 // All Certificates
 // =====================================
 

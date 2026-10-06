@@ -1,0 +1,176 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <style>
+            .school-page {
+                max-width: 1200px;
+                margin: 30px auto;
+                padding: 0 20px;
+            }
+
+            .page-actions {
+                margin-bottom: 22px;
+            }
+
+            .page-actions a {
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .page-header {
+                text-align: center;
+                margin-bottom: 28px;
+            }
+
+            .page-header h1 {
+                margin: 0 0 8px;
+            }
+
+            .page-header p {
+                color: #666;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+                background: #fff;
+                border-radius: 14px;
+                box-shadow: 0 8px 25px rgba(0,0,0,.08);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 700px;
+            }
+
+            th,
+            td {
+                padding: 14px 16px;
+                border-bottom: 1px solid #e5e7eb;
+                text-align: left;
+            }
+
+            th {
+                background: #f3f4f6;
+                font-weight: 700;
+            }
+
+            .view-button {
+                display: inline-block;
+                padding: 8px 14px;
+                border-radius: 7px;
+                color: #fff;
+                background: #0f766e;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .empty {
+                padding: 35px;
+                text-align: center;
+                color: #666;
+            }
+        </style>
+
+        <div class="school-page">
+
+            <div class="page-actions">
+                <a href="/admin/rtse/results">
+                    ← Back to Result Dashboard
+                </a>
+            </div>
+
+            <div class="page-header">
+
+                <h1>
+                    🏫 School-wise Appreciation Certificates
+                </h1>
+
+                <p>
+                    All schools with Appreciation certificate holders
+                    for the active RTSE examination year.
+                </p>
+
+            </div>
+
+            <% if (schools.length) { %>
+
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Sl.</th>
+                                <th>School Name</th>
+                                <th>Appreciation Certificates</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% schools.forEach(function(schoolItem, index) { %>
+
+                                <tr>
+
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            <%= schoolItem.school_name %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <%= schoolItem.certificate_count %>
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/rtse/certificates/schools/<%= encodeURIComponent(schoolItem.school_name) %>"
+                                            class="view-button">
+                                            View Certificate Holders
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }); %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="table-wrap">
+
+                    <div class="empty">
+                        No Appreciation Certificates found.
+                    </div>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>

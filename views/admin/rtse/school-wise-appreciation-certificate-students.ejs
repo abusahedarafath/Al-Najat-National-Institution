@@ -1,0 +1,221 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+
+        <style>
+            .students-page {
+                max-width: 1250px;
+                margin: 30px auto;
+                padding: 0 20px;
+            }
+
+            .page-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 15px;
+                flex-wrap: wrap;
+                margin-bottom: 22px;
+            }
+
+            .page-actions a {
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .print-all-button {
+                display: inline-block;
+                padding: 11px 18px;
+                border-radius: 8px;
+                background: #7c3aed;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+            }
+
+            .page-header {
+                text-align: center;
+                margin-bottom: 25px;
+            }
+
+            .page-header h1 {
+                margin: 0 0 8px;
+            }
+
+            .page-header p {
+                color: #666;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+                background: #fff;
+                border-radius: 14px;
+                box-shadow: 0 8px 25px rgba(0,0,0,.08);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 900px;
+            }
+
+            th,
+            td {
+                padding: 14px 16px;
+                border-bottom: 1px solid #e5e7eb;
+                text-align: left;
+            }
+
+            th {
+                background: #f3f4f6;
+                font-weight: 700;
+            }
+
+            .view-button {
+                display: inline-block;
+                padding: 8px 13px;
+                border-radius: 7px;
+                color: #fff;
+                background: #315f9b;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .empty {
+                padding: 35px;
+                text-align: center;
+                color: #666;
+            }
+        </style>
+
+        <div class="students-page">
+
+            <div class="page-actions">
+
+                <a
+                    href="/admin/rtse/certificates/schools">
+                    ← Back to School List
+                </a>
+
+                <% if (certificates.length) { %>
+
+                    <a
+                        href="/admin/rtse/certificates/schools/<%= encodeURIComponent(school) %>/print"
+                        class="print-all-button">
+                        🖨️ Print All Certificates
+                    </a>
+
+                <% } %>
+
+            </div>
+
+            <div class="page-header">
+
+                <h1>
+                    🏫 <%= school %>
+                </h1>
+
+                <p>
+                    <%= certificates.length %>
+                    Appreciation Certificate(s)
+                </p>
+
+            </div>
+
+            <% if (certificates.length) { %>
+
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Sl.</th>
+                                <th>Student Name</th>
+                                <th>Registration No.</th>
+                                <th>Roll No.</th>
+                                <th>Section</th>
+                                <th>Section Rank</th>
+                                <th>Certificate</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <% certificates.forEach(function(certificate, index) { %>
+
+                                <tr>
+
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            <%= certificate.full_name %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <%= certificate.registration_no %>
+                                    </td>
+
+                                    <td>
+                                        <%= certificate.roll_no %>
+                                    </td>
+
+                                    <td>
+                                        <%= certificate.section %>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            <%= certificate.section_rank %>
+                                        </strong>
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/rtse/certificates/<%= encodeURIComponent(certificate.application_id) %>/print"
+                                            class="view-button">
+                                            View / Download
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }); %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="table-wrap">
+
+                    <div class="empty">
+                        No Appreciation Certificates found for this school.
+                    </div>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include("../partials/footer") %>
