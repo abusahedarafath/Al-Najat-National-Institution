@@ -158,13 +158,39 @@ router.get(
 );
 
 router.get(
-
-    "/rtse/records/centres",
-
+    "/rtse/records/student/:applicationId",
     auth.isAdmin,
+    adminRtseRecordsController.recordsStudentDetails
+);
 
+router.get(
+    "/rtse/records/centres",
+    auth.isAdmin,
     adminRtseRecordsController.recordsCentres
+);
 
+router.get(
+    "/rtse/records/student/:applicationId/registration-slip",
+    auth.isAdmin,
+    adminRtseRecordsController.recordsRegistrationSlip
+);
+
+router.get(
+    "/rtse/records/student/:applicationId/approved-slip",
+    auth.isAdmin,
+    adminRtseRecordsController.recordsApprovedSlip
+);
+
+router.get(
+    "/rtse/records/student/:applicationId/admit-card",
+    auth.isAdmin,
+    adminRtseRecordsController.recordsAdmitCard
+);
+
+router.get(
+    "/rtse/records/student/:applicationId/certificate",
+    auth.isAdmin,
+    adminRtseRecordsController.recordsCertificate
 );
 
 // =====================================

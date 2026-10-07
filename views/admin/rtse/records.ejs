@@ -120,6 +120,7 @@
                                 <th>Gender</th>
                                 <th>Attendance</th>
                                 <th>Result</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="recordsStudents"></tbody>
@@ -470,6 +471,276 @@
     color: #667085;
 }
 
+.records-student-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 300px;
+}
+
+.records-student-action {
+    border: 0;
+    border-radius: 7px;
+    padding: 7px 9px;
+    cursor: pointer;
+    background: #315f9b;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.records-student-action.result {
+    background: #166534;
+}
+
+.records-student-action.documents {
+    background: #6941c6;
+}
+
+.records-student-action:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.records-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(16, 24, 40, .62);
+}
+
+.records-modal[hidden] {
+    display: none;
+}
+
+.records-modal-dialog {
+    width: min(980px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(16, 24, 40, .24);
+}
+
+.records-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.records-modal-header h2 {
+    margin: 0;
+    color: #17213a;
+    font-size: 18px;
+}
+
+.records-modal-close {
+    border: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #f2f4f7;
+    color: #344054;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.records-modal-body {
+    overflow-y: auto;
+    padding: 18px;
+}
+
+.records-modal-loading,
+.records-modal-error,
+.records-modal-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: #667085;
+}
+
+.records-modal-error {
+    color: #b42318;
+}
+
+.records-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.records-detail-card {
+    border: 1px solid #e4e7ec;
+    border-radius: 11px;
+    padding: 14px;
+    background: #fff;
+}
+
+.records-detail-card.full {
+    grid-column: 1 / -1;
+}
+
+.records-detail-card h3 {
+    margin: 0 0 12px;
+    color: #17213a;
+    font-size: 15px;
+}
+
+.records-detail-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f2f4f7;
+}
+
+.records-detail-row:last-child {
+    border-bottom: 0;
+}
+
+.records-detail-label {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.records-detail-value {
+    color: #17213a;
+    font-size: 13px;
+    font-weight: 650;
+    word-break: break-word;
+}
+
+.records-status-present {
+    color: #166534;
+    font-weight: 850;
+}
+
+.records-status-absent {
+    color: #b42318;
+    font-weight: 850;
+}
+
+.records-qr-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.records-qr-card {
+    border: 1px solid #e4e7ec;
+    border-radius: 11px;
+    padding: 14px;
+    text-align: center;
+}
+
+.records-qr-card img {
+    display: block;
+    width: 180px;
+    max-width: 100%;
+    height: auto;
+    margin: 10px auto 0;
+}
+
+.records-result-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.records-result-table th,
+.records-result-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #eaecf0;
+    text-align: left;
+    font-size: 12px;
+}
+
+.records-result-table th {
+    background: #f8fafc;
+    color: #344054;
+    font-weight: 800;
+}
+
+.records-document-list {
+    display: grid;
+    gap: 10px;
+}
+
+.records-document-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 14px;
+    border: 1px solid #e4e7ec;
+    border-radius: 10px;
+}
+
+.records-document-name {
+    color: #17213a;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.records-document-status {
+    color: #667085;
+    font-size: 12px;
+}
+
+.records-document-link {
+    flex-shrink: 0;
+    display: inline-block;
+    padding: 7px 10px;
+    border-radius: 7px;
+    background: #315f9b;
+    color: #fff;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.records-document-link.disabled {
+    background: #eaecf0;
+    color: #98a2b3;
+    pointer-events: none;
+}
+
+@media (max-width: 700px) {
+    .records-student-actions {
+        min-width: 220px;
+    }
+
+    .records-detail-grid,
+    .records-qr-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .records-detail-card.full {
+        grid-column: auto;
+    }
+
+    .records-detail-row {
+        grid-template-columns: 1fr;
+        gap: 3px;
+    }
+
+    .records-document-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+
 @media (max-width: 1100px) {
     .records-filter-card {
         grid-template-columns: 1fr 1fr;
@@ -497,6 +768,45 @@
 }
 </style>
 
+
+<div
+    class="records-modal"
+    id="recordsStudentModal"
+    hidden
+    aria-hidden="true"
+>
+    <div
+        class="records-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="recordsStudentModalTitle"
+    >
+        <div class="records-modal-header">
+            <h2 id="recordsStudentModalTitle">
+                RTSE Student Record
+            </h2>
+
+            <button
+                type="button"
+                class="records-modal-close"
+                id="recordsStudentModalClose"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+        </div>
+
+        <div
+            class="records-modal-body"
+            id="recordsStudentModalBody"
+        >
+            <div class="records-modal-loading">
+                Select a student action to view the record.
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     const searchInput = document.getElementById("recordsSearch");
@@ -521,6 +831,15 @@
     const drilldownTitle = document.getElementById("recordsDrilldownTitle");
     const drilldownStudents = document.getElementById("recordsDrilldownStudents");
     const drilldownClose = document.getElementById("recordsDrilldownClose");
+
+    const studentModal =
+        document.getElementById("recordsStudentModal");
+    const studentModalClose =
+        document.getElementById("recordsStudentModalClose");
+    const studentModalTitle =
+        document.getElementById("recordsStudentModalTitle");
+    const studentModalBody =
+        document.getElementById("recordsStudentModalBody");
 
     let searchTimer = null;
     let requestSequence = 0;
@@ -565,6 +884,744 @@
                 ${escapeHtml(status)}${percentage}
             </span>
         `;
+    }
+
+    function openStudentModal(title = "RTSE Student Record") {
+        studentModalTitle.textContent = title;
+        studentModal.hidden = false;
+        studentModal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeStudentModal() {
+        studentModal.hidden = true;
+        studentModal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+    }
+
+    function setStudentModalLoading(message = "Loading student record...") {
+        studentModalBody.innerHTML = `
+            <div class="records-modal-loading">
+                ${escapeHtml(message)}
+            </div>
+        `;
+    }
+
+    function setStudentModalError(message) {
+        studentModalBody.innerHTML = `
+            <div class="records-modal-error">
+                ${escapeHtml(message)}
+            </div>
+        `;
+    }
+
+
+    function formatRecordValue(value) {
+        if (value === null || value === undefined || value === "") {
+            return "-";
+        }
+
+        return escapeHtml(value);
+    }
+
+    function formatDateValue(value) {
+        if (!value) {
+            return "-";
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return escapeHtml(value);
+        }
+
+        return escapeHtml(
+            date.toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            })
+        );
+    }
+
+    function attendanceStatusHtml(status) {
+        const normalized =
+            String(status || "").trim().toUpperCase();
+
+        if (normalized === "PRESENT") {
+            return '<span class="records-status-present">PRESENT</span>';
+        }
+
+        if (normalized === "ABSENT") {
+            return '<span class="records-status-absent">ABSENT</span>';
+        }
+
+        return '<span>NOT SCANNED</span>';
+    }
+
+    function componentGrade(marks, maximumMarks, gradeCounting) {
+        if (!Number(gradeCounting)) {
+            return "-";
+        }
+
+        const obtained = Number(marks);
+        const maximum = Number(maximumMarks);
+
+        if (
+            !Number.isFinite(obtained) ||
+            !Number.isFinite(maximum) ||
+            maximum <= 0
+        ) {
+            return "-";
+        }
+
+        const percentage = (obtained / maximum) * 100;
+
+        if (percentage >= 90) return "A+";
+        if (percentage >= 80) return "A";
+        if (percentage >= 70) return "B+";
+        if (percentage >= 60) return "B";
+        if (percentage >= 50) return "C+";
+        if (percentage >= 40) return "C";
+
+        return "F";
+    }
+
+    function renderDetailRows(rows) {
+        return rows.map(row => `
+            <div class="records-detail-row">
+                <div class="records-detail-label">
+                    ${row.label}
+                </div>
+                <div class="records-detail-value">
+                    ${row.value}
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function renderBasicStudentRecord(record) {
+        const application = record.application || {};
+        const centre = record.centre || {};
+        const attendance = record.attendance || {};
+
+        const attendanceStatus =
+            String(attendance.status || "").toUpperCase();
+
+        const admitQr =
+            attendance.admit_qr_data_url
+                ? `
+                    <div class="records-qr-card">
+                        <strong>Admit Card QR</strong>
+                        <img
+                            src="${attendance.admit_qr_data_url}"
+                            alt="Admit Card QR"
+                        >
+                    </div>
+                `
+                : `
+                    <div class="records-qr-card">
+                        <strong>Admit Card QR</strong>
+                        <div class="records-modal-empty">
+                            QR not available
+                        </div>
+                    </div>
+                `;
+
+        const resultQr =
+            attendanceStatus === "PRESENT" &&
+            record.result_qr_data_url
+                ? `
+                    <div class="records-qr-card">
+                        <strong>OMR / Result QR</strong>
+                        <img
+                            src="${record.result_qr_data_url}"
+                            alt="OMR / Result QR"
+                        >
+                    </div>
+                `
+                : `
+                    <div class="records-qr-card">
+                        <strong>OMR / Result QR</strong>
+                        <div class="records-modal-empty">
+                            ${
+                                attendanceStatus === "PRESENT"
+                                    ? "QR not available"
+                                    : "Available after PRESENT attendance"
+                            }
+                        </div>
+                    </div>
+                `;
+
+        studentModalBody.innerHTML = `
+            <div class="records-detail-grid">
+                <div class="records-detail-card">
+                    <h3>Student Information</h3>
+                    ${renderDetailRows([
+                        {
+                            label: "Name",
+                            value: formatRecordValue(application.full_name)
+                        },
+                        {
+                            label: "Father Name",
+                            value: formatRecordValue(application.father_name)
+                        },
+                        {
+                            label: "Mother Name",
+                            value: formatRecordValue(application.mother_name)
+                        },
+                        {
+                            label: "School",
+                            value: formatRecordValue(application.school_name)
+                        },
+                        {
+                            label: "Class",
+                            value: formatRecordValue(application.class)
+                        },
+                        {
+                            label: "Section",
+                            value: formatRecordValue(application.section)
+                        },
+                        {
+                            label: "Gender",
+                            value: formatRecordValue(application.gender)
+                        },
+                        {
+                            label: "DOB",
+                            value: formatDateValue(application.dob)
+                        }
+                    ])}
+                </div>
+
+                <div class="records-detail-card">
+                    <h3>Examination Information</h3>
+                    ${renderDetailRows([
+                        {
+                            label: "Examination Year",
+                            value: formatRecordValue(application.application_year)
+                        },
+                        {
+                            label: "Registration No.",
+                            value: formatRecordValue(application.registration_no)
+                        },
+                        {
+                            label: "Roll No.",
+                            value: formatRecordValue(
+                                application.roll_no ||
+                                application.roll_number
+                            )
+                        },
+                        {
+                            label: "Examination Centre",
+                            value: formatRecordValue(
+                                centre.name ||
+                                centre.code
+                            )
+                        },
+                        {
+                            label: "Centre Code",
+                            value: formatRecordValue(centre.code)
+                        },
+                        {
+                            label: "Room No.",
+                            value: formatRecordValue(
+                                attendance.room_no
+                            )
+                        },
+                        {
+                            label: "Attendance",
+                            value: attendanceStatusHtml(attendance.status)
+                        },
+                        {
+                            label: "Application Status",
+                            value: formatRecordValue(
+                                application.application_status
+                            )
+                        }
+                    ])}
+                </div>
+
+                <div class="records-detail-card full">
+                    <h3>Contact &amp; Address</h3>
+                    ${renderDetailRows([
+                        {
+                            label: "Mobile",
+                            value: formatRecordValue(application.mobile)
+                        },
+                        {
+                            label: "Email",
+                            value: formatRecordValue(application.email)
+                        },
+                        {
+                            label: "Address",
+                            value: formatRecordValue(application.address)
+                        },
+                        {
+                            label: "District",
+                            value: formatRecordValue(application.district)
+                        },
+                        {
+                            label: "State",
+                            value: formatRecordValue(application.state)
+                        },
+                        {
+                            label: "Pincode",
+                            value: formatRecordValue(application.pincode)
+                        }
+                    ])}
+                </div>
+
+                <div class="records-detail-card full">
+                    <h3>QR Information</h3>
+                    <div class="records-qr-grid">
+                        ${admitQr}
+                        ${resultQr}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderResultCertificateRecord(record) {
+        const application = record.application || {};
+        const result = record.result || null;
+        const certificate = record.certificate || null;
+
+        if (!result) {
+            studentModalBody.innerHTML = `
+                <div class="records-modal-empty">
+                    No result record is available for this student.
+                </div>
+            `;
+            return;
+        }
+
+        const components =
+            Array.isArray(result.component_marks)
+                ? result.component_marks
+                : [];
+
+        const componentRows = components.length
+            ? components.map(component => `
+                <tr>
+                    <td>${formatRecordValue(component.name)}</td>
+                    <td>${formatRecordValue(component.marks)}</td>
+                    <td>${formatRecordValue(component.maximum_marks)}</td>
+                    <td>
+                        ${
+                            Number(component.grade_counting)
+                                ? componentGrade(
+                                    component.marks,
+                                    component.maximum_marks,
+                                    component.grade_counting
+                                )
+                                : "-"
+                        }
+                    </td>
+                </tr>
+            `).join("")
+            : `
+                <tr>
+                    <td colspan="4">
+                        No configured component marks found.
+                    </td>
+                </tr>
+            `;
+
+        const certificateQr =
+            certificate && certificate.qr_url
+                ? `
+                    <div class="records-qr-card">
+                        <strong>Certificate QR</strong>
+                        <img
+                            src="${escapeHtml(certificate.qr_url)}"
+                            alt="Certificate QR"
+                        >
+                    </div>
+                `
+                : `
+                    <div class="records-qr-card">
+                        <strong>Certificate QR</strong>
+                        <div class="records-modal-empty">
+                            Certificate QR not available
+                        </div>
+                    </div>
+                `;
+
+        studentModalBody.innerHTML = `
+            <div class="records-detail-grid">
+                <div class="records-detail-card full">
+                    <h3>Result Summary</h3>
+                    ${renderDetailRows([
+                        {
+                            label: "Student",
+                            value: formatRecordValue(application.full_name)
+                        },
+                        {
+                            label: "Registration No.",
+                            value: formatRecordValue(application.registration_no)
+                        },
+                        {
+                            label: "OMR Marks",
+                            value: formatRecordValue(result.marks)
+                        },
+                        {
+                            label: "Total Marks",
+                            value: formatRecordValue(result.total_marks)
+                        },
+                        {
+                            label: "Total Full Marks",
+                            value: formatRecordValue(result.total_full_marks)
+                        },
+                        {
+                            label: "Percentage",
+                            value:
+                                result.percentage === null ||
+                                result.percentage === undefined
+                                    ? "-"
+                                    : `${escapeHtml(result.percentage)}%`
+                        },
+                        {
+                            label: "Total Grade",
+                            value: formatRecordValue(result.grade)
+                        },
+                        {
+                            label: "Section Rank",
+                            value: formatRecordValue(result.section_rank)
+                        },
+                        {
+                            label: "Overall Rank",
+                            value: formatRecordValue(result.overall_rank)
+                        },
+                        {
+                            label: "Result Status",
+                            value: formatRecordValue(result.result_status)
+                        },
+                        {
+                            label: "Ranking Basis",
+                            value: formatRecordValue(result.ranking_basis)
+                        }
+                    ])}
+                </div>
+
+                <div class="records-detail-card full">
+                    <h3>Configured / Confirmed Component Marks</h3>
+                    <div class="records-table-wrap">
+                        <table class="records-result-table">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Marks</th>
+                                    <th>Maximum</th>
+                                    <th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${componentRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="records-detail-card full">
+                    <h3>Certificate</h3>
+                    ${renderDetailRows([
+                        {
+                            label: "Certificate No.",
+                            value: certificate
+                                ? formatRecordValue(certificate.certificate_no)
+                                : "Not available"
+                        },
+                        {
+                            label: "Certificate Type",
+                            value: certificate
+                                ? formatRecordValue(certificate.certificate_type)
+                                : "Not available"
+                        }
+                    ])}
+
+                    <div class="records-qr-grid">
+                        ${certificateQr}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderDocumentsRecord(record) {
+        const application = record.application || {};
+        const certificate = record.certificate || null;
+
+        const approved =
+            String(application.application_status || "")
+                .toLowerCase() === "approved";
+
+        const admitGenerated =
+            Number(application.admit_generated) === 1;
+
+        const certificateAvailable =
+            Boolean(certificate);
+
+        const params = new URLSearchParams();
+
+        if (searchInput.value.trim()) {
+            params.set("search", searchInput.value.trim());
+        }
+
+        if (yearSelect.value) {
+            params.set("year", yearSelect.value);
+        }
+
+        if (centreSelect.value) {
+            params.set("centre", centreSelect.value);
+        }
+
+        const queryString = params.toString();
+        const suffix = queryString ? `?${queryString}` : "";
+
+        const applicationId =
+            encodeURIComponent(String(application.id || ""));
+
+        const registrationUrl =
+            `/admin/rtse/records/student/${applicationId}/registration-slip${suffix}`;
+
+        const approvedUrl =
+            `/admin/rtse/records/student/${applicationId}/approved-slip${suffix}`;
+
+        const admitUrl =
+            `/admin/rtse/records/student/${applicationId}/admit-card${suffix}`;
+
+        const certificateUrl =
+            `/admin/rtse/records/student/${applicationId}/certificate${suffix}`;
+
+        studentModalBody.innerHTML = `
+            <div class="records-detail-card">
+                <h3>Student Documents</h3>
+
+                <div class="records-document-list">
+
+                    <div class="records-document-item">
+                        <div>
+                            <div class="records-document-name">
+                                RTSE Registration Slip
+                            </div>
+                            <div class="records-document-status">
+                                Registration record
+                            </div>
+                        </div>
+
+                        <a
+                            class="records-document-link"
+                            href="${registrationUrl}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            OPEN DOCUMENT
+                        </a>
+                    </div>
+
+                    <div class="records-document-item">
+                        <div>
+                            <div class="records-document-name">
+                                Approved Slip
+                            </div>
+                            <div class="records-document-status">
+                                ${
+                                    approved
+                                        ? "Approved application"
+                                        : "Not available for this application"
+                                }
+                            </div>
+                        </div>
+
+                        ${
+                            approved
+                                ? `
+                                    <a
+                                        class="records-document-link"
+                                        href="${approvedUrl}"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        OPEN DOCUMENT
+                                    </a>
+                                `
+                                : `
+                                    <span class="records-document-link disabled">
+                                        NOT AVAILABLE
+                                    </span>
+                                `
+                        }
+                    </div>
+
+                    <div class="records-document-item">
+                        <div>
+                            <div class="records-document-name">
+                                Admit Card
+                            </div>
+                            <div class="records-document-status">
+                                ${
+                                    admitGenerated
+                                        ? "Admit card generated"
+                                        : "Admit card not generated"
+                                }
+                            </div>
+                        </div>
+
+                        ${
+                            admitGenerated
+                                ? `
+                                    <a
+                                        class="records-document-link"
+                                        href="${admitUrl}"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        OPEN DOCUMENT
+                                    </a>
+                                `
+                                : `
+                                    <span class="records-document-link disabled">
+                                        NOT AVAILABLE
+                                    </span>
+                                `
+                        }
+                    </div>
+
+                    <div class="records-document-item">
+                        <div>
+                            <div class="records-document-name">
+                                Certificate
+                            </div>
+                            <div class="records-document-status">
+                                ${
+                                    certificateAvailable
+                                        ? "Certificate available"
+                                        : "Certificate not available"
+                                }
+                            </div>
+                        </div>
+
+                        ${
+                            certificateAvailable
+                                ? `
+                                    <a
+                                        class="records-document-link"
+                                        href="${certificateUrl}"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        OPEN DOCUMENT
+                                    </a>
+                                `
+                                : `
+                                    <span class="records-document-link disabled">
+                                        NOT AVAILABLE
+                                    </span>
+                                `
+                        }
+                    </div>
+
+                </div>
+            </div>
+        `;
+    }
+
+    async function loadStudentRecord(applicationId, action) {
+        const id = Number(applicationId);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            setStudentModalError("Invalid student record.");
+            return;
+        }
+
+        openStudentModal();
+        setStudentModalLoading("Loading student record...");
+
+        const params = new URLSearchParams();
+
+        if (searchInput.value.trim()) {
+            params.set("search", searchInput.value.trim());
+        }
+
+        if (yearSelect.value) {
+            params.set("year", yearSelect.value);
+        }
+
+        if (centreSelect.value) {
+            params.set("centre", centreSelect.value);
+        }
+
+        try {
+            const response = await fetch(
+                `/admin/rtse/records/student/${encodeURIComponent(id)}?${params.toString()}`,
+                {
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success || !data.record) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load this student record."
+                );
+            }
+
+            const record = data.record;
+
+            if (action === "basic") {
+                studentModalTitle.textContent =
+                    "BASIC & EXAM — " +
+                    (record.application?.full_name || "Student");
+
+                renderBasicStudentRecord(record);
+                return;
+            }
+
+            if (action === "result") {
+                if (
+                    String(record.attendance?.status || "")
+                        .toUpperCase() !== "PRESENT"
+                ) {
+                    setStudentModalError(
+                        "Result & Certificate details are available only for PRESENT students."
+                    );
+                    return;
+                }
+
+                studentModalTitle.textContent =
+                    "RESULT & CERTIFICATE — " +
+                    (record.application?.full_name || "Student");
+
+                renderResultCertificateRecord(record);
+                return;
+            }
+
+            if (action === "documents") {
+                studentModalTitle.textContent =
+                    "DOCUMENTS — " +
+                    (record.application?.full_name || "Student");
+
+                renderDocumentsRecord(record);
+                return;
+            }
+
+            setStudentModalError("Unknown student action.");
+        } catch (error) {
+            console.error(
+                "RTSE Records student popup error:",
+                error
+            );
+
+            setStudentModalError(
+                error.message ||
+                "Unable to load this student record."
+            );
+        }
     }
 
     function updateUrl() {
@@ -721,7 +1778,7 @@
         if (!filteredStudents.length) {
             studentsContainer.innerHTML = `
                 <tr>
-                    <td colspan="11" class="records-empty">
+                    <td colspan="12" class="records-empty">
                         ${
                             query
                                 ? "No students found matching the live search."
@@ -766,6 +1823,38 @@
                 <td>${attendanceBadge(student.attendance_status)}</td>
 
                 <td>${resultBadge(student)}</td>
+
+                <td>
+                    <div class="records-student-actions">
+                        <button
+                            type="button"
+                            class="records-student-action"
+                            data-record-action="basic"
+                            data-application-id="${Number(student.id) || 0}"
+                        >
+                            BASIC &amp; EXAM
+                        </button>
+
+                        <button
+                            type="button"
+                            class="records-student-action result"
+                            data-record-action="result"
+                            data-application-id="${Number(student.id) || 0}"
+                            ${String(student.attendance_status || "").toUpperCase() !== "PRESENT" ? "disabled" : ""}
+                        >
+                            RESULT &amp; CERTIFICATE
+                        </button>
+
+                        <button
+                            type="button"
+                            class="records-student-action documents"
+                            data-record-action="documents"
+                            data-application-id="${Number(student.id) || 0}"
+                        >
+                            DOCUMENTS
+                        </button>
+                    </div>
+                </td>
             </tr>
         `).join("");
     }
@@ -832,7 +1921,7 @@
             schoolsContainer.innerHTML = "";
             studentsContainer.innerHTML = `
                 <tr>
-                    <td colspan="11" class="records-empty">
+                    <td colspan="12" class="records-empty">
                         Unable to load records. Please try again.
                     </td>
                 </tr>
@@ -1068,12 +2157,42 @@
         reloadCentres();
     });
 
+    studentModalClose.addEventListener("click", closeStudentModal);
+
+    studentModal.addEventListener("click", function (event) {
+        if (event.target === studentModal) {
+            closeStudentModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !studentModal.hidden) {
+            closeStudentModal();
+        }
+    });
+
     drilldownClose.addEventListener("click", function () {
         drilldown.hidden = true;
         drilldownStudents.innerHTML = "";
     });
 
     document.addEventListener("click", function (event) {
+        const recordActionButton =
+            event.target.closest("[data-record-action]");
+
+        if (recordActionButton) {
+            if (recordActionButton.disabled) {
+                return;
+            }
+
+            loadStudentRecord(
+                recordActionButton.dataset.applicationId,
+                recordActionButton.dataset.recordAction
+            );
+
+            return;
+        }
+
         const sectionButton =
             event.target.closest("[data-drill-section]");
 

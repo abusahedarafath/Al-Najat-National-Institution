@@ -365,4 +365,6 @@
 
 
 
-<%- include("../partials/footer") %>
+<% if (!isRecords) { %>
+    <%- include("../partials/footer") %>
+<% } %>
