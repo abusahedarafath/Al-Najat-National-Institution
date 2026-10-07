@@ -85,6 +85,9 @@ const auth = require("../middleware/auth");
 const adminRtseController =
 require("../controllers/adminRtseController");
 
+const adminRtseRecordsController =
+require("../controllers/adminRtseRecordsController");
+
 const rtseCertificateSettingsController =
     require("../controllers/rtseCertificateSettingsController");
 const adminRtseOmrController =
@@ -107,6 +110,60 @@ router.get(
     auth.isAdmin,
 
     adminRtseController.dashboard
+
+);
+
+// =====================================
+// RTSE Records Dashboard
+// =====================================
+
+router.get(
+
+    "/rtse/records",
+
+    auth.isAdmin,
+
+    adminRtseRecordsController.recordsDashboard
+
+);
+
+router.get(
+
+    "/rtse/records/section/:section",
+
+    auth.isAdmin,
+
+    adminRtseRecordsController.recordsSectionDashboard
+
+);
+
+router.get(
+
+    "/rtse/records/school/:schoolId",
+
+    auth.isAdmin,
+
+    adminRtseRecordsController.recordsSchoolDashboard
+
+);
+
+router.get(
+
+    "/rtse/records/data",
+
+    auth.isAdmin,
+
+    adminRtseRecordsController.recordsData
+
+);
+
+router.get(
+
+    "/rtse/records/centres",
+
+    auth.isAdmin,
+
+    adminRtseRecordsController.recordsCentres
 
 );
 

@@ -1,0 +1,542 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+        <div class="container records-section-page">
+
+            <div class="records-page-header">
+                <div>
+                    <div class="records-back">
+                        <a href="/admin/rtse/records">
+                            ← RTSE Records Dashboard
+                        </a>
+                    </div>
+
+                    <h1>
+                        RTSE RECORDS — SECTION <%= section %>
+                    </h1>
+
+                    <p>
+                        <%= attendance === "PRESENT" ? "Present" : "Absent" %>
+                        students in Section <%= section %>.
+                    </p>
+                </div>
+            </div>
+
+            <form
+                id="sectionFilters"
+                class="records-filter-card"
+                method="GET"
+                action="/admin/rtse/records/section/<%= section %>"
+            >
+                <div class="records-search-wrap">
+                    <label for="recordsSectionSearch">
+                        Search Records
+                    </label>
+
+                    <input
+                        type="search"
+                        id="recordsSectionSearch"
+                        name="search"
+                        value="<%= filters.search %>"
+                        placeholder="Search by student name, registration, roll, school, centre..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="records-filter">
+                    <label for="recordsSectionYear">Year</label>
+
+                    <select
+                        id="recordsSectionYear"
+                        name="year"
+                    >
+                        <option value="">All Years</option>
+
+                        <% years.forEach(function(year) { %>
+                            <option
+                                value="<%= year %>"
+                                <%= String(filters.year) === String(year) ? "selected" : "" %>
+                            >
+                                <%= year %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="records-filter">
+                    <label for="recordsSectionCentre">Centre</label>
+
+                    <select
+                        id="recordsSectionCentre"
+                        name="centre"
+                    >
+                        <option value="">All Centres</option>
+
+                        <% centres.forEach(function(centre) { %>
+                            <option
+                                value="<%= centre.id %>"
+                                <%= String(filters.centreId) === String(centre.id) ? "selected" : "" %>
+                            >
+                                <%= centre.centre_name || centre.centre_code || ("Centre " + centre.id) %>
+                                <% if (centre.centre_code) { %>
+                                    — <%= centre.centre_code %>
+                                <% } %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <button type="submit" class="records-clear">
+                    Apply
+                </button>
+            </form>
+
+            <div class="records-summary-card">
+                <div>
+                    <span>Section</span>
+                    <strong><%= section %></strong>
+                </div>
+
+                <div>
+                    <span>Attendance</span>
+                    <strong><%= attendance %></strong>
+                </div>
+
+                <div>
+                    <span>Students</span>
+                    <strong><%= students.length.toLocaleString() %></strong>
+                </div>
+
+                <div>
+                    <span>Scope</span>
+                    <strong>
+                        <% if (filters.year && filters.centreId) { %>
+                            Year <%= filters.year %> · Selected Centre
+                        <% } else if (filters.year) { %>
+                            Year <%= filters.year %> · All Centres
+                        <% } else if (filters.centreId) { %>
+                            All Years · Selected Centre
+                        <% } else { %>
+                            All Years · All Centres
+                        <% } %>
+                    </strong>
+                </div>
+            </div>
+
+            <section class="records-section">
+                <div class="records-section-heading">
+                    <h2>
+                        SECTION <%= section %> — <%= attendance %> STUDENTS
+                    </h2>
+
+                    <span>
+                        <%= students.length.toLocaleString() %> student(s)
+                    </span>
+                </div>
+
+                <div class="records-table-wrap">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Roll No.</th>
+                                <th>Registration</th>
+                                <th>Student</th>
+                                <th>School</th>
+                                <th>Centre</th>
+                                <th>Year</th>
+                                <th>Section</th>
+                                <th>Gender</th>
+                                <th>Attendance</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% if (!students.length) { %>
+                                <tr>
+                                    <td
+                                        colspan="11"
+                                        class="records-empty"
+                                    >
+                                        No students found for the selected
+                                        search, year, centre and attendance scope.
+                                    </td>
+                                </tr>
+                            <% } else { %>
+
+                                <% students.forEach(function(student, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+
+                                        <td>
+                                            <strong>
+                                                <%= student.roll_no || student.roll_number || "-" %>
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <%= student.registration_no || "-" %>
+                                        </td>
+
+                                        <td>
+                                            <div class="records-student-name">
+                                                <%= student.full_name || "-" %>
+                                            </div>
+
+                                            <% if (student.father_name) { %>
+                                                <div class="records-muted">
+                                                    <%= student.father_name %>
+                                                </div>
+                                            <% } %>
+                                        </td>
+
+                                        <td>
+                                            <%= student.school_name || "-" %>
+                                        </td>
+
+                                        <td>
+                                            <%= student.centre_name || student.centre_code || "-" %>
+                                        </td>
+
+                                        <td>
+                                            <%= student.application_year || "-" %>
+                                        </td>
+
+                                        <td>
+                                            <%= student.section || "-" %>
+                                        </td>
+
+                                        <td>
+                                            <%= student.gender || "-" %>
+                                        </td>
+
+                                        <td>
+                                            <% if (String(student.attendance_status || "").toUpperCase() === "PRESENT") { %>
+                                                <span class="records-badge present">
+                                                    PRESENT
+                                                </span>
+                                            <% } else if (String(student.attendance_status || "").toUpperCase() === "ABSENT") { %>
+                                                <span class="records-badge absent">
+                                                    ABSENT
+                                                </span>
+                                            <% } else { %>
+                                                <span class="records-badge not-scanned">
+                                                    NOT SCANNED
+                                                </span>
+                                            <% } %>
+                                        </td>
+
+                                        <td>
+                                            <% if (!student.result_id) { %>
+                                                <span class="records-badge not-scanned">
+                                                    NO RESULT
+                                                </span>
+                                            <% } else { %>
+                                                <span class="records-badge result">
+                                                    <%= student.result_status || "RESULT" %>
+                                                    <% if (
+                                                        student.percentage !== null &&
+                                                        student.percentage !== undefined
+                                                    ) { %>
+                                                        · <%= student.percentage %>%
+                                                    <% } %>
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<style>
+.records-section-page {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.records-page-header {
+    margin-bottom: 18px;
+}
+
+.records-page-header h1 {
+    margin: 4px 0 0;
+    color: #17213a;
+    font-size: 28px;
+    font-weight: 850;
+}
+
+.records-page-header p {
+    margin: 7px 0 0;
+    color: #667085;
+}
+
+.records-back {
+    margin-bottom: 8px;
+}
+
+.records-back a {
+    color: #2457c5;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.records-back a:hover {
+    text-decoration: underline;
+}
+
+.records-filter-card {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) 180px 260px auto;
+    gap: 14px;
+    align-items: end;
+    margin-bottom: 18px;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #e4e7ec;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(16, 24, 40, .05);
+}
+
+.records-search-wrap,
+.records-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.records-search-wrap label,
+.records-filter label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #344054;
+}
+
+.records-search-wrap input,
+.records-filter select {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 9px;
+    background: #fff;
+    color: #101828;
+    box-sizing: border-box;
+}
+
+.records-clear {
+    min-height: 42px;
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 9px;
+    background: #17213a;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.records-summary-card {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.records-summary-card > div {
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+}
+
+.records-summary-card span {
+    display: block;
+    margin-bottom: 5px;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.records-summary-card strong {
+    color: #17213a;
+    font-size: 17px;
+}
+
+.records-section {
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid #e4e7ec;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.records-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 17px 18px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.records-section-heading h2 {
+    margin: 0;
+    color: #17213a;
+    font-size: 17px;
+    font-weight: 850;
+}
+
+.records-section-heading span {
+    color: #667085;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.records-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.records-table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+}
+
+.records-table th,
+.records-table td {
+    padding: 12px 13px;
+    border-bottom: 1px solid #eaecf0;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.records-table th {
+    background: #f8fafc;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.records-table td {
+    color: #344054;
+    font-size: 13px;
+}
+
+.records-student-name {
+    font-weight: 800;
+    color: #17213a;
+}
+
+.records-muted {
+    margin-top: 3px;
+    color: #667085;
+    font-size: 11px;
+}
+
+.records-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 850;
+}
+
+.records-badge.present {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+.records-badge.absent {
+    background: #fef3f2;
+    color: #b42318;
+}
+
+.records-badge.not-scanned {
+    background: #f2f4f7;
+    color: #475467;
+}
+
+.records-badge.result {
+    background: #eff8ff;
+    color: #175cd3;
+}
+
+.records-empty {
+    padding: 30px !important;
+    text-align: center !important;
+    color: #667085 !important;
+}
+
+@media (max-width: 900px) {
+    .records-filter-card {
+        grid-template-columns: 1fr;
+    }
+
+    .records-summary-card {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .records-summary-card {
+        grid-template-columns: 1fr;
+    }
+
+    .records-page-header h1 {
+        font-size: 22px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const searchInput =
+        document.getElementById("recordsSectionSearch");
+
+    const yearSelect =
+        document.getElementById("recordsSectionYear");
+
+    const centreSelect =
+        document.getElementById("recordsSectionCentre");
+
+    const form =
+        document.getElementById("sectionFilters");
+
+    let searchTimer = null;
+
+    searchInput.addEventListener("input", function () {
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function () {
+            form.submit();
+        }, 300);
+    });
+
+    yearSelect.addEventListener("change", function () {
+        centreSelect.value = "";
+        form.submit();
+    });
+
+    centreSelect.addEventListener("change", function () {
+        form.submit();
+    });
+})();
+</script>
+
+<%- include("../partials/footer") %>
