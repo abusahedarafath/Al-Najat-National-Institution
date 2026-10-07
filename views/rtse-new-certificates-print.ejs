@@ -635,14 +635,13 @@
                 </div>
 
                 <div class="merit-overlay-description">
-                    <%= (certificateCategorySetting?.certificate_description || "")
-                        .replace(/\{student_name\}/g, certificate?.full_name || "Student Name")
-                        .replace(/\{exam_name\}/g, examName)
-                        .replace(/\{rank\}/g, String(sectionRank))
-                        .replace(/\{rank_label\}/g, rankLabel)
-                        .replace(/\{section\}/g, certificate?.section || "Section")
-                        .replace(/\{class\}/g, certificate?.class || "Class")
-                        .replace(/\{year\}/g, String(new Date().getFullYear())) %>
+                    <%- renderBulkCertificateDescription(
+                        certificateCategorySetting?.certificate_description || "",
+                        certificate,
+                        examName,
+                        sectionRank,
+                        rankLabel
+                    ) %>
                 </div>
 
             </div>
