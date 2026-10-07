@@ -372,6 +372,15 @@ body {
     background: rgba(255,255,255,.26);
 }
 
+.certificate-page.appreciation-certificate .description {
+    margin-top: 40px;
+    font-size: 18px;
+}
+
+.certificate-page.appreciation-certificate .dynamic-value {
+    font-size: 1.06em;
+}
+
 .description::before,
 .description::after {
     position: absolute;
@@ -614,7 +623,7 @@ function renderDescription(template, certificate) {
     </a>
 </div>
 
-<div class="certificate-page">
+<div class="certificate-page <%= certificate?.certificate_type === "Appreciation" ? "appreciation-certificate" : "" %>">
 
     <div class="certificate-inner">
 
