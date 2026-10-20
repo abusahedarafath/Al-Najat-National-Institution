@@ -101,7 +101,7 @@
     <div class="group-actions">
 
         <a
-            href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>"
+            href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         >
             ← Back to Section Certificates
         </a>
@@ -118,7 +118,7 @@
         ) { %>
 
             <a
-                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/<%= group %>/print"
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/<%= group %>/print?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="print-all-button"
                 target="_blank"
             >
@@ -209,7 +209,7 @@
                             <td>
 
                                 <a
-                                    href="/admin/rtse/new-certificate/<%= student.application_id %>"
+                                    href="/admin/rtse/new-certificate/<%= student.application_id %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                     class="view-button"
                                 >
                                     View Certificate

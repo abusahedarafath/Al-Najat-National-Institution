@@ -2,7 +2,7 @@ const ExcelJS = require("exceljs");
 const path = require("path");
 const fs = require("fs");
 const RtseApplication = require("../models/RtseApplication");
-const RtseSetting = require("../models/RtseSetting");
+const RtseExamSetting = require("../models/RtseExamSetting");
 
 class RtseExcel {
 
@@ -42,19 +42,42 @@ class RtseExcel {
     // =====================================
     // Export Section Wise
     // =====================================
-    static async exportSection(req, res, section) {
-        const setting = await RtseSetting.get();
-        const applicationYear = Number(setting?.exam_year);
+    static async exportSection(req, res, section, examSettingId = null) {
+        let setting;
 
-        if (!applicationYear) {
-            throw new Error("Active RTSE exam year is not configured.");
+        if (examSettingId !== null && examSettingId !== undefined) {
+            const requestedExamId = Number(examSettingId);
+            if (!Number.isInteger(requestedExamId) || requestedExamId < 1) {
+                throw new Error("Invalid examination setting ID.");
+            }
+
+            setting = await RtseExamSetting.getById(requestedExamId);
+            if (!setting) {
+                throw new Error("Examination not found.");
+            }
+        } else {
+            setting = await RtseExamSetting.get();
         }
 
-        const students =
-            await RtseApplication.getApprovedSectionStudents(
-                section,
-                applicationYear
+        const applicationYear = Number(setting?.exam_year);
+        const normalizedExamId = Number(setting?.id);
+
+        if (
+            !Number.isInteger(applicationYear) ||
+            applicationYear < 1 ||
+            !Number.isInteger(normalizedExamId) ||
+            normalizedExamId < 1
+        ) {
+            throw new Error(
+                "Examination and exam year are not configured correctly."
             );
+        }
+
+        const students = await RtseApplication.getExamApprovedSectionStudents(
+            section,
+            applicationYear,
+            normalizedExamId
+        );
 
         return this.buildExcel(
             students,
@@ -62,10 +85,6 @@ class RtseExcel {
             res
         );
     }
-
-    // =====================================
-    // Build Excel
-    // =====================================
 
     static async buildExcel(students, fileName, res) {
 

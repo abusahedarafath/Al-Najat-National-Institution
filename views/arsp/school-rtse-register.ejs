@@ -324,21 +324,8 @@
     if (!classInput || !sectionInput) return;
 
     function updateRtseSection() {
-        const selectedClass = Number(classInput.value);
-        let section = "";
-
-        if (selectedClass === 4 || selectedClass === 5) {
-            section = "A";
-        } else if (selectedClass === 6 || selectedClass === 7) {
-            section = "B";
-        } else if (selectedClass === 8) {
-            section = "C";
-        } else if (selectedClass === 9) {
-            section = "D";
-        } else if (selectedClass === 10) {
-            section = "E";
-        }
-
+        const sectionByClass = <%- JSON.stringify(sectionByClass || {}).replace(/</g, "\\x3c") %>;
+        const section = sectionByClass[String(classInput.value)] || "";
         sectionInput.value = section;
     }
 

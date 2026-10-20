@@ -425,60 +425,26 @@
         </div>
 
         <!-- SECTION STATISTICS -->
-
         <section class="section">
-
             <h2>Section-wise Students</h2>
-
             <div class="section-grid">
-
-                <a class="section-card"
-                   href="/arsp/school/rtse-students?section=A">
-                    <div class="section-name">Section A</div>
-                    <div class="section-class">Classes 4–5</div>
-                    <div class="section-count">
-                        <%= Number(stats.section_a || 0) %>
-                    </div>
-                </a>
-
-                <a class="section-card"
-                   href="/arsp/school/rtse-students?section=B">
-                    <div class="section-name">Section B</div>
-                    <div class="section-class">Classes 6–7</div>
-                    <div class="section-count">
-                        <%= Number(stats.section_b || 0) %>
-                    </div>
-                </a>
-
-                <a class="section-card"
-                   href="/arsp/school/rtse-students?section=C">
-                    <div class="section-name">Section C</div>
-                    <div class="section-class">Class 8</div>
-                    <div class="section-count">
-                        <%= Number(stats.section_c || 0) %>
-                    </div>
-                </a>
-
-                <a class="section-card"
-                   href="/arsp/school/rtse-students?section=D">
-                    <div class="section-name">Section D</div>
-                    <div class="section-class">Class 9</div>
-                    <div class="section-count">
-                        <%= Number(stats.section_d || 0) %>
-                    </div>
-                </a>
-
-                <a class="section-card"
-                   href="/arsp/school/rtse-students?section=E">
-                    <div class="section-name">Section E</div>
-                    <div class="section-class">Class 10</div>
-                    <div class="section-count">
-                        <%= Number(stats.section_e || 0) %>
-                    </div>
-                </a>
-
+                <% if (sections && sections.length) { %>
+                    <% sections.forEach(section => { %>
+                        <a class="section-card"
+                           href="/arsp/school/rtse-students?section=<%= encodeURIComponent(section.section_name) %>">
+                            <div class="section-name">Section <%= section.section_name %></div>
+                            <div class="section-class">
+                                <%= section.classes.length
+                                    ? "Classes " + section.classes.join(", ")
+                                    : "No classes configured" %>
+                            </div>
+                            <div class="section-count"><%= Number(section.student_count || 0) %></div>
+                        </a>
+                    <% }) %>
+                <% } else { %>
+                    <p>No sections are configured for the active examination.</p>
+                <% } %>
             </div>
-
         </section>
 
         <!-- SCHOOL PROFILE -->

@@ -27,11 +27,29 @@
 
     </a>
 
-    <% if (rankingsGenerated) { %>
+
+    <form method="GET" action="/admin/rtse/results"
+          style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <label for="rtse-exam-selector"><strong>Examination:</strong></label>
+        <select id="rtse-exam-selector" name="exam_id"
+                onchange="this.form.submit()"
+                style="max-width:340px;padding:9px;border:1px solid #cbd5e1;border-radius:6px;">
+            <% (exams || []).forEach(function(exam) { %>
+                <option value="<%= exam.id %>"
+                    <%= selectedExamId === String(exam.id) ? "selected" : "" %>>
+                    <%= exam.exam_name || exam.name || ("Examination #" + exam.id) %>
+                    <%= exam.status === "ACTIVE" ? " (Active)" : "" %>
+                </option>
+            <% }) %>
+        </select>
+        <noscript><button type="submit" class="btn-view">Open</button></noscript>
+    </form>
+
+<% if (rankingsGenerated) { %>
 
     <form
         method="POST"
-        action="/admin/rtse/results/reset-rankings"
+        action="/admin/rtse/results/reset-rankings?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         style="display:inline;"
         data-rtse-confirm="Reset rankings only? Student results, marks, percentages and grades will NOT be deleted.">
 
@@ -48,7 +66,7 @@
 <% } else { %>
 
     <a
-        href="/admin/rtse/results/generate-rankings"
+        href="/admin/rtse/results/generate-rankings?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         class="btn-save">
 
         🏆 Generate Rankings
@@ -58,7 +76,7 @@
 <% } %>
 
     <a
-        href="/admin/rtse/results/merit-list"
+        href="/admin/rtse/results/merit-list?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         class="btn-view">
 
         📋 Merit List
@@ -101,7 +119,7 @@
         <% if (!allCertificatesGenerated) { %>
 
             <a
-                href="/admin/rtse/certificates/generate-all"
+                href="/admin/rtse/certificates/generate-all?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="btn-save"
                 data-rtse-confirm="Generate certificates for all eligible students?">
                 🎓 Generate All Certificates
@@ -110,14 +128,14 @@
         <% } else if (!setting.certificate_publish) { %>
 
             <a
-                href="/admin/rtse/certificates/reset-all"
+                href="/admin/rtse/certificates/reset-all?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="btn-warning"
                 data-rtse-confirm="Reset ALL generated RTSE certificates? This will not delete results, marks, applications, attendance, or uploaded files.">
                 ♻️ Reset All Certificates
             </a>
 
             <a
-                href="/admin/rtse/certificates/publish"
+                href="/admin/rtse/certificates/publish?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="btn-save">
                 📢 Publish Certificates
             </a>
@@ -125,7 +143,7 @@
         <% } else { %>
 
             <a
-                href="/admin/rtse/certificates/hide"
+                href="/admin/rtse/certificates/hide?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="btn-warning">
                 🙈 Hide Certificates
             </a>
@@ -133,13 +151,13 @@
         <% } %>
 
           <a
-        href="/admin/rtse/certificates/all"
+        href="/admin/rtse/certificates/all?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         class="btn-save">
         🖨️ Print All Certificates
         </a>
 
         <a
-        href="/admin/rtse/certificates/schools"
+        href="/admin/rtse/certificates/schools?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         class="btn-save">
         🏫 School-wise Appreciation Certificates
         </a>
@@ -338,7 +356,7 @@
             <div class="rtse-statistics-grid">
 
                 <a
-                    href="/admin/rtse/results/present"
+                    href="/admin/rtse/results/present?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     style="display:block;text-decoration:none;color:inherit;"
                 >
                     <div class="rtse-stat-card">
@@ -357,7 +375,7 @@
                 </a>
 
                 <a
-                    href="/admin/rtse/results/absent"
+                    href="/admin/rtse/results/absent?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     style="display:block;text-decoration:none;color:inherit;"
                 >
                     <div class="rtse-stat-card">
@@ -392,7 +410,7 @@
                         <div class="rtse-section-card">
 
                             <h3>
-                                SECTION <%= sectionData.section %>
+                                 <%= sectionData.section %>
                             </h3>
 
                             <hr>
@@ -420,35 +438,35 @@
 
                             <div style="margin-top:15px;">
                                 <a
-                                    href="/admin/rtse/results/section/<%= encodeURIComponent(sectionData.section) %>"
+                                    href="/admin/rtse/results/section/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                     class="btn-view"
                                 >
                                     See Present Students
                                 </a>
 
                                 <a
-                                    href="/admin/rtse/results/merit-list/<%= encodeURIComponent(sectionData.section) %>"
+                                    href="/admin/rtse/results/merit-list/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                     class="btn-view"
                                 >
                                     🏆 Section Merit List
                                 </a>
 
                                 <a
-                                    href="/admin/rtse/results/top10-merit-list/<%= encodeURIComponent(sectionData.section) %>"
+                                    href="/admin/rtse/results/top10-merit-list/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                     class="btn-view"
                                 >
                                     🏆 Top 10 Merit List
                                 </a>
 
                                 <a
-                                    href="/admin/rtse/results/absent/<%= encodeURIComponent(sectionData.section) %>"
+                                    href="/admin/rtse/results/absent/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                     class="btn-view"
                                 >
                                     👤 See Absent Students
                                 </a>
 
                                 <a
-                                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(sectionData.section) %>"
+                                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                     class="btn-save"
                                 >
                                     ✨ New Certificate System
@@ -458,21 +476,21 @@
                                 <% if (certificateSections?.[sectionData.section]) { %>
 
                                     <a
-                                        href="/admin/rtse/certificates/reset/<%= encodeURIComponent(sectionData.section) %>"
+                                        href="/admin/rtse/certificates/reset/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                         class="btn-warning"
-                                        data-rtse-confirm="Reset certificates for Section <%= sectionData.section %>? Results, marks, attendance and uploaded files will NOT be deleted."
+                                        data-rtse-confirm="Reset certificates for <%= (String((sectionData.section) ?? "").trim() ? (String((sectionData.section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((sectionData.section) ?? "").trim() : "Section " + String((sectionData.section) ?? "").trim()) : "-") %>? Results, marks, attendance and uploaded files will NOT be deleted."
                                     >
-                                        ♻️ Reset Section <%= sectionData.section %> Certificates
+                                        ♻️ Reset <%= (String((sectionData.section) ?? "").trim() ? (String((sectionData.section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((sectionData.section) ?? "").trim() : "Section " + String((sectionData.section) ?? "").trim()) : "-") %> Certificates
                                     </a>
 
                                 <% } else { %>
 
                                     <a
-                                        href="/admin/rtse/certificates/generate/<%= encodeURIComponent(sectionData.section) %>"
+                                        href="/admin/rtse/certificates/generate/<%= encodeURIComponent(sectionData.section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                         class="btn-save"
-                                        data-rtse-confirm="Generate certificates for Section <%= sectionData.section %>?"
+                                        data-rtse-confirm="Generate certificates for <%= (String((sectionData.section) ?? "").trim() ? (String((sectionData.section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((sectionData.section) ?? "").trim() : "Section " + String((sectionData.section) ?? "").trim()) : "-") %>?"
                                     >
-                                        🎓 Generate Section <%= sectionData.section %> Certificate
+                                        🎓 Generate <%= (String((sectionData.section) ?? "").trim() ? (String((sectionData.section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((sectionData.section) ?? "").trim() : "Section " + String((sectionData.section) ?? "").trim()) : "-") %> Certificate
                                     </a>
 
                                 <% } %>

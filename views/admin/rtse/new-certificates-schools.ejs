@@ -80,7 +80,7 @@
 
             <div class="school-actions">
                 <a
-                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 >
                     ← Back to Certificate Management
                 </a>
@@ -128,7 +128,7 @@
 
                                     <td>
                                         <a
-                                            href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools/<%= encodeURIComponent(schoolItem.school_name) %>"
+                                            href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools/<%= encodeURIComponent(schoolItem.school_name) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                             class="view-button"
                                         >
                                             View Students

@@ -1,7 +1,7 @@
 const ArspSetting = require("../models/ArspSetting");
 const ArspSchool = require("../models/ArspSchool");
 const RtseCentre = require("../models/RtseCentre");
-
+const RtseExamSetting = require("../models/RtseExamSetting");
 // =====================================
 // Public School Registration Page
 // =====================================
@@ -181,6 +181,24 @@ exports.confirm = async (req, res) => {
             return res.redirect("/arsp/school/register");
         }
 
+ 
+      // Require a valid active examination before creating any records.
+const examSetting = await RtseExamSetting.getActive();
+const applicationYear = Number(examSetting?.exam_year);
+
+if (
+    !Number.isInteger(applicationYear) ||
+    applicationYear < 2000 ||
+    applicationYear > 9999
+) {
+    req.flash(
+        "error",
+        "No valid active RTSE examination year is configured. Please try again later."
+    );
+    return res.redirect("/arsp/school/register");
+}
+
+
         // Create the school as Pending.
         // centre_id is deliberately NOT passed to ArspSchool.create()
         // because the centre relationship belongs to the assignment table.
@@ -201,7 +219,7 @@ exports.confirm = async (req, res) => {
         await RtseCentre.assignSchool({
             school_id: school.id,
             centre_id: centre.id,
-            application_year: new Date().getFullYear(),
+           application_year: applicationYear, 
             assigned_by: null,
             remarks: "School selected this centre during registration."
         });

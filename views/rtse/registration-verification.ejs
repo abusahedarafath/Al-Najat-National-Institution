@@ -84,7 +84,7 @@
                             </th>
 
                             <td>
-                                Class <%= application.class %>
+                                <%= /^\d+$/.test(String(application.class ?? '').trim()) ? (Number(application.class) > 0 ? 'Class ' + application.class : '-') : (String(application.class ?? '').trim() || '-') %>
                             </td>
                         </tr>
 
@@ -95,7 +95,7 @@
                             </th>
 
                             <td>
-                                SECTION <%= application.section %>
+                                 <%= application.section %>
                             </td>
                         </tr>
 

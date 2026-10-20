@@ -129,6 +129,8 @@ router.get(
 // PUBLIC APPLICATION FORM
 // =====================================
 
+router.get("/section-map", rtseController.getActiveSectionMap);
+
 router.get(
     "/apply",
     rtsePublicController.requireApplicationOpen,

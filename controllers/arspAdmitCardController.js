@@ -187,8 +187,15 @@ exports.download = async (req, res) => {
         const arspSetting =
             await ArspSetting.get();
 
-        const examSetting =
-            await RtseExamSetting.get();
+        let examSetting = null;
+
+        if (application.exam_setting_id) {
+            examSetting = await RtseExamSetting.getById(application.exam_setting_id);
+        }
+
+        if (!examSetting) {
+            examSetting = await RtseExamSetting.get();
+        }
 
         const admitCardSetting =
             await RtseAdmitCardSetting.get();
@@ -439,8 +446,9 @@ exports.download = async (req, res) => {
 
             examYear:
                 examSetting?.exam_year ||
+                application.application_year ||
                 arspSetting?.exam_year ||
-                new Date().getFullYear(),
+                null,
 
             examShift:
                 examShift?.name ||
@@ -516,8 +524,9 @@ exports.download = async (req, res) => {
 
                 examYear:
                     examSetting?.exam_year ||
+                    application.application_year ||
                     arspSetting?.exam_year ||
-                    new Date().getFullYear(),
+                    null,
 
                 error:
                     null

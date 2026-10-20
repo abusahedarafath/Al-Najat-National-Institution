@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const db = require("../config/database");
+const RtseExamSection = require("./RtseExamSection");
 
 class RtseExamAttendance {
 
@@ -123,7 +124,7 @@ class RtseExamAttendance {
     // =====================================
     // Create QR records for generated admits
     // =====================================
-    static async ensureForSection(section, applicationYear) {
+    static async ensureForSection(section, applicationYear, examSettingId = null) {
 
         const normalizedSection =
             String(section || "").trim().toUpperCase();
@@ -131,8 +132,41 @@ class RtseExamAttendance {
         const normalizedYear =
             Number(applicationYear);
 
-        if(!["A","B","C","D","E"].includes(normalizedSection)){
-            throw new Error("Invalid RTSE section.");
+        const examId =
+            examSettingId === null ||
+            examSettingId === undefined ||
+            examSettingId === ""
+                 ? null
+                : Number(examSettingId);
+
+        if (examId !== null) {
+            if (!Number.isInteger(examId) || examId <= 0) {
+                throw new Error("Invalid examination setting ID.");
+            }
+            const RtseExamSection = require("./RtseExamSection");
+            const configuredSections = await RtseExamSection.getSections(examId);
+            if (!configuredSections.some(item =>
+                String(item.section_name).trim().toUpperCase() === normalizedSection
+            )) {
+                throw new Error("Section is not configured for this examination.");
+            }
+
+        } else {
+            const activeExam = await require("./RtseExamSetting").get();
+
+            const configuredSections = activeExam
+                ? await RtseExamSection.getSections(activeExam.id)
+                : [];
+
+            const isConfiguredSection = configuredSections.some(
+                item =>
+                    String(item.section_name || "").trim().toUpperCase() ===
+                    normalizedSection
+            );
+
+            if (!isConfiguredSection) {
+                throw new Error("Invalid RTSE section.");
+            }
         }
 
         if(!normalizedYear){
@@ -149,11 +183,10 @@ class RtseExamAttendance {
               AND roll_no IS NOT NULL
               AND admit_generated = 1
               AND section = ?
-            `,
-            [
-                normalizedYear,
-                normalizedSection
-            ]
+            ` + (examId !== null ? "\n              AND exam_setting_id = ?" : ""),
+            examId !== null
+                ? [normalizedYear, normalizedSection, examId]
+                : [normalizedYear, normalizedSection]
         );
 
         let created = 0;
@@ -203,18 +236,42 @@ class RtseExamAttendance {
     // This is intentionally separate from the
     // shared/legacy RtseSeatPlan.getRoomWise().
     // =====================================
-    static async getAttendanceSheetBySection(section, applicationYear) {
+    static async getAttendanceSheetBySection(section, applicationYear, examSettingId = null) {
         const normalizedSection =
             String(section || "").trim().toUpperCase();
 
         const normalizedYear =
             Number(applicationYear);
 
-        if (
-            !["A", "B", "C", "D", "E"].includes(
+        const RtseExamSetting = require("./RtseExamSetting");
+        const hasExam = examSettingId !== null &&
+            examSettingId !== undefined && examSettingId !== "";
+        let examination;
+
+        if (hasExam) {
+            const normalizedExamId = Number(examSettingId);
+            if (!Number.isSafeInteger(normalizedExamId) || normalizedExamId <= 0) {
+                throw new Error("Invalid examination setting ID.");
+            }
+            examination = await RtseExamSetting.getById(normalizedExamId);
+            if (!examination) {
+                throw new Error("Examination setting not found.");
+            }
+        } else {
+            examination = await RtseExamSetting.get();
+        }
+
+        const configuredSections = examination
+            ? await RtseExamSection.getSections(examination.id)
+            : [];
+
+        const isConfiguredSection = configuredSections.some(
+            item =>
+                String(item.section_name || "").trim().toUpperCase() ===
                 normalizedSection
-            )
-        ) {
+        );
+
+        if (!isConfiguredSection) {
             throw new Error("Invalid RTSE section.");
         }
 
@@ -224,6 +281,19 @@ class RtseExamAttendance {
         ) {
             throw new Error("Invalid RTSE application year.");
         }
+
+        if (
+            hasExam &&
+            Number(examination.exam_year) !== normalizedYear
+        ) {
+            throw new Error(
+                "Examination year does not match the selected examination."
+            );
+        }
+
+        const examFilter = hasExam
+            ? " AND a.exam_setting_id = ?"
+            : "";
 
         /*
          * Attendance must follow the actual locked seat assignment.
@@ -252,7 +322,7 @@ class RtseExamAttendance {
                AND sp.is_locked = 1
             WHERE a.archive = 0
               AND a.application_year = ?
-              AND a.section = ?
+              AND a.section = ?${examFilter}
               AND a.status = 'Approved'
               AND a.roll_no IS NOT NULL
               AND a.admit_generated = 1
@@ -266,7 +336,8 @@ class RtseExamAttendance {
             `,
             [
                 normalizedYear,
-                normalizedSection
+                normalizedSection,
+                ...(hasExam ? [Number(examination.id)] : [])
             ]
         );
 
@@ -289,7 +360,7 @@ class RtseExamAttendance {
                    AND sp.is_locked = 1
                 WHERE a.archive = 0
                   AND a.application_year = ?
-                  AND a.section = ?
+                  AND a.section = ?${examFilter}
                   AND a.status = 'Approved'
                   AND a.roll_no IS NOT NULL
                   AND a.admit_generated = 1
@@ -304,6 +375,7 @@ class RtseExamAttendance {
                 [
                     normalizedYear,
                     normalizedSection,
+                    ...(hasExam ? [Number(examination.id)] : []),
                     room.room_no
                 ]
             );
@@ -442,53 +514,71 @@ class RtseExamAttendance {
     // Eligibility matches the existing
     // generated-admit attendance rules.
     // =====================================
-    static async getResultDashboardStatistics(applicationYear) {
+    static async getResultDashboardStatistics(applicationYear, examSettingId = null) {
         const normalizedYear = Number(applicationYear);
-
         if (!Number.isInteger(normalizedYear) || normalizedYear < 1) {
             throw new Error("Invalid RTSE application year.");
         }
 
-        const [rows] = await db.query(
-            `
-            SELECT
-                a.section,
-                COUNT(DISTINCT a.id) AS eligible_students,
-                COUNT(
-                    DISTINCT CASE
-                        WHEN ea.attendance_status = 'PRESENT'
-                        THEN a.id
-                    END
-                ) AS present_students
+        const hasExam = examSettingId !== null &&
+            examSettingId !== undefined && examSettingId !== "";
+        let sectionNames = [];
+        let sql = `
+            SELECT a.section,
+                   COUNT(DISTINCT a.id) AS eligible_students,
+                   COUNT(DISTINCT CASE
+                       WHEN ea.attendance_status = 'PRESENT' THEN a.id
+                   END) AS present_students
             FROM rtse_applications a
             LEFT JOIN rtse_exam_attendance ea
-                ON ea.application_id = a.id
-            WHERE
-                a.archive = 0
-                AND a.status = 'Approved'
-                AND a.application_year = ?
-                AND a.roll_no IS NOT NULL
-                AND a.admit_generated = 1
-                AND a.section IN ('A', 'B', 'C', 'D', 'E')
-            GROUP BY a.section
-            ORDER BY FIELD(a.section, 'A', 'B', 'C', 'D', 'E')
-            `,
-            [normalizedYear]
-        );
+              ON ea.application_id = a.id
+            WHERE a.archive = 0
+              AND a.status = 'Approved'
+              AND a.application_year = ?
+              AND a.roll_no IS NOT NULL
+              AND a.admit_generated = 1`;
+        const params = [normalizedYear];
 
-        const fixedSections = ['A', 'B', 'C', 'D', 'E'];
+        if (hasExam) {
+            const examId = Number(examSettingId);
+            if (!Number.isInteger(examId) || examId <= 0) {
+                throw new Error("Invalid examination setting ID.");
+            }
+            const configured = await RtseExamSection.getSections(examId);
+            sectionNames = configured.map(row =>
+                String(row.section_name || "").trim().toUpperCase()
+            );
+            sql += " AND a.exam_setting_id = ?";
+            params.push(examId);
+        } else {
+            sql += " AND a.exam_setting_id IS NULL";
+            const [legacySectionRows] = await db.query(
+                `SELECT DISTINCT UPPER(TRIM(section)) AS section
+                 FROM rtse_applications
+                 WHERE archive = 0
+                   AND status = 'Approved'
+                   AND application_year = ?
+                   AND exam_setting_id IS NULL
+                   AND section IS NOT NULL
+                   AND TRIM(section) <> ''
+                 ORDER BY section ASC`,
+                [normalizedYear]
+            );
+            sectionNames = legacySectionRows.map(
+                row => String(row.section || "").trim().toUpperCase()
+            );
+        }
+
+        sql += " GROUP BY a.section";
+        const [rows] = await db.query(sql, params);
         const bySection = {};
 
         for (const row of rows) {
-            const section = String(row.section || '').trim().toUpperCase();
-
-            if (!fixedSections.includes(section)) {
-                continue;
-            }
+            const section = String(row.section || "").trim().toUpperCase();
+            if (!sectionNames.includes(section)) continue;
 
             const eligible = Number(row.eligible_students || 0);
             const present = Number(row.present_students || 0);
-
             bySection[section] = {
                 section,
                 eligible,
@@ -497,46 +587,35 @@ class RtseExamAttendance {
             };
         }
 
-        const sections = fixedSections.map(section => {
-            return bySection[section] || {
-                section,
-                eligible: 0,
-                present: 0,
-                absent: 0
-            };
+        const sections = sectionNames.map(section => bySection[section] || {
+            section, eligible: 0, present: 0, absent: 0
         });
 
-        const overall = sections.reduce(
-            (totals, section) => {
-                totals.eligible += section.eligible;
-                totals.present += section.present;
-                totals.absent += section.absent;
-                return totals;
-            },
-            {
-                eligible: 0,
-                present: 0,
-                absent: 0
-            }
-        );
+        const overall = sections.reduce((totals, section) => {
+            totals.eligible += section.eligible;
+            totals.present += section.present;
+            totals.absent += section.absent;
+            return totals;
+        }, { eligible: 0, present: 0, absent: 0 });
 
-        return {
-            overall,
-            sections
-        };
+        return { overall, sections };
     }
 
     // =====================================
     // Get ABSENT / NOT SCANNED Students
-    // Read-only result-dashboard student list.
-    // Only eligible students without confirmed
-    // PRESENT gate entry are returned.
     // =====================================
-    static async getAbsentStudents(applicationYear) {
+    static async getAbsentStudents(applicationYear, examSettingId = null) {
         const normalizedYear = Number(applicationYear);
 
         if (!Number.isInteger(normalizedYear) || normalizedYear < 1) {
             throw new Error("Invalid RTSE application year.");
+        }
+
+        const hasExam = examSettingId !== null &&
+            examSettingId !== undefined && examSettingId !== "";
+        const normalizedExamId = hasExam ? Number(examSettingId) : null;
+        if (hasExam && (!Number.isInteger(normalizedExamId) || normalizedExamId <= 0)) {
+            throw new Error("Invalid examination setting ID.");
         }
 
         const [rows] = await db.query(
@@ -587,18 +666,18 @@ class RtseExamAttendance {
                 AND a.application_year = ?
                 AND a.roll_no IS NOT NULL
                 AND a.admit_generated = 1
-                AND a.section IN ('A', 'B', 'C', 'D', 'E')
+                AND a.exam_setting_id <=> ?
                 AND (
                     ea.application_id IS NULL
                     OR ea.attendance_status IS NULL
                     OR ea.attendance_status <> 'PRESENT'
                 )
             ORDER BY
-                FIELD(a.section, 'A', 'B', 'C', 'D', 'E'),
+                a.section ASC,
                 a.roll_no ASC,
                 a.full_name ASC
             `,
-            [normalizedYear]
+            [normalizedYear, normalizedExamId, normalizedExamId]
         );
 
         return rows;
@@ -610,14 +689,40 @@ class RtseExamAttendance {
     // Uses the same attendance rule as the
     // all-section absent-students page.
     // =====================================
-    static async getAbsentStudentsBySection(section, applicationYear) {
+    static async getAbsentStudentsBySection(section, applicationYear, examSettingId = null) {
         const normalizedSection =
             String(section || "").trim().toUpperCase();
 
         const normalizedYear =
             Number(applicationYear);
 
-        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+        const hasExam = examSettingId !== null &&
+            examSettingId !== undefined && examSettingId !== "";
+        const normalizedExamId = hasExam ? Number(examSettingId) : null;
+        if (hasExam && (!Number.isInteger(normalizedExamId) || normalizedExamId <= 0)) {
+            throw new Error("Invalid examination setting ID.");
+        }
+        const configuredSections = hasExam
+            ? await RtseExamSection.getSections(normalizedExamId)
+            : [];
+        const allowedSections = hasExam
+            ? configuredSections.map(row => String(row.section_name || "").trim().toUpperCase())
+            : (await db.query(
+                `SELECT DISTINCT UPPER(TRIM(section)) AS section_name
+                 FROM rtse_applications
+                 WHERE archive = 0
+                   AND status = 'Approved'
+                   AND application_year = ?
+                   AND exam_setting_id IS NULL
+                   AND section IS NOT NULL
+                   AND TRIM(section) <> ''
+                 ORDER BY section ASC`,
+                [normalizedYear]
+            ))[0].map(
+                row => String(row.section_name || "").trim().toUpperCase()
+            );
+
+        if (!allowedSections.includes(normalizedSection)) {
             throw new Error("Invalid RTSE section.");
         }
 
@@ -671,6 +776,7 @@ class RtseExamAttendance {
                 a.archive = 0
                 AND a.status = 'Approved'
                 AND a.application_year = ?
+                AND a.exam_setting_id <=> ?
                 AND a.roll_no IS NOT NULL
                 AND a.admit_generated = 1
                 AND a.section = ?
@@ -683,10 +789,7 @@ class RtseExamAttendance {
                 a.roll_no ASC,
                 a.full_name ASC
             `,
-            [
-                normalizedYear,
-                normalizedSection
-            ]
+            [normalizedYear, normalizedExamId, normalizedSection]
         );
 
         return rows;
@@ -697,13 +800,39 @@ class RtseExamAttendance {
     // Only successfully confirmed gate-entry
     // students are returned.
     // =====================================
-    static async getPresentStudentsBySection(section, applicationYear) {
+    static async getPresentStudentsBySection(section, applicationYear, examSettingId = null) {
         const normalizedSection =
             String(section || "").trim().toUpperCase();
 
         const normalizedYear = Number(applicationYear);
 
-        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+        const hasExam = examSettingId !== null &&
+            examSettingId !== undefined && examSettingId !== "";
+        const normalizedExamId = hasExam ? Number(examSettingId) : null;
+        if (hasExam && (!Number.isInteger(normalizedExamId) || normalizedExamId <= 0)) {
+            throw new Error("Invalid examination setting ID.");
+        }
+        const configuredSections = hasExam
+            ? await RtseExamSection.getSections(normalizedExamId)
+            : [];
+        const allowedSections = hasExam
+            ? configuredSections.map(row => String(row.section_name || "").trim().toUpperCase())
+            : (await db.query(
+                `SELECT DISTINCT UPPER(TRIM(section)) AS section_name
+                 FROM rtse_applications
+                 WHERE archive = 0
+                   AND status = 'Approved'
+                   AND application_year = ?
+                   AND exam_setting_id IS NULL
+                   AND section IS NOT NULL
+                   AND TRIM(section) <> ''
+                 ORDER BY section ASC`,
+                [normalizedYear]
+            ))[0].map(
+                row => String(row.section_name || "").trim().toUpperCase()
+            );
+
+        if (!allowedSections.includes(normalizedSection)) {
             throw new Error("Invalid RTSE section.");
         }
 
@@ -760,6 +889,7 @@ class RtseExamAttendance {
                 a.archive = 0
                 AND a.status = 'Approved'
                 AND a.application_year = ?
+                AND a.exam_setting_id <=> ?
                 AND a.roll_no IS NOT NULL
                 AND a.admit_generated = 1
                 AND a.section = ?
@@ -767,7 +897,7 @@ class RtseExamAttendance {
                 a.roll_no ASC,
                 a.full_name ASC
             `,
-            [normalizedYear, normalizedSection]
+            [normalizedYear, normalizedExamId, normalizedSection]
         );
 
         return rows;

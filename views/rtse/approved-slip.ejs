@@ -78,7 +78,7 @@
             <div>
                 <span>Section</span>
                 <strong>
-                    SECTION <%= application.section %>
+                     <%= application.section %>
                 </strong>
             </div>
 
@@ -188,14 +188,14 @@
                 <div>
                     <span>Class</span>
                     <strong>
-                        Class <%= application.class %>
+                        <%= /^\d+$/.test(String(application.class ?? '').trim()) ? (Number(application.class) > 0 ? 'Class ' + application.class : '-') : (String(application.class ?? '').trim() || '-') %>
                     </strong>
                 </div>
 
                 <div>
                     <span>Section</span>
                     <strong>
-                        SECTION <%= application.section %>
+                         <%= application.section %>
                     </strong>
                 </div>
 

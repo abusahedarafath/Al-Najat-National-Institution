@@ -3,19 +3,29 @@
 const fs = require("fs");
 const db = require("../config/database");
 const RtseSetting = require("../models/RtseSetting");
+const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseExamSection = require("../models/RtseExamSection");
 const RtseLoginInformationPdf =
     require("../models/RtseLoginInformationPdf");
 
 const generateSectionPdf =
     require("../utils/rtseLoginInformationPdf").generateSection;
 
-const ALLOWED_SECTIONS = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E"
-];
+async function isConfiguredSection(section) {
+    try {
+        const examination = await RtseExamSetting.getActive();
+        if (!examination) return false;
+
+        const sections = await RtseExamSection.getSections(examination.id);
+        return sections.some(
+            item =>
+                String(item.section_name || "").trim().toUpperCase() === section
+        );
+    } catch (error) {
+        console.error("RTSE configured-section validation error:", error);
+        return false;
+    }
+}
 
 async function getSectionApplications(section) {
 
@@ -93,7 +103,7 @@ exports.statusSection = async (req, res) => {
             .trim()
             .toUpperCase();
 
-    if (!ALLOWED_SECTIONS.includes(section)) {
+    if (!await isConfiguredSection(section)) {
         return res.status(400).json({
             success: false,
             message: "Invalid RTSE section."
@@ -147,7 +157,7 @@ exports.prepareSection = async (req, res) => {
             .trim()
             .toUpperCase();
 
-    if (!ALLOWED_SECTIONS.includes(section)) {
+    if (!await isConfiguredSection(section)) {
         return res.status(400).json({
             success: false,
             message: "Invalid RTSE section."
@@ -219,7 +229,7 @@ exports.viewSection = async (req, res) => {
             .trim()
             .toUpperCase();
 
-    if (!ALLOWED_SECTIONS.includes(section)) {
+    if (!await isConfiguredSection(section)) {
         return res.status(400).send(
             "Invalid RTSE section."
         );
@@ -260,7 +270,7 @@ exports.file = async (req, res) => {
             .trim()
             .toUpperCase();
 
-    if (!ALLOWED_SECTIONS.includes(section)) {
+    if (!await isConfiguredSection(section)) {
         return res.status(400).send(
             "Invalid RTSE section."
         );
@@ -319,7 +329,7 @@ exports.resetSection = async (req, res) => {
             .trim()
             .toUpperCase();
 
-    if (!ALLOWED_SECTIONS.includes(section)) {
+    if (!await isConfiguredSection(section)) {
         return res.status(400).json({
             success: false,
             message: "Invalid RTSE section."

@@ -14,9 +14,11 @@ class RtseAdmitDownloadReport {
 
         const params = [];
 
-        if (/^\d+$/.test(classValue)) {
-            conditions.push("ra.class = ?");
-            params.push(Number(classValue));
+        if (classValue) {
+            conditions.push(
+                "LOWER(TRIM(CAST(ra.class AS CHAR))) = LOWER(?)"
+            );
+            params.push(classValue);
         }
 
         if (/^[A-Z]$/.test(section)) {
@@ -177,9 +179,11 @@ class RtseAdmitDownloadReport {
 
         const params = [sectionValue];
 
-        if (/^\d+$/.test(classValue)) {
-            conditions.push("ra.class = ?");
-            params.push(Number(classValue));
+        if (classValue) {
+            conditions.push(
+                "LOWER(TRIM(CAST(ra.class AS CHAR))) = LOWER(?)"
+            );
+            params.push(classValue);
         }
 
         if (search) {
@@ -259,9 +263,11 @@ class RtseAdmitDownloadReport {
 
         const countParams = [sectionValue];
 
-        if (/^\d+$/.test(classValue)) {
-            countConditions.push("class = ?");
-            countParams.push(Number(classValue));
+        if (classValue) {
+            countConditions.push(
+                "LOWER(TRIM(CAST(class AS CHAR))) = LOWER(?)"
+            );
+            countParams.push(classValue);
         }
 
         const [countRows] = await db.query(
@@ -305,7 +311,9 @@ class RtseAdmitDownloadReport {
             ORDER BY class ASC
         `);
 
-        return rows.map(row => Number(row.class));
+        return rows
+            .map(row => String(row.class ?? "").trim())
+            .filter(Boolean);
     }
 
     static async getSections() {

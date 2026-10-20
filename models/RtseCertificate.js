@@ -223,7 +223,7 @@ static async exists(applicationId){
     // Get All Certificates
     // =====================================
 
-    static async getAll(applicationYear = null){
+    static async getAll(applicationYear = null, examSettingId = undefined){
 
     let sql = `
         SELECT
@@ -251,6 +251,11 @@ static async exists(applicationId){
     if(applicationYear){
         sql += " AND a.application_year=?";
         params.push(applicationYear);
+    }
+
+    if (examSettingId !== undefined) {
+        sql += " AND a.exam_setting_id <=> ?";
+        params.push(examSettingId);
     }
 
     sql += " ORDER BY c.id DESC";
@@ -389,125 +394,91 @@ static async search(keyword, applicationYear = null){
 // Students Without Certificate
 // =====================================
 
-static async getPendingStudents(section = null, applicationYear = null){
 
+static async getPendingStudents(
+    section = null,
+    applicationYear = null,
+    examSettingId = undefined
+) {
     let sql = `
-
-        SELECT
-
-            a.id
-
+        SELECT a.id
         FROM rtse_applications a
-
         INNER JOIN rtse_results r
-
             ON r.application_id = a.id
-
         LEFT JOIN rtse_certificates c
-
             ON c.application_id = a.id
-
-        WHERE
-
-              a.application_year=?
-
-            AND r.id IS NOT NULL
-
-            AND r.section_rank >= 11
-
-        AND
-
-            c.id IS NULL
-
+           AND c.certificate_type = 'Appreciation'
+        WHERE a.application_year = ?
+          AND r.id IS NOT NULL
+          AND r.section_rank >= 11
+          AND c.id IS NULL
     `;
-
     const params = [applicationYear];
 
-    if(section){
-
-        sql += " AND a.section=?";
-
-        params.push(section);
-
+    if (examSettingId !== undefined) {
+        sql += " AND a.exam_setting_id <=> ?";
+        params.push(examSettingId);
     }
 
-    const [rows] = await db.query(
+    if (section) {
+        sql += " AND a.section = ?";
+        params.push(section);
+    }
 
-        sql,
-
-        params
-
-    );
-
+    const [rows] = await db.query(sql, params);
     return rows;
-
-}
-
-// =====================================
-// Get Certificates by Section
-// =====================================
-
-// =====================================
-// Reset Certificates by Section
-// =====================================
-
-static async resetBySection(section, applicationYear){
-
-    await db.query(
-
-        `DELETE c
-         FROM rtse_certificates c
-         INNER JOIN rtse_applications a
-             ON a.id=c.application_id
-         INNER JOIN rtse_results r
-             ON r.application_id=a.id
-         WHERE
-             a.section=?
-             AND a.application_year=?
-             AND r.section_rank >= 11`,
-
-        [
-            section,
-            applicationYear
-        ]
-
-    );
-
 }
 
 
-// =====================================
-// Reset All Certificates
-// =====================================
+static async resetBySection(
+    section,
+    applicationYear,
+    examSettingId = undefined
+) {
+    let sql = `
+        DELETE c
+        FROM rtse_certificates c
+        INNER JOIN rtse_applications a
+            ON a.id = c.application_id
+        INNER JOIN rtse_results r
+            ON r.application_id = a.id
+        WHERE a.section = ?
+          AND a.application_year = ?
+          AND r.section_rank >= 11
+    `;
+    const params = [section, applicationYear];
 
-static async resetAll(applicationYear){
+    if (examSettingId !== undefined) {
+        sql += " AND a.exam_setting_id <=> ?";
+        params.push(examSettingId);
+    }
 
-    await db.query(
-
-        `DELETE c
-         FROM rtse_certificates c
-         INNER JOIN rtse_applications a
-             ON a.id=c.application_id
-         INNER JOIN rtse_results r
-             ON r.application_id=a.id
-         WHERE
-             a.application_year=?
-             AND r.section_rank >= 11`,
-
-        [
-            applicationYear
-        ]
-
-    );
-
+    await db.query(sql, params);
 }
 
+// Reset only Rank 11+ appreciation certificates within the requested scope.
+static async resetAll(applicationYear, examSettingId = undefined) {
+    let sql = `
+        DELETE c
+        FROM rtse_certificates c
+        INNER JOIN rtse_applications a
+            ON a.id = c.application_id
+        INNER JOIN rtse_results r
+            ON r.application_id = a.id
+        WHERE a.application_year = ?
+          AND r.section_rank >= 11
+    `;
+    const params = [applicationYear];
 
-// =====================================
-// Get Certificates by Section
-// =====================================
+    if (examSettingId !== undefined) {
+        sql += " AND a.exam_setting_id <=> ?";
+        params.push(examSettingId);
+    }
 
-static async getBySection(section, applicationYear){
+    await db.query(sql, params);
+}
+
+static async getBySection(section, applicationYear, examSettingId = undefined){
 
     const [rows] = await db.query(
 
@@ -545,19 +516,15 @@ static async getBySection(section, applicationYear){
 
           AND a.application_year=?
 
+          AND (? = 0 OR a.exam_setting_id <=> ?)
+
             AND r.section_rank >= 11
 
         ORDER BY
 
             r.section_rank ASC`,
 
-        [
-
-            section
-
-        ,
-              applicationYear
-          ]
+        [section, applicationYear, examSettingId === undefined ? 0 : 1, examSettingId ?? null]
 
     );
 

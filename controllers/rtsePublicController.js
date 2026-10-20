@@ -1,6 +1,8 @@
 const RtseApplication = require("../models/RtseApplication");
 const RtseSetting = require("../models/RtseSetting");
 const ArspSetting = require("../models/ArspSetting");
+const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseExamSection = require("../models/RtseExamSection");
 const fs = require("fs");
 const path = require("path");
 
@@ -59,12 +61,16 @@ exports.requireApplicationOpen = async (req, res, next) => {
 exports.applicationPage = async (req, res) => {
     const draft = req.session.rtseDraft || {};
     const setting = await ArspSetting.get();
+    const examSetting = await RtseExamSetting.getActive();
+    const examYear = Number(examSetting?.exam_year) || null;
 
     res.render("rtse/application", {
-        title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
-        draft,
-        setting
-    });
+    title: `Ratabari Talent Search Examination ${examYear || ""} | RTSE Online Application`,
+    draft,
+    setting,
+    examYear
+});
+
 };
 
 // =====================================
@@ -74,6 +80,8 @@ exports.applicationPage = async (req, res) => {
 exports.submitApplication = async (req, res) => {
     try {
         const oldDraft = req.session.rtseDraft || {};
+       const examSetting = await RtseExamSetting.getActive();
+const examYear = Number(examSetting?.exam_year) || null;
 
         const photoFile =
             req.files &&
@@ -90,13 +98,19 @@ exports.submitApplication = async (req, res) => {
                 : oldDraft.identity_document || null;
 
         // Photo is mandatory for a new application
+
+
         if (!photoFile) {
             return res.render("rtse/application", {
-                title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
+                title: `Ratabari Talent Search Examination ${examYear || ""} | RTSE Online Application`,
                 error: "Candidate photograph is required.",
-                draft: req.body
+                draft: req.body,
+                setting: await ArspSetting.get(),
+                examYear
             });
         }
+
+
 
         // If a new photo was uploaded, remove the previous draft photo
         if (
@@ -114,7 +128,9 @@ exports.submitApplication = async (req, res) => {
             deleteRtseFile(oldDraft.identity_document);
         }
 
-        const section = RtseApplication.getSection(req.body.class);
+        if (!examSetting || !Number.isInteger(Number(examSetting.id))) throw new Error("No active examination is configured.");
+        const section = await RtseExamSection.getSectionForClass(examSetting.id, req.body.class);
+        if (!section) throw new Error("This class is not mapped to a section for the active examination.");
 
         const draft = {
             full_name: req.body.full_name || "",
@@ -129,6 +145,7 @@ exports.submitApplication = async (req, res) => {
             state: req.body.state || "Assam",
             pincode: req.body.pincode || "",
             class: req.body.class || "",
+            exam_setting_id: examSetting.id,
             section,
             address: req.body.address || "",
             photo: photoFile,
@@ -144,10 +161,15 @@ exports.submitApplication = async (req, res) => {
     } catch (err) {
         console.error("RTSE review error:", err);
 
+           const examSetting = await RtseExamSetting.getActive();
+        const examYear = Number(examSetting?.exam_year) || null;
+
         return res.render("rtse/application", {
-            title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
+            title: `Ratabari Talent Search Examination ${examYear || ""} | RTSE Online Application`,
             error: "Unable to prepare the application for review.",
-            draft: req.body || {}
+            draft: req.body || {},
+            setting: await ArspSetting.get(),
+            examYear
         });
     }
 };
@@ -226,14 +248,19 @@ exports.confirmApplication = async (req, res) => {
             state: draft.state,
             pincode: draft.pincode,
             class: draft.class,
+            exam_setting_id: draft.exam_setting_id,
+            section: draft.section,
             address: draft.address,
             photo: draft.photo,
             identity_document: draft.identity_document
         });
 
+        const examSetting = await RtseExamSetting.getById(Number(draft.exam_setting_id));
         const application = {
+            exam_setting_id: draft.exam_setting_id,
+            exam_name: examSetting ? examSetting.exam_name : null,
             registration_no: result.registration_no,
-            application_year: new Date().getFullYear(),
+            application_year: result.application_year,
             section: result.section,
             full_name: draft.full_name,
             father_name: draft.father_name,

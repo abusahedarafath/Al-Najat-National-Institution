@@ -8,14 +8,22 @@
 <%
     // RTSE sections MUST always remain in fixed order.
     // Never sort this list based on generated rolls/admit cards.
-    const RTSE_FIXED_SECTION_ORDER = ["A", "B", "C", "D", "E"];
+    const RTSE_SECTION_ORDER = activeExamination
+        ? (Array.isArray(configuredSections) ? configuredSections : [])
+            .map(function(item) {
+                return String(item.section_name || "").trim().toUpperCase();
+            })
+            .filter(Boolean)
+        : (Array.isArray(configuredSections) ? configuredSections : [])
+            .map(function(item) { return String(item.section_name || "").trim().toUpperCase(); })
+            .filter(Boolean);
 
     const RTSE_SECTION_MAP = {};
     (Array.isArray(sectionStats) ? sectionStats : []).forEach(function(item) {
         RTSE_SECTION_MAP[String(item.section || "").toUpperCase()] = item;
     });
 
-    const RTSE_SECTIONS_FIXED = RTSE_FIXED_SECTION_ORDER.map(function(section) {
+    const RTSE_SECTIONS_FIXED = RTSE_SECTION_ORDER.map(function(section) {
         return RTSE_SECTION_MAP[section] || {
             section: section,
             application_open: false,
@@ -65,9 +73,9 @@
 
                     <% } %>
 
-<% if(admitGenerated){ %>
+<% if(activeExamination && admitGenerated){ %>
     <a
-        href="/admin/rtse/admit-cards/pdf/all"
+        href="/admin/rtse/exam-settings/<%= activeExamination.id %>/admit-cards/pdf/all"
         class="btn-save"
     >
         🖨️ Print / Save All Generated Admit Cards
@@ -256,13 +264,13 @@
 
 
                 <!-- =================================================
-                     SECTION A-E GRID
+                     DYNAMIC EXAMINATION SECTION GRID
                 ================================================== -->
 
                 <div class="rtse-section-grid">
 
 
-        <% RTSE_FIXED_SECTION_ORDER.forEach(section=>{ %>
+        <% RTSE_SECTION_ORDER.forEach(section=>{ %>
 
                         <% const data =
                             RTSE_SECTION_MAP[section] || {};
@@ -276,7 +284,7 @@
                         <div class="rtse-section-card">
 
                             <h3>
-                                SECTION <%= section %>
+                                <%= section %>
                             </h3>
 
                             <hr>
@@ -346,7 +354,7 @@
                             <div class="rtse-section-actions">
 
                                 <a
-                                    href="/admin/rtse/approved/<%= section %>"
+                                    href="<%= activeExamination ? `/admin/rtse/exam-settings/${activeExamination.id}/approved/${encodeURIComponent(section)}` : `/admin/rtse/approved/${encodeURIComponent(section)}` %>"
                                     class="btn-view"
                                 >
                                     👥 Manage Approved Students
@@ -354,7 +362,7 @@
 
 
                                 <a
-                                    href="/admin/rtse/export/<%= section %>"
+                                    href="<%= activeExamination ? `/admin/rtse/exam-settings/${activeExamination.id}/export/${encodeURIComponent(section)}` : `/admin/rtse/export/${encodeURIComponent(section)}` %>"
                                     class="btn-save"
                                 >
                                     📊 Section Excel
@@ -362,27 +370,27 @@
 
                                 <% if(Number(data.admit_generated || 0) > 0){ %>
                                     <a
-                                        href="/admin/rtse/admit-cards/pdf/<%= section %>"
+                                        href="/admin/rtse/exam-settings/<%= activeExamination.id %>/admit-cards/pdf/<%= encodeURIComponent(section) %>"
                                         class="btn-save"
                                     >
                                         🖨️ Print / Save All Admit Cards
                                     </a>
                                       <% if(Number(data.omr_generated || 0) > 0){ %>
                             <a
-                                href="/admin/rtse/omr/pdf/<%= section %>"
+                                href="/admin/rtse/exam-settings/<%= activeExamination.id %>/omr/pdf/<%= encodeURIComponent(section) %>"
                                 class="btn-save">
                                 📝 Download Section OMR
                             </a>
                                       <% } %>
                                 <a
-                                    href="/admin/rtse/seat-plan/<%= section %>"
+                                    href="<%= activeExamination ? `/admin/rtse/exam-settings/${activeExamination.id}/seat-plan/${encodeURIComponent(section)}` : `/admin/rtse/seat-plan/${encodeURIComponent(section)}` %>"
                                     class="btn-view"
                                 >
                                     🪑 View Seat Plan
                                 </a>
 
                                 <a
-                                    href="/admin/rtse/attendance-sheet/<%= section %>"
+                                    href="<%= activeExamination ? `/admin/rtse/exam-settings/${activeExamination.id}/attendance-sheet/${encodeURIComponent(section)}` : `/admin/rtse/attendance-sheet/${encodeURIComponent(section)}` %>"
                                     class="btn-view"
                                 >
                                     📋 View Attendance Sheet
@@ -398,10 +406,10 @@
         <% if(Number(data.omr_generated || 0) === 0){ %>
             <form
                 method="POST"
-                action="/admin/rtse/omr/generate/<%= section %>"
+                action="/admin/rtse/exam-settings/<%= activeExamination.id %>/omr/generate/<%= encodeURIComponent(section) %>"
                 style="display:inline;"
                 data-rtse-confirm-title="Generate OMR Sheets"
-                data-rtse-confirm-message="Generate OMR sheets for Section <%= section %>?\n\nThis will refresh each student Result QR token. Attendance and PRESENT status will not be changed."
+                data-rtse-confirm-message="Generate OMR sheets for <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>?\n\nThis will refresh each student Result QR token. Attendance and PRESENT status will not be changed."
             >
                 <button type="submit" class="btn-save">
                     📝 Generate OMR
@@ -413,10 +421,10 @@
             </span>
             <form
                 method="POST"
-                action="/admin/rtse/omr/reset/<%= section %>"
+                action="/admin/rtse/exam-settings/<%= activeExamination.id %>/omr/reset/<%= encodeURIComponent(section) %>"
                 style="display:inline;"
                 data-rtse-confirm-title="Reset OMR Generation"
-                data-rtse-confirm-message="Reset OMR generation for Section <%= section %>?\n\nAdmit Cards, Roll Numbers, Attendance and PRESENT status will remain unchanged."
+                data-rtse-confirm-message="Reset OMR generation for <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>?\n\nAdmit Cards, Roll Numbers, Attendance and PRESENT status will remain unchanged."
             >
                 <button type="submit" class="btn-warning">
                     ↩ Reset OMR
@@ -443,32 +451,28 @@
                                 <% } else { %>
                                     <% if(Number(data.roll_generated || 0) === 0){ %>
 
-                                        <a
-                                            href="/admin/rtse/generate-roll/<%= section %>"
-                                            class="btn-save"
-                                            data-rtse-confirm-title="Generate Roll Numbers"
-                                        data-rtse-confirm-message="Generate Roll Numbers for Section <%= section %>?"
-                                        >
-                                            Generate Roll Number
-                                        </a>
+                                        <% if(activeExamination){ %>
+<form method="POST" action="/admin/rtse/exam-settings/<%= activeExamination.id %>/generate-roll/<%= encodeURIComponent(section) %>" style="display:inline;" data-rtse-confirm-title="Generate Roll Numbers" data-rtse-confirm-message="Generate Roll Numbers for <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>?">
+<button type="submit" class="btn-save">Generate Roll Number</button>
+</form>
+<% } %>
 
                                     <% } else if(Number(data.admit_generated || 0) === 0){ %>
 
-                                        <a
-                                            href="/admin/rtse/admit-generator/<%= section %>"
-                                            class="btn-view"
-                                        >
-                                            Generate Admit Cards
-                                        </a>
+                                        <% if(activeExamination){ %>
+<form method="POST" action="/admin/rtse/exam-settings/<%= activeExamination.id %>/generate-admit/<%= encodeURIComponent(section) %>" style="display:inline;">
+<button type="submit" class="btn-view">Generate Admit Cards</button>
+</form>
+<% } %>
 
 
                                         <% if(!setting.admit_publish){ %>
 <form
                                                 method="POST"
-                                                action="/admin/rtse/reset-roll/<%= section %>"
+                                                action="/admin/rtse/exam-settings/<%= activeExamination.id %>/reset-roll/<%= encodeURIComponent(section) %>"
                                                 style="display:inline;"
                                                 data-rtse-confirm-title="Reset Roll Number & Admit"
-                                                data-rtse-confirm-message="Reset Roll No. for Section <%= section %>?\n\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected."
+                                                data-rtse-confirm-message="Reset Roll No. for <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>?\n\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected."
                                             >
                                                 <button
                                                     type="submit"
@@ -489,10 +493,10 @@
                                         <% if(!setting.admit_publish){ %>
                                         <form
                                                 method="POST"
-                                                action="/admin/rtse/reset-roll/<%= section %>"
+                                                action="/admin/rtse/exam-settings/<%= activeExamination.id %>/reset-roll/<%= encodeURIComponent(section) %>"
                                                 style="display:inline;"
                                                 data-rtse-confirm-title="Reset Roll Number & Admit"
-                                                data-rtse-confirm-message="Reset Roll No. for Section <%= section %>?\n\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected."
+                                                data-rtse-confirm-message="Reset Roll No. for <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>?\n\nThis will reset generated roll numbers and admit-card status for this section. Existing attendance records are protected."
                                             >
                                                 <button
                                                     type="submit"
@@ -528,37 +532,6 @@
                 </div>
 
             </div>
-
-
-            <!-- =====================================================
-                 APPLICATION REGISTRY
-            ====================================================== -->
-
-            <div class="profile-card">
-
-                <div class="rtse-table-wrapper">
-
-                    <div class="profile-card rtse-search-card" style="margin-bottom:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;">
-
-        <div>
-            <h2 style="margin:0;">Search Applications</h2>
-            <p style="margin:5px 0 0;color:#666;font-size:13px;">
-                Search by Name, Registration No., Mobile, School, Class or Section
-            </p>
-        </div>
-
-
-
-    </div>
-
-
-
-            </div>
-
-        </div>
-
-
 
 <!-- =========================================================
      RTSE RESET CONFIRMATION MODAL
@@ -896,246 +869,11 @@
     // --------------------------------------------------------
     // Forms: stop submission BEFORE the browser can submit.
     // --------------------------------------------------------
-    document.addEventListener("click", function (event) {
-        const button = event.target.closest(
-            'form[data-rtse-confirm-title] button[type="submit"]'
-        );
 
-        if (!button) {
-            return;
-        }
-
-        const form = button.form;
-
-        if (!form) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        pendingForm = form;
-        pendingTrigger = button;
-        pendingResolve = null;
-
-        openRtseConfirmModal(form, button);
-    }, true);
 
     // --------------------------------------------------------
     // Links: intercept all dashboard confirmation links.
     // --------------------------------------------------------
-    document.addEventListener("click", function (event) {
-        const link = event.target.closest(
-            'a[data-rtse-confirm-title]'
-        );
-
-        if (!link) {
-            return;
-        }
-
-        if (
-            event.defaultPrevented ||
-            event.button !== 0 ||
-            event.metaKey ||
-            event.ctrlKey ||
-            event.shiftKey ||
-            event.altKey
-        ) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        pendingForm = null;
-        pendingTrigger = link;
-        pendingResolve = null;
-
-        openRtseConfirmModal(null, link);
-    }, true);
-
-    cancelButton.addEventListener("click", function () {
-        closeRtseConfirmModal(false);
-    });
-
-    continueButton.addEventListener("click", function () {
-        const form = pendingForm;
-        const link = pendingTrigger;
-        const resolve = pendingResolve;
-
-        if (typeof resolve === "function") {
-            closeRtseConfirmModal(true);
-            return;
-        }
-
-        closeRtseConfirmModal(false);
-
-        if (form) {
-            if (typeof form.requestSubmit === "function") {
-                form.requestSubmit();
-            } else {
-                HTMLFormElement.prototype.submit.call(form);
-            }
-            return;
-        }
-
-        if (link) {
-            window.location.href = link.href;
-        }
-    });
-
-    overlay.addEventListener("click", function (event) {
-        if (event.target === overlay) {
-            closeRtseConfirmModal(false);
-        }
-    });
-
-    document.addEventListener("keydown", function (event) {
-        if (!overlay.classList.contains("is-visible")) {
-            return;
-        }
-
-        if (event.key === "Escape") {
-            event.preventDefault();
-            closeRtseConfirmModal(false);
-            return;
-        }
-
-        if (event.key === "Enter") {
-            if (
-                document.activeElement === cancelButton ||
-                document.activeElement === continueButton
-            ) {
-                event.preventDefault();
-                continueButton.click();
-            }
-        }
-    });
-
-    // --------------------------------------------------------
-    // Public helper for async JavaScript actions.
-    // --------------------------------------------------------
-    window.rtseConfirm = function (titleText, messageText, options) {
-        options = options || {};
-
-        return new Promise(function (resolve) {
-            pendingForm = null;
-            pendingTrigger = null;
-            pendingResolve = resolve;
-
-            title.textContent = titleText || "Confirm Action";
-            message.textContent = String(
-                messageText || "Are you sure you want to continue?"
-            ).replace(/\\n/g, "\n");
-
-            const lowerTitle = String(titleText || "").toLowerCase();
-
-            const isOmr =
-                lowerTitle.includes("omr") ||
-                options.omr === true;
-
-            const isDanger =
-                lowerTitle.includes("reset") ||
-                lowerTitle.includes("close") ||
-                lowerTitle.includes("hide") ||
-                options.danger === true;
-
-            overlay.classList.toggle("rtse-confirm-omr", isOmr);
-            overlay.classList.toggle("rtse-confirm-danger", isDanger);
-            overlay.classList.toggle("rtse-confirm-action", !isDanger);
-
-            overlay.classList.add("is-visible");
-            document.body.style.overflow = "hidden";
-
-            window.setTimeout(function () {
-                continueButton.focus();
-            }, 0);
-        });
-    };
-})();
-</script>>
-<script>
-(function () {
-    const RTSE_DASHBOARD_SCROLL_POSITION_KEY =
-        "rtse_dashboard_scroll_position";
-
-    function saveRtseDashboardScrollPosition() {
-        try {
-            sessionStorage.setItem(
-                RTSE_DASHBOARD_SCROLL_POSITION_KEY,
-                String(window.scrollY || window.pageYOffset || 0)
-            );
-        } catch (error) {
-            console.warn(
-                "RTSE scroll position could not be saved:",
-                error
-            );
-        }
-    }
-
-    function restoreRtseDashboardScrollPosition() {
-        try {
-            const saved = sessionStorage.getItem(
-                RTSE_DASHBOARD_SCROLL_POSITION_KEY
-            );
-
-            if (saved === null) return;
-
-            sessionStorage.removeItem(
-                RTSE_DASHBOARD_SCROLL_POSITION_KEY
-            );
-
-            const scrollY = Number(saved);
-
-            if (!Number.isFinite(scrollY)) return;
-
-            requestAnimationFrame(function () {
-                window.scrollTo(0, scrollY);
-
-                requestAnimationFrame(function () {
-                    window.scrollTo(0, scrollY);
-                });
-            });
-        } catch (error) {
-            console.warn(
-                "RTSE scroll position could not be restored:",
-                error
-            );
-        }
-    }
-
-    document.addEventListener("submit", function (event) {
-        const form = event.target;
-
-        if (!form || !(form instanceof HTMLFormElement)) {
-            return;
-        }
-
-        const action =
-            String(form.getAttribute("action") || "");
-
-        if (
-            action.includes("/admin/rtse/reset-roll/")
-        ) {
-            saveRtseDashboardScrollPosition();
-        }
-    }, true);
-
-    document.addEventListener("click", function (event) {
-        const link = event.target.closest("a");
-
-        if (!link) return;
-
-        const href =
-            String(link.getAttribute("href") || "");
-
-        if (
-            href.includes("/admin/rtse/generate-roll/") ||
-            href.includes("/admin/rtse/admit-generator/")
-        ) {
-            saveRtseDashboardScrollPosition();
-        }
-    }, true);
 
     if (document.readyState === "loading") {
         document.addEventListener(

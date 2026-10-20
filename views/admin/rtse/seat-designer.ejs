@@ -554,9 +554,9 @@
     >
       <option value="">Section Lock</option>
 
-      <% ["A","B","C","D","E"].forEach(lockSection => { %>
+      <% (sections || []).forEach(sectionItem => { const lockSection = String(sectionItem.section_name || "").trim().toUpperCase(); %>
         <option value="<%= lockSection %>">
-          Section <%= lockSection %>
+          <%= (String((lockSection) ?? "").trim() ? (String((lockSection) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((lockSection) ?? "").trim() : "Section " + String((lockSection) ?? "").trim()) : "-") %>
         </option>
       <% }) %>
     </select>
@@ -792,7 +792,7 @@
                                             Select Section
                                         </option>
 
-                                        <% ["A","B","C","D","E"].forEach(section => { %>
+                                        <% (sections || []).forEach(sectionItem => { const section = String(sectionItem.section_name || "").trim().toUpperCase(); %>
                                             <option
                                                 value="<%= section %>"
                                                 <%= shift.universal_section_lock === section
@@ -982,7 +982,10 @@ function includeSeatForm(
 const seatHasCompleteLock =
                                     !!seat.is_locked &&
                                     ["Male", "Female"].includes(seat.gender) &&
-                                    ["A", "B", "C", "D", "E"].includes(seat.section);
+                                    (sections || []).some(sectionItem =>
+        String(sectionItem.section_name || "").trim().toUpperCase() ===
+        String(seat.section || "").trim().toUpperCase()
+    );
 
 const effectiveGender =
                                     seatHasCompleteLock
@@ -1077,7 +1080,7 @@ const seatIsLocked =
                     None
                 </option>
 
-                <% ["A", "B", "C", "D", "E"].forEach(section => { %>
+                <% (sections || []).forEach(sectionItem => { const section = String(sectionItem.section_name || "").trim().toUpperCase(); %>
 
                     <option
                         value="<%= section %>"

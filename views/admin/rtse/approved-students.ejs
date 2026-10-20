@@ -1,4 +1,5 @@
 <%- include("../partials/header") %>
+<% const isExamSpecific = typeof examination !== "undefined" && !!examination; %>
 
 <div class="admin-layout">
 
@@ -13,13 +14,15 @@
                 <div>
 
                     <h1>
-                        Approved Students —
-                        Section <%= section %>
+                        Approved Students<% if (isExamSpecific) { %> — <%= examination.exam_name %><% } %> — <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>
                     </h1>
 
                     <p>
-                        Only approved RTSE students of
-                        Section <%= section %> are shown here.
+                        <% if (isExamSpecific) { %>
+                            Approved students for <%= examination.exam_name %>, application year <%= applicationYear %>, <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>.
+                        <% } else { %>
+                            Only approved RTSE students of <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> are shown here.
+                        <% } %>
                     </p>
 
                 </div>
@@ -28,18 +31,18 @@
                     style="display:flex;gap:10px;flex-wrap:wrap;">
 
                     <a
-                        href="/admin/rtse"
+                        href="<%= isExamSpecific ? '/admin/rtse/exam-settings/' + examination.id + '/generation' : '/admin/rtse' %>"
                         class="btn-view">
 
-                        ← RTSE Dashboard
+                        <%= isExamSpecific ? "← Section Generation" : "← RTSE Dashboard" %>
 
                     </a>
 
                     <a
-                        href="/admin/rtse/export/<%= section %>"
+                        href="<%= isExamSpecific ? '/admin/rtse/exam-settings/' + examination.id + '/export/' + encodeURIComponent(section) : '/admin/rtse/export/' + encodeURIComponent(section) %>"
                         class="btn-save">
 
-                        📊 Section <%= section %> Excel
+                        📊 <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> Excel
 
                     </a>
 
@@ -112,7 +115,7 @@
 
         <div>
             <h2 style="margin:0;">
-                Search Section <%= section %> Students
+                Search <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> Students
             </h2>
 
             <p style="margin:5px 0 0;color:#666;font-size:13px;">
@@ -486,11 +489,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
 
-            const url =
-                "/admin/rtse/approved/" +
-                encodeURIComponent(section) +
-                "/live-search?search=" +
-                encodeURIComponent(query);
+            const searchBaseUrl = <%- JSON.stringify(
+                isExamSpecific
+                    ? "/admin/rtse/exam-settings/" + examination.id + "/approved/" + encodeURIComponent(section) + "/live-search"
+                    : "/admin/rtse/approved/" + encodeURIComponent(section) + "/live-search"
+            ) %>;
+
+            const url = searchBaseUrl + "?search=" + encodeURIComponent(query);
 
             const response =
                 await fetch(

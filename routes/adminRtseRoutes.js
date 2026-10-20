@@ -1,3 +1,4 @@
+const adminRtseRecordsYearController = require("../controllers/adminRtseRecordsYearController");
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
@@ -392,41 +393,21 @@ router.post(
 // Section Wise
 // =====================================
 
-router.post(
-    "/rtse/reset-roll/:section",
-    auth.isAdmin,
-    adminRtseController.resetRollNumbers
-);
+
 
 
 // =====================================
 // Generate Roll Numbers
 // =====================================
 
-router.get(
 
-    "/rtse/generate-roll/:section",
-
-    auth.isAdmin,
-
-    adminRtseController.generateRollNumbers
-
-);
 
 
 // =====================================
 // Generate Admit Cards
 // =====================================
 
-router.get(
 
-    "/rtse/generate-admit/:section",
-
-    auth.isAdmin,
-
-    adminRtseController.generateAdmitCards
-
-);
 
 
 // =====================================
@@ -530,22 +511,10 @@ router.post(
 // Admit Card Generator
 // =====================================
 
-router.get(
-
-    "/rtse/admit-generator/:section",
-
-    auth.isAdmin,
-
-    adminRtseController.admitGenerationPage
-
-);
 
 
-router.post(
-    "/rtse/admit-generator/:section",
-    auth.isAdmin,
-    adminRtseController.generateAdmitCards
-);
+
+
 
 // =====================================
 // RTSE Admit Card Settings
@@ -600,19 +569,19 @@ router.post(
  // =====================================
 
 router.post(
-    "/rtse/omr/generate/:section",
+    "/rtse/exam-settings/:id/omr/generate/:section",
     auth.isAdmin,
     adminRtseOmrController.generateSectionOmr
 );
 
 router.post(
-    "/rtse/omr/reset/:section",
+    "/rtse/exam-settings/:id/omr/reset/:section",
     auth.isAdmin,
     adminRtseOmrController.resetSectionOmr
 );
 
 router.get(
-    "/rtse/omr/pdf/:section",
+    "/rtse/exam-settings/:id/omr/pdf/:section",
     auth.isAdmin,
     adminRtseOmrController.downloadSectionOmrPdf
 );
@@ -624,7 +593,7 @@ router.get(
 );
 
 router.get(
-    "/rtse/admit-cards/pdf/all",
+    "/rtse/exam-settings/:id/admit-cards/pdf/all",
     auth.isAdmin,
     adminRtseController.downloadAllAdmitCardsPdf
 );
@@ -636,9 +605,9 @@ router.get(
 );
 
 router.get(
-    "/rtse/admit-cards/pdf/:section",
+    "/rtse/exam-settings/:id/admit-cards/pdf/:section",
     auth.isAdmin,
-    adminRtseController.downloadSectionAdmitCardsPdf
+    adminRtseController.downloadExamSectionAdmitCardsPdf
 );
 
 router.get(
@@ -816,6 +785,72 @@ router.post(
 
 );
 
+
+
+// Examination-specific section Excel export.
+router.get(
+    "/rtse/exam-settings/:id/export/:section",
+    auth.isAdmin,
+    adminRtseController.exportExamSectionExcel
+);
+
+// Examination-specific approved students and live search.
+router.get(
+    "/rtse/exam-settings/:id/approved/:section/live-search",
+    auth.isAdmin,
+    adminRtseController.liveExamSectionApprovedSearch
+);
+
+router.get(
+    "/rtse/exam-settings/:id/approved/:section",
+    auth.isAdmin,
+    adminRtseController.examSectionApprovedStudents
+);
+
+// Examination-specific section generation page and actions.
+router.get(
+    "/rtse/exam-settings/:id/generation",
+    auth.isAdmin,
+    adminRtseController.examSectionGenerationPage
+);
+
+router.post(
+    "/rtse/exam-settings/:id/generate-roll/:section",
+    auth.isAdmin,
+    adminRtseController.generateExamSectionRollNumbers
+);
+
+router.post(
+    "/rtse/exam-settings/:id/generate-admit/:section",
+    auth.isAdmin,
+    adminRtseController.generateExamSectionAdmitCards
+);
+
+router.post(
+    "/rtse/exam-settings/:id/reset-roll/:section",
+    auth.isAdmin,
+    adminRtseController.resetExamSectionRollNumbers
+);
+
+router.post(
+    "/rtse/exam-settings/:id/reset-admit/:section",
+    auth.isAdmin,
+    adminRtseController.resetExamSectionAdmitCards
+);
+
+// Examination-specific section configuration
+router.get(
+    "/rtse/exam-settings/:id/sections",
+    auth.isAdmin,
+    adminRtseController.examSectionSettingsPage
+);
+
+router.post(
+    "/rtse/exam-settings/:id/sections",
+    auth.isAdmin,
+    multer().none(),
+    adminRtseController.saveExamSectionSettings
+);
 
 // View Examination
 router.get(
@@ -1036,6 +1071,25 @@ router.post(
     "/rtse/seat-plan",
     auth.isAdmin,
     adminRtseController.generateSeatPlan
+);
+
+// Examination-scoped Seat Plan and Attendance Sheet
+router.get(
+    "/rtse/exam-settings/:id/seat-plan/:section",
+    auth.isAdmin,
+    adminRtseController.roomWiseSeatPlan
+);
+
+router.get(
+    "/rtse/exam-settings/:id/attendance-sheet/pdf/:section",
+    auth.isAdmin,
+    adminRtseController.downloadAttendanceSheetPdf
+);
+
+router.get(
+    "/rtse/exam-settings/:id/attendance-sheet/:section",
+    auth.isAdmin,
+    adminRtseController.attendanceSheet
 );
 
 // Room Wise Seat Plan
@@ -1520,5 +1574,25 @@ router.get(
 
 );
 
+
+
+// RTSE Records Year Manager
+router.get(
+    "/rtse/records/years",
+    auth.isAdmin,
+    adminRtseRecordsYearController.recordsYears
+);
+
+router.post(
+    "/rtse/records/years/:year/finish",
+    auth.isAdmin,
+    adminRtseRecordsYearController.finishYear
+);
+
+router.post(
+    "/rtse/records/years/:year/reopen",
+    auth.isAdmin,
+    adminRtseRecordsYearController.reopenYear
+);
 
 module.exports = router;

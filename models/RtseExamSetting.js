@@ -446,12 +446,37 @@ class RtseExamSetting {
 
         const examYear = examRows[0].exam_year;
 
-        const [applicationRows] = await db.query(
+        // Preserve the legacy year-based safeguard. After the custom-section
+        // migration, also protect applications linked directly to this exam.
+        const [columnRows] = await db.query(
             `SELECT COUNT(*) AS total
-             FROM rtse_applications
-             WHERE application_year=?`,
-            [examYear]
+             FROM information_schema.columns
+             WHERE table_schema = DATABASE()
+               AND table_name = 'rtse_applications'
+               AND column_name = 'exam_setting_id'`
         );
+
+        const hasExamSettingId =
+            Number(columnRows[0] && columnRows[0].total) > 0;
+
+        let applicationRows;
+
+        if (hasExamSettingId) {
+            [applicationRows] = await db.query(
+                `SELECT COUNT(*) AS total
+                 FROM rtse_applications
+                 WHERE application_year = ?
+                    OR exam_setting_id = ?`,
+                [examYear, id]
+            );
+        } else {
+            [applicationRows] = await db.query(
+                `SELECT COUNT(*) AS total
+                 FROM rtse_applications
+                 WHERE application_year = ?`,
+                [examYear]
+            );
+        }
 
         if(
             applicationRows[0] &&

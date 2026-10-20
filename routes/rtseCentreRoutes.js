@@ -346,10 +346,21 @@ router.get(
                     );
                 }
 
-                const setting = await ArspSetting.get();
-                const examSetting = await RtseExamSetting.get();
-                const admitCardSetting =
-                    await RtseAdmitCardSetting.get();
+              const setting = await ArspSetting.get();
+let examSetting = null;
+
+if (student?.exam_setting_id) {
+    examSetting = await RtseExamSetting.getById(
+        student.exam_setting_id
+    );
+}
+
+if (!examSetting) {
+    examSetting = await RtseExamSetting.get();
+}
+
+const admitCardSetting =
+    await RtseAdmitCardSetting.get(); 
 
                 return res.render(
                     "rtse/student-admit-card",
@@ -361,10 +372,11 @@ router.get(
                         qrData,
                         examSetting,
                         admitCardSetting,
-                        examYear:
-                            examSetting?.exam_year ||
-                            setting?.exam_year ||
-                            new Date().getFullYear(),
+                       examYear:
+    examSetting?.exam_year ||
+    student?.application_year ||
+    setting?.exam_year ||
+    null,
 
                         // Centre Portal context
                         centrePortal: true,

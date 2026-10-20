@@ -26,7 +26,7 @@
 
 
                 <h2>
-                    RTSE 2026 ONLINE APPLICATION
+                 RTSE <%= examYear || "" %> ONLINE APPLICATION
                 </h2>
 
             </div>
@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="rtse-duplicate-message">
-                    This candidate is already registered.
+               This candidate is already registered for RTSE <%= examYear || "" %>.
                 </div>
 
                 <div class="rtse-duplicate-registration">
@@ -296,52 +296,26 @@
 
                         <label>Class</label>
 
-                        <select
-                            id="studentClass"
-                            name="class"
-                            required
-                        >
 
-                            <option value="">
-                                Select Class
-                            </option>
+<select
+    id="studentClass"
+    name="class"
+    required
+>
+    <option value="">Select Class</option>
+    <% (availableClasses || []).forEach(classOption => { %>
+        <option
+            value="<%= classOption.value %>"
+            data-section="<%= classOption.section_name || '' %>"
+            <%= draft && (
+                classOption.class_definition_id
+                    ? String(draft.class_definition_id || '') === String(classOption.class_definition_id)
+                    : String(draft.class || '') === String(classOption.value)
+            ) ? "selected" : "" %>
+        ><%= classOption.label %></option>
+    <% }) %>
+</select>
 
-                            <option value="4"
-                                <%= draft && String(draft.class) === "4" ? "selected" : "" %>>
-                                Class IV
-                            </option>
-
-                            <option value="5"
-                                <%= draft && String(draft.class) === "5" ? "selected" : "" %>>
-                                Class V
-                            </option>
-
-                            <option value="6"
-                                <%= draft && String(draft.class) === "6" ? "selected" : "" %>>
-                                Class VI
-                            </option>
-
-                            <option value="7"
-                                <%= draft && String(draft.class) === "7" ? "selected" : "" %>>
-                                Class VII
-                            </option>
-
-                            <option value="8"
-                                <%= draft && String(draft.class) === "8" ? "selected" : "" %>>
-                                Class VIII
-                            </option>
-
-                            <option value="9"
-                                <%= draft && String(draft.class) === "9" ? "selected" : "" %>>
-                                Class IX
-                            </option>
-
-                            <option value="10"
-                                <%= draft && String(draft.class) === "10" ? "selected" : "" %>>
-                                Class X
-                            </option>
-
-                        </select>
 
                     </div>
 
@@ -1201,31 +1175,31 @@ updateSchoolField();
 
 const cls = document.getElementById("studentClass");
 const sec = document.getElementById("section");
+let sectionMappings = {};
+
 
 function updateSection() {
-
-    let s = "";
-
-    if (cls.value === "4" || cls.value === "5") {
-        s = "A";
-    }
-    else if (cls.value === "6" || cls.value === "7") {
-        s = "B";
-    }
-    else if (cls.value === "8") {
-        s = "C";
-    }
-    else if (cls.value === "9") {
-        s = "D";
-    }
-    else if (cls.value === "10") {
-        s = "E";
-    }
-
-    sec.value = s;
+    const selectedOption = cls.options[cls.selectedIndex];
+    sec.value = (
+        selectedOption && selectedOption.dataset.section
+    ) || sectionMappings[String(cls.value)] || "";
 }
 
+
 cls.addEventListener("change", updateSection);
+
+fetch("/rtse/section-map")
+    .then(response => {
+        if (!response.ok) throw new Error("Section mapping unavailable");
+        return response.json();
+    })
+    .then(mapping => {
+        sectionMappings = mapping;
+        updateSection();
+    })
+    .catch(() => {
+        sec.value = "";
+    });
 
 updateSection();
 
@@ -2327,7 +2301,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </h2>
 
                 <div class="rtse-duplicate-modal-subtitle">
-                    This candidate is already registered for RTSE 2026.
+                 This candidate is already registered for RTSE <%= examYear || "" %>.
                 </div>
 
             </div>

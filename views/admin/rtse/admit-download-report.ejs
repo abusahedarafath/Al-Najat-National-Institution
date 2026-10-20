@@ -331,7 +331,7 @@
                     <% for (const item of classes) { %>
                         <option value="<%= item %>"
                             <%= filters.classValue === String(item) ? "selected" : "" %>>
-                            Class <%= item %>
+                            <%= /^\d+$/.test(String(item).trim()) ? "Class " + item : item %>
                         </option>
                     <% } %>
                 </select>
@@ -344,7 +344,7 @@
                     <% for (const item of sectionOptions) { %>
                         <option value="<%= item %>"
                             <%= filters.section === String(item) ? "selected" : "" %>>
-                            Section <%= item %>
+                            <%= (String((item) ?? "").trim() ? (String((item) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((item) ?? "").trim() : "Section " + String((item) ?? "").trim()) : "-") %>
                         </option>
                     <% } %>
                 </select>
@@ -391,7 +391,7 @@
                     <div class="rtse-report-section-header">
                         <div class="rtse-report-section-heading">
                             <div class="rtse-report-section-title">
-                                Section <%= group.section %>
+                                <%= (String((group.section) ?? "").trim() ? (String((group.section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((group.section) ?? "").trim() : "Section " + String((group.section) ?? "").trim()) : "-") %>
                             </div>
 
                             <div class="rtse-report-section-badge">

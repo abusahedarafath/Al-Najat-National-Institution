@@ -784,115 +784,239 @@ class RtseCentre {
         return rows;
     }
 
+    static async regenerateCodes() {
+        const conn = await db.getConnection();
+        let lockAcquired = false;
+
+        try {
+            const [lockRows] = await conn.query(
+                "SELECT GET_LOCK(?, 15) AS acquired",
+                ["rtse_centre_code_allocation"]
+            );
+
+            if (Number(lockRows[0]?.acquired) !== 1) {
+                throw new Error("Could not obtain the centre-code allocation lock. Please try again.");
+            }
+            lockAcquired = true;
+
+            await conn.beginTransaction();
+
+            const [examRows] = await conn.query(
+                `SELECT exam_year
+                 FROM rtse_exam_settings
+                 WHERE status = 'ACTIVE'
+                 ORDER BY id DESC
+                 LIMIT 1
+                 FOR UPDATE`
+            );
+
+            const examYear = Number(examRows[0]?.exam_year);
+            if (!Number.isInteger(examYear) || examYear < 2000) {
+                throw new Error("No valid active RTSE exam year is configured.");
+            }
+
+            const prefix = "R" + String(examYear).slice(-2);
+            const [centres] = await conn.query(
+                "SELECT id FROM rtse_centres ORDER BY id ASC FOR UPDATE"
+            );
+
+            if (centres.length > 999) {
+                throw new Error(
+                    "Cannot generate centre codes: the RYYNNN format supports at most 999 centres."
+                );
+            }
+
+            const timestamp = Date.now();
+            for (const centre of centres) {
+                await conn.query(
+                    "UPDATE rtse_centres SET centre_code = ? WHERE id = ?",
+                    ["TMPCC_" + centre.id + "_" + timestamp, centre.id]
+                );
+            }
+
+            for (let i = 0; i < centres.length; i++) {
+                const centreCode = prefix + String(i + 1).padStart(3, "0");
+                await conn.query(
+                    "UPDATE rtse_centres SET centre_code = ? WHERE id = ?",
+                    [centreCode, centres[i].id]
+                );
+            }
+
+            await conn.commit();
+            return { examYear, count: centres.length };
+        } catch (err) {
+            try {
+                await conn.rollback();
+            } catch (_) {}
+            throw err;
+        } finally {
+            if (lockAcquired) {
+                try {
+                    await conn.query(
+                        "SELECT RELEASE_LOCK(?)",
+                        ["rtse_centre_code_allocation"]
+                    );
+                } catch (err) {
+                    console.error("Unable to release centre-code lock:", err.message);
+                }
+            }
+            conn.release();
+        }
+    }
+
     static async create(data) {
-        /*
-         * Centre numeric DB ID:
-         * generated automatically by MySQL AUTO_INCREMENT.
-         *
-         * Public Centre ID:
-         * RTSE53700001, RTSE53700002, ...
-         *
-         * Public Centre Code:
-         * R26001, R26002, ...
-         */
+        const conn = await db.getConnection();
+        let lockAcquired = false;
 
-        const uniqueToken =
-            Date.now().toString() +
-            "-" +
-            Math.floor(Math.random() * 1000000);
+        try {
+            const [lockRows] = await conn.query(
+                "SELECT GET_LOCK(?, 15) AS acquired",
+                ["rtse_centre_code_allocation"]
+            );
 
-        /*
-         * Temporary database placeholders must fit the VARCHAR(20)
-         * centre_id column. The final public IDs are generated below.
-         */
-        const temporaryCentreId = "TMP" + Date.now();
-        const temporaryCentreCode = "TMC" + Date.now();
+            if (Number(lockRows[0]?.acquired) !== 1) {
+                throw new Error("Could not obtain the centre-code allocation lock. Please try again.");
+            }
+            lockAcquired = true;
 
-        const [result] = await db.query(`
-            INSERT INTO rtse_centres (
-                centre_id,
-                centre_code,
-                centre_name,
-                centre_type,
-                head_name,
-                mobile,
-                email,
-                address,
-                village,
-                post_office,
-                district,
-                state,
-                pincode,
-                capacity,
-                status,
-                remarks,
-                created_by
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)
-        `, [
-            temporaryCentreId,
-            temporaryCentreCode,
-            data.centre_name,
-            data.centre_type || "School",
-            data.head_name || null,
-            data.mobile || null,
-            data.email || null,
-            data.address || null,
-            data.village || null,
-            data.post_office || null,
-            data.district || null,
-            data.state || "Assam",
-            data.pincode || null,
-            Number(data.capacity) || 0,
-            data.remarks || null,
-            data.created_by || null
-        ]);
+            await conn.beginTransaction();
 
-        const centreDbId = result.insertId;
+            const [activeExamRows] = await conn.query(
+                `SELECT exam_year
+                 FROM rtse_exam_settings
+                 WHERE status = 'ACTIVE'
+                 ORDER BY id DESC
+                 LIMIT 1
+                 FOR UPDATE`
+            );
 
-        const [rows] = await db.query(`
-            SELECT COALESCE(
-                MAX(
-                    CAST(
-                        SUBSTRING(centre_id, 9)
-                        AS UNSIGNED
-                    )
-                ),
-                0
-            ) AS last_number
-            FROM rtse_centres
-            WHERE centre_id LIKE 'RTSE537%'
-              AND centre_id NOT LIKE 'TMP%'
-        `);
+            const examYear = Number(activeExamRows[0]?.exam_year);
+            if (!Number.isInteger(examYear) || examYear < 2000) {
+                throw new Error("No valid active RTSE exam year is configured.");
+            }
 
-        const lastNumber = Number(rows[0]?.last_number || 0);
-        const nextNumber = lastNumber + 1;
+            const centreCodePrefix = "R" + String(examYear).slice(-2);
 
-        const centreId =
-            "RTSE537" +
-            String(nextNumber).padStart(5, "0");
+            // Global four-digit sequence; retain existing centre records.
+            const [sequenceRows] = await conn.query(
+                `SELECT COALESCE(
+                    MAX(CAST(RIGHT(centre_id, 4) AS UNSIGNED)), 0
+                 ) AS last_number
+                 FROM rtse_centres
+                 WHERE centre_id LIKE 'RTSE%'`
+            );
 
-        const centreCode =
-            "R26" +
-            String(nextNumber).padStart(3, "0");
+            const nextIdNumber =
+                Number(sequenceRows[0]?.last_number || 0) + 1;
 
-        await db.query(`
-            UPDATE rtse_centres
-            SET
-                centre_id = ?,
-                centre_code = ?
-            WHERE id = ?
-        `, [
-            centreId,
-            centreCode,
-            centreDbId
-        ]);
+            if (!Number.isInteger(nextIdNumber) || nextIdNumber > 9999) {
+                throw new Error(
+                    "Cannot create centre: the four-digit global Centre ID sequence limit has been reached."
+                );
+            }
 
-        return {
-            id: centreDbId,
-            centre_id: centreId,
-            centre_code: centreCode
-        };
+            const sequenceSuffix = String(nextIdNumber).padStart(4, "0");
+            const crypto = require("crypto");
+            let centreId = null;
+
+            // Use a random four-digit group and check full-ID uniqueness.
+            for (let attempt = 0; attempt < 100; attempt++) {
+                const randomGroup = String(crypto.randomInt(1000, 10000));
+                const candidate = "RTSE" + randomGroup + sequenceSuffix;
+
+                const [existingIdRows] = await conn.query(
+                    `SELECT id
+                     FROM rtse_centres
+                     WHERE centre_id = ?
+                     LIMIT 1`,
+                    [candidate]
+                );
+
+                if (existingIdRows.length === 0) {
+                    centreId = candidate;
+                    break;
+                }
+            }
+
+            if (!centreId) {
+                throw new Error(
+                    "Could not allocate a unique Centre ID. Please try again."
+                );
+            }
+
+            const [codeRows] = await conn.query(
+                `SELECT COALESCE(
+                    MAX(CAST(SUBSTRING(centre_code, 4) AS UNSIGNED)), 0
+                 ) AS last_number
+                 FROM rtse_centres
+                 WHERE centre_code LIKE ?`,
+                [centreCodePrefix + "%"]
+            );
+
+            const nextCodeNumber =
+                Number(codeRows[0]?.last_number || 0) + 1;
+
+            if (nextCodeNumber > 999) {
+                throw new Error(
+                    "Cannot create centre: the active exam year's centre-code limit of 999 has been reached."
+                );
+            }
+
+            const centreCode =
+                centreCodePrefix + String(nextCodeNumber).padStart(3, "0");
+
+            const [result] = await conn.query(
+                `INSERT INTO rtse_centres (
+                    centre_id, centre_code, centre_name, centre_type,
+                    head_name, mobile, email, address, village, post_office,
+                    district, state, pincode, capacity, status, remarks, created_by
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)`,
+                [
+                    centreId,
+                    centreCode,
+                    data.centre_name,
+                    data.centre_type || "School",
+                    data.head_name || null,
+                    data.mobile || null,
+                    data.email || null,
+                    data.address || null,
+                    data.village || null,
+                    data.post_office || null,
+                    data.district || null,
+                    data.state || "Assam",
+                    data.pincode || null,
+                    Number(data.capacity) || 0,
+                    data.remarks || null,
+                    data.created_by || null
+                ]
+            );
+
+            await conn.commit();
+
+            return {
+                id: result.insertId,
+                centre_id: centreId,
+                centre_code: centreCode
+            };
+        } catch (err) {
+            try {
+                await conn.rollback();
+            } catch (_) {}
+            throw err;
+        } finally {
+            if (lockAcquired) {
+                try {
+                    await conn.query(
+                        "SELECT RELEASE_LOCK(?)",
+                        ["rtse_centre_code_allocation"]
+                    );
+                } catch (err) {
+                    console.error("Unable to release centre-code lock:", err.message);
+                }
+            }
+            conn.release();
+        }
     }
 
     static async update(id, data) {

@@ -1,6 +1,21 @@
+const RtseExamSetting = require("./RtseExamSetting");
+const RtseExamSection = require("./RtseExamSection");
 const db = require("../config/database");
 
 class RtseSeatPlan {
+    static async isConfiguredSection(section) {
+        const normalized = String(section ?? "").trim().toUpperCase();
+        if (!normalized) return false;
+
+        const examSetting = await RtseExamSetting.get();
+        if (!examSetting?.id) return false;
+
+        const configuredSections = await RtseExamSection.getSections(examSetting.id);
+        return configuredSections.some(
+            item => String(item.section_name ?? "").trim().toUpperCase() === normalized
+        );
+    }
+
 
     // =====================================
     // Shift -> Room Configuration
@@ -636,7 +651,7 @@ class RtseSeatPlan {
 
         if (
             section !== null &&
-            !["A", "B", "C", "D", "E"].includes(section)
+            !(await this.isConfiguredSection(section))
         ) {
             throw new Error("Invalid section.");
         }
@@ -851,7 +866,7 @@ class RtseSeatPlan {
             throw new Error("A valid gender is required.");
         }
 
-        if (!["A", "B", "C", "D", "E"].includes(normalizedSection)) {
+        if (!(await this.isConfiguredSection(normalizedSection))) {
             throw new Error("A valid section is required.");
         }
 
@@ -1292,7 +1307,7 @@ class RtseSeatPlan {
         }
 
         if (
-            !["A", "B", "C", "D", "E"].includes(normalizedSection)
+            !(await this.isConfiguredSection(normalizedSection))
         ) {
             throw new Error("A valid section is required.");
         }
@@ -1940,7 +1955,7 @@ class RtseSeatPlan {
 
         if (
             requestedSection &&
-            !["A", "B", "C", "D", "E"].includes(requestedSection)
+            !(await this.isConfiguredSection(requestedSection))
         ) {
             throw new Error("Invalid section.");
         }
@@ -2083,7 +2098,7 @@ class RtseSeatPlan {
              */
             if (
                 !["Male", "Female"].includes(effectiveGender) ||
-                !["A", "B", "C", "D", "E"].includes(effectiveSection)
+                !(await this.isConfiguredSection(effectiveSection))
             ) {
                 await connection.rollback();
 
@@ -2106,8 +2121,7 @@ class RtseSeatPlan {
                 .toUpperCase();
 
             const seatHasCompleteConfiguration =
-                ["Male", "Female"].includes(seatGender) &&
-                ["A", "B", "C", "D", "E"].includes(seatSection);
+                ["Male", "Female"].includes(seatGender) &&(await this.isConfiguredSection(seatSection));
 
             if (seatHasCompleteConfiguration) {
                 await connection.rollback();
@@ -2625,7 +2639,7 @@ class RtseSeatPlan {
 
         if (
             sectionLock !== null &&
-            !["A", "B", "C", "D", "E"].includes(sectionLock)
+            !(await this.isConfiguredSection(sectionLock))
         ) {
             throw new Error("Invalid section lock.");
         }
@@ -2902,7 +2916,8 @@ class RtseSeatPlan {
 
     static async getRoomWise(
         section,
-        applicationYear
+        applicationYear,
+        examSettingId = null
     ) {
         const normalizedSection =
             String(section || "").trim().toUpperCase();
@@ -2910,11 +2925,37 @@ class RtseSeatPlan {
         const normalizedYear =
             Number(applicationYear);
 
-        if (
-            !["A", "B", "C", "D", "E"].includes(
+        const RtseExamSetting = require("./RtseExamSetting");
+        const RtseExamSection = require("./RtseExamSection");
+
+        const hasExam = examSettingId !== null &&
+            examSettingId !== undefined && examSettingId !== "";
+        let examination;
+
+        if (hasExam) {
+            const normalizedExamId = Number(examSettingId);
+            if (!Number.isSafeInteger(normalizedExamId) || normalizedExamId <= 0) {
+                throw new Error("Invalid examination setting ID.");
+            }
+            examination = await RtseExamSetting.getById(normalizedExamId);
+            if (!examination) {
+                throw new Error("Examination setting not found.");
+            }
+        } else {
+            examination = await RtseExamSetting.get();
+        }
+
+        const configuredSections = examination
+            ? await RtseExamSection.getSections(examination.id)
+            : [];
+
+        const isConfiguredSection = configuredSections.some(
+            item =>
+                String(item.section_name || "").trim().toUpperCase() ===
                 normalizedSection
-            )
-        ) {
+        );
+
+        if (!isConfiguredSection) {
             throw new Error("Invalid RTSE section.");
         }
 
@@ -2924,6 +2965,19 @@ class RtseSeatPlan {
         ) {
             throw new Error("Invalid RTSE application year.");
         }
+
+        if (
+            hasExam &&
+            Number(examination.exam_year) !== normalizedYear
+        ) {
+            throw new Error(
+                "Examination year does not match the selected examination."
+            );
+        }
+
+        const examFilter = hasExam
+            ? " AND a.exam_setting_id = ?"
+            : "";
 
         /*
          * IMPORTANT:
@@ -2951,7 +3005,7 @@ class RtseSeatPlan {
                AND sp.is_locked = 1
             WHERE a.archive = 0
               AND a.application_year = ?
-              AND a.section = ?
+              AND a.section = ?${examFilter}
               AND a.status = 'Approved'
               AND a.roll_no IS NOT NULL
               AND a.shift_id IS NOT NULL
@@ -2964,7 +3018,8 @@ class RtseSeatPlan {
             `,
             [
                 normalizedYear,
-                normalizedSection
+                normalizedSection,
+                ...(hasExam ? [Number(examination.id)] : [])
             ]
         );
 
@@ -2987,7 +3042,7 @@ class RtseSeatPlan {
                    AND sp.is_locked = 1
                 WHERE a.archive = 0
                   AND a.application_year = ?
-                  AND a.section = ?
+                  AND a.section = ?${examFilter}
                   AND a.status = 'Approved'
                   AND a.roll_no IS NOT NULL
                   AND a.shift_id IS NOT NULL
@@ -3001,6 +3056,7 @@ class RtseSeatPlan {
                 [
                     normalizedYear,
                     normalizedSection,
+                    ...(hasExam ? [Number(examination.id)] : []),
                     room.room_no
                 ]
             );

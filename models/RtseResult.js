@@ -142,7 +142,8 @@ class RtseResult {
                 a.school_name,
                 a.section,
                 a.class,
-                a.application_year
+                a.application_year,
+                a.exam_setting_id
 
              FROM rtse_results r
 
@@ -183,6 +184,7 @@ class RtseResult {
                 a.section,
                 a.class,
                 a.application_year,
+                a.exam_setting_id,
                 a.photo
              FROM rtse_results r
              INNER JOIN rtse_applications a
@@ -267,7 +269,8 @@ static async getDashboardResults(
     search = "",
     section = "",
     resultFilter = "",
-    applicationYear = null
+    applicationYear = null,
+  examSettingId = null
 ){
 
     search = String(search || "").trim();
@@ -332,6 +335,16 @@ static async getDashboardResults(
     `;
 
     const params = [applicationYear];
+    if (examSettingId === null || examSettingId === undefined || examSettingId === "") {
+        sql += " AND a.exam_setting_id IS NULL";
+    } else {
+        const examId = Number(examSettingId);
+        if (!Number.isInteger(examId) || examId <= 0) {
+            throw new Error("Invalid RTSE examination ID.");
+        }
+        sql += " AND a.exam_setting_id = ?";
+        params.push(examId);
+    }
 
     if (search) {
 
@@ -401,7 +414,7 @@ static async getDashboardResults(
 // Generate Section-wise Rank
 // =====================================
 
-static async generateSectionRanks(section, applicationYear){
+static async generateSectionRanks(section, applicationYear, examSettingId = null){
 
     const [students] = await db.query(
 
@@ -441,10 +454,7 @@ static async generateSectionRanks(section, applicationYear){
            AND mc.enabled=1
            AND mc.ranking_enabled=1
 
-        WHERE
-
-            a.section=?
-          AND a.application_year=?
+        WHERE a.section=? AND a.application_year=? AND a.exam_setting_id <=> ?
 
         AND r.id IS NOT NULL
 
@@ -459,10 +469,7 @@ static async generateSectionRanks(section, applicationYear){
             ranking_marks DESC,
             a.full_name ASC`,
 
-        [
-              section,
-              applicationYear
-          ]
+        [section, applicationYear, examSettingId]
 
     );
 
@@ -504,7 +511,7 @@ static async generateSectionRanks(section, applicationYear){
 // Ranking State Helpers
 // =====================================
 
-static async hasGeneratedRankings(applicationYear){
+static async hasGeneratedRankings(applicationYear, examSettingId = null){
 
     const [rows] = await db.query(
 
@@ -516,7 +523,7 @@ static async hasGeneratedRankings(applicationYear){
 
              ON a.id=r.application_id
 
-         WHERE a.application_year=?
+         WHERE a.application_year=? AND a.exam_setting_id <=> ?
 
            AND r.id IS NOT NULL
 
@@ -525,7 +532,7 @@ static async hasGeneratedRankings(applicationYear){
                OR r.section_rank IS NOT NULL
            )`,
 
-        [applicationYear]
+        [applicationYear, examSettingId]
 
     );
 
@@ -534,7 +541,7 @@ static async hasGeneratedRankings(applicationYear){
 }
 
 
-static async resetRankings(applicationYear){
+static async resetRankings(applicationYear, examSettingId = null){
 
     await db.query(
 
@@ -548,11 +555,11 @@ static async resetRankings(applicationYear){
              r.section_rank=NULL,
              r.overall_rank=NULL
 
-         WHERE a.application_year=?
+         WHERE a.application_year=? AND a.exam_setting_id <=> ?
 
            AND r.id IS NOT NULL`,
 
-        [applicationYear]
+        [applicationYear, examSettingId]
 
     );
 
@@ -562,7 +569,7 @@ static async resetRankings(applicationYear){
 // Generate Overall Rank
 // =====================================
 
-static async generateOverallRank(applicationYear){
+static async generateOverallRank(applicationYear, examSettingId = null){
 
     const [students] = await db.query(
 
@@ -602,7 +609,7 @@ static async generateOverallRank(applicationYear){
            AND mc.enabled=1
            AND mc.ranking_enabled=1
 
-        WHERE a.application_year=?
+        WHERE a.application_year=? AND a.exam_setting_id <=> ?
           AND r.id IS NOT NULL
 
         GROUP BY
@@ -618,7 +625,7 @@ static async generateOverallRank(applicationYear){
 
     ,
 
-          [applicationYear]
+          [applicationYear, examSettingId]
 
       );
 
@@ -659,7 +666,7 @@ static async generateOverallRank(applicationYear){
 // Overall Merit List
 // =====================================
 
-static async getOverallMeritList(applicationYear){
+static async getOverallMeritList(applicationYear, examSettingId = null){
 
     const [rows] = await db.query(
 
@@ -681,7 +688,7 @@ static async getOverallMeritList(applicationYear){
 
             ON a.id=r.application_id
 
-        WHERE a.application_year=?
+        WHERE a.application_year=? AND a.exam_setting_id <=> ?
           AND r.id IS NOT NULL
 
         ORDER BY
@@ -690,7 +697,7 @@ static async getOverallMeritList(applicationYear){
 
     ,
 
-          [applicationYear]
+          [applicationYear, examSettingId]
 
       );
 
@@ -771,7 +778,7 @@ static async getOverallMeritList(applicationYear){
 // =====================================
 // Section Top 10 Merit List
 // =====================================
-static async getSectionTop10MeritList(section, applicationYear){
+static async getSectionTop10MeritList(section, applicationYear, examSettingId = undefined){
 
     const [rows] = await db.query(
         `SELECT
@@ -790,6 +797,7 @@ static async getSectionTop10MeritList(section, applicationYear){
          WHERE
             a.section=?
             AND a.application_year=?
+            AND (? = 0 OR a.exam_setting_id <=> ?)
             AND r.id IS NOT NULL
             AND r.section_rank IS NOT NULL
             AND r.section_rank <= 10
@@ -798,16 +806,13 @@ static async getSectionTop10MeritList(section, applicationYear){
             r.total_marks DESC,
             r.id ASC
          `,
-        [
-            section,
-            applicationYear
-        ]
+        [section, applicationYear, examSettingId === undefined ? 0 : 1, examSettingId ?? null]
     );
 
     return rows;
 }
 
-static async getSectionMeritList(section, applicationYear){
+static async getSectionMeritList(section, applicationYear, examSettingId = undefined){
 
     const [rows] = await db.query(
 
@@ -833,6 +838,7 @@ static async getSectionMeritList(section, applicationYear){
 
             a.section=?
           AND a.application_year=?
+            AND (? = 0 OR a.exam_setting_id <=> ?)
 
         AND r.id IS NOT NULL
         AND r.section_rank > 10
@@ -841,10 +847,7 @@ static async getSectionMeritList(section, applicationYear){
 
             r.section_rank ASC`,
 
-        [
-              section,
-              applicationYear
-          ]
+        [section, applicationYear, examSettingId === undefined ? 0 : 1, examSettingId ?? null]
 
     );
 

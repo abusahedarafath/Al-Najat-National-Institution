@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 
 <title>
-RTSE Section <%= section %> Certificates
+RTSE <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> Certificates
 </title>
 
 <style>

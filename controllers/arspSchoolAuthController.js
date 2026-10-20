@@ -2,6 +2,8 @@ const ArspSchool = require("../models/ArspSchool");
 const adminRtseController = require("./adminRtseController");
 const ArspSchoolAccount = require("../models/ArspSchoolAccount");
 const RtseApplication = require("../models/RtseApplication");
+const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseExamSection = require("../models/RtseExamSection");
 const RtseAdmitDownload = require("../models/RtseAdmitDownload");
 
 
@@ -201,9 +203,32 @@ exports.dashboard = async (req, res) => {
             return res.redirect("/arsp/school/login");
         }
 
-        const stats = await RtseApplication.getSchoolRtseStats(
-            schoolId
-        );
+        const stats = await RtseApplication.getSchoolRtseStats(schoolId);
+
+        const activeExam = await RtseExamSetting.getActive();
+        const configuredSections = activeExam
+            ? await RtseExamSection.getSections(activeExam.id)
+            : [];
+        const classMappings = activeExam
+            ? await RtseExamSection.getClassMappings(activeExam.id)
+            : [];
+
+        const sections = configuredSections.map(item => {
+            const sectionName = String(item.section_name || "").trim().toUpperCase();
+            const classes = classMappings
+                .filter(mapping =>
+                    String(mapping.section_name || "").trim().toUpperCase() === sectionName
+                )
+                .map(mapping => String(mapping.student_class || "").trim())
+                .filter(Boolean);
+
+            return {
+                ...item,
+                section_name: sectionName,
+                classes,
+                student_count: Number(stats.section_counts?.[sectionName] || 0)
+            };
+        });
 
 
         res.setHeader(
@@ -216,7 +241,8 @@ exports.dashboard = async (req, res) => {
         return res.render("arsp/school-dashboard", {
             title: "RTSE Student Registry",
             school,
-            stats
+            stats,
+            sections
         });
 
     } catch (err) {
@@ -247,9 +273,21 @@ exports.rtseRegisterPage = async (req, res) => {
             return res.redirect("/arsp/school/login");
         }
 
+        const examSetting = await RtseExamSetting.getActive();
+        const classMappings = examSetting
+            ? await RtseExamSection.getClassMappings(examSetting.id)
+            : [];
+        const sectionByClass = Object.fromEntries(
+            classMappings.map(item => [
+                String(item.student_class),
+                item.section_name
+            ])
+        );
+
         return res.render("arsp/school-rtse-register", {
             title: "Register RTSE Student",
-            school
+            school,
+            sectionByClass
         });
 
     } catch (err) {
@@ -315,15 +353,15 @@ exports.rtseRegister = async (req, res) => {
             return res.redirect("/arsp/school/rtse-register");
         }
 
-        const section =
-            RtseApplication.getSection(studentClass);
+        const examSetting = await RtseExamSetting.getActive();
+        const section = examSetting
+            ? await RtseExamSection.getSectionForClass(examSetting.id, studentClass)
+            : "";
 
-        if (!section) {
-            req.flash(
-                "error",
-                "Invalid RTSE class. Classes 4 to 10 are allowed."
-            );
-
+        if (!examSetting || !section) {
+            req.flash("error", !examSetting
+                ? "No active RTSE examination is configured."
+                : "This class is not mapped to a section for the active examination.");
             return res.redirect("/arsp/school/rtse-register");
         }
 
@@ -346,6 +384,8 @@ exports.rtseRegister = async (req, res) => {
             state: state || school.state || "Assam",
             pincode: pincode || school.pincode || "",
             class: studentClass,
+            exam_setting_id: examSetting.id,
+            section,
             address,
             photo,
             identity_document: identityDocument || null
@@ -644,13 +684,25 @@ exports.rtseStudentUpdate = async (req, res) => {
             );
         }
 
-        const section =
-            RtseApplication.getSection(
-                studentClass
+        const storedExamSettingId = Number(existingStudent.exam_setting_id);
+        const examSetting =
+            Number.isInteger(storedExamSettingId) && storedExamSettingId > 0
+                ? { id: storedExamSettingId }
+                : await RtseExamSetting.getActive();
+
+        const section = examSetting
+            ? await RtseExamSection.getSectionForClass(examSetting.id, studentClass)
+            : "";
+
+        if (!examSetting || !section) {
+            return res.status(400).send(
+                !examSetting
+                    ? "No RTSE examination is configured."
+                    : "This class is not mapped to a section for the student examination."
             );
+        }
 
         const data = {
-
             full_name:
                 String(req.body.full_name || "").trim(),
 

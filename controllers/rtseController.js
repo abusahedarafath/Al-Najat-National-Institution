@@ -10,6 +10,8 @@ require("../models/RtseCertificate");
 
 const RtseExamSetting =
 require("../models/RtseExamSetting");
+const RtseExamSection = require("../models/RtseExamSection");
+
 
 const RtseApplication =
 require("../models/RtseApplication");
@@ -20,6 +22,20 @@ require("../models/ArspSchool");
 
 
 // =====================================
+exports.getActiveSectionMap = async (req, res) => {
+    try {
+        const exam = await RtseExamSetting.getActive();
+        if (!exam) return res.status(503).json({});
+        const rows = await RtseExamSection.getClassMappings(exam.id);
+        const result = {};
+        for (const row of rows) result[String(row.student_class)] = row.section_name;
+        return res.json(result);
+    } catch (err) {
+        console.error("Unable to load RTSE section mappings:", err);
+        return res.status(500).json({});
+    }
+};
+
 // RTSE Application Helpers
 // =====================================
 
@@ -55,6 +71,44 @@ function deleteRtseFile(filename) {
 
 
 // =====================================
+async function getRtseRegistrationClasses(activeExam, classMappings) {
+    return buildRtseAvailableClasses(classMappings);
+}
+
+function buildRtseAvailableClasses(classMappings) {
+    const roman = [
+        "", "I", "II", "III", "IV", "V", "VI",
+        "VII", "VIII", "IX", "X", "XI", "XII"
+    ];
+    const seen = new Set();
+
+    return (classMappings || [])
+        .map(row => {
+            const value = String(row.student_class ?? "").trim();
+            if (!value) return null;
+
+            const key = value.toLocaleLowerCase();
+            if (seen.has(key)) return null;
+            seen.add(key);
+
+            const numericValue = Number(value);
+            const isRomanClass =
+                /^\d+$/.test(value) &&
+                Number.isInteger(numericValue) &&
+                numericValue >= 1 &&
+                numericValue <= 12;
+
+            return {
+                value,
+                label: isRomanClass
+                    ? `Class ${roman[numericValue]}`
+                    : value,
+                section_name: String(row.section_name || "")
+            };
+        })
+        .filter(Boolean);
+}
+
 // Application Form
 // =====================================
 
@@ -62,6 +116,17 @@ exports.applicationPage = async (req, res) => {
     try {
         const draft = req.session.rtseDraft || {};
         const setting = await ArspSetting.get();
+        const activeExam = await RtseExamSetting.getActive();
+        const classMappings = activeExam
+            ? await RtseExamSection.getClassMappings(activeExam.id)
+            : [];
+        const availableClasses =
+            await getRtseRegistrationClasses(activeExam, classMappings);
+        const applicationError = !activeExam
+            ? "Online applications are unavailable because no active examination is configured."
+            : availableClasses.length === 0
+                ? "Online applications are unavailable because no classes are configured for the active examination."
+                : null;
 
         let schools = [];
 
@@ -78,7 +143,10 @@ exports.applicationPage = async (req, res) => {
             title: "Ratabari Talent Search Examination 2026 | RTSE Online Application",
             draft,
             setting,
-            schools
+            schools,
+            availableClasses,
+            examYear: activeExam ? activeExam.exam_year : "",
+            error: applicationError
         });
     } catch (err) {
         console.error("RTSE application page error:", err);
@@ -94,7 +162,7 @@ exports.applicationPage = async (req, res) => {
 // =====================================
 
 exports.submitApplication = async (req, res) => {
-
+    let availableClasses = buildRtseAvailableClasses([]);
     try {
         const setting = await RtseSetting.get();
 
@@ -108,6 +176,32 @@ exports.submitApplication = async (req, res) => {
         }
 
 
+
+        const activeExam = await RtseExamSetting.getActive();
+        const classMappings = activeExam
+            ? await RtseExamSection.getClassMappings(activeExam.id)
+            : [];
+        availableClasses =
+            await getRtseRegistrationClasses(activeExam, classMappings);
+        let applicationSchools = [];
+        try {
+            applicationSchools = await ArspSchool.getAll("", "Approved");
+        } catch (schoolErr) {
+            console.error("Unable to load RTSE schools:", schoolErr.message);
+        }
+
+        if (!activeExam || availableClasses.length === 0) {
+            return res.status(503).render("rtse/application", {
+                title: "RTSE Online Application",
+                error: !activeExam
+                    ? "Online applications are unavailable because no active examination is configured."
+                    : "Online applications are unavailable because no classes are configured for the active examination.",
+                draft: req.body || {},
+                availableClasses,
+                schools: applicationSchools,
+                setting
+            });
+        }
 
         const oldDraft =
             req.session.rtseDraft || {};
@@ -136,11 +230,39 @@ exports.submitApplication = async (req, res) => {
                     title: "RTSE Online Application",
                     error: "Candidate photograph is required.",
                     draft: req.body || {},
+                    availableClasses,
+                    schools: applicationSchools,
                     setting
                 }
             );
 
         }
+
+
+
+
+
+const classValue = String(req.body.class || "").trim();
+const selectedClassOption = availableClasses.find(
+    item => String(item.value) === classValue
+);
+const className = selectedClassOption ? selectedClassOption.label : "";
+const section = selectedClassOption
+    ? selectedClassOption.section_name
+    : "";
+
+if (!selectedClassOption || !section) {
+    return res.status(400).render("rtse/application", {
+        title: "RTSE Online Application",
+        error: "Please select a class configured for the active examination.",
+        draft: req.body || {},
+        schools: applicationSchools,
+        availableClasses,
+        setting
+    });
+}
+
+
 
 
         // Remove old photo if a new one was uploaded
@@ -172,11 +294,6 @@ exports.submitApplication = async (req, res) => {
         }
 
 
-        const section =
-            RtseApplication.getSection(
-                req.body.class
-            );
-
         const schoolId =
             String(req.body.school_id || "").trim();
 
@@ -206,6 +323,7 @@ exports.submitApplication = async (req, res) => {
                         error:
                             "Please select a valid registered school.",
                         draft: req.body || {},
+                        availableClasses,
                         schools,
                         setting
                     }
@@ -243,6 +361,7 @@ exports.submitApplication = async (req, res) => {
                     error:
                         "Please select your school or choose Other.",
                     draft: req.body || {},
+                    availableClasses,
                     schools,
                     setting
                 }
@@ -300,6 +419,7 @@ exports.submitApplication = async (req, res) => {
                     duplicateCandidate: duplicate,
 
                     draft: req.body || {},
+                    availableClasses,
 
                     schools: approvedSchools,
 
@@ -346,10 +466,14 @@ exports.submitApplication = async (req, res) => {
             pincode:
                 req.body.pincode || "",
 
-            class:
-                req.body.class || "",
+            exam_setting_id:
+                Number(activeExam.id),
 
+class: classValue,
+            class_definition_id: null,
+            class_name: className,
             section,
+
 
             address:
                 req.body.address || "",
@@ -391,6 +515,7 @@ exports.submitApplication = async (req, res) => {
                 error:
                     "Unable to prepare the application for review.",
                 draft: req.body || {},
+                availableClasses,
                 setting
             }
         );
@@ -491,6 +616,23 @@ exports.confirmApplication = async (
 
         }
 
+        // Ensure the draft still belongs to its selected examination.
+        const currentActiveExam = await RtseExamSetting.getActive();
+
+        if (
+            !draft.exam_setting_id ||
+            !Number.isInteger(Number(draft.exam_setting_id)) ||
+            Number(draft.exam_setting_id) <= 0 ||
+            !currentActiveExam ||
+            Number(currentActiveExam.id) !== Number(draft.exam_setting_id)
+        ) {
+            return res.status(409).render("rtse/review", {
+                title: "Review RTSE Application",
+                draft,
+                error: "The active examination has changed, or this draft is from an older session. Please return to the application and start again."
+            });
+        }
+
 
         // =================================
         // Re-validate registered school
@@ -545,6 +687,10 @@ exports.confirmApplication = async (
 
         const result =
             await RtseApplication.create({
+exam_setting_id: Number(draft.exam_setting_id),
+class_definition_id: draft.class_definition_id || null,
+section: draft.section,
+
 
                 full_name:
                     draft.full_name,
@@ -597,13 +743,18 @@ exports.confirmApplication = async (
             });
 
 
+        const examSetting = await RtseExamSetting.getById(Number(draft.exam_setting_id));
+
         const application = {
+
+            exam_setting_id: draft.exam_setting_id,
+            exam_name: examSetting ? examSetting.exam_name : null,
 
             registration_no:
                 result.registration_no,
 
             application_year:
-                new Date().getFullYear(),
+                result.application_year,
 
             section:
                 result.section,
@@ -668,7 +819,8 @@ exports.confirmApplication = async (
                 title:
                     "RTSE Registration Successful",
 
-                application
+                application,
+                isRecords: false
             }
         );
 
@@ -772,12 +924,16 @@ exports.registrationSlipSearch = async (req, res) => {
 
         }
 
+        const examSetting = application.exam_setting_id ? await RtseExamSetting.getById(Number(application.exam_setting_id)) : null;
+
         return res.render(
             "rtse/acknowledgement",
             {
                 title: "RTSE Registration Slip",
 
                 application: {
+                    exam_setting_id: application.exam_setting_id,
+                    exam_name: examSetting ? examSetting.exam_name : null,
                     registration_no:
                         application.registration_no,
 

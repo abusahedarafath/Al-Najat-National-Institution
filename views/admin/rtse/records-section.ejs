@@ -15,12 +15,12 @@
                     </div>
 
                     <h1>
-                        RTSE RECORDS — SECTION <%= section %>
+                        RTSE RECORDS —  <%= section %>
                     </h1>
 
                     <p>
                         <%= attendance === "PRESENT" ? "Present" : "Absent" %>
-                        students in Section <%= section %>.
+                        students in <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>.
                     </p>
                 </div>
             </div>
@@ -129,7 +129,7 @@
             <section class="records-section">
                 <div class="records-section-heading">
                     <h2>
-                        SECTION <%= section %> — <%= attendance %> STUDENTS
+                         <%= section %> — <%= attendance %> STUDENTS
                     </h2>
 
                     <span>

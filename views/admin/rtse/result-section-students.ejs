@@ -12,11 +12,11 @@
             <div class="page-header">
 
                 <h1>
-                    RTSE Section <%= section %> — Present Students
+                    RTSE <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> — Present Students
                 </h1>
 
                 <a
-                    href="/admin/rtse/results"
+                    href="/admin/rtse/results?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     class="btn-cancel"
                 >
                     ← Back
@@ -28,7 +28,7 @@
             <div class="profile-card">
 
                 <h2>
-                    Section <%= section %> — PRESENT Students
+                    <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> — PRESENT Students
                 </h2>
 
                 <p>
@@ -91,7 +91,7 @@
                         </h3>
 
                         <p>
-                            No student in Section <%= section %>
+                            No student in <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>
                             has completed confirmed gate entry yet.
                         </p>
 

@@ -1,6 +1,35 @@
 <%- include("../partials/header") %>
 
 <%
+function formatExamDate(value) {
+    if (!value) return "";
+
+    if (value instanceof Date && !isNaN(value.getTime())) {
+        const y = value.getFullYear();
+        const m = String(value.getMonth() + 1).padStart(2, "0");
+        const d = String(value.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    }
+
+    const raw = String(value).trim();
+
+    const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (iso) {
+        return `${iso[1]}-${iso[2]}-${iso[3]}`;
+    }
+
+    const parsed = new Date(raw);
+
+    if (!isNaN(parsed.getTime())) {
+        const y = parsed.getFullYear();
+        const m = String(parsed.getMonth() + 1).padStart(2, "0");
+        const d = String(parsed.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    }
+
+    return "";
+}
+
 function formatExamTime(value) {
     if (!value) return "";
 
@@ -123,7 +152,7 @@ function formatExamTime(value) {
     <input
         type="date"
         name="application_start_date"
-        value="<%= examination?.application_start_date || '' %>"
+        value="<%= formatExamDate(examination?.application_start_date) %>"
     >
 </div>
 
@@ -134,7 +163,7 @@ function formatExamTime(value) {
     <input
         type="date"
         name="application_end_date"
-        value="<%= examination?.application_end_date || '' %>"
+        value="<%= formatExamDate(examination?.application_end_date) %>"
     >
 </div>
 
@@ -145,7 +174,7 @@ function formatExamTime(value) {
     <input
         type="date"
         name="exam_date"
-        value="<%= examination?.exam_date || '' %>"
+        value="<%= formatExamDate(examination?.exam_date) %>"
         required
     >
 </div>
@@ -159,7 +188,7 @@ function formatExamTime(value) {
                             <input
                                 type="date"
                                 name="result_publish_date"
-                                value="<%= examination?.result_publish_date || '' %>"
+                                value="<%= formatExamDate(examination?.result_publish_date) %>"
                             >
 
                         </div>
@@ -174,7 +203,7 @@ function formatExamTime(value) {
                             <input
                                 type="date"
                                 name="certificate_publish_date"
-                                value="<%= examination?.certificate_publish_date || '' %>"
+                                value="<%= formatExamDate(examination?.certificate_publish_date) %>"
                             >
 
                         </div>
@@ -233,6 +262,17 @@ function formatExamTime(value) {
         starting time and ending time.
         Enter time in normal 12-hour format, for example
         <strong>10:30 PM</strong>.
+        <% if (mode === "create") { %>
+        <p style="margin-top:10px;">
+            Create the examination first, then configure its sections and
+            class mappings before assigning sections to examination shifts.
+        </p>
+        <% } else if (!(examSections || []).length) { %>
+        <p style="margin-top:10px;">
+            No sections are configured yet. Configure sections and class
+            mappings before assigning sections to examination shifts.
+        </p>
+        <% } %>
     </div>
 
     <div
@@ -353,8 +393,9 @@ function formatExamTime(value) {
                         margin-top:7px;
                     ">
 
-                        <% ["A","B","C","D","E"].forEach(section => { %>
-
+                        <% (examSections || []).forEach(sectionItem => {
+                            const section = String(sectionItem.section_name || "").trim().toUpperCase();
+                        %>
                             <label style="
                                 display:flex;
                                 align-items:center;
@@ -365,7 +406,6 @@ function formatExamTime(value) {
                                 background:#fff;
                                 cursor:pointer;
                             ">
-
                                 <input
                                     type="checkbox"
                                     name="exam_shifts[<%= index %>][sections][]"
@@ -374,11 +414,8 @@ function formatExamTime(value) {
                                         s => String(s.section || s).toUpperCase() === section
                                     ) ? "checked" : "" %>
                                 >
-
-                                Section <%= section %>
-
+                                <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>
                             </label>
-
                         <% }) %>
 
                     </div>
@@ -495,6 +532,12 @@ function formatExamTime(value) {
     let index =
         container.querySelectorAll("[data-shift-card]").length;
 
+    const examSectionNames = <%- JSON.stringify(
+        (examSections || [])
+            .map(item => String(item.section_name || "").trim().toUpperCase())
+            .filter(Boolean)
+    ) %>;
+
     const shiftOptions = `
         <option value="">Select shift</option>
         <% (shifts || []).forEach(shift => { %>
@@ -602,7 +645,7 @@ function formatExamTime(value) {
                     margin-top:7px;
                 ">
 
-                    ${["A","B","C","D","E"].map(section => `
+                    ${examSectionNames.map(section => `
                         <label style="
                             display:flex;
                             align-items:center;

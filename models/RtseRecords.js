@@ -1,13 +1,14 @@
 const db = require("../config/database");
+const recordsDb = db.recordsPool;
 
 class RtseRecords {
     // --------------------------------------------------------
     // Historical RTSE years
     // --------------------------------------------------------
     static async getYears() {
-        const [rows] = await db.query(`
+        const [rows] = await recordsDb.query(`
             SELECT DISTINCT application_year
-            FROM rtse_applications
+            FROM records_applications
             WHERE application_year IS NOT NULL
             ORDER BY application_year DESC
         `);
@@ -31,9 +32,10 @@ class RtseRecords {
                 c.centre_name,
                 c.centre_type,
                 c.status
-            FROM rtse_school_centre_assignments sca
-            INNER JOIN rtse_centres c
-                ON c.id = sca.centre_id
+            FROM records_school_centre_assignments sca
+            INNER JOIN records_centres c
+                ON c.application_year = sca.application_year
+                AND c.id = sca.centre_id
             WHERE sca.status IN ('Approved', 'Active')
         `;
 
@@ -48,7 +50,7 @@ class RtseRecords {
                 c.centre_code ASC
         `;
 
-        const [rows] = await db.query(sql, params);
+        const [rows] = await recordsDb.query(sql, params);
         return rows;
     }
 
@@ -64,19 +66,23 @@ class RtseRecords {
         const params = [];
 
         let sql = `
-            FROM rtse_applications a
-            LEFT JOIN rtse_school_centre_assignments sca
+            FROM records_applications a
+            LEFT JOIN records_school_centre_assignments sca
                 ON sca.school_id = a.school_id
                 AND sca.application_year = a.application_year
                 AND sca.status IN ('Approved', 'Active')
-            LEFT JOIN rtse_centres c
-                ON c.id = sca.centre_id
-            LEFT JOIN arsp_schools s
-                ON s.id = a.school_id
-            LEFT JOIN rtse_exam_attendance ea
-                ON ea.application_id = a.id
-            LEFT JOIN rtse_results r
-                ON r.application_id = a.id
+            LEFT JOIN records_centres c
+                ON c.application_year = a.application_year
+                AND c.id = sca.centre_id
+            LEFT JOIN records_schools s
+                ON s.application_year = a.application_year
+                AND s.id = a.school_id
+            LEFT JOIN records_exam_attendance ea
+                ON ea.application_year = a.application_year
+                AND ea.application_id = a.id
+            LEFT JOIN records_results r
+                ON r.application_year = a.application_year
+                AND r.application_id = a.id
             WHERE 1 = 1
         `;
 
@@ -132,7 +138,7 @@ class RtseRecords {
     static async getDashboardData(filters = {}) {
         const scope = this.buildScope(filters);
 
-        const [studentRows] = await db.query(`
+        const [studentRows] = await recordsDb.query(`
             SELECT DISTINCT
                 a.id,
                 a.registration_no,
@@ -171,14 +177,14 @@ class RtseRecords {
             ${scope.sql}
             ORDER BY
                 a.application_year DESC,
-                FIELD(a.section, 'A', 'B', 'C', 'D', 'E'),
+                UPPER(TRIM(a.section)) ASC,
                 a.roll_no ASC,
                 a.full_name ASC
         `, scope.params);
 
-        const [sectionRows] = await db.query(`
+        const [sectionRows] = await recordsDb.query(`
             SELECT
-                a.section,
+                UPPER(TRIM(a.section)) AS section,
                 COUNT(DISTINCT a.id) AS total_students,
                 SUM(
                     CASE
@@ -207,12 +213,12 @@ class RtseRecords {
                     END
                 ) AS absent_students
             ${scope.sql}
-            AND a.section IN ('A', 'B', 'C', 'D', 'E')
-            GROUP BY a.section
-            ORDER BY FIELD(a.section, 'A', 'B', 'C', 'D', 'E')
+            AND NULLIF(TRIM(a.section), '') IS NOT NULL
+            GROUP BY UPPER(TRIM(a.section))
+            ORDER BY UPPER(TRIM(a.section)) ASC
         `, scope.params);
 
-        const [schoolRows] = await db.query(`
+        const [schoolRows] = await recordsDb.query(`
             SELECT
                 a.school_id,
                 COALESCE(
@@ -234,15 +240,10 @@ class RtseRecords {
             ORDER BY school_name ASC
         `, scope.params);
 
-        const fixedSections = ["A", "B", "C", "D", "E"];
         const bySection = {};
-
         for (const row of sectionRows) {
             const section = String(row.section || "").trim().toUpperCase();
-
-            if (!fixedSections.includes(section)) {
-                continue;
-            }
+            if (!section) continue;
 
             bySection[section] = {
                 section,
@@ -254,16 +255,12 @@ class RtseRecords {
             };
         }
 
-        const sections = fixedSections.map(section => (
-            bySection[section] || {
-                section,
-                total_students: 0,
-                male_students: 0,
-                female_students: 0,
-                present_students: 0,
-                absent_students: 0
-            }
-        ));
+        const sections = Object.values(bySection).sort(
+            (a, b) => a.section.localeCompare(b.section, undefined, {
+                numeric: true,
+                sensitivity: "base"
+            })
+        );
 
         return {
             students: studentRows,
@@ -286,7 +283,7 @@ class RtseRecords {
         const scope = this.buildScope(filters);
         const params = [...scope.params, id];
 
-        const [rows] = await db.query(`
+        const [rows] = await recordsDb.query(`
             SELECT DISTINCT
                 a.id,
                 a.registration_no,
@@ -335,10 +332,12 @@ class RtseRecords {
                 cert.qr_code AS certificate_qr_code
             ${scope.sql.replace(
                 "WHERE 1 = 1",
-                `LEFT JOIN rtse_result_qr rrq
-                ON rrq.application_id = a.id
-            LEFT JOIN rtse_certificates cert
-                ON cert.application_id = a.id
+                `LEFT JOIN records_result_qr rrq
+                ON rrq.application_year = a.application_year
+                AND rrq.application_id = a.id
+            LEFT JOIN records_certificates cert
+                ON cert.application_year = a.application_year
+                AND cert.application_id = a.id
             WHERE 1 = 1`
             )}
             AND a.id = ?
@@ -355,7 +354,7 @@ class RtseRecords {
         let rankingComponents = [];
 
         if (student.result_id) {
-            const [componentRows] = await db.query(`
+            const [componentRows] = await recordsDb.query(`
                 SELECT
                     rcm.component_id,
                     rcm.marks,
@@ -365,16 +364,18 @@ class RtseRecords {
                     mc.grade_counting,
                     mc.ranking_enabled,
                     mc.display_order
-                FROM rtse_result_component_marks rcm
-                INNER JOIN rtse_mark_components mc
-                    ON mc.id = rcm.component_id
-                WHERE rcm.result_id = ?
-                  AND mc.application_year = ?
+                FROM records_result_component_marks rcm
+                INNER JOIN records_mark_components mc
+                    ON mc.application_year = ?
+                    AND mc.id = rcm.component_id
+                WHERE rcm.application_year = ?
+                  AND rcm.result_id = ?
                   AND mc.enabled = 1
                 ORDER BY mc.display_order ASC, mc.id ASC
             `, [
-                student.result_id,
-                student.application_year
+                student.application_year,
+                student.application_year,
+                student.result_id
             ]);
 
             componentMarks = componentRows;
@@ -456,6 +457,205 @@ class RtseRecords {
         };
     }
 
+    // --------------------------------------------------------
+    // Historical exam setting for a Records application year.
+    // --------------------------------------------------------
+    static async getExamSetting(applicationYear) {
+        const year = Number(applicationYear);
+
+        if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+            return null;
+        }
+
+        const [rows] = await recordsDb.query(`
+            SELECT *
+            FROM records_exam_settings
+            WHERE application_year = ?
+              AND exam_year = ?
+            ORDER BY id DESC
+            LIMIT 1
+        `, [year, year]);
+
+        return rows[0] || null;
+    }
+
+    // --------------------------------------------------------
+    // Exact historical certificate lookup.
+    // This is required because one application may have more
+    // than one certificate in the historical snapshot.
+    // --------------------------------------------------------
+    static async getCertificate(
+        applicationYear,
+        applicationId,
+        certificateType
+    ) {
+        const year = Number(applicationYear);
+        const id = Number(applicationId);
+        const type = String(certificateType || "").trim();
+
+        if (
+            !Number.isInteger(year) ||
+            year < 2000 ||
+            year > 2100 ||
+            !Number.isInteger(id) ||
+            id <= 0 ||
+            !type
+        ) {
+            return null;
+        }
+
+        const [rows] = await recordsDb.query(`
+            SELECT
+                id,
+                application_id,
+                certificate_no,
+                certificate_type,
+                issue_date,
+                qr_code,
+                created_at
+            FROM records_certificates
+            WHERE application_year = ?
+              AND application_id = ?
+              AND certificate_type = ?
+            ORDER BY id DESC
+            LIMIT 1
+        `, [year, id, type]);
+
+        return rows[0] || null;
+    }
+
+    // --------------------------------------------------------
+    // Historical certificate settings for a Records application year.
+    // --------------------------------------------------------
+    static async getCertificateSetting(applicationYear) {
+        const year = Number(applicationYear);
+
+        if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+            return null;
+        }
+
+        const [rows] = await recordsDb.query(`
+            SELECT *
+            FROM records_certificate_settings
+            WHERE application_year = ?
+            LIMIT 1
+        `, [year]);
+
+        return rows[0] || null;
+    }
+
+    // --------------------------------------------------------
+    // Historical certificate category setting for a Records year.
+    // --------------------------------------------------------
+    static async getCertificateCategorySetting(
+        applicationYear,
+        categoryKey
+    ) {
+        const year = Number(applicationYear);
+        const key = String(categoryKey || "").trim();
+
+        if (
+            !Number.isInteger(year) ||
+            year < 2000 ||
+            year > 2100 ||
+            !key
+        ) {
+            return null;
+        }
+
+        const [rows] = await recordsDb.query(`
+            SELECT *
+            FROM records_certificate_category_settings
+            WHERE application_year = ?
+              AND category_key = ?
+            LIMIT 1
+        `, [year, key]);
+
+        return rows[0] || null;
+    }
+
+    // --------------------------------------------------------
+    // All historical certificate category settings for a year.
+    // --------------------------------------------------------
+    static async getCertificateCategorySettings(applicationYear) {
+        const year = Number(applicationYear);
+
+        if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+            return [];
+        }
+
+        const [rows] = await recordsDb.query(`
+            SELECT *
+            FROM records_certificate_category_settings
+            WHERE application_year = ?
+            ORDER BY id ASC
+        `, [year]);
+
+        return rows;
+    }
+
+    // --------------------------------------------------------
+    // Historical examination shifts and sections.
+    // --------------------------------------------------------
+    static async getExamShifts(applicationYear, examSettingId = null) {
+        const year = Number(applicationYear);
+
+        if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+            return [];
+        }
+
+        const params = [year];
+        let sql = `
+            SELECT
+                es.id,
+                es.exam_setting_id,
+                es.shift_id,
+                es.reporting_time,
+                es.exam_start_time,
+                es.exam_end_time,
+                es.is_active,
+                s.shift_no,
+                s.shift_name,
+                s.layout,
+                s.is_active AS shift_master_active
+            FROM records_exam_shifts es
+            INNER JOIN records_seat_plan_shifts s
+                ON s.application_year = es.application_year
+                AND s.id = es.shift_id
+            WHERE es.application_year = ?
+        `;
+
+        if (Number.isInteger(Number(examSettingId)) && Number(examSettingId) > 0) {
+            sql += ` AND es.exam_setting_id = ?`;
+            params.push(Number(examSettingId));
+        }
+
+        sql += `
+            ORDER BY s.shift_no ASC, es.id ASC
+        `;
+
+        const [rows] = await recordsDb.query(sql, params);
+
+        for (const shift of rows) {
+            const [sections] = await recordsDb.query(`
+                SELECT
+                    id,
+                    section
+                FROM records_exam_shift_sections
+                WHERE application_year = ?
+                  AND exam_shift_id = ?
+                ORDER BY section ASC
+            `, [
+                year,
+                shift.id
+            ]);
+
+            shift.sections = sections;
+        }
+
+        return rows;
+    }
+
     static async getDrilldownStudents(filters = {}) {
         const scope = this.buildScope(filters);
         const params = [...scope.params];
@@ -463,8 +663,8 @@ class RtseRecords {
         let extra = "";
 
         const section = String(filters.section || "").trim().toUpperCase();
-        if (["A", "B", "C", "D", "E"].includes(section)) {
-            extra += ` AND a.section = ?`;
+        if (section) {
+            extra += ` AND UPPER(TRIM(a.section)) = ?`;
             params.push(section);
         }
 
@@ -487,7 +687,7 @@ class RtseRecords {
             `;
         }
 
-        const [rows] = await db.query(`
+        const [rows] = await recordsDb.query(`
             SELECT DISTINCT
                 a.id,
                 a.registration_no,
@@ -515,7 +715,7 @@ class RtseRecords {
             ${scope.sql}
             ${extra}
             ORDER BY
-                FIELD(a.section, 'A', 'B', 'C', 'D', 'E'),
+                UPPER(TRIM(a.section)) ASC,
                 a.roll_no ASC,
                 a.full_name ASC
         `, params);

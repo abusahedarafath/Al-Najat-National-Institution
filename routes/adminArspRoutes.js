@@ -313,6 +313,12 @@ router.get(
     adminRtseCentreController.index
 );
 
+router.post(
+    "/admin/arsp/centres/regenerate-codes",
+    authMiddleware.isLoggedIn,
+    adminRtseCentreController.regenerateCodes
+);
+
 router.get(
     "/admin/arsp/centres/add",
     authMiddleware.isLoggedIn,

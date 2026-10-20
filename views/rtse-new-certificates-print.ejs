@@ -131,7 +131,7 @@
                     : "Merit Certificates"
         %>
         -
-        Section <%= section %>
+        <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>
     </title>
 
     <style>

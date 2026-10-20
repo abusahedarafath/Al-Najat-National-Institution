@@ -200,9 +200,26 @@
             <p>Manage examination centres, approval and centre capacity.</p>
         </div>
 
-        <a href="/admin/arsp/centres/add" class="centre-btn">
-            + Add Centre
-        </a>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <a href="/admin/arsp/centres/add" class="centre-btn">
+                + Add Centre
+            </a>
+
+            <form
+                method="POST"
+                action="/admin/arsp/centres/regenerate-codes"
+                onsubmit="return confirm('Regenerate ALL centre codes for the active exam year? Codes will be reassigned in database ID order. Centre IDs and records will remain unchanged.');"
+                style="margin:0;"
+            >
+                <button
+                    type="submit"
+                    class="centre-btn"
+                    style="background:#b45309;border:0;cursor:pointer;"
+                >
+                    Reset / Regenerate Codes
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="centre-stats">

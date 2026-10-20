@@ -80,7 +80,7 @@
         <div class="school-page">
 
             <div class="page-actions">
-                <a href="/admin/rtse/results">
+                <a href="/admin/rtse/results?exam_id=<%= encodeURIComponent(selectedExamId) %>">
                     ← Back to Result Dashboard
                 </a>
             </div>
@@ -138,7 +138,7 @@
                                     <td>
 
                                         <a
-                                            href="/admin/rtse/certificates/schools/<%= encodeURIComponent(schoolItem.school_name) %>"
+                                            href="/admin/rtse/certificates/schools/<%= encodeURIComponent(schoolItem.school_name) %>?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                                             class="view-button">
                                             View Certificate Holders
                                         </a>

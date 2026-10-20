@@ -653,9 +653,15 @@ exports.admitCard = async (req, res) => {
         const arspSetting =
             await ArspSetting.get();
 
-        const examSetting =
-            await RtseExamSetting.get();
+        let examSetting = null;
 
+        if (application.exam_setting_id) {
+            examSetting = await RtseExamSetting.getById(application.exam_setting_id);
+        }
+
+        if (!examSetting) {
+            examSetting = await RtseExamSetting.get();
+        }
         const admitCardSetting =
             await RtseAdmitCardSetting.get();
 
@@ -712,8 +718,9 @@ exports.admitCard = async (req, res) => {
                     admitCardSetting,
                                               examYear:
                                                   examSetting?.exam_year ||
+                                                  application.application_year ||
                                                   arspSetting?.exam_year ||
-                                                  new Date().getFullYear(),
+                                                  null,
                     error: "Your admit card has not been generated yet."
                 }
             );
@@ -738,8 +745,9 @@ exports.admitCard = async (req, res) => {
                 examCentre,
                                               examYear:
                                                   examSetting?.exam_year ||
+                                                  application.application_year ||
                                                   arspSetting?.exam_year ||
-                                                  new Date().getFullYear(),
+                                                  null,
                     error: "Admit cards have not been published yet."
                 }
             );
@@ -781,8 +789,9 @@ exports.admitCard = async (req, res) => {
                     admitCardSetting,
                     examYear:
                         examSetting?.exam_year ||
+                        application.application_year ||
                         arspSetting?.exam_year ||
-                        new Date().getFullYear(),
+                        null,
                     error:
                         "Admit card verification is required. Please return to your RTSE student dashboard and complete Google account, name and mobile verification."
                 }
@@ -869,8 +878,9 @@ exports.admitCard = async (req, res) => {
                 admitCardSetting,
                                                     examYear:
                                                         examSetting?.exam_year ||
+                                                        application.application_year ||
                                                         arspSetting?.exam_year ||
-                                                        new Date().getFullYear(),
+                                                        null,
                 error: null
             }
         );

@@ -127,7 +127,7 @@
 <div class="certificate-section-page">
 
     <a
-        href="/admin/rtse/results"
+        href="/admin/rtse/results?exam_id=<%= encodeURIComponent(selectedExamId) %>"
         class="back-link"
     >
         ← Back to RTSE Result Dashboard
@@ -170,7 +170,7 @@
                 </p>
 
                 <a
-                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank1"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank1?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     class="certificate-action"
                 >
                     View All 1st Rank Certificates
@@ -208,7 +208,7 @@
                 </p>
 
                 <a
-                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank2"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank2?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     class="certificate-action"
                 >
                     View All 2nd Rank Certificates
@@ -246,7 +246,7 @@
                 </p>
 
                 <a
-                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank3"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/rank3?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     class="certificate-action"
                 >
                     View All 3rd Rank Certificates
@@ -287,7 +287,7 @@
             </p>
 
             <a
-                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/merit"
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/merit?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="certificate-action"
             >
                 View All Merit Certificates
@@ -345,7 +345,7 @@
             </p>
 
             <a
-                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools"
+                href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 class="certificate-action"
             >
                 View School-wise Certificates

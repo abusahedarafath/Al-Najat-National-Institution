@@ -118,6 +118,35 @@ exports.create = async (req, res) => {
 };
 
 // =====================================
+// Regenerate Centre Codes
+// =====================================
+exports.regenerateCodes = async (req, res) => {
+    try {
+        const result = await RtseCentre.regenerateCodes();
+
+        if (req.flash) {
+            req.flash(
+                "success",
+                "Centre codes regenerated for exam year " +
+                    result.examYear +
+                    ". Updated " + result.count + " centre(s)."
+            );
+        }
+
+        return res.redirect("/admin/arsp/centres");
+    } catch (err) {
+        console.error("RTSE Centre Code Regeneration Error:", err);
+
+        return renderError(
+            req,
+            res,
+            "/admin/arsp/centres",
+            err.message || "Unable to regenerate centre codes."
+        );
+    }
+};
+
+// =====================================
 // View Centre
 // =====================================
 exports.view = async (req, res) => {
@@ -622,7 +651,7 @@ exports.createAccount = async (req, res) => {
             return res.redirect(`/admin/arsp/centre/${id}`);
         }
 
-        const username = `centre_${String(centre.centre_code).trim()}`;
+        const username = String(centre.centre_id).trim();
 
         const created = await RtseCentreAccount.create(
             id,

@@ -181,7 +181,7 @@
         <div class="rtse-section-report-top">
             <div>
                 <h1 class="rtse-section-report-title">
-                    Section <%= section %> — Admit Card Download Report
+                    <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> — Admit Card Download Report
                 </h1>
 
                 <p class="rtse-section-report-subtitle">
@@ -254,7 +254,7 @@
                                 value="<%= item %>"
                                 <%= filters.classValue === String(item) ? "selected" : "" %>
                             >
-                                Class <%= item %>
+                                <%= /^\d+$/.test(String(item).trim()) ? "Class " + item : item %>
                             </option>
                         <% } %>
                     </select>

@@ -2,14 +2,30 @@ const RtseSetting = require("../models/RtseSetting");
 const RtseApplication = require("../models/RtseApplication");
 const RtseCentre = require("../models/RtseCentre");
 const RtseExamSetting = require("../models/RtseExamSetting");
+const RtseExamSection = require("../models/RtseExamSection");
 const RtseResultQr = require("../models/RtseResultQr");
 const QRCode = require("qrcode");
 const { createOmrPdf } = require("../utils/rtseOmrPdf");
 
-const VALID_SECTIONS = ["A", "B", "C", "D", "E"];
-
 function normalizeSection(value) {
     return String(value || "").trim().toUpperCase();
+}
+
+async function isConfiguredSection(section, examSettingId) {
+    const examId = Number(examSettingId);
+
+    if (
+        !normalizeSection(section) ||
+        !Number.isInteger(examId) ||
+        examId <= 0
+    ) {
+        return false;
+    }
+
+    const sections = await RtseExamSection.getSections(examId);
+    return sections.some(item =>
+        normalizeSection(item.section_name) === normalizeSection(section)
+    );
 }
 
 async function prepareStudent(student, examSetting, centreCache) {
@@ -104,28 +120,33 @@ async function beginPdfResponse(res, filename, students) {
 
 exports.generateSectionOmr = async (req, res) => {
     const section = normalizeSection(req.params.section);
-
-    if (!VALID_SECTIONS.includes(section)) {
-        req.flash("error", "Invalid RTSE section.");
-        return res.redirect("/admin/rtse");
-    }
+    const examSettingId = Number(req.params.id);
 
     try {
-        const setting = await RtseSetting.get();
-        const examYear = Number(setting?.exam_year);
-
-        if (!examYear) {
-            throw new Error("Active RTSE exam year is not configured.");
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0) {
+            throw new Error("A valid examination must be selected.");
         }
 
-        /*
-         * ONLY dependency for OMR:
-         * Admit Card must already be generated.
-         */
+        const examSetting = await RtseExamSetting.getById(examSettingId);
+        if (!examSetting) {
+            throw new Error("The selected examination was not found.");
+        }
+
+        if (!(await isConfiguredSection(section, examSettingId))) {
+            throw new Error("This section is not configured for the selected examination.");
+        }
+
+        const examYear = Number(examSetting.exam_year);
+        if (!Number.isInteger(examYear) || examYear <= 0) {
+            throw new Error("The selected examination has an invalid exam year.");
+        }
+
+        // Admit cards must already be generated for this examination and section.
         const students =
-            await RtseApplication.getGeneratedAdmitCardStudents(
+            await RtseApplication.getExamGeneratedAdmitCardStudents(
                 section,
-                examYear
+                examYear,
+                examSettingId
             );
 
         if (!students.length) {
@@ -136,136 +157,120 @@ exports.generateSectionOmr = async (req, res) => {
             return res.redirect("/admin/rtse");
         }
 
-        /*
-         * Explicit OMR generation/regeneration:
-         * create a fresh Result QR token for every student.
-         *
-         * IMPORTANT:
-         * This does NOT activate Result QR.
-         * Super Scanner still requires PRESENT attendance.
-         */
+        // Explicit OMR generation refreshes Result QR tokens.
+        // It does not activate Result QR or change attendance.
         for (const student of students) {
             await RtseResultQr.regenerateForApplication(student.id);
         }
 
         await RtseApplication.markOmrGeneratedForSection(
             section,
-            examYear
+            examYear,
+            examSettingId
         );
 
-        const examSetting = await RtseExamSetting.get();
         const centreCache = new Map();
         const preparedStudents = [];
 
         for (const student of students) {
             preparedStudents.push(
                 await prepareStudent(
-                    {
-                        ...student,
-                        section
-                    },
+                    { ...student, section },
                     examSetting,
                     centreCache
                 )
             );
         }
 
-        await beginPdfResponse(
+        return await beginPdfResponse(
             res,
             `RTSE-OMR-Section-${section}-${examYear}.pdf`,
             preparedStudents
         );
     } catch (error) {
         console.error("RTSE Generate Section OMR Error:", error);
-
         if (!res.headersSent) {
-            req.flash(
-                "error",
-                "Unable to generate Section OMR sheets."
-            );
+            req.flash("error", error.message || "Unable to generate Section OMR sheets.");
             return res.redirect("/admin/rtse");
         }
-
-        res.end();
+        return res.end();
     }
 };
 
 exports.resetSectionOmr = async (req, res) => {
     const section = normalizeSection(req.params.section);
-
-    if (!VALID_SECTIONS.includes(section)) {
-        req.flash("error", "Invalid RTSE section.");
-        return res.redirect("/admin/rtse");
-    }
+    const examSettingId = Number(req.params.id);
 
     try {
-        const setting = await RtseSetting.get();
-        const examYear = Number(setting?.exam_year);
-
-        if (!examYear) {
-            throw new Error("Active RTSE exam year is not configured.");
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0) {
+            throw new Error("A valid examination must be selected.");
         }
 
-        /*
-         * ONLY OMR state is reset.
-         *
-         * Admit Card, Roll Number, Attendance QR and
-         * PRESENT attendance are completely untouched.
-         *
-         * Existing Result QR is also retained here.
-         * The next explicit OMR generation replaces it
-         * with a fresh token.
-         */
+        const examination = await RtseExamSetting.getById(examSettingId);
+        if (!examination) {
+            throw new Error("The selected examination was not found.");
+        }
+
+        if (!(await isConfiguredSection(section, examSettingId))) {
+            throw new Error("This section is not configured for the selected examination.");
+        }
+
+        const examYear = Number(examination.exam_year);
+        if (!Number.isInteger(examYear) || examYear <= 0) {
+            throw new Error("The selected examination has an invalid exam year.");
+        }
+
+        // Reset only this examination's OMR state.
+        // Admit cards, roll numbers, Result QR tokens and attendance stay unchanged.
         await RtseApplication.resetOmrForSection(
             section,
-            examYear
+            examYear,
+            examSettingId
         );
 
         req.flash(
             "success",
             `OMR generation reset successfully for Section ${section}.`
         );
-
         return res.redirect("/admin/rtse");
     } catch (error) {
         console.error("RTSE Reset Section OMR Error:", error);
-
         req.flash(
             "error",
-            "Unable to reset Section OMR generation."
+            error.message || "Unable to reset Section OMR generation."
         );
-
         return res.redirect("/admin/rtse");
     }
 };
 
 exports.downloadSectionOmrPdf = async (req, res) => {
     const section = normalizeSection(req.params.section);
-
-    if (!VALID_SECTIONS.includes(section)) {
-        req.flash("error", "Invalid RTSE section.");
-        return res.redirect("/admin/rtse");
-    }
+    const examSettingId = Number(req.params.id);
 
     try {
-        const setting = await RtseSetting.get();
-        const examYear = Number(setting?.exam_year);
-
-        if (!examYear) {
-            throw new Error("Active RTSE exam year is not configured.");
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0) {
+            throw new Error("A valid examination must be selected.");
         }
 
-        /*
-         * Section OMR may only be downloaded after the
-         * independent OMR generation step has completed.
-         *
-         * This check does NOT inspect or modify attendance.
-         */
-        const omrStatus =
-            await RtseApplication.getSectionOmrStatus(
-                section,
-                examYear
-            );
+        const examination = await RtseExamSetting.getById(examSettingId);
+        if (!examination) {
+            throw new Error("The selected examination was not found.");
+        }
+
+        if (!(await isConfiguredSection(section, examSettingId))) {
+            throw new Error("This section is not configured for the selected examination.");
+        }
+
+        const examYear = Number(examination.exam_year);
+        if (!Number.isInteger(examYear) || examYear <= 0) {
+            throw new Error("The selected examination has an invalid exam year.");
+        }
+
+        const omrStatus = await RtseApplication.getSectionOmrStatus(
+            section,
+            examYear,
+            examSettingId
+        );
 
         if (
             Number(omrStatus?.eligible || 0) === 0 ||
@@ -274,17 +279,16 @@ exports.downloadSectionOmrPdf = async (req, res) => {
         ) {
             req.flash(
                 "error",
-                `OMR has not been generated for Section ${section}.`
+                `OMR has not been generated for Section ${section} in the selected examination.`
             );
             return res.redirect("/admin/rtse");
         }
 
-        const examSetting = await RtseExamSetting.get();
-
         const students =
-            await RtseApplication.getGeneratedAdmitCardStudents(
+            await RtseApplication.getExamGeneratedAdmitCardStudents(
                 section,
-                examYear
+                examYear,
+                examSettingId
             );
 
         if (!students.length) {
@@ -301,33 +305,28 @@ exports.downloadSectionOmrPdf = async (req, res) => {
         for (const student of students) {
             preparedStudents.push(
                 await prepareStudent(
-                    {
-                        ...student,
-                        section
-                    },
-                    examSetting,
+                    { ...student, section },
+                    examination,
                     centreCache
                 )
             );
         }
 
-        beginPdfResponse(
+        return await beginPdfResponse(
             res,
             `RTSE-OMR-Section-${section}-${examYear}.pdf`,
             preparedStudents
         );
     } catch (error) {
         console.error("RTSE Section OMR Error:", error);
-
         if (!res.headersSent) {
             req.flash(
                 "error",
-                "Unable to generate Section OMR sheets."
+                error.message || "Unable to generate Section OMR sheets."
             );
             return res.redirect("/admin/rtse");
         }
-
-        res.end();
+        return res.end();
     }
 };
 
@@ -363,23 +362,33 @@ exports.downloadStudentOmrPdf = async (req, res) => {
             return res.redirect(`/admin/rtse/application/${id}`);
         }
 
-        const section = normalizeSection(student.section);
+               const section = normalizeSection(student.section);
+        const examSettingId = Number(student.exam_setting_id);
 
-        if (!VALID_SECTIONS.includes(section)) {
-            req.flash("error", "Invalid student section.");
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0) {
+            throw new Error("Student examination configuration is missing.");
+        }
+
+        const examSetting = await RtseExamSetting.getById(examSettingId);
+
+        if (!examSetting) {
+            throw new Error("Student examination configuration was not found.");
+        }
+
+        if (!(await isConfiguredSection(section, examSettingId))) {
+            req.flash(
+                "error",
+                "This section is not configured for the student's examination."
+            );
             return res.redirect(`/admin/rtse/application/${id}`);
         }
 
-        const setting = await RtseSetting.get();
-        const examYear = Number(
-            setting?.exam_year || student.application_year
-        );
+        const examYear = Number(examSetting.exam_year);
 
-        if (!examYear) {
-            throw new Error("Active RTSE exam year is not configured.");
-        }
+        if (!Number.isInteger(examYear) || examYear <= 0) {
+            throw new Error("The student's examination has an invalid exam year.");
+        } 
 
-        const examSetting = await RtseExamSetting.get();
         const centreCache = new Map();
 
         const preparedStudent = await prepareStudent(

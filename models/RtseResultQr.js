@@ -89,19 +89,46 @@ class RtseResultQr {
     // Create Result QR records for
     // generated-admit students in a section
     // =====================================
-    static async ensureForSection(section, applicationYear) {
+    static async ensureForSection(section, applicationYear, examSettingId = null) {
         const normalizedSection =
             String(section || "").trim().toUpperCase();
 
         const normalizedYear =
             Number(applicationYear);
 
-        if (
-            !["A", "B", "C", "D", "E"].includes(
-                normalizedSection
-            )
-        ) {
-            throw new Error("Invalid RTSE section.");
+        const examId =
+            examSettingId === null || examSettingId === undefined || examSettingId === ""
+                ? null
+                : Number(examSettingId);
+
+        if (examId !== null) {
+            if (!Number.isInteger(examId) || examId <= 0) {
+                throw new Error("Invalid examination setting ID.");
+            }
+            const RtseExamSection = require("./RtseExamSection");
+            const configuredSections = await RtseExamSection.getSections(examId);
+            if (!configuredSections.some(item =>
+                String(item.section_name).trim().toUpperCase() === normalizedSection
+            )) {
+                throw new Error("Section is not configured for this examination.");
+            }
+        } else {
+            const RtseExamSetting = require("./RtseExamSetting");
+            const RtseExamSection = require("./RtseExamSection");
+            const activeExam = await RtseExamSetting.get();
+
+            if (!activeExam?.id) {
+                throw new Error(
+                    "An examination must be configured before creating Result QR records."
+                );
+            }
+
+            const configuredSections = await RtseExamSection.getSections(activeExam.id);
+            if (!configuredSections.some(
+                item => String(item.section_name || "").trim().toUpperCase() === normalizedSection
+            )) {
+                throw new Error("Section is not configured for the active examination.");
+            }
         }
 
         if (!normalizedYear) {
@@ -118,11 +145,10 @@ class RtseResultQr {
               AND roll_no IS NOT NULL
               AND admit_generated = 1
               AND section = ?
-            `,
-            [
-                normalizedYear,
-                normalizedSection
-            ]
+            ` + (examId !== null ? "\n              AND exam_setting_id = ?" : ""),
+            examId !== null
+                ? [normalizedYear, normalizedSection, examId]
+                : [normalizedYear, normalizedSection]
         );
 
         let created = 0;

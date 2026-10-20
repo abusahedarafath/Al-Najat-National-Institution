@@ -1,0 +1,123 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+    <main class="admin-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Roll &amp; Admit Generation</h1>
+                    <p style="margin:6px 0 0;color:#6b7280;">
+                        <%= examination.exam_name %> — <%= examination.exam_year %>
+                    </p>
+                </div>
+                <a
+                    href="/admin/rtse/exam-settings/<%= examination.id %>/sections"
+                    class="btn-cancel"
+                    style="text-decoration:none;"
+                >Configure Sections</a>
+            </div>
+
+            <% if (typeof success !== "undefined" && success && success.length) { %>
+                <div class="alert alert-success">
+                    <%= success[0] %>
+                </div>
+            <% } %>
+
+            <% if (typeof error !== "undefined" && error && error.length) { %>
+                <div class="alert alert-danger">
+                    <%= error[0] %>
+                </div>
+            <% } %>
+
+            <div class="profile-card">
+                <p>
+                    Actions on this page apply only to the selected examination
+                    and configured section. Application year continues to use
+                    the existing calendar-year registration behavior.
+                </p>
+
+                <% if (!sections.length) { %>
+                    <p>No sections are configured for this examination yet.</p>
+                <% } else { %>
+                    <% sections.forEach(section => { %>
+                        <div style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:space-between;
+                            gap:16px;
+                            flex-wrap:wrap;
+                            padding:16px 0;
+                            border-bottom:1px solid #e5e7eb;
+                        ">
+                            <div>
+                                <h2 style="margin:0 0 6px;">
+                                    <%= section.section_name %>
+                                </h2>
+                                <p style="margin:0;color:#6b7280;">
+                                    Roll suffix range:
+                                    <strong><%= section.roll_start %>–<%= section.roll_end %></strong>
+                                </p>
+                            </div>
+
+                            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                                <a
+                                    href="/admin/rtse/exam-settings/<%= examination.id %>/approved/<%= encodeURIComponent(section.section_name) %>"
+                                    class="btn-cancel"
+                                    style="text-decoration:none;"
+                                >Manage Approved Students</a>
+                                <form
+                                    method="POST"
+                                    action="/admin/rtse/exam-settings/<%= examination.id %>/generate-roll/<%= encodeURIComponent(section.section_name) %>"
+                                    onsubmit="return confirm('Generate roll numbers for <%= (String((section.section_name) ?? "").trim() ? (String((section.section_name) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section.section_name) ?? "").trim() : "Section " + String((section.section_name) ?? "").trim()) : "-") %>? Existing assigned roll numbers will not be overwritten.');"
+                                >
+                                    <button type="submit" class="btn-save">
+                                        Generate Roll Numbers
+                                    </button>
+                                </form>
+<form
+                                    method="POST"
+                                    action="/admin/rtse/exam-settings/<%= examination.id %>/reset-roll/<%= encodeURIComponent(section.section_name) %>"
+                                    onsubmit="return confirm('Reset roll numbers for <%= (String((section.section_name) ?? "").trim() ? (String((section.section_name) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section.section_name) ?? "").trim() : "Section " + String((section.section_name) ?? "").trim()) : "-") %>? This is blocked if PRESENT attendance exists.');"
+                                >
+                                    <button type="submit" class="btn-cancel">
+                                        Reset Roll Numbers
+                                    </button>
+                                </form>
+
+                                <form
+                                    method="POST"
+                                    action="/admin/rtse/exam-settings/<%= examination.id %>/generate-admit/<%= encodeURIComponent(section.section_name) %>"
+                                    onsubmit="return confirm('Generate admit-card status and QR records for <%= (String((section.section_name) ?? "").trim() ? (String((section.section_name) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section.section_name) ?? "").trim() : "Section " + String((section.section_name) ?? "").trim()) : "-") %>?');"
+                                >
+                                    <button type="submit" class="btn-save">
+                                        Generate Admit Cards
+                                    </button>
+                                </form>
+<form
+                                    method="POST"
+                                    action="/admin/rtse/exam-settings/<%= examination.id %>/reset-admit/<%= encodeURIComponent(section.section_name) %>"
+                                    onsubmit="return confirm('Reset admit-card status for <%= (String((section.section_name) ?? "").trim() ? (String((section.section_name) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section.section_name) ?? "").trim() : "Section " + String((section.section_name) ?? "").trim()) : "-") %>? Attendance records will be preserved. This is blocked if PRESENT attendance exists.');"
+                                >
+                                    <button type="submit" class="btn-cancel">
+                                        Reset Admit Cards
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+
+                <div style="margin-top:22px;">
+                    <a
+                        href="/admin/rtse/exam-settings/<%= examination.id %>"
+                        class="btn-cancel"
+                        style="text-decoration:none;"
+                    >Back to Examination</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<%- include("../partials/footer") %>

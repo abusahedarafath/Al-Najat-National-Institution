@@ -842,7 +842,7 @@
                     </span>
 
                     <span class="rtse-info-value">
-                        Class <%= application.class %>
+                        <%= /^\d+$/.test(String(application.class ?? '').trim()) ? (Number(application.class) > 0 ? 'Class ' + application.class : '-') : (String(application.class ?? '').trim() || '-') %>
                     </span>
                 </div>
 
@@ -852,9 +852,9 @@
                         Section
                     </span>
 
-                    <span class="rtse-info-value">
-                        Section <%= application.section %>
-                    </span>
+<span class="rtse-info-value">
+    <%= application.section || "-" %>
+</span>
                 </div>
 
 

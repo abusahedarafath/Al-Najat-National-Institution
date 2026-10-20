@@ -11,6 +11,16 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+const recordsPool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.RECORDS_DB_NAME || "al_najat_records_db",
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0
+});
+
 (async () => {
     try {
         const conn = await pool.getConnection();
@@ -21,5 +31,7 @@ const pool = mysql.createPool({
         process.exit(1);
     }
 })();
+
+pool.recordsPool = recordsPool;
 
 module.exports = pool;

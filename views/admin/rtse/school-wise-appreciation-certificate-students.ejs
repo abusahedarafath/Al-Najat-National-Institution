@@ -97,14 +97,14 @@
             <div class="page-actions">
 
                 <a
-                    href="/admin/rtse/certificates/schools">
+                    href="/admin/rtse/certificates/schools?exam_id=<%= encodeURIComponent(selectedExamId) %>">
                     ← Back to School List
                 </a>
 
                 <% if (certificates.length) { %>
 
                     <a
-                        href="/admin/rtse/certificates/schools/<%= encodeURIComponent(school) %>/print"
+                        href="/admin/rtse/certificates/schools/<%= encodeURIComponent(school) %>/print?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                         class="print-all-button">
                         🖨️ Print All Certificates
                     </a>

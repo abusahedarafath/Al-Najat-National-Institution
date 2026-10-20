@@ -101,14 +101,14 @@
             <div class="page-actions">
 
                 <a
-                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools"
+                    href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                 >
                     ← Back to School List
                 </a>
 
                 <% if (certificates.length) { %>
                     <a
-                        href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools/<%= encodeURIComponent(school) %>/print"
+                        href="/admin/rtse/new-certificates/section/<%= encodeURIComponent(section) %>/schools/<%= encodeURIComponent(school) %>/print?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                         class="print-all-button"
                     >
                         🖨️ Print All Certificates

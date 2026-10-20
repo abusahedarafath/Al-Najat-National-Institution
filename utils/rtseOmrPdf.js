@@ -21,13 +21,32 @@ const COLORS = {
     grey: "#555555"
 };
 
-const SECTION_COLORS = {
-    A: "#2f5597",
-    B: "#d63384",
-    C: "#198754",
-    D: "#9c27b0",
-    E: "#d97706"
-};
+function getSectionColor(section) {
+    const value = String(section ?? "").trim().toUpperCase();
+    if (!value) return "#555555";
+
+    let hash = 0;
+    for (let i = 0; i < value.length; i++) {
+        hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0;
+    }
+
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue}, 58%, 38%)`;
+}
+
+function getSectionPalette(section) {
+    const value = String(section ?? "").trim().toUpperCase();
+
+    if (SECTION_OMR_PALETTE[value]) {
+        return SECTION_OMR_PALETTE[value];
+    }
+
+    return {
+        primary: getSectionColor(value),
+        light: "#f3f3f3",
+        band: "#e5e7eb"
+    };
+}
 
 const SECTION_OMR_PALETTE = {
     A: {
@@ -218,13 +237,27 @@ function drawHeader(doc, data, omrColors = SECTION_OMR_PALETTE.A) {
         data.exam_year || data.application_year || ""
     ).trim();
 
-    const rollPrefix = examYear
+    const fallbackRollPrefix = examYear
         ? `RTSE${examYear.slice(-2)}`
         : "RTSE";
 
+    // Prefer the saved centre-code roll used by the admit card.
+    const storedRollNo = String(data.roll_no || "").trim();
+    const rollParts = storedRollNo.split("-");
+    const hasCentreCodeRoll =
+        rollParts.length >= 2 &&
+        rollParts[0].trim() !== "" &&
+        rollParts.slice(1).join("-").trim() !== "";
+
+    const rollPrefix = hasCentreCodeRoll
+        ? rollParts[0].trim()
+        : fallbackRollPrefix;
+
     const rollNumber = String(
-        data.roll_number ?? ""
-    ).replace(/\D/g, "").slice(-4).padStart(4, "0");
+        hasCentreCodeRoll
+            ? rollParts.slice(1).join("-").trim()
+            : (data.roll_number ?? "")
+    ).replace(/\D/g, "");
 
     fitText(
         doc,
@@ -944,7 +977,7 @@ function drawSignatureArea(doc) {
 function drawQuestionGrid(doc, section = "A") {
     const sectionKey = text(section, "A").toUpperCase();
     const omrColors =
-        SECTION_OMR_PALETTE[sectionKey] || SECTION_OMR_PALETTE.A;
+        getSectionPalette(sectionKey)
     const x = M + 4;
     const y = 356;
     const w = PAGE.width - (M + 4) * 2;
@@ -1108,7 +1141,7 @@ function drawQuestionColumn(
 async function renderOmrPage(doc, data) {
     const sectionKey = text(data.section, "A").toUpperCase();
     const omrColors =
-        SECTION_OMR_PALETTE[sectionKey] || SECTION_OMR_PALETTE.A;
+        getSectionPalette(sectionKey)
 
     drawOuterFrame(doc);
     drawHeader(doc, data, omrColors);
@@ -1141,5 +1174,5 @@ async function createOmrPdf(students) {
 module.exports = {
     createOmrPdf,
     renderOmrPage,
-    SECTION_COLORS
+    getSectionColor
 };

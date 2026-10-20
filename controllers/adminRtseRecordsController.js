@@ -32,7 +32,7 @@ exports.recordsDashboard = async (req, res) => {
         const drillAttendance = String(req.query.attendance || "").trim().toUpperCase();
 
         if (
-            ["A", "B", "C", "D", "E"].includes(drillSection) ||
+            /^[A-Z0-9 _-]{1,20}$/.test(drillSection) ||
             /^\d+$/.test(drillSchoolId)
         ) {
             const students = await RtseRecords.getDrilldownStudents({
@@ -77,7 +77,7 @@ exports.recordsSectionDashboard = async (req, res) => {
     try {
         const section = String(req.params.section || "").trim().toUpperCase();
 
-        if (!["A", "B", "C", "D", "E"].includes(section)) {
+        if (!/^[A-Z0-9 _-]{1,20}$/.test(section)) {
             return res.status(404).render("error", {
                 message: "Invalid RTSE section."
             });
@@ -436,9 +436,8 @@ exports.recordsAdmitCard = async (req, res) => {
         }
 
         // Records must remain strictly read-only.
-        // Never call ensureForApplication() here.
-        const attendance =
-            await RtseExamAttendance.getByApplication(student.id);
+        // All year-specific examination data comes from Records DB.
+        const attendance = record.attendance;
 
         if (!attendance || !attendance.qr_token) {
             return res.status(404).render("error", {
@@ -449,29 +448,25 @@ exports.recordsAdmitCard = async (req, res) => {
         const ArspSetting = require("../models/ArspSetting");
         const setting = await ArspSetting.get();
 
-        // The application year is an exam year, not an exam-setting ID.
-        // Resolve the historical exam setting by exam_year.
-        const db = require("../config/database");
-
-        const [examRows] = await db.query(
-            `SELECT *
-             FROM rtse_exam_settings
-             WHERE exam_year=?
-             ORDER BY id DESC
-             LIMIT 1`,
-            [student.application_year]
-        );
-
-        const examSetting = examRows[0] || null;
-
+        // Admit Card instructions/signature are global configuration.
         const admitCardSetting =
             await RtseAdmitCardSetting.get();
+
+        // Resolve the historical examination configuration
+        // using the student's application year.
+        const examSetting =
+            await RtseRecords.getExamSetting(
+                student.application_year
+            );
 
         let examShift = null;
 
         if (examSetting && student.section) {
             const configuredShifts =
-                await RtseExamSetting.getShifts(examSetting.id);
+                await RtseRecords.getExamShifts(
+                    student.application_year,
+                    examSetting.id
+                );
 
             const studentSection =
                 String(student.section)
@@ -490,15 +485,9 @@ exports.recordsAdmitCard = async (req, res) => {
                 ) || null;
         }
 
-        let examCentre = null;
-
-        if (student.school_id && student.application_year) {
-            examCentre =
-                await RtseCentre.getSchoolAssignment(
-                    student.school_id,
-                    student.application_year
-                );
-        }
+        // Centre data is already resolved from the historical
+        // Records DB by getStudentRecordDetails().
+        const examCentre = record.centre;
 
         const qrData = await QRCode.toDataURL(
             attendance.qr_token,
@@ -544,8 +533,12 @@ exports.recordsCertificate = async (req, res) => {
         const record = await getRecordsDocumentContext(req, res);
         if (!record) return;
 
+        const application = record.application;
+        const result = record.result;
+        const certificate = record.certificate;
+
         const applicationId =
-            Number(record.application.id);
+            Number(application && application.id);
 
         if (!Number.isInteger(applicationId) || applicationId <= 0) {
             return res.status(400).render("error", {
@@ -553,11 +546,28 @@ exports.recordsCertificate = async (req, res) => {
             });
         }
 
-        const result = record.result;
-
         if (!result) {
             return res.status(404).render("error", {
                 message: "Result is not available for this application."
+            });
+        }
+
+        if (!certificate) {
+            return res.status(404).render("error", {
+                message: "Certificate is not available for this application."
+            });
+        }
+
+        const applicationYear =
+            Number(application.application_year);
+
+        if (
+            !Number.isInteger(applicationYear) ||
+            applicationYear < 2000 ||
+            applicationYear > 2100
+        ) {
+            return res.status(404).render("error", {
+                message: "Historical examination year is not available."
             });
         }
 
@@ -567,53 +577,83 @@ exports.recordsCertificate = async (req, res) => {
         /*
          * Records Dashboard is strictly read-only.
          *
-         * Use the certificate that already exists in
-         * rtse_certificates. Never generate or ensure a
-         * certificate from the Records Dashboard.
+         * The historical Records DB is the source of truth for
+         * the certificate that was actually issued. Do not infer
+         * certificate_type from the current rank mapping because
+         * historical certificates may have a type that differs
+         * from the current ranking rules.
+         *
+         * No operational certificate lookup or generation occurs.
          */
-        let certificateType = "";
+        const historicalCertificate =
+            certificate &&
+            certificate.certificate_type
+                ? await RtseRecords.getCertificate(
+                    applicationYear,
+                    applicationId,
+                    certificate.certificate_type
+                )
+                : null;
 
-        if (sectionRank === 1) {
-            certificateType = "Gold";
-        } else if (sectionRank === 2) {
-            certificateType = "Silver";
-        } else if (sectionRank === 3) {
-            certificateType = "Bronze";
-        } else if (sectionRank >= 4 && sectionRank <= 10) {
-            certificateType = "Merit";
-        } else if (sectionRank >= 11) {
-            certificateType = "Appreciation";
-        } else {
-            return res.status(404).render("error", {
-                message: "A valid certificate rank is not available for this application."
-            });
-        }
-
-        const certificate =
-            await RtseCertificate.getByApplicationAndType(
-                applicationId,
-                certificateType
-            );
-
-        if (!certificate) {
+        if (!historicalCertificate) {
             return res.status(404).render("error", {
                 message:
-                    `${certificateType} certificate is not available for this application.`
+                    "Historical certificate is not available for this application."
             });
         }
 
+        const certificateType =
+            historicalCertificate.certificate_type;
+
         const setting =
-            await RtseExamSetting.get();
+            await RtseRecords.getExamSetting(applicationYear);
 
         const certificateSetting =
-            await RtseCertificateSetting.get();
+            await RtseRecords.getCertificateSetting(applicationYear);
 
         const siteSettings =
             await SiteSetting.get();
 
         /*
-         * Ranks 1–10 use the existing new certificate
-         * template exactly as it is already used elsewhere.
+         * The historical certificate table intentionally stores only
+         * certificate-specific fields. Student/template fields are
+         * reconstructed from the same historical Records DB snapshot.
+         */
+        const certificateForTemplate = {
+            registration_no:
+                application.registration_no,
+
+            roll_no:
+                application.roll_no || application.roll_number,
+
+            full_name:
+                application.full_name,
+
+            school_name:
+                application.school_name,
+
+            section:
+                application.section,
+
+            photo:
+                application.photo,
+
+            section_rank:
+                result.section_rank,
+
+            overall_rank:
+                result.overall_rank,
+
+            certificate_no:
+                historicalCertificate.certificate_no,
+
+            qr_code:
+                historicalCertificate.qr_code
+        };
+
+        /*
+         * Ranks 1–10 use the existing new certificate template
+         * exactly as it is already used elsewhere.
          */
         if (sectionRank >= 1 && sectionRank <= 10) {
             const categoryKey =
@@ -626,7 +666,8 @@ exports.recordsCertificate = async (req, res) => {
                             : "merit";
 
             const certificateCategorySetting =
-                await RtseCertificateCategorySetting.getByCategory(
+                await RtseRecords.getCertificateCategorySetting(
+                    applicationYear,
                     categoryKey
                 );
 
@@ -681,40 +722,8 @@ exports.recordsCertificate = async (req, res) => {
                 }
             }
 
-            const certificateForTemplate = {
-                registration_no:
-                    certificate.registration_no,
-
-                roll_no:
-                    certificate.roll_no,
-
-                full_name:
-                    certificate.full_name,
-
-                school_name:
-                    certificate.school_name,
-
-                section:
-                    certificate.section,
-
-                photo:
-                    certificate.photo,
-
-                section_rank:
-                    certificate.section_rank,
-
-                overall_rank:
-                    certificate.overall_rank,
-
-                certificate_no:
-                    certificate.certificate_no,
-
-                qr_code:
-                    certificate.qr_code,
-
-                writing_skill_grade:
-                    writingSkillGrade
-            };
+            certificateForTemplate.writing_skill_grade =
+                writingSkillGrade;
 
             return res.render(
                 "rtse-new-certificate",
@@ -734,7 +743,9 @@ exports.recordsCertificate = async (req, res) => {
          * certificate renderer exactly as it already exists.
          */
         const categoryRows =
-            await RtseCertificateCategorySetting.getAll();
+            await RtseRecords.getCertificateCategorySettings(
+                applicationYear
+            );
 
         const certificateCategories = {};
 
@@ -746,12 +757,12 @@ exports.recordsCertificate = async (req, res) => {
             "admin/rtse/section-certificates",
             {
                 title: "Appreciation Certificate",
-                certificates: [certificate],
+                certificates: [certificateForTemplate],
                 setting,
                 siteSettings,
                 certificateSetting,
                 certificateCategories,
-                section: certificate.section
+                section: application.section
             }
         );
 

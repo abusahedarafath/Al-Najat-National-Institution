@@ -1,5 +1,73 @@
 <%- include("../partials/header") %>
 
+<%
+function formatExamDate(value) {
+    if (!value) return "—";
+
+    if (value instanceof Date && !isNaN(value.getTime())) {
+        return value.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
+    const raw = String(value).trim();
+
+    const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+    if (iso) {
+        const date = new Date(
+            Number(iso[1]),
+            Number(iso[2]) - 1,
+            Number(iso[3])
+        );
+
+        return date.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
+    const parsed = new Date(raw);
+
+    if (!isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
+    return raw;
+}
+
+function formatExamTime(value) {
+    if (!value) return "—";
+
+    const raw = String(value).trim();
+
+    const match = raw.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+
+    if (!match) return raw;
+
+    let hour = Number(match[1]);
+    const minute = match[2];
+
+    if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
+        return raw;
+    }
+
+    const suffix = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+
+    return `${hour}:${minute} ${suffix}`;
+}
+%>
+
 <div class="admin-layout">
 
     <%- include("../partials/sidebar") %>
@@ -97,7 +165,7 @@
                         <label>Application Start Date</label>
 
                         <div>
-                            <%= examination.application_start_date || "—" %>
+                            <%= formatExamDate(examination.application_start_date) %>
                         </div>
 
                     </div>
@@ -108,7 +176,7 @@
                         <label>Application End Date</label>
 
                         <div>
-                            <%= examination.application_end_date || "—" %>
+                            <%= formatExamDate(examination.application_end_date) %>
                         </div>
 
                     </div>
@@ -119,7 +187,7 @@
                         <label>Examination Date</label>
 
                         <div>
-                            <%= examination.exam_date || "—" %>
+                            <%= formatExamDate(examination.exam_date) %>
                         </div>
 
                     </div>
@@ -130,7 +198,7 @@
                         <label>Reporting Time</label>
 
                         <div>
-                            <%= examination.reporting_time || "—" %>
+                            <%= formatExamTime(examination.reporting_time) %>
                         </div>
 
                     </div>
@@ -141,7 +209,7 @@
                         <label>Examination Start Time</label>
 
                         <div>
-                            <%= examination.exam_start_time || "—" %>
+                            <%= formatExamTime(examination.exam_start_time) %>
                         </div>
 
                     </div>
@@ -152,7 +220,7 @@
                         <label>Examination End Time</label>
 
                         <div>
-                            <%= examination.exam_end_time || "—" %>
+                            <%= formatExamTime(examination.exam_end_time) %>
                         </div>
 
                     </div>
@@ -163,7 +231,7 @@
                         <label>Result Publish Date</label>
 
                         <div>
-                            <%= examination.result_publish_date || "—" %>
+                            <%= formatExamDate(examination.result_publish_date) %>
                         </div>
 
                     </div>
@@ -174,7 +242,7 @@
                         <label>Certificate Publish Date</label>
 
                         <div>
-                            <%= examination.certificate_publish_date || "—" %>
+                            <%= formatExamDate(examination.certificate_publish_date) %>
                         </div>
 
                     </div>
@@ -213,7 +281,7 @@
                         <label>Created At</label>
 
                         <div>
-                            <%= examination.created_at || "—" %>
+                            <%= examination.created_at ? new Date(examination.created_at).toLocaleString("en-IN", { day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"2-digit", hour12:true }) : "—" %>
                         </div>
 
                     </div>
@@ -224,13 +292,182 @@
                         <label>Last Updated</label>
 
                         <div>
-                            <%= examination.updated_at || "—" %>
+                            <%= examination.updated_at ? new Date(examination.updated_at).toLocaleString("en-IN", { day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"2-digit", hour12:true }) : "—" %>
                         </div>
 
                     </div>
 
 
                 </div>
+
+        <div style="
+            margin-top:25px;
+            padding:18px;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+            background:#f9fafb;
+        ">
+            <h3 style="margin:0 0 15px;">
+                Examination Shifts &amp; Sections
+            </h3>
+
+            <% if (examShifts && examShifts.length) { %>
+
+                <div style="display:grid;gap:12px;">
+
+                    <% examShifts.forEach((shift, index) => { %>
+
+    <div style="
+        padding:16px;
+        background:#fff;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+    ">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom:14px;
+        ">
+            <div>
+                <div style="
+                    font-size:17px;
+                    font-weight:700;
+                    color:#111827;
+                ">
+                    Shift <%= shift.shift_no || (index + 1) %>
+                    <% if (shift.shift_name) { %>
+                        — <%= shift.shift_name %>
+                    <% } %>
+                </div>
+
+                <% if (shift.layout) { %>
+                    <div style="
+                        margin-top:4px;
+                        font-size:13px;
+                        color:#6b7280;
+                    ">
+                        Layout: <strong><%= shift.layout %></strong>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:12px;
+        ">
+
+            <div style="
+                padding:12px;
+                background:#f9fafb;
+                border-radius:9px;
+            ">
+                <div style="font-size:12px;color:#6b7280;">
+                    Reporting Time
+                </div>
+                <strong>
+                    <%= formatExamTime(shift.reporting_time) %>
+                </strong>
+            </div>
+
+            <div style="
+                padding:12px;
+                background:#f9fafb;
+                border-radius:9px;
+            ">
+                <div style="font-size:12px;color:#6b7280;">
+                    Starting Time
+                </div>
+                <strong>
+                    <%= formatExamTime(shift.exam_start_time) %>
+                </strong>
+            </div>
+
+            <div style="
+                padding:12px;
+                background:#f9fafb;
+                border-radius:9px;
+            ">
+                <div style="font-size:12px;color:#6b7280;">
+                    Ending Time
+                </div>
+                <strong>
+                    <%= formatExamTime(shift.exam_end_time) %>
+                </strong>
+            </div>
+
+        </div>
+
+        <div style="
+            margin-top:15px;
+            padding-top:13px;
+            border-top:1px solid #e5e7eb;
+        ">
+
+            <div style="
+                font-size:12px;
+                color:#6b7280;
+                margin-bottom:8px;
+            ">
+                Sections Assigned to This Shift
+            </div>
+
+            <% if (shift.sections && shift.sections.length) { %>
+
+                <div style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:8px;
+                ">
+
+                    <% shift.sections.forEach(section => { %>
+
+                        <span style="
+                            display:inline-block;
+                            padding:6px 12px;
+                            border-radius:999px;
+                            background:#eff6ff;
+                            color:#1d4ed8;
+                            font-weight:700;
+                            font-size:13px;
+                        ">
+                            <%= (String((section.section) ?? "").trim() ? (String((section.section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section.section) ?? "").trim() : "Section " + String((section.section) ?? "").trim()) : "-") %>
+                        </span>
+
+                    <% }) %>
+
+                </div>
+
+            <% } else { %>
+
+                <div style="color:#6b7280;">
+                    No sections assigned to this shift.
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+<% }) %>
+
+                </div>
+
+            <% } else { %>
+
+                <div style="color:#6b7280;">
+                    No examination shifts configured.
+                </div>
+
+            <% } %>
+        </div>
+
 
 
                 <div style="
@@ -242,7 +479,15 @@
                 ">
 
                     <a
-                        href="/admin/rtse/exam-settings/<%= examination.id %>/edit"
+                        <a
+                        href="/admin/rtse/exam-settings/<%= examination.id %>/sections"
+                        class="btn-save"
+                        style="text-decoration:none;"
+                    >
+                        Configure Sections
+                    </a>
+
+                    href="/admin/rtse/exam-settings/<%= examination.id %>/edit"
                         class="btn-cancel"
                         style="text-decoration:none;"
                     >

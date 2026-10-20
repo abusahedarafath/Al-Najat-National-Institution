@@ -43,14 +43,8 @@
             <div class="slip-title">
 
                 <h1>
-                    <%= siteSettings && siteSettings.institution_name
-                        ? siteSettings.institution_name
-                        : 'AL-NAJAT NATIONAL INSTITUTION' %>
+                    <%= application && application.exam_name ? application.exam_name : 'Examination name unavailable' %>
                 </h1>
-
-                <h2>
-                    Ratabari Talent Search Examination 2026
-                </h2>
 
                 <div class="organized-by">
                     Organized by
@@ -100,7 +94,7 @@
             <div>
                 <span>Section</span>
                 <strong>
-                    SECTION <%= application.section %>
+                     <%= application.section %>
                 </strong>
             </div>
 
@@ -214,14 +208,14 @@
                 <div class="detail-row">
                     <span>Class</span>
                     <strong>
-                        Class <%= application.class %>
+                        <%= /^\d+$/.test(String(application.class ?? '').trim()) ? (Number(application.class) > 0 ? 'Class ' + application.class : '-') : (String(application.class ?? '').trim() || '-') %>
                     </strong>
                 </div>
 
                 <div class="detail-row">
                     <span>Section</span>
                     <strong>
-                        SECTION <%= application.section %>
+                         <%= application.section %>
                     </strong>
                 </div>
 
@@ -322,7 +316,7 @@
         <div class="slip-footer">
 
             <div>
-                <strong>Ratabari Talent Search Examination 2026</strong>
+                <strong><%= application && application.exam_name ? application.exam_name : 'Examination name unavailable' %></strong>
                 <br>
                 Organized by
                 <strong class="footer-arsp">ARSP</strong>

@@ -1,0 +1,898 @@
+<%- include("../partials/header") %>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+
+    <main class="admin-content">
+        <div class="container records-years-page">
+
+<style>
+
+
+.records-years-page {
+    width: min(1180px, calc(100% - 28px));
+    margin: 30px auto;
+}
+
+.header {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+    margin-bottom: 18px;
+}
+
+.header h1 {
+    margin: 0 0 8px;
+    font-size: 26px;
+}
+
+.header p {
+    margin: 0;
+    color: #64748b;
+}
+
+
+.records-flash {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 48px 16px 16px;
+    margin: 0 0 14px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+    animation: recordsFlashIn .35s ease-out;
+    overflow: hidden;
+}
+
+.records-flash::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+}
+
+.records-flash-icon {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.records-flash-content {
+    min-width: 0;
+    padding-top: 1px;
+}
+
+.records-flash-title {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .01em;
+}
+
+.records-flash-message {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 600;
+}
+
+.records-flash-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    color: inherit;
+    font-size: 20px;
+    line-height: 1;
+    opacity: .65;
+    cursor: pointer;
+}
+
+.records-flash-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, .06);
+}
+
+.records-flash-success {
+    background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.records-flash-success::before {
+    background: #16a34a;
+}
+
+.records-flash-success .records-flash-icon {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.records-flash-error {
+    background: linear-gradient(135deg, #fff7f7, #fef2f2);
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.records-flash-error::before {
+    background: #dc2626;
+}
+
+.records-flash-error .records-flash-icon {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.records-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, .68);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: recordsConfirmOverlayIn .2s ease-out;
+}
+
+.records-confirm-overlay.is-open {
+    display: flex;
+}
+
+.records-confirm-modal {
+    position: relative;
+    width: min(460px, 100%);
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .30);
+    animation: recordsConfirmModalIn .28s cubic-bezier(.2,.8,.2,1);
+}
+
+.records-confirm-top {
+    position: relative;
+    padding: 28px 24px 24px;
+    color: #ffffff;
+}
+
+.records-confirm-modal.records-confirm-finish .records-confirm-top {
+    background: linear-gradient(135deg, #047857, #16a34a, #22c55e);
+}
+
+.records-confirm-modal.records-confirm-reopen .records-confirm-top {
+    background: linear-gradient(135deg, #b45309, #d97706, #f59e0b);
+}
+
+.records-confirm-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.20);
+    border: 1px solid rgba(255,255,255,.35);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.20);
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.records-confirm-title {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 800;
+}
+
+.records-confirm-subtitle {
+    margin: 7px 0 0;
+    color: rgba(255,255,255,.88);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.records-confirm-body {
+    padding: 24px;
+}
+
+.records-confirm-message {
+    margin: 0;
+    color: #475569;
+    font-size: 15px;
+    line-height: 1.65;
+    font-weight: 600;
+}
+
+.records-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 24px 24px;
+}
+
+.records-confirm-btn {
+    min-width: 105px;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+.records-confirm-btn:hover {
+    transform: translateY(-1px);
+}
+
+.records-confirm-btn:active {
+    transform: translateY(0);
+}
+
+.records-confirm-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.records-confirm-cancel:hover {
+    background: #e2e8f0;
+}
+
+.records-confirm-primary {
+    color: #ffffff;
+}
+
+.records-confirm-modal.records-confirm-finish .records-confirm-primary {
+    background: linear-gradient(135deg, #047857, #16a34a);
+    box-shadow: 0 7px 18px rgba(22,163,74,.25);
+}
+
+.records-confirm-modal.records-confirm-reopen .records-confirm-primary {
+    background: linear-gradient(135deg, #b45309, #d97706);
+    box-shadow: 0 7px 18px rgba(217,119,6,.25);
+}
+
+.records-confirm-primary:hover {
+    opacity: .92;
+}
+
+.records-confirm-x {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.30);
+    border-radius: 10px;
+    background: rgba(255,255,255,.15);
+    color: #ffffff;
+    font-size: 23px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.records-confirm-x:hover {
+    background: rgba(255,255,255,.25);
+}
+
+@keyframes recordsConfirmOverlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes recordsConfirmModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 650px) {
+    .records-confirm-overlay {
+        padding: 14px;
+    }
+
+    .records-confirm-modal {
+        border-radius: 20px;
+    }
+
+    .records-confirm-top {
+        padding: 24px 20px 20px;
+    }
+
+    .records-confirm-icon {
+        width: 52px;
+        height: 52px;
+        margin-bottom: 13px;
+        border-radius: 16px;
+        font-size: 24px;
+    }
+
+    .records-confirm-title {
+        font-size: 20px;
+    }
+
+    .records-confirm-body {
+        padding: 20px;
+    }
+
+    .records-confirm-actions {
+        padding: 0 20px 20px;
+        flex-direction: column-reverse;
+    }
+
+    .records-confirm-btn {
+        width: 100%;
+    }
+}
+
+
+.records-flash-hide {
+    animation: recordsFlashOut .25s ease-in forwards;
+}
+
+@keyframes recordsFlashIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes recordsFlashOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+@media (max-width: 650px) {
+    .records-flash {
+        padding: 14px 42px 14px 14px;
+        gap: 11px;
+        border-radius: 12px;
+    }
+
+    .records-flash-icon {
+        flex-basis: 30px;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .records-flash-title,
+    .records-flash-message {
+        font-size: 13px;
+    }
+}
+
+.active-box {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+}
+
+.table-wrap {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+th,
+td {
+    padding: 14px 15px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: #f8fafc;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #475569;
+}
+
+tr:last-child td {
+    border-bottom: 0;
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-ARCHIVED {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-REOPENED {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-ACTIVE {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-ARCHIVING {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.status-RETIRED {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 9px 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.finish {
+    background: #166534;
+    color: #fff;
+}
+
+.reopen {
+    background: #b45309;
+    color: #fff;
+}
+
+.disabled {
+    background: #e5e7eb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.small {
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 650px) {
+    .records-years-page {
+        width: min(100% - 16px, 1180px);
+        margin: 16px auto;
+    }
+
+    .header {
+        padding: 18px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+}
+
+</style>
+
+    <div class="header">
+        <h1>RTSE Records Year Manager</h1>
+        <p>
+            Finish a completed RTSE year to move its operational data into the historical Records DB.
+            Reopen only the currently active examination year to restore that data and remove its historical copy.
+        </p>
+    </div>
+
+    <% if (activeOperationalYear) { %>
+        <div class="active-box">
+            <strong>Active operational year:</strong>
+            <%= activeOperationalYear %>
+        </div>
+    <% } %>
+
+    <% if (successMessages && successMessages.length) { %>
+    <% successMessages.forEach(message => { %>
+        <div class="records-flash records-flash-success"
+             role="status"
+             aria-live="polite">
+            <div class="records-flash-icon" aria-hidden="true">✓</div>
+
+            <div class="records-flash-content">
+                <span class="records-flash-title">Operation Successful</span>
+                <p class="records-flash-message"><%= message %></p>
+            </div>
+
+            <button
+                type="button"
+                class="records-flash-close"
+                aria-label="Close notification"
+                onclick="this.closest('.records-flash').remove()"
+            >×</button>
+        </div>
+    <% }) %>
+<% } %>
+
+<% if (errorMessages && errorMessages.length) { %>
+    <% errorMessages.forEach(message => { %>
+        <div class="records-flash records-flash-error"
+             role="alert"
+             aria-live="assertive">
+            <div class="records-flash-icon" aria-hidden="true">!</div>
+
+            <div class="records-flash-content">
+                <span class="records-flash-title">Operation Could Not Be Completed</span>
+                <p class="records-flash-message"><%= message %></p>
+            </div>
+
+            <button
+                type="button"
+                class="records-flash-close"
+                aria-label="Close notification"
+                onclick="this.closest('.records-flash').remove()"
+            >×</button>
+        </div>
+    <% }) %>
+<% } %>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Application Year</th>
+                    <th>Exam Year</th>
+                    <th>Status</th>
+                    <th>Operational Applications</th>
+                    <th>Records Applications</th>
+                    <th>Archived At</th>
+                    <th>Reopened At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            <% if (!years.length) { %>
+                <tr>
+                    <td colspan="8">No RTSE years found.</td>
+                </tr>
+            <% } %>
+
+            <% years.forEach(row => { %>
+                <tr>
+                    <td>
+                        <strong><%= row.application_year %></strong>
+
+                        <% if (Number(row.is_active_operational_year) === 1) { %>
+                            <div class="small">Currently operational</div>
+                        <% } %>
+                    </td>
+
+                    <td><%= row.exam_year %></td>
+
+                    <td>
+                        <span class="status status-<%= row.archive_status %>">
+                            <%= row.archive_status %>
+                        </span>
+                    </td>
+
+                    <td><%= row.operational_applications %></td>
+
+                    <td><%= row.record_applications %></td>
+
+                    <td>
+                        <%= row.archived_at
+                            ? new Date(row.archived_at).toLocaleString("en-IN", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit"
+                            })
+                            : "—"
+                        %>
+                    </td>
+
+                    <td>
+                        <%= row.reopened_at
+                            ? new Date(row.reopened_at).toLocaleString("en-IN", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit"
+                            })
+                            : "—"
+                        %>
+                    </td>
+
+                    <td>
+                        <div class="actions">
+
+                            <% if (
+                                row.archive_status !== "ARCHIVED" &&
+                                row.archive_status !== "RETIRED" &&
+                                Number(row.operational_applications) > 0
+                            ) { %>
+
+                                <form
+                                    method="POST"
+                                    action="/admin/rtse/records/years/<%= row.application_year %>/finish"
+                                >
+                                    <button
+                                        class="finish"
+                                        type="button"
+                                        onclick="openRecordsConfirm(
+                                            this.form,
+                                            'finish',
+                                            'Finish RTSE <%= row.application_year %>?',
+                                            'All operational data for this year will be moved to Records DB. The operational copy will not be available until the year is reopened.'
+                                        )"
+                                    >
+                                        Finish <%= row.application_year %>
+                                    </button>
+                                </form>
+
+                            <% } %>
+
+                            <% if (
+                                row.archive_status === "ARCHIVED"
+                            ) { %>
+
+                                <form
+                                    method="POST"
+                                    action="/admin/rtse/records/years/<%= row.application_year %>/reopen"
+                                >
+                                    <button
+                                        class="reopen"
+                                        type="button"
+                                        onclick="openRecordsConfirm(
+                                            this.form,
+                                            'reopen',
+                                            'Reopen RTSE <%= row.application_year %>?',
+                                            'Operational data will be restored from Records DB, and the historical Records copy will be removed.'
+                                        )"
+                                    >
+                                        Undo / Reopen
+                                    </button>
+                                </form>
+
+                            <% } %>
+
+                            <% if (
+                                row.archive_status === "ARCHIVED" &&
+                                activeOperationalYear &&
+                                Number(activeOperationalYear) > Number(row.application_year)
+                            ) { %>
+                                <span class="small">
+                                    Locked by newer operational year
+                                </span>
+                            <% } %>
+
+                            <% if (
+                                row.archive_status === "RETIRED"
+                            ) { %>
+                                <span class="small">Retired</span>
+                            <% } %>
+
+                        </div>
+                    </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".records-flash").forEach(function (flash) {
+        setTimeout(function () {
+            if (!flash.isConnected) return;
+
+            flash.classList.add("records-flash-hide");
+
+            setTimeout(function () {
+                if (flash.isConnected) {
+                    flash.remove();
+                }
+            }, 260);
+        }, 7000);
+    });
+});
+</script>
+
+
+<div
+    id="recordsConfirmOverlay"
+    class="records-confirm-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="recordsConfirmTitle"
+    aria-describedby="recordsConfirmMessage"
+>
+    <div id="recordsConfirmModal" class="records-confirm-modal records-confirm-finish">
+
+        <div class="records-confirm-top">
+            <button
+                type="button"
+                class="records-confirm-x"
+                aria-label="Close confirmation"
+                onclick="closeRecordsConfirm()"
+            >×</button>
+
+            <div id="recordsConfirmIcon" class="records-confirm-icon" aria-hidden="true">
+                ✓
+            </div>
+
+            <h2 id="recordsConfirmTitle" class="records-confirm-title">
+                Confirm Operation
+            </h2>
+
+            <p id="recordsConfirmSubtitle" class="records-confirm-subtitle">
+                Please review this action before continuing.
+            </p>
+        </div>
+
+        <div class="records-confirm-body">
+            <p id="recordsConfirmMessage" class="records-confirm-message"></p>
+        </div>
+
+        <div class="records-confirm-actions">
+            <button
+                type="button"
+                class="records-confirm-btn records-confirm-cancel"
+                onclick="closeRecordsConfirm()"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="recordsConfirmPrimary"
+                class="records-confirm-btn records-confirm-primary"
+                onclick="submitRecordsConfirm()"
+            >
+                Confirm
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    let pendingRecordsForm = null;
+
+    window.openRecordsConfirm = function (form, type, title, message) {
+        pendingRecordsForm = form;
+
+        const overlay = document.getElementById("recordsConfirmOverlay");
+        const modal = document.getElementById("recordsConfirmModal");
+        const icon = document.getElementById("recordsConfirmIcon");
+        const titleEl = document.getElementById("recordsConfirmTitle");
+        const subtitleEl = document.getElementById("recordsConfirmSubtitle");
+        const messageEl = document.getElementById("recordsConfirmMessage");
+        const primary = document.getElementById("recordsConfirmPrimary");
+
+        modal.classList.remove("records-confirm-finish", "records-confirm-reopen");
+        modal.classList.add(type === "reopen" ? "records-confirm-reopen" : "records-confirm-finish");
+
+        if (type === "reopen") {
+            icon.textContent = "↻";
+            subtitleEl.textContent = "Restore the operational year";
+            primary.textContent = "Reopen Year";
+        } else {
+            icon.textContent = "✓";
+            subtitleEl.textContent = "Move the completed year to Records DB";
+            primary.textContent = "Finish Year";
+        }
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+
+        overlay.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        setTimeout(function () {
+            primary.focus();
+        }, 50);
+
+        return false;
+    };
+
+    window.closeRecordsConfirm = function () {
+        const overlay = document.getElementById("recordsConfirmOverlay");
+
+        overlay.classList.remove("is-open");
+        pendingRecordsForm = null;
+        document.body.style.overflow = "";
+    };
+
+    window.submitRecordsConfirm = function () {
+        if (!pendingRecordsForm) return;
+
+        const form = pendingRecordsForm;
+        pendingRecordsForm = null;
+
+        const overlay = document.getElementById("recordsConfirmOverlay");
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+
+        HTMLFormElement.prototype.submit.call(form);
+    };
+
+    document.getElementById("recordsConfirmOverlay")
+        .addEventListener("click", function (event) {
+            if (event.target === this) {
+                closeRecordsConfirm();
+            }
+        });
+
+    document.addEventListener("keydown", function (event) {
+        const overlay = document.getElementById("recordsConfirmOverlay");
+
+        if (
+            event.key === "Escape" &&
+            overlay.classList.contains("is-open")
+        ) {
+            closeRecordsConfirm();
+        }
+    });
+})();
+</script>
+
+<%- include("../partials/footer") %>

@@ -11,11 +11,11 @@
             <div class="page-header">
 
                 <h1>
-                    RTSE — Section <%= section %> — Absent / Not Scanned Students
+                    RTSE — <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> — Absent / Not Scanned Students
                 </h1>
 
                 <a
-                    href="/admin/rtse/results"
+                    href="/admin/rtse/results?exam_id=<%= encodeURIComponent(selectedExamId) %>"
                     class="btn-cancel"
                 >
                     ← Back
@@ -27,12 +27,12 @@
             <div class="profile-card">
 
                 <h2>
-                    Section <%= section %> — Gate Entry Not Completed
+                    <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> — Gate Entry Not Completed
                 </h2>
 
                 <p>
                     RTSE <%= applicationYear %>
-                    · Section <%= section %>
+                    · <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %>
                 </p>
 
                 <p>
@@ -91,7 +91,7 @@
                         </h3>
 
                         <p>
-                            All eligible RTSE students in Section <%= section %> have completed
+                            All eligible RTSE students in <%= (String((section) ?? "").trim() ? (String((section) ?? "").trim().toUpperCase().startsWith("SECTION") ? String((section) ?? "").trim() : "Section " + String((section) ?? "").trim()) : "-") %> have completed
                             confirmed gate entry.
                         </p>
 

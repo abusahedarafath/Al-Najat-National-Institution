@@ -1,0 +1,304 @@
+<%- include("../partials/header") %>
+<%
+const sectionRows = sections.length
+    ? sections
+    : [{ section_name: "", roll_start: "", roll_end: "" }];
+const mappingByClass = new Map(
+    classMappings.map(item => [
+        Number(item.student_class),
+        item.section_name
+    ])
+);
+%>
+
+<div class="admin-layout">
+    <%- include("../partials/sidebar") %>
+    <main class="admin-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Configure Examination Sections</h1>
+                    <p style="margin:6px 0 0;color:#6b7280;">
+                        <%= examination.exam_name %> — <%= examination.exam_year %>
+                    </p>
+                </div>
+                <a
+                    href="/admin/rtse/exam-settings/<%= examination.id %>"
+                    class="btn-cancel"
+                    style="text-decoration:none;"
+                >← Back</a>
+            </div>
+
+            <div class="profile-card">
+                <p>
+                    Set each section's inclusive roll-number suffix range
+                    and map each student class to one section.
+                    Existing student roll numbers are not recalculated by
+                    saving this form.
+                </p>
+
+                <form
+                    action="/admin/rtse/exam-settings/<%= examination.id %>/sections"
+                    method="POST"
+                >
+                    <div style="margin:0 0 18px;">
+                    <a
+                        href="/admin/rtse/exam-settings/<%= examination.id %>/generation"
+                        class="btn-save"
+                        style="display:inline-block;text-decoration:none;"
+                    >Open Roll &amp; Admit Generation</a>
+                </div>
+
+                <h2>Section names and roll ranges</h2>
+
+                    <div id="section-rows">
+                        <% sectionRows.forEach(section => { %>
+                            <div class="section-row" style="
+                                display:grid;
+                                grid-template-columns: minmax(100px,1fr) minmax(100px,1fr) minmax(100px,1fr) auto;
+                                gap:10px;
+                                align-items:end;
+                                margin-bottom:12px;
+                            ">
+                                <input type="hidden" name="section_id" value="<%= section.id ?? '' %>">
+                                <div class="form-group">
+                                    <label>Section name</label>
+                                    <input
+                                        type="text"
+                                        name="section_name"
+                                        value="<%= section.section_name %>"
+                                        maxlength="20"
+                                        pattern="[A-Za-z0-9][A-Za-z0-9 _-]{0,19}"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label>Roll suffix start</label>
+                                    <input
+                                        type="number"
+                                        name="roll_start"
+                                        min="1"
+                                        max="2147483647"
+                                        value="<%= section.roll_start %>"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label>Roll suffix end</label>
+                                    <input
+                                        type="number"
+                                        name="roll_end"
+                                        min="1"
+                                        max="2147483647"
+                                        value="<%= section.roll_end %>"
+                                        required
+                                    >
+                                </div>
+                                <button
+                                    type="button"
+                                    class="btn-cancel remove-section"
+                                >Remove</button>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <button type="button" class="btn-cancel" id="add-section">
+                        + Add Section
+                    </button>
+
+                    <hr style="margin:24px 0;">
+
+                    <h2>Class-to-section mapping</h2>
+                    <p style="color:#6b7280;">
+                        Add only the classes included in this examination.
+                        Each class can be assigned to one section.
+                    </p>
+
+                    <% const mappingRows = classMappings.length
+                        ? classMappings
+                        : [{ student_class: "", section_name: "" }]; %>
+
+                    <div id="class-mapping-rows">
+                        <% mappingRows.forEach(mapping => { %>
+                            <div class="class-mapping-row" style="display:grid;grid-template-columns:minmax(100px,1fr) minmax(140px,1fr) auto;gap:10px;align-items:end;margin-bottom:12px;">
+                                <div class="form-group">
+                                    <label>Class name (e.g. 4, Nursery, LKG)</label>
+                                    <input
+                                        type="text"
+                                        name="student_class"
+                                        maxlength="50"
+                                        value="<%= mapping.student_class ?? '' %>"
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label>Assigned section</label>
+                                    <select name="class_section">
+                                        <option value="">Select section</option>
+                                        <% sections.forEach(section => { %>
+                                            <option
+                                                value="<%= section.section_name %>"
+                                                <%= mapping.section_name === section.section_name ? "selected" : "" %>
+                                            ><%= section.section_name %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn-cancel remove-class-mapping">Remove</button>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <button type="button" class="btn-cancel" id="add-class-mapping">
+                        + Add Class Mapping
+                    </button>
+
+                    <div style="
+                        display:flex;
+                        justify-content:flex-end;
+                        gap:10px;
+                        flex-wrap:wrap;
+                        margin-top:24px;
+                    ">
+                        <a
+                            href="/admin/rtse/exam-settings/<%= examination.id %>"
+                            class="btn-cancel"
+                            style="text-decoration:none;"
+                        >Cancel</a>
+                        <button type="submit" class="btn-save">
+                            Save Configuration
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+(function () {
+    const container = document.getElementById("section-rows");
+    const addButton = document.getElementById("add-section");
+
+    function refreshMappingOptions(renamedFrom = "", renamedTo = "") {
+        const names = Array.from(
+            container.querySelectorAll('input[name="section_name"]')
+        ).map(input => input.value.trim().toUpperCase()).filter(Boolean);
+
+        const uniqueNames = [...new Set(names)];
+
+        document.querySelectorAll('select[name="class_section"]').forEach(select => {
+            const previous = select.value;
+            const desired = renamedFrom && previous === renamedFrom
+                ? renamedTo
+                : previous;
+
+            select.replaceChildren(new Option("Select section", ""));
+            uniqueNames.forEach(name => select.add(new Option(name, name)));
+            select.value = uniqueNames.includes(desired) ? desired : "";
+        });
+    }
+
+    const mappingContainer = document.getElementById("class-mapping-rows");
+    const addClassButton = document.getElementById("add-class-mapping");
+
+    function addClassMappingRow() {
+        const row = document.createElement("div");
+        row.className = "class-mapping-row";
+        row.style.cssText =
+            "display:grid;grid-template-columns:minmax(100px,1fr) " +
+            "minmax(140px,1fr) auto;gap:10px;align-items:end;margin-bottom:12px;";
+
+        row.innerHTML = `
+            <div class="form-group">
+                <label>Class name (e.g. 4, Nursery, LKG)</label>
+                <input type="text" name="student_class" maxlength="50">
+            </div>
+            <div class="form-group">
+                <label>Assigned section</label>
+                <select name="class_section">
+                    <option value="">Select section</option>
+                </select>
+            </div>
+            <button type="button" class="btn-cancel remove-class-mapping">Remove</button>
+        `;
+
+        mappingContainer.appendChild(row);
+        refreshMappingOptions();
+    }
+
+    addClassButton.addEventListener("click", addClassMappingRow);
+
+    mappingContainer.addEventListener("click", function (event) {
+        const button = event.target.closest(".remove-class-mapping");
+        if (button) {
+            button.closest(".class-mapping-row").remove();
+        }
+    });
+
+    function addRow() {
+        const row = document.createElement("div");
+        row.className = "section-row";
+        row.style.cssText =
+            "display:grid;grid-template-columns:minmax(100px,1fr) " +
+            "minmax(100px,1fr) minmax(100px,1fr) auto;gap:10px;" +
+            "align-items:end;margin-bottom:12px;";
+
+        row.innerHTML = `
+            <input type="hidden" name="section_id" value="">
+            <div class="form-group">
+                <label>Section name</label>
+                <input type="text" name="section_name" maxlength="20"
+                    pattern="[A-Za-z0-9][A-Za-z0-9 _-]{0,19}" required>
+            </div>
+            <div class="form-group">
+                <label>Roll suffix start</label>
+                <input type="number" name="roll_start" min="1"
+                    max="2147483647" required>
+            </div>
+            <div class="form-group">
+                <label>Roll suffix end</label>
+                <input type="number" name="roll_end" min="1"
+                    max="2147483647" required>
+            </div>
+            <button type="button" class="btn-cancel remove-section">Remove</button>
+        `;
+
+        container.appendChild(row);
+        refreshMappingOptions();
+    }
+
+    addButton.addEventListener("click", addRow);
+
+    const sectionRenameSources = new WeakMap();
+
+    container.addEventListener("focusin", function (event) {
+        if (event.target.matches('input[name="section_name"]')) {
+            sectionRenameSources.set(
+                event.target,
+                event.target.value.trim().toUpperCase()
+            );
+        }
+    });
+
+    container.addEventListener("focusout", function (event) {
+        if (!event.target.matches('input[name="section_name"]')) return;
+
+        const oldName = sectionRenameSources.get(event.target) || "";
+        const newName = event.target.value.trim().toUpperCase();
+
+        refreshMappingOptions(oldName, newName);
+        sectionRenameSources.delete(event.target);
+    });
+
+    refreshMappingOptions();
+
+    container.addEventListener("click", function (event) {
+        const button = event.target.closest(".remove-section");
+        if (button) {
+            button.closest(".section-row").remove();
+            refreshMappingOptions();
+        }
+    });
+})();
+</script>
+
+<%- include("../partials/footer") %>

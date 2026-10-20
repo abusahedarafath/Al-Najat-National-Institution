@@ -4,7 +4,7 @@ const generateCertificateQR = require("../utils/certificateQrGenerator");
 
 class RtseCertificateService {
 
-    static async generate(applicationId, host){
+    static async generate(applicationId, host, expectedExamSettingId = undefined){
 
         const student =
             await RtseResult.getByApplication(applicationId);
@@ -15,34 +15,54 @@ class RtseCertificateService {
 
         }
 
-        const exists =
-            await RtseCertificate.exists(applicationId);
+        // Validate examination scope when supplied by the caller.
+        if (expectedExamSettingId !== undefined) {
+            const actualExamSettingId =
+                student.exam_setting_id == null
+                    ? null
+                    : Number(student.exam_setting_id);
 
-        if(exists){
+            const expectedId =
+                expectedExamSettingId == null
+                    ? null
+                    : Number(expectedExamSettingId);
 
-            return false;
-
+            if (actualExamSettingId !== expectedId) {
+                throw new Error(
+                    "Certificate generation result does not match the selected RTSE examination."
+                );
+            }
         }
-
-        // The existing certificate system is now exclusively
-        // for Section Rank 11+ Appreciation Certificates.
-        //
-        // Ranks 1–10 are handled by the new certificate system.
-        // The guard here prevents direct/accidental use of the
-        // old generator for those students.
 
         const sectionRank =
             Number(student.section_rank);
 
-        if(sectionRank < 11){
+        // Preserve the existing behavior for ranks below 11.
+        if (sectionRank < 11) {
+            const exists =
+                await RtseCertificate.exists(applicationId);
+
+            if (exists) {
+                return false;
+            }
 
             throw new Error(
                 "The existing certificate system is only for Section Rank 11+ Appreciation Certificates."
             );
-
         }
 
         const type = "Appreciation";
+
+        // Only an existing Appreciation certificate blocks this generator.
+        const existingAppreciation =
+            await RtseCertificate.getByApplicationAndType(
+                applicationId,
+                type
+            );
+
+        if (existingAppreciation) {
+            return false;
+        }
 
         const applicationYear =
             Number(student.application_year);
