@@ -412,8 +412,8 @@ class RtseRecordsYear {
                         exam_centre,
                         controller_name,
                         status,
-                        created_at,
-                        updated_at
+                        NULL,
+                        NULL
                     FROM ${OP_DB}.rtse_exam_settings
                     WHERE exam_year = ?
                 `,
