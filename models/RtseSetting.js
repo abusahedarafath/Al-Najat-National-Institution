@@ -120,9 +120,7 @@ static async publishScheduledResults() {
         `UPDATE rtse_settings
          SET
             result_publish=1,
-            result_publish_scheduled=0,
-            result_publish_at=NULL,
-            result_publish_countdown_seconds=0
+            result_publish_scheduled=0
          WHERE id=1
            AND result_publish_scheduled=1
            AND result_publish_at IS NOT NULL

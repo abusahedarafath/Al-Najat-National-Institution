@@ -6,13 +6,14 @@ class RtseInvitedSchool {
     // Get distinct schools appearing in RTSE applications.
     // School name is the ONLY uniqueness/grouping key.
     // =====================================================
-    static async getAll(applicationYear) {
-
+    static async getAll(applicationYear, examSettingId) {
         const year = Number(applicationYear);
+        const examId = Number(examSettingId);
+        const hasExamId = Number.isInteger(examId) && examId > 0;
+        if (!year || !hasExamId) throw new Error("A valid application year and examination ID are required.");
+        const examFilter = " AND a.exam_setting_id = ?";
 
-        if (!year) {
-            return [];
-        }
+
 
         const [rows] = await db.query(`
             SELECT
@@ -30,7 +31,7 @@ class RtseInvitedSchool {
                     COUNT(*) AS student_count
                 FROM rtse_applications a
                 WHERE a.archive = 0
-                  AND a.application_year = ?
+                  AND a.application_year = ?${examFilter}
                   AND a.school_name IS NOT NULL
                   AND TRIM(a.school_name) <> ''
                 GROUP BY LOWER(TRIM(a.school_name))
@@ -82,7 +83,7 @@ class RtseInvitedSchool {
                 ON centres.school_key = app.school_key
 
             ORDER BY app.school_name ASC
-        `, [year, year]);
+        `, [year, examId, year]);
 
         return rows.map(row => ({
             school_name: row.school_name,
@@ -113,13 +114,14 @@ class RtseInvitedSchool {
     // =====================================================
     // Dashboard count: distinct school names only.
     // =====================================================
-    static async getCount(applicationYear) {
-
+    static async getCount(applicationYear, examSettingId) {
         const year = Number(applicationYear);
+        const examId = Number(examSettingId);
+        const hasExamId = Number.isInteger(examId) && examId > 0;
+        if (!year || !hasExamId) throw new Error("A valid application year and examination ID are required.");
+        const examFilter = " AND exam_setting_id = ?";
 
-        if (!year) {
-            return 0;
-        }
+
 
         const [rows] = await db.query(`
             SELECT COUNT(*) AS total
@@ -128,12 +130,12 @@ class RtseInvitedSchool {
                     LOWER(TRIM(school_name)) COLLATE utf8mb4_unicode_ci AS school_key
                 FROM rtse_applications
                 WHERE archive = 0
-                  AND application_year = ?
+                  AND application_year = ?${examFilter}
                   AND school_name IS NOT NULL
                   AND TRIM(school_name) <> ''
                 GROUP BY LOWER(TRIM(school_name))
             ) schools
-        `, [year]);
+        `, [year, examId]);
 
         return Number(rows[0]?.total || 0);
     }

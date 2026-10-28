@@ -1106,38 +1106,32 @@ return true;
 // Dashboard Statistics
 // =====================================
 
-static async getDashboardStats(){
+static async getDashboardStats(examSettingId){
+
+    const examId = Number(examSettingId);
+
+    if (!Number.isInteger(examId) || examId <= 0) {
+        throw new Error("A valid configured examination is required for RTSE dashboard statistics.");
+    }
 
     const [rows] = await db.query(
-
         `SELECT
-
-            COUNT(*) total,
-
-            SUM(status='Pending') pending,
-
-            SUM(status='Approved') approved,
-
-            SUM(status='Rejected') rejected,
-
-            SUM(CASE WHEN gender='Male' THEN 1 ELSE 0 END) male,
-
-            SUM(CASE WHEN gender='Female' THEN 1 ELSE 0 END) female,
-
-            SUM(roll_no IS NOT NULL) roll_generated,
-
-            SUM(admit_generated=1) admit_generated
-
-        FROM rtse_applications
-
-        WHERE archive=0`
-
+            COUNT(*) AS total,
+            COALESCE(SUM(status = 'Pending'), 0) AS pending,
+            COALESCE(SUM(status = 'Approved'), 0) AS approved,
+            COALESCE(SUM(status = 'Rejected'), 0) AS rejected,
+            COALESCE(SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END), 0) AS male,
+            COALESCE(SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END), 0) AS female,
+            COALESCE(SUM(roll_no IS NOT NULL), 0) AS roll_generated,
+            COALESCE(SUM(admit_generated = 1), 0) AS admit_generated
+         FROM rtse_applications
+         WHERE archive = 0
+           AND exam_setting_id = ?`,
+        [examId]
     );
 
     return rows[0];
-
 }
-
 
 
 // =====================================
@@ -1711,13 +1705,24 @@ static async getExamGeneratedAdmitCardStudents(
 // =====================================
 static async getGeneratedAdmitCardStudentsBySchool(
     schoolName,
-    applicationYear
+    applicationYear,
+    examSettingId
 ){
     const normalizedSchoolName =
         String(schoolName || "").trim();
+    const normalizedYear = Number(applicationYear);
+    const normalizedExamId = Number(examSettingId);
 
     if (!normalizedSchoolName) {
         return [];
+    }
+
+    if (!Number.isInteger(normalizedYear) || normalizedYear <= 0) {
+        throw new Error("A valid examination year is required.");
+    }
+
+    if (!Number.isInteger(normalizedExamId) || normalizedExamId <= 0) {
+        throw new Error("A valid examination ID is required.");
     }
 
     const [rows] = await db.query(
@@ -1728,6 +1733,7 @@ static async getGeneratedAdmitCardStudentsBySchool(
             archive = 0
             AND status = 'Approved'
             AND application_year = ?
+            AND exam_setting_id = ?
             AND roll_no IS NOT NULL
             AND admit_generated = 1
             AND school_name IS NOT NULL
@@ -1744,7 +1750,8 @@ static async getGeneratedAdmitCardStudentsBySchool(
             roll_no ASC
         `,
         [
-            applicationYear,
+            normalizedYear,
+            normalizedExamId,
             normalizedSchoolName
         ]
     );

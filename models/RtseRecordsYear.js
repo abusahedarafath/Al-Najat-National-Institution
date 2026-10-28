@@ -727,30 +727,7 @@ class RtseRecordsYear {
                 [year, year]
             );
 
-            await copyRows(
-                connection,
-                "records_exam_attendance_qr_history",
-                [
-                    "application_year",
-                    "id",
-                    "application_id",
-                    "qr_token",
-                    "created_at"
-                ],
-                `
-                    SELECT
-                        ?,
-                        h.id,
-                        h.application_id,
-                        h.qr_token,
-                        h.created_at
-                    FROM ${OP_DB}.rtse_exam_attendance_qr_history h
-                    JOIN ${OP_DB}.rtse_applications a
-                        ON a.id = h.application_id
-                    WHERE a.application_year = ?
-                `,
-                [year, year]
-            );
+
 
             /*
              * ----------------------------------------------------
@@ -1126,7 +1103,6 @@ class RtseRecordsYear {
                 ["seats", "rtse_seat_plan_seats", "records_seat_plan_seats", "application_year"],
                 ["assignments", "rtse_school_centre_assignments", "records_school_centre_assignments", "application_year"],
                 ["attendance", "rtse_exam_attendance", "records_exam_attendance", "application_year"],
-                ["attendance_qr_history", "rtse_exam_attendance_qr_history", "records_exam_attendance_qr_history", "application_year"],
                 ["mark_components", "rtse_mark_components", "records_mark_components", "application_year"],
                 ["results", "rtse_results", "records_results", "application_year"],
                 ["result_component_marks", "rtse_result_component_marks", "records_result_component_marks", "application_year"],
@@ -1144,7 +1120,6 @@ class RtseRecordsYear {
                 if (
                     sourceTable === "rtse_results" ||
                     sourceTable === "rtse_exam_attendance" ||
-                    sourceTable === "rtse_exam_attendance_qr_history" ||
                     sourceTable === "rtse_result_component_marks" ||
                     sourceTable === "rtse_result_qr" ||
                     sourceTable === "rtse_certificates" ||
@@ -1155,7 +1130,6 @@ class RtseRecordsYear {
                     const appColumn = {
                         rtse_results: "application_id",
                         rtse_exam_attendance: "application_id",
-                        rtse_exam_attendance_qr_history: "application_id",
                         rtse_result_component_marks: "result_id",
                         rtse_result_qr: "application_id",
                         rtse_certificates: "application_id",
@@ -1211,7 +1185,6 @@ class RtseRecordsYear {
                 } else if (
                     [
                         "rtse_exam_attendance",
-                        "rtse_exam_attendance_qr_history",
                         "rtse_result_qr",
                         "rtse_certificates",
                         "rtse_counted_omr",
@@ -1450,13 +1423,7 @@ class RtseRecordsYear {
                 WHERE a.application_year = ?
             `, [year]);
 
-            await connection.query(`
-                DELETE q
-                FROM ${OP_DB}.rtse_exam_attendance_qr_history q
-                INNER JOIN ${OP_DB}.rtse_applications a
-                    ON a.id = q.application_id
-                WHERE a.application_year = ?
-            `, [year]);
+
 
             await connection.query(`
                 DELETE e
@@ -1616,6 +1583,24 @@ class RtseRecordsYear {
             }
 
             /*
+             * Preserve archived attendance QR history. This deployment
+             * has no matching operational history table to restore into.
+             */
+            const [[archivedAttendanceQrHistory]] = await connection.query(`
+                SELECT COUNT(*) AS total
+                FROM ${RECORDS_DB}.records_exam_attendance_qr_history
+                WHERE application_year = ?
+            `, [year]);
+
+            if (Number(archivedAttendanceQrHistory.total) !== 0) {
+                throw new Error(
+                    `Cannot reopen ${year}: archived attendance QR history exists, ` +
+                    `but the operational history table is unavailable. ` +
+                    `Archived history has been preserved; resolve the schema mismatch first.`
+                );
+            }
+
+            /*
              * The target operational year must be completely empty
              * before restoration. This prevents duplicate/partial
              * restoration.
@@ -1659,14 +1644,6 @@ class RtseRecordsYear {
                      FROM ${OP_DB}.rtse_exam_attendance ea
                      JOIN ${OP_DB}.rtse_applications a
                        ON a.id = ea.application_id
-                     WHERE a.application_year = ?`
-                ],
-                [
-                    "attendance_qr_history",
-                    `SELECT COUNT(*) AS total
-                     FROM ${OP_DB}.rtse_exam_attendance_qr_history h
-                     JOIN ${OP_DB}.rtse_applications a
-                       ON a.id = h.application_id
                      WHERE a.application_year = ?`
                 ],
                 [
@@ -2070,22 +2047,7 @@ class RtseRecordsYear {
                 WHERE application_year = ?
             `, [year]);
 
-            await connection.query(`
-                INSERT INTO ${OP_DB}.rtse_exam_attendance_qr_history
-                (
-                    id,
-                    application_id,
-                    qr_token,
-                    created_at
-                )
-                SELECT
-                    id,
-                    application_id,
-                    qr_token,
-                    created_at
-                FROM ${RECORDS_DB}.records_exam_attendance_qr_history
-                WHERE application_year = ?
-            `, [year]);
+
 
             await connection.query(`
                 INSERT INTO ${OP_DB}.rtse_results
@@ -2311,14 +2273,6 @@ class RtseRecordsYear {
                      FROM ${OP_DB}.rtse_exam_attendance ea
                      JOIN ${OP_DB}.rtse_applications a
                        ON a.id = ea.application_id
-                     WHERE a.application_year = ?`
-                ],
-                [
-                    "attendance_qr_history",
-                    `SELECT COUNT(*) AS total
-                     FROM ${OP_DB}.rtse_exam_attendance_qr_history h
-                     JOIN ${OP_DB}.rtse_applications a
-                       ON a.id = h.application_id
                      WHERE a.application_year = ?`
                 ],
                 [

@@ -28,22 +28,7 @@
     </a>
 
 
-    <form method="GET" action="/admin/rtse/results"
-          style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <label for="rtse-exam-selector"><strong>Examination:</strong></label>
-        <select id="rtse-exam-selector" name="exam_id"
-                onchange="this.form.submit()"
-                style="max-width:340px;padding:9px;border:1px solid #cbd5e1;border-radius:6px;">
-            <% (exams || []).forEach(function(exam) { %>
-                <option value="<%= exam.id %>"
-                    <%= selectedExamId === String(exam.id) ? "selected" : "" %>>
-                    <%= exam.exam_name || exam.name || ("Examination #" + exam.id) %>
-                    <%= exam.status === "ACTIVE" ? " (Active)" : "" %>
-                </option>
-            <% }) %>
-        </select>
-        <noscript><button type="submit" class="btn-view">Open</button></noscript>
-    </form>
+
 
 <% if (rankingsGenerated) { %>
 
@@ -183,10 +168,15 @@
      * Convert the saved UTC datetime to IST (+05:30)
      * before displaying the administrator's schedule fields.
      */
+    const scheduledPublishValue = setting?.result_publish_at;
+
     const scheduledPublishRaw =
-        setting?.result_publish_at
-            ? String(setting.result_publish_at).replace("T", " ")
-            : "";
+        scheduledPublishValue instanceof Date &&
+        !Number.isNaN(scheduledPublishValue.getTime())
+            ? scheduledPublishValue.toISOString().slice(0, 19).replace("T", " ")
+            : scheduledPublishValue
+                ? String(scheduledPublishValue).replace("T", " ").replace(/\\.\\d+Z?$/, "")
+                : "";
 
     let scheduledPublishDate = "";
     let scheduledPublishTime = "";
@@ -233,123 +223,106 @@
     }
 %>
 
-<div style="width:100%;box-sizing:border-box;background:#fff;padding:18px 20px;margin-top:14px;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 4px 14px rgba(15,23,42,.05);">
-
-    <div style="font-size:18px;font-weight:800;color:#17213a;margin-bottom:5px;">
-        🕐 Result Publication Schedule
-    </div>
-
-    <div style="font-size:13px;color:#667085;margin-bottom:16px;">
-        Set the date and time for scheduled RTSE result publication.
-    </div>
-
-    <form
-        method="POST"
-        action="/admin/rtse/results/publication-schedule"
-        style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;"
-    >
-
-        <label style="display:flex;flex-direction:column;gap:7px;min-width:180px;">
-            <span style="font-size:13px;font-weight:700;color:#344054;">
-                Publication Date
-            </span>
-
-            <input
-                type="date"
-                name="result_publish_date"
-                value="<%= scheduledPublishDate %>"
-                style="height:42px;border:1px solid #d0d5dd;border-radius:9px;padding:0 11px;font-size:14px;"
-            >
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:7px;min-width:160px;">
-            <span style="font-size:13px;font-weight:700;color:#344054;">
-                Publication Time
-            </span>
-
-            <div style="display:flex;gap:8px;align-items:center;">
-                <input
-                    type="time"
-                    name="result_publish_time"
-                    value="<%= scheduledPublishTime %>"
-                    step="60"
-                    aria-label="Publication time in IST"
-                    style="height:42px;width:145px;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:9px;padding:0 11px;font-size:14px;background:#fff;"
-                >
-
-                <span
-                    style="font-size:12px;color:#667085;white-space:nowrap;"
-                >
-                    IST (UTC+05:30)
-                </span>
+<section class="rtse-publication-card" aria-labelledby="rtse-publication-title">
+    <header class="rtse-publication-header">
+        <div class="rtse-publication-heading">
+            <span class="rtse-publication-icon" aria-hidden="true">◷</span>
+            <div>
+                <h2 id="rtse-publication-title">Result Publication Schedule</h2>
+                <p>Configure when RTSE results become available to students.</p>
             </div>
-        </label>
-
-                <label style="display:flex;flex-direction:column;gap:7px;min-width:180px;">
-            <span style="font-size:13px;font-weight:700;color:#344054;">
-                Countdown Starter
-            </span>
-
-            <div style="display:flex;align-items:center;gap:8px;">
-                <input
-                    type="number"
-                    name="result_publish_countdown_seconds"
-                    value="<%= Number(setting?.result_publish_countdown_seconds || 0) %>"
-                    min="0"
-                    step="1"
-                    inputmode="numeric"
-                    style="height:42px;width:130px;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:9px;padding:0 11px;font-size:14px;"
-                >
-
-                <span style="font-size:13px;color:#667085;">
-                    seconds
-                </span>
-            </div>
-        </label>
-
-<label style="display:flex;align-items:center;gap:9px;height:42px;padding:0 4px;">
-
-            <input
-                type="checkbox"
-                name="result_publish_scheduled"
-                value="1"
-                <%= Number(setting?.result_publish_scheduled) === 1 ? "checked" : "" %>
-                style="width:18px;height:18px;"
-            >
-
-            <span style="font-size:14px;font-weight:700;color:#344054;">
-                Enable Scheduled Publication
-            </span>
-
-        </label>
-
-        <button
-            type="submit"
-            class="btn-save"
-            style="height:42px;"
-        >
-            💾 Save Publication Schedule
-        </button>
-
-    </form>
-
-    <% if (
-        Number(setting?.result_publish_scheduled) === 1 &&
-        setting?.result_publish_at
-    ) { %>
-
-        <div style="margin-top:14px;padding:11px 13px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;color:#166534;font-size:13px;">
-
-            Scheduled publication:
-            <strong>
-                <%= scheduledPublishDate %> <%= scheduledPublishTime %> IST
-            </strong>
-
         </div>
+        <span class="rtse-publication-badge <%= Number(setting?.result_publish_scheduled) === 1 ? 'is-scheduled' : (Number(setting?.result_publish) === 1 ? 'is-published' : 'is-inactive') %>">
+            <span class="rtse-publication-badge-dot"></span>
+            <%= Number(setting?.result_publish_scheduled) === 1 ? 'Scheduled' : (Number(setting?.result_publish) === 1 ? 'Published' : 'Not published') %>
+        </span>
+    </header>
 
-    <% } %>
+    <div class="rtse-publication-body">
+        <form
+            class="rtse-publication-form"
+            method="POST"
+            action="/admin/rtse/results/publication-schedule"
+        >
+            <div class="rtse-publication-field">
+                <label for="result-publish-date">Publication date</label>
+                <input
+                    id="result-publish-date"
+                    type="date"
+                    name="result_publish_date"
+                    value="<%= scheduledPublishDate %>"
+                >
+                <small>Select the date results should be published.</small>
+            </div>
 
-</div>
+            <div class="rtse-publication-field">
+                <label for="result-publish-time">Publication time</label>
+                <div class="rtse-publication-time-control">
+                    <input
+                        id="result-publish-time"
+                        type="time"
+                        name="result_publish_time"
+                        value="<%= scheduledPublishTime %>"
+                        step="60"
+                        aria-label="Publication time in IST"
+                    >
+                    <span class="rtse-publication-timezone">IST <span>(UTC+05:30)</span></span>
+                </div>
+                <small>Uses Indian Standard Time.</small>
+            </div>
+
+            <div class="rtse-publication-field">
+                <label for="result-publish-countdown">Countdown starter</label>
+                <div class="rtse-publication-countdown-control">
+                    <input
+                        id="result-publish-countdown"
+                        type="number"
+                        name="result_publish_countdown_seconds"
+                        value="<%= Number(setting?.result_publish_countdown_seconds || 0) %>"
+                        min="0"
+                        step="1"
+                        inputmode="numeric"
+                    >
+                    <span>seconds</span>
+                </div>
+                <small>Set the countdown duration in seconds.</small>
+            </div>
+
+            <label class="rtse-publication-toggle">
+                <input
+                    type="checkbox"
+                    name="result_publish_scheduled"
+                    value="1"
+                    <%= Number(setting?.result_publish_scheduled) === 1 ? "checked" : "" %>
+                >
+                <span class="rtse-publication-toggle-copy">
+                    <strong>Enable scheduled publication</strong>
+                    <small>Publish results automatically at the selected time.</small>
+                </span>
+            </label>
+
+            <div class="rtse-publication-actions">
+                <button type="submit" class="rtse-publication-save">
+                    <span aria-hidden="true">✓</span>
+                    Save publication schedule
+                </button>
+            </div>
+        </form>
+
+        <% if (setting?.result_publish_at) { %>
+            <div class="rtse-publication-summary <%= Number(setting?.result_publish_scheduled) === 1 ? 'summary-scheduled' : (Number(setting?.result_publish) === 1 ? 'summary-published' : 'summary-inactive') %>" role="status">
+                <span class="rtse-publication-summary-icon" aria-hidden="true">
+                    <%= Number(setting?.result_publish_scheduled) === 1 ? '◷' : (Number(setting?.result_publish) === 1 ? '✓' : 'i') %>
+                </span>
+                <div class="rtse-publication-summary-copy">
+                    <strong><%= Number(setting?.result_publish_scheduled) === 1 ? 'Scheduled publication' : (Number(setting?.result_publish) === 1 ? 'Publication time reached' : 'Saved publication schedule') %></strong>
+                    <span class="rtse-publication-summary-datetime"><%= scheduledPublishDate %> · <%= scheduledPublishTime %> IST</span>
+                    <span class="rtse-publication-summary-detail"><%= Number(setting?.result_publish_scheduled) === 1 ? 'Results are scheduled to be published automatically.' : (Number(setting?.result_publish) === 1 ? 'Results have been published.' : 'This saved schedule has not published the results.') %></span>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</section>
 
 <!-- Attendance Statistics -->
 

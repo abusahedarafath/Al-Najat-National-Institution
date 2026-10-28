@@ -194,109 +194,56 @@ function deleteRtseAdminPhoto(filename) {
 // =====================================
 
 exports.dashboard = async (req, res) => {
-
     try {
+        const activeExamination = await RtseExamSetting.getActive();
+        const examSettingId = Number(activeExamination?.id);
+        const applicationYear = Number(activeExamination?.exam_year);
 
-        const stats =
-            await RtseApplication.getDashboardStats();
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0 ||
+            !Number.isInteger(applicationYear) || applicationYear <= 0) {
+            throw new Error("A valid active RTSE examination is not configured.");
+        }
 
-
-
-        const dashboardSetting =
-            await RtseSetting.get();
-
-        const applicationYear =
-            Number(dashboardSetting?.exam_year);
-
+        const stats = await RtseApplication.getDashboardStats(examSettingId);
         const invitedSchoolCount =
-            await RtseInvitedSchool.getCount(
-                applicationYear
-            );
-
+            await RtseInvitedSchool.getCount(applicationYear, examSettingId);
         const studentsWithoutSchoolCount =
-            await RtseStudentsWithoutSchool.getCount(
-                applicationYear
-            );
-
+            await RtseStudentsWithoutSchool.getCount(applicationYear, examSettingId);
         const studentsNotSentToCentreCount =
-            await RtseStudentsNotSentToCentre.getCount(
-                applicationYear
-            );
+            await RtseStudentsNotSentToCentre.getCount(applicationYear, examSettingId);
 
-const activeExamination = await RtseExamSetting.getActive();
-        const configuredSections = activeExamination
-            ? await RtseExamSection.getSections(activeExamination.id)
-            : [];
+        const configuredSections =
+            await RtseExamSection.getSections(examSettingId);
+        const sectionStats =
+            await RtseApplication.getSectionStatistics(examSettingId);
+        const setting = await RtseSetting.get();
 
-        const sectionStats = activeExamination
-            ? await RtseApplication.getSectionStatistics(activeExamination.id)
-            : [];
-
-  const setting = await RtseSetting.get();
-
-const admitGenerated =
-    sectionStats.some(
-        s => (s.admit_generated || 0) > 0
-    );
-
-
-
-
-
-
-
-        res.render(
-
-            "admin/rtse/dashboard",
-
-            {
-
-                title: "RTSE Dashboard",
-
-                total: stats.total || 0,
-
-                pending: stats.pending || 0,
-
-                approved: stats.approved || 0,
-
-                rejected: stats.rejected || 0,
-
-                male: stats.male || 0,
-
-                female: stats.female || 0,
-
-
-                invitedSchoolCount,
-                studentsWithoutSchoolCount,
-                studentsNotSentToCentreCount,
-                admitGenerated,
-                activeExamination,
-                configuredSections,
-
-                sectionStats,
-
-                setting
-
-            }
-
+        const admitGenerated = sectionStats.some(
+            s => (s.admit_generated || 0) > 0
         );
 
+        res.render("admin/rtse/dashboard", {
+            title: "RTSE Dashboard",
+            total: stats.total || 0,
+            pending: stats.pending || 0,
+            approved: stats.approved || 0,
+            rejected: stats.rejected || 0,
+            male: stats.male || 0,
+            female: stats.female || 0,
+            invitedSchoolCount,
+            studentsWithoutSchoolCount,
+            studentsNotSentToCentreCount,
+            admitGenerated,
+            activeExamination,
+            configuredSections,
+            sectionStats,
+            setting
+        });
     } catch (err) {
-
         console.error(err);
-
-        req.flash(
-
-            "error",
-
-            "Unable to load RTSE Dashboard."
-
-        );
-
+        req.flash("error", "Unable to load RTSE Dashboard.");
         res.redirect("/admin");
-
     }
-
 };
 
 // =====================================
@@ -304,46 +251,30 @@ const admitGenerated =
 // =====================================
 exports.invitedSchoolsPage = async (req, res) => {
     try {
+        const activeExamination = await RtseExamSetting.getActive();
+        const examSettingId = Number(activeExamination?.id);
+        const applicationYear = Number(activeExamination?.exam_year);
 
-        const setting =
-            await RtseSetting.get();
-
-        const applicationYear =
-            Number(setting?.exam_year);
-
-        if (!applicationYear) {
-            throw new Error(
-                "Active RTSE exam year is not configured."
-            );
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0 ||
+            !Number.isInteger(applicationYear) || applicationYear <= 0) {
+            throw new Error("A valid active RTSE examination is not configured.");
         }
 
-        const schools =
-            await RtseInvitedSchool.getAll(
-                applicationYear
-            );
-
-        res.render(
-            "admin/rtse/invited-schools",
-            {
-                title: "RTSE Invited Schools",
-                schools,
-                schoolCount: schools.length,
-                applicationYear
-            }
+        const schools = await RtseInvitedSchool.getAll(
+            applicationYear,
+            examSettingId
         );
 
+        res.render("admin/rtse/invited-schools", {
+            title: "RTSE Invited Schools",
+            schools,
+            schoolCount: schools.length,
+            applicationYear,
+            activeExamination
+        });
     } catch (err) {
-
-        console.error(
-            "RTSE Invited Schools Load Error:",
-            err
-        );
-
-        req.flash(
-            "error",
-            "Unable to load RTSE Invited Schools."
-        );
-
+        console.error("RTSE Invited Schools Load Error:", err);
+        req.flash("error", "Unable to load RTSE Invited Schools.");
         res.redirect("/admin/rtse");
     }
 };
@@ -353,55 +284,37 @@ exports.invitedSchoolsPage = async (req, res) => {
 // =====================================
 exports.studentsWithoutSchoolPage = async (req, res) => {
     try {
+        const activeExamination = await RtseExamSetting.getActive();
+        const examSettingId = Number(activeExamination?.id);
+        const applicationYear = Number(activeExamination?.exam_year);
 
-        const setting = await RtseSetting.get();
-
-        const applicationYear =
-            Number(setting?.exam_year);
-
-        if (!applicationYear) {
-            throw new Error(
-                "Active RTSE exam year is not configured."
-            );
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0 ||
+            !Number.isInteger(applicationYear) || applicationYear <= 0) {
+            throw new Error("A valid active RTSE examination is not configured.");
         }
 
-        const search =
-            String(req.query.search || "").trim();
+        const search = String(req.query.search || "").trim();
+        const status = String(req.query.status || "").trim();
 
-        const status =
-            String(req.query.status || "").trim();
-
-        const students =
-            await RtseStudentsWithoutSchool.getAll(
-                applicationYear,
-                search,
-                status
-            );
-
-        res.render(
-            "admin/rtse/students-without-school",
-            {
-                title: "RTSE Students Without School",
-                students,
-                studentCount: students.length,
-                applicationYear,
-                search,
-                status
-            }
+        const students = await RtseStudentsWithoutSchool.getAll(
+            applicationYear,
+            search,
+            status,
+            examSettingId
         );
 
+        res.render("admin/rtse/students-without-school", {
+            title: "RTSE Students Without School",
+            students,
+            studentCount: students.length,
+            applicationYear,
+            search,
+            status,
+            activeExamination
+        });
     } catch (err) {
-
-        console.error(
-            "RTSE Students Without School Load Error:",
-            err
-        );
-
-        req.flash(
-            "error",
-            "Unable to load students without school."
-        );
-
+        console.error("RTSE Students Without School Load Error:", err);
+        req.flash("error", "Unable to load students without school.");
         res.redirect("/admin/rtse");
     }
 };
@@ -411,50 +324,37 @@ exports.studentsWithoutSchoolPage = async (req, res) => {
 // =====================================
 exports.studentsNotSentToCentrePage = async (req, res) => {
     try {
-        const setting = await RtseSetting.get();
-        const applicationYear = Number(setting?.exam_year);
+        const activeExamination = await RtseExamSetting.getActive();
+        const examSettingId = Number(activeExamination?.id);
+        const applicationYear = Number(activeExamination?.exam_year);
 
-        if (!applicationYear) {
-            throw new Error(
-                "Active RTSE exam year is not configured."
-            );
+        if (!Number.isInteger(examSettingId) || examSettingId <= 0 ||
+            !Number.isInteger(applicationYear) || applicationYear <= 0) {
+            throw new Error("A valid active RTSE examination is not configured.");
         }
 
-        const search =
-            String(req.query.search || "").trim();
+        const search = String(req.query.search || "").trim();
+        const status = String(req.query.status || "").trim();
 
-        const status =
-            String(req.query.status || "").trim();
-
-        const students =
-            await RtseStudentsNotSentToCentre.getAll(
-                applicationYear,
-                search,
-                status
-            );
-
-        res.render(
-            "admin/rtse/students-not-sent-to-centre",
-            {
-                title: "RTSE Students Not Sent to Centre",
-                students,
-                studentCount: students.length,
-                applicationYear,
-                search,
-                status
-            }
+        const students = await RtseStudentsNotSentToCentre.getAll(
+            applicationYear,
+            search,
+            status,
+            examSettingId
         );
+
+        res.render("admin/rtse/students-not-sent-to-centre", {
+            title: "RTSE Students Not Sent to Centre",
+            students,
+            studentCount: students.length,
+            applicationYear,
+            search,
+            status,
+            activeExamination
+        });
     } catch (err) {
-        console.error(
-            "RTSE Students Not Sent To Centre Load Error:",
-            err
-        );
-
-        req.flash(
-            "error",
-            "Unable to load students not sent to centre."
-        );
-
+        console.error("RTSE Students Not Sent To Centre Load Error:", err);
+        req.flash("error", "Unable to load students not sent to centre.");
         res.redirect("/admin/rtse");
     }
 };
@@ -5445,28 +5345,26 @@ exports.resultDashboard = async (req, res) => {
             String(req.query.section || "").trim();
 
 
-        const examSelection = await resolveRtseResultExam(req);
-        const {
-            exams,
-            selectedExam,
-            examSettingId,
-            selectedExamId,
-            isLegacy
-        } = examSelection;
+        const selectedExam = await RtseExamSetting.getActive();
 
-        const setting =
-            await RtseSetting.get();
-
-        const applicationYear =
-            Number(setting?.exam_year);
-
-        if(!applicationYear){
-            throw new Error(
-                "Active RTSE exam year is not configured."
-            );
+        if (!selectedExam || !selectedExam.id) {
+            throw new Error("No active RTSE examination is configured.");
         }
 
-const students =
+        const examSettingId = Number(selectedExam.id);
+        const selectedExamId = String(selectedExam.id);
+        const isLegacy = false;
+        const exams = [selectedExam];
+
+        const setting = await RtseSetting.get();
+
+        const applicationYear = Number(selectedExam.exam_year);
+
+        if (!Number.isInteger(applicationYear) || applicationYear <= 0) {
+            throw new Error("The active RTSE examination year is not configured.");
+        }
+
+        const students =
             await RtseResult.getDashboardResults(
                 search,
                 section,
@@ -8594,14 +8492,18 @@ exports.viewSchoolAdmitCards = async (req, res) => {
             );
         }
 
-        const setting = await RtseSetting.get();
+        const activeExamination = await RtseExamSetting.getActive();
+        const applicationYear = Number(activeExamination?.exam_year);
+        const examSettingId = Number(activeExamination?.id);
 
-        const applicationYear =
-            Number(setting?.exam_year);
-
-        if (!applicationYear) {
+        if (
+            !Number.isInteger(applicationYear) ||
+            applicationYear <= 0 ||
+            !Number.isInteger(examSettingId) ||
+            examSettingId <= 0
+        ) {
             throw new Error(
-                "Active RTSE exam year is not configured."
+                "A valid active RTSE examination is not configured."
             );
         }
 
@@ -8609,7 +8511,8 @@ exports.viewSchoolAdmitCards = async (req, res) => {
             await RtseApplication
                 .getGeneratedAdmitCardStudentsBySchool(
                     schoolName,
-                    applicationYear
+                    applicationYear,
+                    examSettingId
                 );
 
         if (!students.length) {

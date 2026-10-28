@@ -1,15 +1,19 @@
 const db = require("../config/database");
 
 class RtseStudentsNotSentToCentre {
-    static async getAll(applicationYear, search = "", status = "") {
+    static async getAll(applicationYear, search = "", status = "", examSettingId) {
         const year = Number(applicationYear);
-        if (!year) return [];
+        const examId = Number(examSettingId);
+        const hasExamId = Number.isInteger(examId) && examId > 0;
+        if (!year || !hasExamId) throw new Error("A valid application year and examination ID are required.");
 
         const params = [year];
+        if (hasExamId) params.push(examId);
 
         let whereSql = `
             a.archive = 0
             AND a.application_year = ?
+            AND a.exam_setting_id = ?
             AND NOT EXISTS (
                 SELECT 1
                 FROM rtse_school_centre_assignments sca
@@ -91,9 +95,11 @@ class RtseStudentsNotSentToCentre {
         return rows;
     }
 
-    static async getCount(applicationYear) {
+    static async getCount(applicationYear, examSettingId) {
         const year = Number(applicationYear);
-        if (!year) return 0;
+        const examId = Number(examSettingId);
+        const hasExamId = Number.isInteger(examId) && examId > 0;
+        if (!year || !hasExamId) throw new Error("A valid application year and examination ID are required.");
 
         const [rows] = await db.query(
             `
@@ -101,6 +107,7 @@ class RtseStudentsNotSentToCentre {
             FROM rtse_applications a
             WHERE a.archive = 0
               AND a.application_year = ?
+              AND a.exam_setting_id = ?
               AND NOT EXISTS (
                   SELECT 1
                   FROM rtse_school_centre_assignments sca
@@ -115,7 +122,7 @@ class RtseStudentsNotSentToCentre {
                     AND LOWER(s.status) = 'approved'
               )
             `,
-            [year]
+            [year, examId]
         );
 
         return Number(rows[0]?.total || 0);
