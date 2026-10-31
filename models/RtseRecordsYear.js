@@ -581,6 +581,7 @@ class RtseRecordsYear {
                 "records_applications",
                 [
                     "application_year",
+                    "exam_setting_id",
                     "id",
                     "registration_no",
                     "full_name",
@@ -615,6 +616,7 @@ class RtseRecordsYear {
                 `
                     SELECT
                         application_year,
+                        exam_setting_id,
                         id,
                         registration_no,
                         full_name,
@@ -1339,7 +1341,18 @@ class RtseRecordsYear {
                        AND a.id = c.application_id
                     WHERE c.application_year = ?
                       AND a.id IS NULL
-                `, "certificate -> application"]
+                `, "certificate -> application"],
+                [`
+                    SELECT COUNT(*) AS bad
+                    FROM ${RECORDS_DB}.records_applications a
+                    LEFT JOIN ${RECORDS_DB}.records_exam_settings e
+                      ON e.application_year = a.application_year
+                     AND e.id = a.exam_setting_id
+                    WHERE a.application_year = ?
+                      AND a.exam_setting_id IS NOT NULL
+                      AND e.id IS NULL
+                `, "application -> examination setting"],
+
             ];
 
             for (const [sql, label] of relationshipChecks) {
@@ -1955,6 +1968,7 @@ class RtseRecordsYear {
                     id,
                     registration_no,
                     application_year,
+                    exam_setting_id,
                     full_name,
                     father_name,
                     mother_name,
@@ -1990,6 +2004,7 @@ class RtseRecordsYear {
                     id,
                     registration_no,
                     application_year,
+                    exam_setting_id,
                     full_name,
                     father_name,
                     mother_name,
@@ -2436,6 +2451,17 @@ class RtseRecordsYear {
                        ON a.id = c.application_id
                      WHERE a.id IS NULL`,
                     "certificate -> application"
+                ],
+                [
+                    `SELECT COUNT(*) AS bad
+                     FROM ${OP_DB}.rtse_applications a
+                     LEFT JOIN ${OP_DB}.rtse_exam_settings e
+                       ON e.id = a.exam_setting_id
+                      AND e.exam_year = a.application_year
+                     WHERE a.application_year = ?
+                       AND a.exam_setting_id IS NOT NULL
+                       AND e.id IS NULL`,
+                    "application -> examination setting/year"
                 ]
             ];
 
