@@ -16,7 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
         let paused = false;
         let animationFrame = null;
         let lastTime = 0;
-        const speed = 24;
+        const speed = 36;
+        const loopPoint = track.scrollWidth / 2;
+
+        // Start at the duplicated set so movement begins from the first person.
 
         function animate(timestamp) {
             if (!lastTime) lastTime = timestamp;
@@ -27,8 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!paused) {
                 viewport.scrollLeft += speed * delta;
 
-                const loopPoint = track.scrollWidth / 2;
-
+                // Seamlessly jump to the matching position in the original set.
                 if (viewport.scrollLeft >= loopPoint) {
                     viewport.scrollLeft -= loopPoint;
                 }
