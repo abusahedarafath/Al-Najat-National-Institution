@@ -1,6 +1,7 @@
 <%- include('../partials/header') %>
 
 <link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/arsp-members.css">
 
 <%- include('../partials/navbar') %>
 <link rel="stylesheet" href="/css/home-popup.css">
@@ -247,6 +248,135 @@
 
 
 
+
+<!-- =====================================================
+     ARSP HOMEPAGE MEMBERS DISPLAY
+===================================================== -->
+<% if (arspMemberDisplaySettings && Number(arspMemberDisplaySettings.is_enabled) === 1 && arspMembers && arspMembers.length) { %>
+<section class="arsp-home-members arsp-design-<%= arspMemberDisplaySettings.design_key %>">
+    <div class="container">
+        <div class="arsp-section-heading">
+            <span class="section-badge">Our Organisation</span>
+            <h2>ARSP Members</h2>
+            <p>Meet the members serving our organisation and community.</p>
+        </div>
+
+        <% if (arspMemberDisplaySettings.design_key === "carousel") { %>
+            <div class="arsp-carousel-viewport" aria-label="ARSP members">
+                <div class="arsp-carousel-track">
+                    <% arspMembers.forEach(member => { %>
+                        <article class="arsp-member-card">
+                            <div class="arsp-member-designation"><%= member.designation %></div>
+                            <div class="arsp-member-photo-wrap">
+                                <% if (member.photo) { %>
+                                    <img class="arsp-member-photo"
+                                         src="/uploads/arsp-members/<%= encodeURIComponent(member.photo) %>"
+                                         alt="<%= member.full_name %>"
+                                         loading="lazy">
+                                <% } else { %>
+                                    <div class="arsp-member-photo-placeholder">
+                                        <%= String(member.full_name || "?").trim().charAt(0).toUpperCase() %>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="arsp-member-name"><%= member.full_name %></div>
+                        </article>
+                    <% }); %>
+                </div>
+            </div>
+
+        <% } else if (arspMemberDisplaySettings.design_key === "compact_grid") { %>
+            <div class="arsp-member-grid">
+                <% arspMembers.forEach(member => { %>
+                    <article class="arsp-member-card">
+                        <div class="arsp-member-photo-wrap">
+                            <% if (member.photo) { %>
+                                <img class="arsp-member-photo"
+                                     src="/uploads/arsp-members/<%= encodeURIComponent(member.photo) %>"
+                                     alt="<%= member.full_name %>"
+                                     loading="lazy">
+                            <% } else { %>
+                                <div class="arsp-member-photo-placeholder">
+                                    <%= String(member.full_name || "?").trim().charAt(0).toUpperCase() %>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="arsp-member-name"><%= member.full_name %></div>
+                        <div class="arsp-member-designation"><%= member.designation %></div>
+                    </article>
+                <% }); %>
+            </div>
+            <% if (arspMembers.length > 4) { %>
+                <div class="arsp-grid-toggle-wrap">
+                    <button type="button" class="arsp-grid-toggle"
+                            aria-expanded="false">See All</button>
+                </div>
+            <% } %>
+
+        <% } else if (arspMemberDisplaySettings.design_key === "profile_cards") { %>
+            <div class="arsp-member-grid">
+                <% arspMembers.forEach(member => { %>
+                    <article class="arsp-member-card">
+                        <div class="arsp-member-photo-wrap">
+                            <% if (member.photo) { %>
+                                <img class="arsp-member-photo"
+                                     src="/uploads/arsp-members/<%= encodeURIComponent(member.photo) %>"
+                                     alt="<%= member.full_name %>"
+                                     loading="lazy">
+                            <% } else { %>
+                                <div class="arsp-member-photo-placeholder">
+                                    <%= String(member.full_name || "?").trim().charAt(0).toUpperCase() %>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="arsp-member-details">
+                            <div class="arsp-member-designation"><%= member.designation %></div>
+                            <div class="arsp-member-name"><%= member.full_name %></div>
+                        </div>
+                    </article>
+                <% }); %>
+            </div>
+
+        <% } else if (arspMemberDisplaySettings.design_key === "hierarchy") { %>
+            <div class="arsp-hierarchy-groups">
+                <% [
+                    "Founder",
+                    "Organizing Body",
+                    "Chief Adviser",
+                    "Advisory Body"
+                ].forEach(group => {
+                    const groupMembers = arspMembers.filter(member => member.section === group);
+                    if (groupMembers.length) {
+                %>
+                    <div class="arsp-hierarchy-group">
+                        <h3><%= group %></h3>
+                        <div class="arsp-member-grid">
+                            <% groupMembers.forEach(member => { %>
+                                <article class="arsp-member-card">
+                                    <div class="arsp-member-photo-wrap">
+                                        <% if (member.photo) { %>
+                                            <img class="arsp-member-photo"
+                                                 src="/uploads/arsp-members/<%= encodeURIComponent(member.photo) %>"
+                                                 alt="<%= member.full_name %>"
+                                                 loading="lazy">
+                                        <% } else { %>
+                                            <div class="arsp-member-photo-placeholder">
+                                                <%= String(member.full_name || "?").trim().charAt(0).toUpperCase() %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    <div class="arsp-member-name"><%= member.full_name %></div>
+                                    <div class="arsp-member-designation"><%= member.designation %></div>
+                                </article>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% } }); %>
+            </div>
+        <% } %>
+    </div>
+</section>
+<% } %>
 
 <!-- =====================================================
      QUICK ACCESS
@@ -754,6 +884,7 @@ const ext = item.image
 </section>
 
 <script src="/js/home-slider.js"></script>
+<script src="/js/arsp-members.js"></script>
 
 
 <% if(honourHeartPopup){ %>

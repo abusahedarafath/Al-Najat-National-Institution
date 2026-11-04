@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middleware/auth");
+const adminArspMemberDisplayController = require("../controllers/adminArspMemberDisplayController");
 
 router.use("/admin", authMiddleware.isAdmin);
 
@@ -527,6 +528,22 @@ router.post(
     "/admin/arsp/school/:id/reset-password",
     authMiddleware.isLoggedIn,
     adminArspSchoolController.resetPortalPassword
+);
+
+
+// ======================================
+// ARSP Homepage Members Display Settings
+// ======================================
+router.get(
+    "/admin/arsp/members-display-settings",
+    authMiddleware.isLoggedIn,
+    adminArspMemberDisplayController.settingsPage
+);
+
+router.post(
+    "/admin/arsp/members-display-settings",
+    authMiddleware.isLoggedIn,
+    adminArspMemberDisplayController.saveSettings
 );
 
 module.exports = router;

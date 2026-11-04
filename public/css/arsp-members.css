@@ -1,0 +1,319 @@
+/* =========================================================
+   ARSP HOMEPAGE MEMBERS
+   Four configurable display designs
+========================================================= */
+
+.arsp-home-members {
+    --arsp-primary: #12345a;
+    --arsp-gold: #c99a35;
+    --arsp-text: #26364a;
+    --arsp-muted: #718096;
+    padding: 65px 0;
+    background: #f7f9fc;
+    overflow: hidden;
+}
+
+.arsp-home-members .arsp-section-heading {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.arsp-home-members .arsp-section-heading .section-badge {
+    color: var(--arsp-gold);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.arsp-home-members .arsp-section-heading h2 {
+    color: var(--arsp-primary);
+    font-size: clamp(25px, 3vw, 36px);
+    margin: 10px 0;
+}
+
+.arsp-home-members .arsp-section-heading p {
+    color: var(--arsp-muted);
+    margin: 0;
+}
+
+.arsp-member-card {
+    min-width: 0;
+    text-align: center;
+    color: var(--arsp-text);
+}
+
+.arsp-member-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #e8edf3;
+}
+
+.arsp-member-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #e8edf3;
+    color: var(--arsp-primary);
+    font-size: 38px;
+    font-weight: 700;
+}
+
+/* 1. Circular portrait carousel */
+
+.arsp-carousel-viewport {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--arsp-gold) #e6ebf1;
+    padding: 10px 4px 22px;
+    scroll-behavior: smooth;
+}
+
+.arsp-carousel-track {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    width: max-content;
+}
+
+.arsp-design-carousel .arsp-member-card {
+    width: 170px;
+    flex: 0 0 170px;
+}
+
+.arsp-design-carousel .arsp-member-designation {
+    min-height: 38px;
+    margin-bottom: 10px;
+    color: var(--arsp-gold);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.arsp-design-carousel .arsp-member-photo-wrap {
+    width: 145px;
+    height: 145px;
+    margin: 0 auto 13px;
+    overflow: hidden;
+    border: 4px solid white;
+    border-radius: 50%;
+    box-shadow: 0 5px 20px rgba(18, 52, 90, .15);
+}
+
+.arsp-design-carousel .arsp-member-photo-placeholder {
+    border-radius: 50%;
+}
+
+.arsp-design-carousel .arsp-member-name {
+    color: var(--arsp-primary);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* 2. Expandable member grid */
+
+.arsp-member-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+}
+
+
+.arsp-design-compact_grid .arsp-member-card {
+    padding: 18px;
+    background: white;
+    border: 1px solid #e9edf2;
+    border-radius: 12px;
+}
+
+.arsp-design-compact_grid .arsp-member-photo-wrap {
+    width: 100%;
+    height: 175px;
+    margin-bottom: 13px;
+    overflow: hidden;
+    border-radius: 9px;
+}
+
+.arsp-design-compact_grid .arsp-member-name {
+    color: var(--arsp-primary);
+    font-weight: 700;
+}
+
+.arsp-grid-toggle-wrap {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.arsp-grid-toggle {
+    padding: 11px 26px;
+    border: 0;
+    border-radius: 30px;
+    background: var(--arsp-primary);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* 3. Premium rectangular profile cards */
+
+.arsp-design-profile_cards .arsp-member-grid {
+    gap: 25px;
+}
+
+.arsp-design-profile_cards .arsp-member-card {
+    overflow: hidden;
+    background: white;
+    border-radius: 13px;
+    box-shadow: 0 7px 25px rgba(18, 52, 90, .10);
+    border-bottom: 3px solid var(--arsp-gold);
+    text-align: left;
+}
+
+.arsp-design-profile_cards .arsp-member-photo-wrap {
+    height: 245px;
+    overflow: hidden;
+    background: #e8edf3;
+}
+
+.arsp-design-profile_cards .arsp-member-details {
+    padding: 17px;
+}
+
+.arsp-design-profile_cards .arsp-member-designation {
+    color: var(--arsp-gold);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.arsp-design-profile_cards .arsp-member-name {
+    color: var(--arsp-primary);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* 4. Formal organisational hierarchy */
+
+.arsp-hierarchy-groups {
+    display: grid;
+    gap: 28px;
+}
+
+.arsp-hierarchy-group {
+    padding: 24px;
+    background: white;
+    border: 1px solid #e5eaf0;
+    border-top: 3px solid var(--arsp-gold);
+    border-radius: 12px;
+}
+
+.arsp-hierarchy-group h3 {
+    margin: 0 0 20px;
+    color: var(--arsp-primary);
+    text-align: center;
+    font-size: 19px;
+}
+
+.arsp-hierarchy-group .arsp-member-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.arsp-design-hierarchy .arsp-member-card {
+    padding: 18px;
+    border: 1px solid #edf0f4;
+    border-radius: 10px;
+}
+
+.arsp-design-hierarchy .arsp-member-photo-wrap {
+    width: 115px;
+    height: 115px;
+    margin: 0 auto 12px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 3px solid #f0dfb8;
+}
+
+.arsp-design-hierarchy .arsp-member-name {
+    color: var(--arsp-primary);
+    font-weight: 700;
+}
+
+.arsp-design-hierarchy .arsp-member-designation {
+    color: var(--arsp-gold);
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* Shared details */
+
+.arsp-member-name {
+    overflow-wrap: anywhere;
+}
+
+.arsp-member-designation {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .arsp-member-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .arsp-hierarchy-group .arsp-member-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .arsp-home-members {
+        padding: 42px 0;
+    }
+
+    .arsp-member-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+    }
+
+        .arsp-design-compact_grid .arsp-member-photo-wrap {
+        height: 135px;
+    }
+
+    .arsp-design-profile_cards .arsp-member-photo-wrap {
+        height: 175px;
+    }
+
+    .arsp-design-profile_cards .arsp-member-details {
+        padding: 12px;
+    }
+
+    .arsp-design-profile_cards .arsp-member-name {
+        font-size: 15px;
+    }
+
+    .arsp-hierarchy-group {
+        padding: 15px;
+    }
+
+    .arsp-hierarchy-group .arsp-member-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .arsp-design-hierarchy .arsp-member-photo-wrap {
+        width: 85px;
+        height: 85px;
+    }
+
+    .arsp-design-carousel .arsp-member-card {
+        width: 145px;
+        flex-basis: 145px;
+    }
+
+    .arsp-design-carousel .arsp-member-photo-wrap {
+        width: 120px;
+        height: 120px;
+    }
+}

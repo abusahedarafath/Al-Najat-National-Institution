@@ -18,6 +18,7 @@ const HomepageAchievement =
 const HomepageFeature =
     require("../models/HomepageFeature");
 const HomePopup = require("../models/HomePopup");
+const ArspHomepageDisplay = require("../models/ArspHomepageDisplay");
 
 // ======================================
 // Home Page
@@ -71,6 +72,25 @@ exports.index = async (req, res) => {
         const personalities =
             await personalityModel.getHomepage();
 
+        let arspMembers = [];
+        let arspMemberDisplaySettings = {
+            is_enabled: 1,
+            design_key: "carousel"
+        };
+
+        try {
+            arspMemberDisplaySettings =
+                await ArspHomepageDisplay.getSettings();
+
+            arspMembers =
+                await ArspHomepageDisplay.getVisibleMembers();
+        } catch (arspError) {
+            console.error(
+                "ARSP homepage members unavailable; continuing without them:",
+                arspError.message
+            );
+        }
+
         const honourHeartPopup =
             await HonourHeartAwardee.getPopup();
 
@@ -106,7 +126,9 @@ exports.index = async (req, res) => {
                 honourHeartPopup,
                 homePopup,
                 achievements,
-                features
+                features,
+                arspMembers,
+                arspMemberDisplaySettings
             }
         );
 
