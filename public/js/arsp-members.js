@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let dragStartX = 0;
         let dragStartTime = 0;
         let activePointerId = null;
-        let resumeTimer = null;
 
         function updatePause() {
             const shouldPause = hovered || focused || dragging;
@@ -51,19 +50,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        function pauseForInteraction() {
-            clearTimeout(resumeTimer);
-            updatePause();
-        }
-
-        function resumeAfterInteraction() {
-            clearTimeout(resumeTimer);
-            resumeTimer = setTimeout(updatePause, 2000);
-        }
-
         viewport.addEventListener("mouseenter", function () {
             hovered = true;
-            pauseForInteraction();
+            updatePause();
         });
 
         viewport.addEventListener("mouseleave", function () {
@@ -73,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         viewport.addEventListener("focusin", function () {
             focused = true;
-            pauseForInteraction();
+            updatePause();
         });
 
         viewport.addEventListener("focusout", function () {
@@ -89,7 +78,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!animation) return;
 
             event.preventDefault();
-            clearTimeout(resumeTimer);
 
             dragging = true;
             activePointerId = event.pointerId;
@@ -128,9 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 viewport.releasePointerCapture(pointerId);
             }
 
-            if (!hovered && !focused) {
-                resumeAfterInteraction();
-            }
         }
 
         viewport.addEventListener("pointerup", finishDragging);
@@ -142,9 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
             activePointerId = null;
             updatePause();
 
-            if (!hovered && !focused) {
-                resumeAfterInteraction();
-            }
         });
 
     });
