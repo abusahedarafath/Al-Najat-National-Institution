@@ -317,3 +317,42 @@
         height: 120px;
     }
 }
+
+
+/* Smooth GPU-accelerated ARSP member carousel */
+.arsp-carousel-viewport {
+    overflow: hidden !important;
+    scrollbar-width: none;
+    scroll-behavior: auto !important;
+    touch-action: pan-y;
+}
+
+.arsp-carousel-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.arsp-carousel-track {
+    width: max-content;
+    will-change: transform;
+    animation: arsp-member-marquee var(--arsp-duration, 30s) linear infinite;
+}
+
+.arsp-carousel-track.is-paused {
+    animation-play-state: paused;
+}
+
+@keyframes arsp-member-marquee {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(var(--arsp-distance), 0, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .arsp-carousel-track {
+        animation: none;
+        transform: none;
+    }
+}

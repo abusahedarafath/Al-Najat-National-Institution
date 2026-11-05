@@ -1,89 +1,49 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Circular portrait carousel
+    // Smooth, continuous right-to-left member carousel
     document.querySelectorAll(".arsp-carousel-viewport").forEach(function (viewport) {
         const track = viewport.querySelector(".arsp-carousel-track");
         if (!track || track.children.length < 2) return;
 
         const originalCards = Array.from(track.children);
-        const originalCount = originalCards.length;
+        const originalWidth = track.scrollWidth;
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        const loopDistance = originalWidth + gap;
 
         originalCards.forEach(function (card) {
             const clone = card.cloneNode(true);
             clone.setAttribute("aria-hidden", "true");
+            clone.querySelectorAll("[id]").forEach(el => el.removeAttribute("id"));
+            clone.querySelectorAll("a, button, input, select, textarea").forEach(el => {
+                el.setAttribute("tabindex", "-1");
+            });
             track.appendChild(clone);
         });
 
-        let paused = false;
-        let animationFrame = null;
-        let lastTime = 0;
-        const speed = 36;
-        const loopPoint = track.scrollWidth / 2;
+        const speed = 90; // pixels per second
+        const duration = loopDistance / speed;
 
-        // Start at the duplicated set so movement begins from the first person.
+        track.style.setProperty("--arsp-distance", "-" + loopDistance + "px");
+        track.style.setProperty("--arsp-duration", duration + "s");
 
-        function animate(timestamp) {
-            if (!lastTime) lastTime = timestamp;
-
-            const delta = Math.min((timestamp - lastTime) / 1000, 0.05);
-            lastTime = timestamp;
-
-            if (!paused) {
-                viewport.scrollLeft += speed * delta;
-
-                // Seamlessly jump to the matching position in the original set.
-                if (viewport.scrollLeft >= loopPoint) {
-                    viewport.scrollLeft -= loopPoint;
-                }
-            }
-
-            animationFrame = requestAnimationFrame(animate);
+        function pause() {
+            track.classList.add("is-paused");
         }
 
-        viewport.addEventListener("mouseenter", function () {
-            paused = true;
-        });
+        function resume() {
+            track.classList.remove("is-paused");
+        }
 
-        viewport.addEventListener("mouseleave", function () {
-            paused = false;
-            lastTime = 0;
-        });
+        viewport.addEventListener("mouseenter", pause);
+        viewport.addEventListener("mouseleave", resume);
+        viewport.addEventListener("focusin", pause);
+        viewport.addEventListener("focusout", resume);
 
-        viewport.addEventListener("touchstart", function () {
-            paused = true;
-        }, { passive: true });
-
+        viewport.addEventListener("touchstart", pause, { passive: true });
         viewport.addEventListener("touchend", function () {
-            setTimeout(function () {
-                paused = false;
-                lastTime = 0;
-            }, 1800);
+            clearTimeout(viewport._arspTouchTimer);
+            viewport._arspTouchTimer = setTimeout(resume, 1800);
         }, { passive: true });
-
-        viewport.addEventListener("focusin", function () {
-            paused = true;
-        });
-
-        viewport.addEventListener("focusout", function () {
-            paused = false;
-            lastTime = 0;
-        });
-
-        viewport.addEventListener("wheel", function () {
-            paused = true;
-            clearTimeout(viewport._arspWheelTimer);
-            viewport._arspWheelTimer = setTimeout(function () {
-                paused = false;
-                lastTime = 0;
-            }, 1800);
-        }, { passive: true });
-
-        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            animationFrame = requestAnimationFrame(animate);
-        }
-
-        window.addEventListener("pagehide", function () {
-            if (animationFrame) cancelAnimationFrame(animationFrame);
-        }, { once: true });
+        viewport.addEventListener("touchcancel", resume, { passive: true });
     });
 
     // Responsive expandable compact member grid
