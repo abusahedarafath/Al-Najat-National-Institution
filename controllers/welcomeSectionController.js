@@ -91,6 +91,11 @@ exports.update = async (req, res) => {
 
     try {
 
+
+        if (!req.body || typeof req.body !== "object") {
+            return res.status(400).send("Invalid or missing form data.");
+        }
+
         await WelcomeSection.update(req.params.id, req.body);
 
         res.redirect("/admin/welcome-sections");
@@ -103,6 +108,7 @@ exports.update = async (req, res) => {
     }
 
 };
+
 
 // ======================================
 // Delete

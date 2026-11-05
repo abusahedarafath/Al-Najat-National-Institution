@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const multer = require("multer");
+const welcomeSectionFormParser = multer().none();
 const authMiddleware = require("../middleware/auth");
 
 router.use("/admin", authMiddleware.isAdmin);
@@ -36,6 +38,7 @@ router.get(
 
 router.post(
     "/welcome-section/:id/edit",
+    welcomeSectionFormParser,
     welcomeSectionController.update
 );
 
