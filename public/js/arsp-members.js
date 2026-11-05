@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Smooth automatic carousel with manual mouse dragging and touch swiping
+    // Native horizontal ARSP carousel with automatic movement
     document.querySelectorAll(".arsp-carousel-viewport").forEach(function (viewport) {
         const track = viewport.querySelector(".arsp-carousel-track");
         if (!track || track.children.length < 2) return;
@@ -20,71 +20,78 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const speed = 90;
-        const duration = loopDistance / speed;
-        const durationMs = duration * 1000;
-
-        track.style.setProperty("--arsp-distance", "-" + loopDistance + "px");
-        track.style.setProperty("--arsp-duration", duration + "s");
-
-        function getAnimation() {
-            return track.getAnimations().find(animation =>
-                animation.animationName === "arsp-member-marquee"
-            );
-        }
+        const dragSensitivity = 2.5;
 
         let hovered = false;
         let focused = false;
+        let touchActive = false;
         let dragging = false;
-        let dragStartX = 0;
-        let dragStartTime = 0;
         let activePointerId = null;
+        let dragStartX = 0;
+        let dragStartScroll = 0;
+        let lastFrame = 0;
 
-        function updatePause() {
-            const shouldPause = hovered || focused || dragging;
-            track.classList.toggle("is-paused", shouldPause);
+        function isPaused() {
+            return hovered || focused || touchActive || dragging;
+        }
 
-            const animation = getAnimation();
-            if (animation) {
-                if (shouldPause) animation.pause();
-                else animation.play();
+        function normalizeScroll() {
+            if (loopDistance > 0 && viewport.scrollLeft >= loopDistance) {
+                viewport.scrollLeft = viewport.scrollLeft % loopDistance;
             }
         }
 
-        viewport.addEventListener("mouseenter", function () {
+        function animate(timestamp) {
+            if (!lastFrame) lastFrame = timestamp;
+
+            if (!isPaused() && document.visibilityState !== "hidden") {
+                const elapsed = Math.min(timestamp - lastFrame, 50);
+                viewport.scrollLeft += speed * elapsed / 1000;
+                normalizeScroll();
+            }
+
+            lastFrame = timestamp;
+            requestAnimationFrame(animate);
+        }
+
+        viewport.addEventListener("pointerenter", function (event) {
+            if (event.pointerType !== "mouse") return;
             hovered = true;
-            updatePause();
         });
 
-        viewport.addEventListener("mouseleave", function () {
+        viewport.addEventListener("pointerleave", function (event) {
+            if (event.pointerType !== "mouse") return;
             hovered = false;
-            updatePause();
         });
 
         viewport.addEventListener("focusin", function () {
             focused = true;
-            updatePause();
         });
 
-        viewport.addEventListener("focusout", function () {
-            focused = false;
-            updatePause();
+        viewport.addEventListener("focusout", function (event) {
+            if (!viewport.contains(event.relatedTarget)) focused = false;
         });
+
+        viewport.addEventListener("touchstart", function () {
+            touchActive = true;
+        }, { passive: true });
+
+        viewport.addEventListener("touchend", function () {
+            touchActive = false;
+        }, { passive: true });
+
+        viewport.addEventListener("touchcancel", function () {
+            touchActive = false;
+        }, { passive: true });
 
         viewport.addEventListener("pointerdown", function (event) {
+            if (event.pointerType !== "mouse" || event.button !== 0) return;
             if (event.target.closest("a, button, input, select, textarea")) return;
-            if (event.pointerType === "mouse" && event.button !== 0) return;
-
-            const animation = getAnimation();
-            if (!animation) return;
-
-            event.preventDefault();
 
             dragging = true;
             activePointerId = event.pointerId;
             dragStartX = event.clientX;
-
-            updatePause();
-            dragStartTime = Number(animation.currentTime) || 0;
+            dragStartScroll = viewport.scrollLeft;
 
             try {
                 viewport.setPointerCapture(event.pointerId);
@@ -94,14 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
         viewport.addEventListener("pointermove", function (event) {
             if (!dragging || event.pointerId !== activePointerId) return;
 
-            const animation = getAnimation();
-            if (!animation) return;
-
             const distance = event.clientX - dragStartX;
-            const dragSensitivity = 2.5;
-            const nextTime = dragStartTime - (distance * dragSensitivity / speed) * 1000;
-
-            animation.currentTime = ((nextTime % durationMs) + durationMs) % durationMs;
+            viewport.scrollLeft = dragStartScroll - distance * dragSensitivity;
         });
 
         function finishDragging(event) {
@@ -110,25 +111,21 @@ document.addEventListener("DOMContentLoaded", function () {
             const pointerId = activePointerId;
             dragging = false;
             activePointerId = null;
-            updatePause();
+            normalizeScroll();
 
             if (pointerId !== null && viewport.hasPointerCapture(pointerId)) {
                 viewport.releasePointerCapture(pointerId);
             }
-
         }
 
         viewport.addEventListener("pointerup", finishDragging);
         viewport.addEventListener("pointercancel", finishDragging);
         viewport.addEventListener("lostpointercapture", function () {
-            if (!dragging) return;
-
             dragging = false;
             activePointerId = null;
-            updatePause();
-
         });
 
+        requestAnimationFrame(animate);
     });
 
     // Responsive expandable compact member grid

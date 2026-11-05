@@ -319,51 +319,22 @@
 }
 
 
-/* Smooth GPU-accelerated ARSP member carousel */
+/* Native horizontal scrolling for ARSP member carousel */
 .arsp-carousel-viewport {
-    overflow: hidden !important;
+    position: relative;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     scrollbar-width: none;
     scroll-behavior: auto !important;
-    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .arsp-carousel-viewport::-webkit-scrollbar {
     display: none;
-}
-
-.arsp-carousel-track {
-    width: max-content;
-    will-change: transform;
-    animation: arsp-member-marquee var(--arsp-duration, 30s) linear infinite;
-}
-
-.arsp-carousel-track.is-paused {
-    animation-play-state: paused;
-}
-
-@keyframes arsp-member-marquee {
-    from {
-        transform: translate3d(0, 0, 0);
-    }
-    to {
-        transform: translate3d(var(--arsp-distance), 0, 0);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .arsp-carousel-track {
-        animation: none;
-        transform: none;
-    }
-}
-
-
-/* Manual mouse and touch control for the animated carousel */
-.arsp-carousel-viewport {
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: pan-y;
 }
 
 .arsp-carousel-viewport:active {
@@ -371,6 +342,10 @@
 }
 
 .arsp-carousel-track {
+    width: max-content;
+    will-change: auto;
+    animation: none !important;
+    transform: none !important;
     -webkit-user-select: none;
     user-select: none;
 }
