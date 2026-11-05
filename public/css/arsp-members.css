@@ -356,3 +356,27 @@
         transform: none;
     }
 }
+
+
+/* Manual mouse and touch control for the animated carousel */
+.arsp-carousel-viewport {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+}
+
+.arsp-carousel-viewport:active {
+    cursor: grabbing;
+}
+
+.arsp-carousel-track {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.arsp-carousel-track img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}

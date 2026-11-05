@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Smooth, continuous right-to-left member carousel
+    // Smooth automatic carousel with manual mouse dragging and touch swiping
     document.querySelectorAll(".arsp-carousel-viewport").forEach(function (viewport) {
         const track = viewport.querySelector(".arsp-carousel-track");
         if (!track || track.children.length < 2) return;
@@ -19,31 +19,102 @@ document.addEventListener("DOMContentLoaded", function () {
             track.appendChild(clone);
         });
 
-        const speed = 90; // pixels per second
+        const speed = 90;
         const duration = loopDistance / speed;
+        const durationMs = duration * 1000;
 
         track.style.setProperty("--arsp-distance", "-" + loopDistance + "px");
         track.style.setProperty("--arsp-duration", duration + "s");
 
-        function pause() {
-            track.classList.add("is-paused");
+        let hovered = false;
+        let focused = false;
+        let dragging = false;
+        let dragStartX = 0;
+        let dragStartTime = 0;
+        let activePointerId = null;
+
+        function getAnimation() {
+            return track.getAnimations().find(animation =>
+                animation.animationName === "arsp-member-marquee"
+            );
         }
 
-        function resume() {
-            track.classList.remove("is-paused");
+        function updatePause() {
+            track.classList.toggle("is-paused", hovered || focused || dragging);
         }
 
-        viewport.addEventListener("mouseenter", pause);
-        viewport.addEventListener("mouseleave", resume);
-        viewport.addEventListener("focusin", pause);
-        viewport.addEventListener("focusout", resume);
+        viewport.addEventListener("mouseenter", function () {
+            hovered = true;
+            updatePause();
+        });
 
-        viewport.addEventListener("touchstart", pause, { passive: true });
-        viewport.addEventListener("touchend", function () {
-            clearTimeout(viewport._arspTouchTimer);
-            viewport._arspTouchTimer = setTimeout(resume, 1800);
-        }, { passive: true });
-        viewport.addEventListener("touchcancel", resume, { passive: true });
+        viewport.addEventListener("mouseleave", function () {
+            hovered = false;
+            updatePause();
+        });
+
+        viewport.addEventListener("focusin", function () {
+            focused = true;
+            updatePause();
+        });
+
+        viewport.addEventListener("focusout", function () {
+            focused = false;
+            updatePause();
+        });
+
+        viewport.addEventListener("pointerdown", function (event) {
+            if (event.target.closest("a, button, input, select, textarea")) return;
+            if (event.pointerType === "mouse" && event.button !== 0) return;
+
+            const animation = getAnimation();
+            if (!animation) return;
+
+            event.preventDefault();
+            dragging = true;
+            activePointerId = event.pointerId;
+            dragStartX = event.clientX;
+            dragStartTime = Number(animation.currentTime) || 0;
+
+            updatePause();
+
+            try {
+                viewport.setPointerCapture(event.pointerId);
+            } catch (_) {}
+        });
+
+        viewport.addEventListener("pointermove", function (event) {
+            if (!dragging || event.pointerId !== activePointerId) return;
+
+            const animation = getAnimation();
+            if (!animation) return;
+
+            const distance = event.clientX - dragStartX;
+            const nextTime = dragStartTime - (distance / speed) * 1000;
+
+            animation.currentTime = ((nextTime % durationMs) + durationMs) % durationMs;
+        });
+
+        function finishDragging(event) {
+            if (!dragging || (event && event.pointerId !== activePointerId)) return;
+
+            const pointerId = activePointerId;
+            dragging = false;
+            activePointerId = null;
+            updatePause();
+
+            if (pointerId !== null && viewport.hasPointerCapture(pointerId)) {
+                viewport.releasePointerCapture(pointerId);
+            }
+        }
+
+        viewport.addEventListener("pointerup", finishDragging);
+        viewport.addEventListener("pointercancel", finishDragging);
+        viewport.addEventListener("lostpointercapture", function () {
+            dragging = false;
+            activePointerId = null;
+            updatePause();
+        });
     });
 
     // Responsive expandable compact member grid
