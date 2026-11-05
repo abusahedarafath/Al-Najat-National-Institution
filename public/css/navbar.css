@@ -20,7 +20,8 @@
 
 .main-header{
     width:100%;
-    position:relative;
+    position:sticky;
+    top:0;
     z-index:5000;
     background:#fff;
     box-shadow:0 3px 16px rgba(0,0,0,.10);
@@ -1810,3 +1811,15 @@
     }
 }
 
+
+
+/* =========================================================
+   MOBILE ACTION BUTTON SIDE SPACING
+========================================================= */
+@media (max-width: 768px) {
+    .arsp-action-buttons {
+        width: calc(100% - 24px) !important;
+        margin: 0 12px 12px !important;
+        box-sizing: border-box !important;
+    }
+}

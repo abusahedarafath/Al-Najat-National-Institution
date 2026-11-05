@@ -37,7 +37,7 @@
 
                 </button>
 
-            </div>
+    
 
 
             <!-- =================================================
@@ -51,6 +51,41 @@
             
 
         
+
+
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT: BRANDING CONTAINER
+        ================================================== -->
+
+        <div class="arsp-branding-section">
+
+            <div class="arsp-branding-content">
+
+                <h1>
+
+                    <%= siteSettings
+                        ? siteSettings.institution_name
+                        : "Active Rural Social Progress" %>
+
+                </h1>
+
+                <p>
+
+                    <%= siteSettings
+                        ? siteSettings.tagline
+                        : "Empowering Rural, Inspiring Future" %>
+
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+</header>
 
             <div class="arsp-action-buttons">
 
@@ -100,41 +135,10 @@
 
             </div>
 
-        </div>
-
-
-        <!-- =================================================
-             RIGHT: BRANDING CONTAINER
-        ================================================== -->
-
-        <div class="arsp-branding-section">
-
-            <div class="arsp-branding-content">
-
-                <h1>
-
-                    <%= siteSettings
-                        ? siteSettings.institution_name
-                        : "Active Rural Social Progress" %>
-
-                </h1>
-
-                <p>
-
-                    <%= siteSettings
-                        ? siteSettings.tagline
-                        : "Empowering Rural, Inspiring Future" %>
-
-                </p>
-
-            </div>
-
-        </div>
 
 
             
 
-    </div>
 
 
     <!-- =====================================================
@@ -274,7 +278,7 @@
 
     <%- include("../home/arsp-scanner") %>
 
-</header>
+
 
 
 <!-- =========================================================
