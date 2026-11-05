@@ -26,26 +26,37 @@ document.addEventListener("DOMContentLoaded", function () {
         track.style.setProperty("--arsp-distance", "-" + loopDistance + "px");
         track.style.setProperty("--arsp-duration", duration + "s");
 
-        let hovered = false;
-        let focused = false;
-        let dragging = false;
-        let dragStartX = 0;
-        let dragStartTime = 0;
-        let activePointerId = null;
-
         function getAnimation() {
             return track.getAnimations().find(animation =>
                 animation.animationName === "arsp-member-marquee"
             );
         }
 
+        let hovered = false;
+        let focused = false;
+        let dragging = false;
+        let dragStartX = 0;
+        let dragStartTime = 0;
+        let activePointerId = null;
+        let resumeTimer = null;
+
         function updatePause() {
             track.classList.toggle("is-paused", hovered || focused || dragging);
         }
 
+        function pauseForInteraction() {
+            clearTimeout(resumeTimer);
+            updatePause();
+        }
+
+        function resumeAfterInteraction() {
+            clearTimeout(resumeTimer);
+            resumeTimer = setTimeout(updatePause, 2000);
+        }
+
         viewport.addEventListener("mouseenter", function () {
             hovered = true;
-            updatePause();
+            pauseForInteraction();
         });
 
         viewport.addEventListener("mouseleave", function () {
@@ -55,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         viewport.addEventListener("focusin", function () {
             focused = true;
-            updatePause();
+            pauseForInteraction();
         });
 
         viewport.addEventListener("focusout", function () {
@@ -71,6 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!animation) return;
 
             event.preventDefault();
+            pauseForInteraction();
+
             dragging = true;
             activePointerId = event.pointerId;
             dragStartX = event.clientX;
@@ -106,15 +119,26 @@ document.addEventListener("DOMContentLoaded", function () {
             if (pointerId !== null && viewport.hasPointerCapture(pointerId)) {
                 viewport.releasePointerCapture(pointerId);
             }
+
+            if (!hovered && !focused) {
+                resumeAfterInteraction();
+            }
         }
 
         viewport.addEventListener("pointerup", finishDragging);
         viewport.addEventListener("pointercancel", finishDragging);
         viewport.addEventListener("lostpointercapture", function () {
+            if (!dragging) return;
+
             dragging = false;
             activePointerId = null;
             updatePause();
+
+            if (!hovered && !focused) {
+                resumeAfterInteraction();
+            }
         });
+
     });
 
     // Responsive expandable compact member grid
