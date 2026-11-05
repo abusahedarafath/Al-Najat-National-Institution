@@ -41,7 +41,14 @@ document.addEventListener("DOMContentLoaded", function () {
         let resumeTimer = null;
 
         function updatePause() {
-            track.classList.toggle("is-paused", hovered || focused || dragging);
+            const shouldPause = hovered || focused || dragging;
+            track.classList.toggle("is-paused", shouldPause);
+
+            const animation = getAnimation();
+            if (animation) {
+                if (shouldPause) animation.pause();
+                else animation.play();
+            }
         }
 
         function pauseForInteraction() {
@@ -82,14 +89,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!animation) return;
 
             event.preventDefault();
-            pauseForInteraction();
+            clearTimeout(resumeTimer);
 
             dragging = true;
             activePointerId = event.pointerId;
             dragStartX = event.clientX;
-            dragStartTime = Number(animation.currentTime) || 0;
 
             updatePause();
+            dragStartTime = Number(animation.currentTime) || 0;
 
             try {
                 viewport.setPointerCapture(event.pointerId);
@@ -103,7 +110,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!animation) return;
 
             const distance = event.clientX - dragStartX;
-            const nextTime = dragStartTime - (distance / speed) * 1000;
+            const dragSensitivity = 2.5;
+            const nextTime = dragStartTime - (distance * dragSensitivity / speed) * 1000;
 
             animation.currentTime = ((nextTime % durationMs) + durationMs) % durationMs;
         });
