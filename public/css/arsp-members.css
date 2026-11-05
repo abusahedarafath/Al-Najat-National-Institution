@@ -373,3 +373,21 @@
     user-drag: none;
     pointer-events: none;
 }
+
+
+/* Compact TEAM ARSP heading on mobile */
+@media (max-width: 600px) {
+    .arsp-home-members {
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+
+    .arsp-home-members .arsp-section-heading {
+        margin-bottom: 14px;
+    }
+
+    .arsp-home-members .arsp-section-heading h2 {
+        margin: 0;
+        font-size: 23px;
+    }
+}
